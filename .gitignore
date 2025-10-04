@@ -139,3 +139,4 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .minion/asana.config.json
 /packages/color
+/arm.out
