@@ -1,0 +1,31 @@
+{
+  "name": "@azure-arm-priv/cli",
+  "version": "1.0.0",
+  "description": "CLI tool",
+  "main": "../../dist/cli/index.js",
+  "bin": {
+    "azure-arm-priv": "../../dist/cli/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf ../../dist/cli"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@azure/identity": "^4.0.0",
+    "@azure/arm-subscriptions": "^5.0.0",
+    "@azure/arm-resources": "^5.0.0",
+    "inquirer": "^9.0.0",
+    "chalk": "^5.0.0",
+    "ora": "^7.0.0",
+    "commander": "^12.0.0",
+    "tsx": "^4.7.0"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.0"
+  }
+}

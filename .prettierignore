@@ -1,0 +1,14 @@
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+arm.out
+
+# Coverage
+coverage
+.nyc_output
+
+# Misc
+*.log
+.DS_Store
