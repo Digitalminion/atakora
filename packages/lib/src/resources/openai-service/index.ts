@@ -15,7 +15,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmOpenAIService, CognitiveServicesSku } from '@azure-arm-priv/lib';
+ * import { ArmOpenAIService, CognitiveServicesSku } from '@atakora/lib';
  *
  * const openai = new ArmOpenAIService(resourceGroup, 'OpenAI', {
  *   accountName: 'oai-colorai-001',
@@ -32,7 +32,7 @@
  * @example
  * L2 usage (auto-generation):
  * ```typescript
- * import { OpenAIService } from '@azure-arm-priv/lib';
+ * import { OpenAIService } from '@atakora/lib';
  *
  * const openai = new OpenAIService(resourceGroup, 'GPT');
  * // Auto-generates name, sets custom subdomain, uses secure defaults

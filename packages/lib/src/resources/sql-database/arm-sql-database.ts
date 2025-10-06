@@ -20,7 +20,7 @@ import type { ArmSqlDatabaseProps, DatabaseSku } from './types';
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmSqlDatabase, DatabaseSkuTier } from '@azure-arm-priv/lib';
+ * import { ArmSqlDatabase, DatabaseSkuTier } from '@atakora/lib';
  *
  * const database = new ArmSqlDatabase(resourceGroup, 'Database', {
  *   serverName: 'sql-colorai-001',

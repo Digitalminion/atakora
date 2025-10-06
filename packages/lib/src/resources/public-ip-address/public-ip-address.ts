@@ -29,7 +29,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { PublicIpAddress } from '@azure-arm-priv/lib';
+ * import { PublicIpAddress } from '@atakora/lib';
  *
  * const publicIp = new PublicIpAddress(resourceGroup, 'AppPublicIp');
  * ```

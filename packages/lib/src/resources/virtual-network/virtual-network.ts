@@ -24,7 +24,7 @@ import type { VirtualNetworkProps, IVirtualNetwork, AddressSpace, InlineSubnetPr
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { VirtualNetwork } from '@azure-arm-priv/lib';
+ * import { VirtualNetwork } from '@atakora/lib';
  *
  * // Creates VNet with auto-generated name and defaults
  * const vnet = new VirtualNetwork(resourceGroup, 'MainVNet', {

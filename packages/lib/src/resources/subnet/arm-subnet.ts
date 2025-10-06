@@ -24,7 +24,7 @@ import type {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmSubnet } from '@azure-arm-priv/lib';
+ * import { ArmSubnet } from '@atakora/lib';
  *
  * const subnet = new ArmSubnet(vnet, 'WebSubnet', {
  *   name: 'snet-web-01',
@@ -286,11 +286,26 @@ export class ArmSubnet extends Resource {
       properties.sharingScope = this.sharingScope;
     }
 
-    return {
+    // Build dependsOn array for explicit dependencies
+    const dependsOn: string[] = [];
+
+    // Add NSG dependency if referenced
+    if (this.networkSecurityGroup) {
+      dependsOn.push(this.networkSecurityGroup.id);
+    }
+
+    const template: any = {
       type: this.resourceType,
       apiVersion: this.apiVersion,
       name: `${this.virtualNetworkName}/${this.name}`,
       properties,
     };
+
+    // Only include dependsOn if there are dependencies
+    if (dependsOn.length > 0) {
+      template.dependsOn = dependsOn;
+    }
+
+    return template;
   }
 }

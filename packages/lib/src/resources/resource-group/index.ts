@@ -14,7 +14,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmResourceGroup } from '@azure-arm-priv/lib';
+ * import { ArmResourceGroup } from '@atakora/lib';
  *
  * const rg = new ArmResourceGroup(stack, 'RG', {
  *   resourceGroupName: 'rg-explicit-name',
@@ -26,7 +26,7 @@
  * @example
  * L2 usage (auto-generation):
  * ```typescript
- * import { ResourceGroup } from '@azure-arm-priv/lib';
+ * import { ResourceGroup } from '@atakora/lib';
  *
  * const rg = new ResourceGroup(stack, 'DataRG');
  * // Auto-generates name, location, tags from stack context

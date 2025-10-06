@@ -32,7 +32,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { WafPolicy } from '@azure-arm-priv/lib';
+ * import { WafPolicy } from '@atakora/lib';
  *
  * const wafPolicy = new WafPolicy(resourceGroup, 'MainWaf');
  * ```

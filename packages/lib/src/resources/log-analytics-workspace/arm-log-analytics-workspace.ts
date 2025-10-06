@@ -20,7 +20,7 @@ import type { ArmLogAnalyticsWorkspaceProps } from './types';
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmLogAnalyticsWorkspace, WorkspaceSku } from '@azure-arm-priv/lib';
+ * import { ArmLogAnalyticsWorkspace, WorkspaceSku } from '@atakora/lib';
  *
  * const workspace = new ArmLogAnalyticsWorkspace(resourceGroup, 'Workspace', {
  *   workspaceName: 'log-analytics-prod-001',

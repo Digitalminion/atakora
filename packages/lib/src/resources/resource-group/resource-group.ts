@@ -23,7 +23,7 @@ import type { ResourceGroupProps, IResourceGroup } from './types';
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { ResourceGroup } from '@azure-arm-priv/lib';
+ * import { ResourceGroup } from '@atakora/lib';
  *
  * // Creates resource group with auto-generated name:
  * // "rg-{org}-{project}-datarg-{env}-{geo}-{instance}"
@@ -119,7 +119,9 @@ export class ResourceGroup extends Construct implements IResourceGroup {
     };
 
     // Create underlying L1 resource
-    this.armResourceGroup = new ArmResourceGroup(this.subscriptionStack, `${id}-Resource`, {
+    // Pass the parent scope (which should be the SubscriptionStack)
+    // This allows the synthesizer to find the stack via tree traversal
+    this.armResourceGroup = new ArmResourceGroup(scope, `${id}-Resource`, {
       resourceGroupName: this.resourceGroupName,
       location: this.location,
       tags: this.tags,

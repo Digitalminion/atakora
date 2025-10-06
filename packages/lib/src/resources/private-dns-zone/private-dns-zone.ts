@@ -1,6 +1,8 @@
 import { Construct } from '../../core/construct';
 import type { IResourceGroup } from '../resource-group/types';
+import type { IVirtualNetwork } from '../virtual-network/types';
 import { ArmPrivateDnsZone } from './arm-private-dns-zone';
+import { ArmVirtualNetworkLink } from './arm-virtual-network-link';
 import type { PrivateDnsZoneProps, IPrivateDnsZone } from './types';
 
 /**
@@ -22,10 +24,20 @@ import type { PrivateDnsZoneProps, IPrivateDnsZone } from './types';
  * @example
  * Basic usage:
  * ```typescript
- * import { PrivateDnsZone } from '@azure-arm-priv/lib';
+ * import { PrivateDnsZone } from '@atakora/lib';
  *
  * const blobDnsZone = new PrivateDnsZone(resourceGroup, 'BlobDnsZone', {
  *   zoneName: 'privatelink.blob.core.windows.net'
+ * });
+ * ```
+ *
+ * @example
+ * With virtual network links:
+ * ```typescript
+ * const blobDnsZone = new PrivateDnsZone(resourceGroup, 'BlobDnsZone', {
+ *   zoneName: 'privatelink.blob.core.windows.net',
+ *   virtualNetworks: vnet, // or vnet.vnetId or [vnet1, vnet2]
+ *   registrationEnabled: false
  * });
  * ```
  *
@@ -48,6 +60,11 @@ export class PrivateDnsZone extends Construct implements IPrivateDnsZone {
    * Parent resource group.
    */
   private readonly parentResourceGroup: IResourceGroup;
+
+  /**
+   * Virtual network links created for this DNS zone.
+   */
+  private readonly vnetLinks: ArmVirtualNetworkLink[] = [];
 
   /**
    * Name of the Private DNS zone.
@@ -129,6 +146,90 @@ export class PrivateDnsZone extends Construct implements IPrivateDnsZone {
 
     // Get resource ID from L1
     this.zoneId = this.armPrivateDnsZone.zoneId;
+
+    // Create virtual network links if provided
+    if (props.virtualNetworks) {
+      this.createVirtualNetworkLinks(scope, id, props);
+    }
+  }
+
+  /**
+   * Creates virtual network links for the Private DNS zone.
+   *
+   * @param scope - Parent construct
+   * @param id - Base identifier for link constructs
+   * @param props - Private DNS zone properties
+   */
+  private createVirtualNetworkLinks(
+    scope: Construct,
+    id: string,
+    props: PrivateDnsZoneProps
+  ): void {
+    // Normalize virtualNetworks to an array
+    const vnets = Array.isArray(props.virtualNetworks)
+      ? props.virtualNetworks
+      : [props.virtualNetworks!];
+
+    // Create a link for each VNet
+    vnets.forEach((vnet, index) => {
+      // Resolve VNet ID
+      const vnetId = typeof vnet === 'string' ? vnet : vnet.vnetId;
+
+      // Generate a unique link name based on VNet
+      const linkName = this.generateLinkName(vnetId, index);
+
+      // Create the L1 virtual network link
+      const link = new ArmVirtualNetworkLink(
+        scope,
+        `${id}-VNetLink-${index}`,
+        {
+          privateDnsZoneName: this.zoneName,
+          linkName: linkName,
+          location: 'global',
+          virtualNetworkId: vnetId,
+          registrationEnabled: props.registrationEnabled ?? false,
+          tags: this.tags,
+        }
+      );
+
+      this.vnetLinks.push(link);
+    });
+  }
+
+  /**
+   * Generates a link name from a VNet resource ID.
+   *
+   * @param vnetId - Virtual network resource ID
+   * @param index - Index for uniqueness
+   * @returns Generated link name
+   */
+  private generateLinkName(vnetId: string, index: number): string {
+    // Extract VNet name from resource ID
+    const match = vnetId.match(/\/virtualNetworks\/([^/]+)/);
+    const vnetName = match ? match[1] : `vnet-${index}`;
+
+    // Generate link name: vnet-{name}-link
+    let linkName = `${vnetName}-link`;
+
+    // Sanitize name to match pattern: ^[a-zA-Z0-9][-a-zA-Z0-9]{0,78}[a-zA-Z0-9]$
+    linkName = linkName.replace(/[^a-zA-Z0-9-]/g, '-');
+    linkName = linkName.replace(/-+/g, '-');
+    linkName = linkName.replace(/^-+|-+$/g, '');
+
+    // Truncate to 80 characters if needed
+    if (linkName.length > 80) {
+      linkName = linkName.substring(0, 80).replace(/-+$/, '');
+    }
+
+    // Ensure it starts and ends with alphanumeric
+    if (!/^[a-zA-Z0-9]/.test(linkName)) {
+      linkName = `link-${linkName}`;
+    }
+    if (!/[a-zA-Z0-9]$/.test(linkName)) {
+      linkName = `${linkName}-0`;
+    }
+
+    return linkName;
   }
 
   /**

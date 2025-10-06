@@ -24,7 +24,7 @@ import type {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmAppService, AppServiceKind, ManagedIdentityType } from '@azure-arm-priv/lib';
+ * import { ArmAppService, AppServiceKind, ManagedIdentityType } from '@atakora/lib';
  *
  * const app = new ArmAppService(resourceGroup, 'WebApp', {
  *   siteName: 'app-colorai-001',

@@ -12,7 +12,14 @@ export class ResourceTransformer {
    * @returns ARM resource JSON
    */
   transform(resource: Resource): ArmResource {
-    // Extract ARM properties from resource
+    // Check if resource has toArmTemplate method
+    if (typeof (resource as any).toArmTemplate === 'function') {
+      const armTemplate = (resource as any).toArmTemplate();
+      const cleaned = this.cleanUndefined(armTemplate as ArmResource);
+      return this.replaceTokens(cleaned);
+    }
+
+    // Fallback: Extract ARM properties manually from resource
     const armResource: ArmResource = {
       type: resource.resourceType,
       apiVersion: this.extractApiVersion(resource),
@@ -52,8 +59,8 @@ export class ResourceTransformer {
       armResource.identity = identity;
     }
 
-    // Clean up undefined values
-    return this.cleanUndefined(armResource);
+    // Clean up undefined values and replace tokens
+    return this.replaceTokens(this.cleanUndefined(armResource));
   }
 
   /**
@@ -151,7 +158,8 @@ export class ResourceTransformer {
 
       if (typeof value === 'object') {
         const cleanedValue = this.cleanUndefined(value);
-        if (Object.keys(cleanedValue).length > 0) {
+        // Preserve 'properties' field even if empty (required by ARM schema)
+        if (key === 'properties' || Object.keys(cleanedValue).length > 0) {
           cleaned[key] = cleanedValue;
         }
         continue;
@@ -161,6 +169,105 @@ export class ResourceTransformer {
     }
 
     return cleaned as T;
+  }
+
+  /**
+   * Replace placeholder tokens with ARM template expressions
+   *
+   * @remarks
+   * Replaces the following placeholders:
+   * - {subscriptionId} → [subscription().subscriptionId]
+   * - {resourceGroupName} → [resourceGroup().name]
+   * - 00000000-0000-0000-0000-000000000000 → [subscription().tenantId] (for Key Vault tenantId)
+   *
+   * IMPORTANT: Does NOT replace tokens inside ARM expressions (strings starting with '[')
+   *
+   * @param obj - ARM resource object to process
+   * @returns ARM resource with tokens replaced
+   */
+  private replaceTokens<T extends Record<string, any>>(obj: T): T {
+    const result: any = {};
+
+    for (const [key, value] of Object.entries(obj)) {
+      // Skip dependsOn arrays - these should be ARM expressions already
+      if (key === 'dependsOn' && Array.isArray(value)) {
+        result[key] = value;
+        continue;
+      }
+
+      if (typeof value === 'string') {
+        // Don't replace tokens in ARM expressions (strings starting with '[')
+        if (value.startsWith('[')) {
+          result[key] = value;
+          continue;
+        }
+
+        let replacedValue = value;
+
+        // Replace {subscriptionId} with ARM expression
+        replacedValue = replacedValue.replace(
+          /\{subscriptionId\}/g,
+          '[subscription().subscriptionId]'
+        );
+
+        // Replace {resourceGroupName} with ARM expression
+        replacedValue = replacedValue.replace(
+          /\{resourceGroupName\}/g,
+          '[resourceGroup().name]'
+        );
+
+        // Special case: Replace placeholder tenantId with ARM expression
+        // This is specifically for Key Vault and similar resources
+        if (key === 'tenantId' && value === '00000000-0000-0000-0000-000000000000') {
+          replacedValue = '[subscription().tenantId]';
+        }
+
+        result[key] = replacedValue;
+      } else if (Array.isArray(value)) {
+        result[key] = value.map((item) =>
+          typeof item === 'object' && item !== null
+            ? this.replaceTokens(item)
+            : typeof item === 'string'
+            ? this.replaceStringTokens(item)
+            : item
+        );
+      } else if (typeof value === 'object' && value !== null) {
+        result[key] = this.replaceTokens(value);
+      } else {
+        result[key] = value;
+      }
+    }
+
+    return result as T;
+  }
+
+  /**
+   * Replace tokens in a string value
+   *
+   * @param str - String to process
+   * @returns String with tokens replaced
+   */
+  private replaceStringTokens(str: string): string {
+    // Don't replace tokens in ARM expressions (strings starting with '[')
+    if (str.startsWith('[')) {
+      return str;
+    }
+
+    let result = str;
+
+    // Replace {subscriptionId} with ARM expression
+    result = result.replace(
+      /\{subscriptionId\}/g,
+      '[subscription().subscriptionId]'
+    );
+
+    // Replace {resourceGroupName} with ARM expression
+    result = result.replace(
+      /\{resourceGroupName\}/g,
+      '[resourceGroup().name]'
+    );
+
+    return result;
   }
 
   /**

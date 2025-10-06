@@ -29,7 +29,7 @@ import type {
  * @example
  * Minimal usage (auto-generates name):
  * ```typescript
- * import { SqlDatabase } from '@azure-arm-priv/lib';
+ * import { SqlDatabase } from '@atakora/lib';
  *
  * const database = new SqlDatabase(sqlServer, 'AppDatabase');
  * ```

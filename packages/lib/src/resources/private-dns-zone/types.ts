@@ -10,6 +10,8 @@
  * @packageDocumentation
  */
 
+import type { IVirtualNetwork } from '../virtual-network/types';
+
 /**
  * Properties for L1 ArmPrivateDnsZone construct.
  */
@@ -63,6 +65,29 @@ export interface PrivateDnsZoneProps {
    * If provided, it will be validated to ensure it's 'global'.
    */
   readonly location?: 'global';
+
+  /**
+   * Virtual networks to link to this Private DNS zone (optional).
+   *
+   * @remarks
+   * When provided, virtual network links will be automatically created.
+   * Can be a single VNet or an array of VNets.
+   * Each VNet can be either a string (resource ID) or IVirtualNetwork reference.
+   *
+   * For more control over link properties (like auto-registration),
+   * use the VirtualNetworkLink construct separately.
+   */
+  readonly virtualNetworks?: string | IVirtualNetwork | Array<string | IVirtualNetwork>;
+
+  /**
+   * Enable auto-registration of VM DNS records (optional - defaults to false).
+   *
+   * @remarks
+   * Only applies when virtualNetworks are provided.
+   * When true, VMs in the linked VNets will have their DNS records
+   * automatically registered in the private DNS zone.
+   */
+  readonly registrationEnabled?: boolean;
 
   /**
    * Resource tags (optional - merged with parent tags).

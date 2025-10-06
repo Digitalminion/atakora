@@ -28,7 +28,7 @@ import type {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmStorageAccount, StorageAccountSkuName, StorageAccountKind } from '@azure-arm-priv/lib';
+ * import { ArmStorageAccount, StorageAccountSkuName, StorageAccountKind } from '@atakora/lib';
  *
  * const storage = new ArmStorageAccount(resourceGroup, 'Storage', {
  *   storageAccountName: 'stgcolorai001',

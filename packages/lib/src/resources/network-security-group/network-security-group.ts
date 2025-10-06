@@ -30,7 +30,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { NetworkSecurityGroup } from '@azure-arm-priv/lib';
+ * import { NetworkSecurityGroup } from '@atakora/lib';
  *
  * const nsg = new NetworkSecurityGroup(resourceGroup, 'WebNSG');
  * ```

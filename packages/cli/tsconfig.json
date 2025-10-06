@@ -2,7 +2,14 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "../../dist/cli"
+    "outDir": "../../dist/cli",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "tsBuildInfoFile": "../../dist/cli/.tsbuildinfo"
   },
+  "references": [
+    { "path": "../lib" }
+  ],
   "include": ["src/**/*"]
 }

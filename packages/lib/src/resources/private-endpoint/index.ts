@@ -14,7 +14,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmPrivateEndpoint } from '@azure-arm-priv/lib';
+ * import { ArmPrivateEndpoint } from '@atakora/lib';
  *
  * const endpoint = new ArmPrivateEndpoint(resourceGroup, 'StorageEndpoint', {
  *   privateEndpointName: 'pe-storage-blob-01',
@@ -33,7 +33,7 @@
  * @example
  * L2 usage (auto-generation):
  * ```typescript
- * import { PrivateEndpoint } from '@azure-arm-priv/lib';
+ * import { PrivateEndpoint } from '@atakora/lib';
  *
  * const endpoint = new PrivateEndpoint(resourceGroup, 'StorageEndpoint', {
  *   subnet: subnet,

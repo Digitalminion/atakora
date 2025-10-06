@@ -37,7 +37,7 @@
  *   Project,
  *   Environment,
  *   Instance
- * } from '@azure-arm-priv/lib';
+ * } from '@atakora/lib';
  *
  * const app = new App();
  *

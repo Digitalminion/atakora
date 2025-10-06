@@ -14,7 +14,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmAppServicePlan, AppServicePlanSkuName, AppServicePlanSkuTier } from '@azure-arm-priv/lib';
+ * import { ArmAppServicePlan, AppServicePlanSkuName, AppServicePlanSkuTier } from '@atakora/lib';
  *
  * const plan = new ArmAppServicePlan(resourceGroup, 'Plan', {
  *   planName: 'asp-colorai-001',
@@ -31,7 +31,7 @@
  * @example
  * L2 usage (auto-generation):
  * ```typescript
- * import { AppServicePlan } from '@azure-arm-priv/lib';
+ * import { AppServicePlan } from '@atakora/lib';
  *
  * const plan = new AppServicePlan(resourceGroup, 'ApiPlan');
  * // Auto-generates name, defaults to Linux B1

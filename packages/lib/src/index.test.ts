@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as lib from './index';
 
-describe('@azure-arm-priv/lib', () => {
+describe('@atakora/lib', () => {
   it('should export naming module', () => {
     expect(lib).toHaveProperty('ResourceNameGenerator');
     expect(lib).toHaveProperty('DEFAULT_CONVENTIONS');

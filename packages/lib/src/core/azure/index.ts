@@ -18,7 +18,7 @@
  * @example
  * Geography usage:
  * ```typescript
- * import { Geography } from '@azure-arm-priv/lib/core/azure';
+ * import { Geography } from '@atakora/lib/core/azure';
  *
  * const geo = Geography.fromValue('eastus');
  * console.log(geo.location);     // "eastus" - Use for ARM template deployment
@@ -29,7 +29,7 @@
  * @example
  * Subscription usage:
  * ```typescript
- * import { Subscription } from '@azure-arm-priv/lib/core/azure';
+ * import { Subscription } from '@atakora/lib/core/azure';
  *
  * const sub = new Subscription({
  *   subscriptionId: '12345678-1234-1234-1234-123456789abc',
@@ -40,7 +40,7 @@
  * @example
  * Deployment scope:
  * ```typescript
- * import { DeploymentScope, getSchemaForScope } from '@azure-arm-priv/lib/core/azure';
+ * import { DeploymentScope, getSchemaForScope } from '@atakora/lib/core/azure';
  *
  * const schema = getSchemaForScope(DeploymentScope.Subscription);
  * ```

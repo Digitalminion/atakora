@@ -20,7 +20,7 @@ import type { ArmApplicationGatewayProps, ApplicationGatewaySku } from './types'
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmApplicationGateway, ApplicationGatewaySkuName, ApplicationGatewayTier } from '@azure-arm-priv/lib';
+ * import { ArmApplicationGateway, ApplicationGatewaySkuName, ApplicationGatewayTier } from '@atakora/lib';
  *
  * const appgw = new ArmApplicationGateway(resourceGroup, 'AppGw', {
  *   gatewayName: 'appgw-prod-eastus-01',

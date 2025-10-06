@@ -20,7 +20,7 @@ import type { ArmActionGroupProps } from './types';
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmActionGroup } from '@azure-arm-priv/lib';
+ * import { ArmActionGroup } from '@atakora/lib';
  *
  * const actionGroup = new ArmActionGroup(resourceGroup, 'ActionGroup', {
  *   actionGroupName: 'ag-alerts-prod',

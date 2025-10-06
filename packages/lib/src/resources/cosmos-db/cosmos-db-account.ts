@@ -35,7 +35,7 @@ import type {
  * @example
  * Basic serverless Cosmos DB account:
  * ```typescript
- * import { CosmosDbAccount } from '@azure-arm-priv/lib';
+ * import { CosmosDbAccount } from '@atakora/lib';
  *
  * const cosmosAccount = new CosmosDbAccount(resourceGroup, 'CosmosAccount', {
  *   location: 'eastus',

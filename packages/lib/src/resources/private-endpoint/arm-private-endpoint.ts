@@ -25,7 +25,7 @@ import type {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmPrivateEndpoint } from '@azure-arm-priv/lib';
+ * import { ArmPrivateEndpoint } from '@atakora/lib';
  *
  * const endpoint = new ArmPrivateEndpoint(resourceGroup, 'StorageEndpoint', {
  *   privateEndpointName: 'pe-storage-blob-01',
@@ -284,6 +284,24 @@ export class ArmPrivateEndpoint extends Resource {
       properties.customNetworkInterfaceName = this.customNetworkInterfaceName;
     }
 
+    // Build dependsOn array for explicit dependencies
+    const dependsOn: string[] = [];
+
+    // Add subnet dependency
+    dependsOn.push(this.subnet.id);
+
+    // Add dependencies for all target resources (private link services)
+    this.privateLinkServiceConnections.forEach(connection => {
+      dependsOn.push(connection.privateLinkServiceId);
+    });
+
+    // Add private DNS zone dependencies if using DNS zone group
+    if (this.privateDnsZoneGroup) {
+      this.privateDnsZoneGroup.privateDnsZoneConfigs.forEach(config => {
+        dependsOn.push(config.privateDnsZoneId);
+      });
+    }
+
     // Optional private DNS zone group (as a sub-resource)
     const resources: any[] = [];
     if (this.privateDnsZoneGroup) {
@@ -311,6 +329,7 @@ export class ArmPrivateEndpoint extends Resource {
       name: this.privateEndpointName,
       location: this.location,
       properties,
+      dependsOn,
     };
 
     // Optional tags

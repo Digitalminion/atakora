@@ -14,7 +14,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmNetworkSecurityGroup, SecurityRuleProtocol, SecurityRuleAccess, SecurityRuleDirection } from '@azure-arm-priv/lib';
+ * import { ArmNetworkSecurityGroup, SecurityRuleProtocol, SecurityRuleAccess, SecurityRuleDirection } from '@atakora/lib';
  *
  * const nsg = new ArmNetworkSecurityGroup(resourceGroup, 'WebNSG', {
  *   networkSecurityGroupName: 'nsg-web-01',
@@ -38,7 +38,7 @@
  * @example
  * L2 usage (auto-generation with helper methods):
  * ```typescript
- * import { NetworkSecurityGroup, SecurityRuleProtocol } from '@azure-arm-priv/lib';
+ * import { NetworkSecurityGroup, SecurityRuleProtocol } from '@atakora/lib';
  *
  * const nsg = new NetworkSecurityGroup(resourceGroup, 'WebNSG');
  *

@@ -28,7 +28,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { LogAnalyticsWorkspace } from '@azure-arm-priv/lib';
+ * import { LogAnalyticsWorkspace } from '@atakora/lib';
  *
  * const workspace = new LogAnalyticsWorkspace(resourceGroup, 'MainWorkspace');
  * ```

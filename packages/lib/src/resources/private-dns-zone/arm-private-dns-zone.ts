@@ -22,7 +22,7 @@ import type { ArmPrivateDnsZoneProps } from './types';
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmPrivateDnsZone } from '@azure-arm-priv/lib';
+ * import { ArmPrivateDnsZone } from '@atakora/lib';
  *
  * const zone = new ArmPrivateDnsZone(resourceGroup, 'BlobDnsZone', {
  *   zoneName: 'privatelink.blob.core.windows.net',

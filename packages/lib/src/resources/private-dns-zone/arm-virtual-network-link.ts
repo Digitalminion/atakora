@@ -22,7 +22,7 @@ import type { ArmVirtualNetworkLinkProps, IVirtualNetworkLink } from './virtual-
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmVirtualNetworkLink } from '@azure-arm-priv/lib';
+ * import { ArmVirtualNetworkLink } from '@atakora/lib';
  *
  * const link = new ArmVirtualNetworkLink(resourceGroup, 'VNetLink', {
  *   privateDnsZoneName: 'privatelink.blob.core.windows.net',

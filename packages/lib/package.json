@@ -1,5 +1,5 @@
 {
-  "name": "@azure-arm-priv/lib",
+  "name": "@atakora/lib",
   "version": "1.0.0",
   "description": "Core library",
   "main": "./dist/index.js",
@@ -9,7 +9,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
-    "clean": "rm -rf ./dist"
+    "clean": "rm -rf ./dist && rm -rf ../../dist/lib",
+    "codegen:types": "node dist/codegen/cli.js",
+    "codegen:resource": "node dist/codegen/cli-generate-resource.js",
+    "codegen:validate": "node dist/codegen/cli-validate.js",
+    "codegen:sync": "node dist/codegen/schema-sync.js"
   },
   "keywords": [],
   "author": "",

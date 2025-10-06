@@ -25,7 +25,7 @@ import type {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmCosmosDbAccount, DatabaseAccountOfferType, ConsistencyLevel } from '@azure-arm-priv/lib';
+ * import { ArmCosmosDbAccount, DatabaseAccountOfferType, ConsistencyLevel } from '@atakora/lib';
  *
  * const cosmosAccount = new ArmCosmosDbAccount(resourceGroup, 'CosmosAccount', {
  *   databaseAccountName: 'cosmos-colorai-001',

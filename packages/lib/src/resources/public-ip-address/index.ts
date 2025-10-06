@@ -14,7 +14,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmPublicIpAddress, PublicIPAddressSku, PublicIPAllocationMethod } from '@azure-arm-priv/lib';
+ * import { ArmPublicIpAddress, PublicIPAddressSku, PublicIPAllocationMethod } from '@atakora/lib';
  *
  * const publicIp = new ArmPublicIpAddress(resourceGroup, 'PublicIp', {
  *   publicIpAddressName: 'pip-myapp-001',
@@ -29,7 +29,7 @@
  * @example
  * L2 usage (auto-generation):
  * ```typescript
- * import { PublicIpAddress } from '@azure-arm-priv/lib';
+ * import { PublicIpAddress } from '@atakora/lib';
  *
  * const publicIp = new PublicIpAddress(resourceGroup, 'AppPublicIp');
  * // Auto-generates name, uses secure defaults

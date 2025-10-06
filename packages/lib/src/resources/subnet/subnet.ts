@@ -30,7 +30,7 @@ interface IVirtualNetwork {
  * @example
  * Minimal usage (auto-generates name):
  * ```typescript
- * import { Subnet } from '@azure-arm-priv/lib';
+ * import { Subnet } from '@atakora/lib';
  *
  * // Creates subnet with auto-generated name
  * const subnet = new Subnet(vnet, 'WebSubnet', {

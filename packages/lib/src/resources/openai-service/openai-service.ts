@@ -31,7 +31,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { OpenAIService } from '@azure-arm-priv/lib';
+ * import { OpenAIService } from '@atakora/lib';
  *
  * const openai = new OpenAIService(resourceGroup, 'AI');
  * ```

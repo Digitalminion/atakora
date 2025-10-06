@@ -31,7 +31,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { StorageAccount } from '@azure-arm-priv/lib';
+ * import { StorageAccount } from '@atakora/lib';
  *
  * const storage = new StorageAccount(resourceGroup, 'DataStorage');
  * ```

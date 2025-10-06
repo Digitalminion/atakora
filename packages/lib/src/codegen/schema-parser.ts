@@ -495,7 +495,12 @@ export class SchemaParser {
    * @returns TypeScript-friendly type name
    */
   private toTypeName(name: string): string {
-    // Remove Format suffix: "AddressSpacePropertiesFormat" -> "AddressSpace"
-    return name.replace(/PropertiesFormat$/, '').replace(/Format$/, '');
+    // Remove common ARM suffixes and standardize to Props
+    // "AddressSpacePropertiesFormat" -> "AddressSpace"
+    // "BackupPolicyProperties" -> "BackupPolicyProps"
+    return name
+      .replace(/PropertiesFormat$/, '')
+      .replace(/Format$/, '')
+      .replace(/Properties$/, 'Props');
   }
 }

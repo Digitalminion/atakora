@@ -43,7 +43,7 @@ import {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { ApplicationGateway } from '@azure-arm-priv/lib';
+ * import { ApplicationGateway } from '@atakora/lib';
  *
  * // Creates Application Gateway with auto-generated name and defaults
  * const appgw = new ApplicationGateway(resourceGroup, 'MainAppGw', {

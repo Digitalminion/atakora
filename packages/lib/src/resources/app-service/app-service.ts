@@ -39,7 +39,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { AppService } from '@azure-arm-priv/lib';
+ * import { AppService } from '@atakora/lib';
  *
  * const app = new AppService(resourceGroup, 'WebApp', {
  *   serverFarmId: plan.planId

@@ -1,21 +1,22 @@
 {
-  "name": "@azure-arm-priv/cli",
+  "name": "@atakora/cli",
   "version": "1.0.0",
   "description": "CLI tool",
-  "main": "../../dist/cli/index.js",
+  "main": "./dist/index.js",
   "bin": {
-    "azure-arm-priv": "../../dist/cli/cli.js"
+    "azure-arm": "./dist/cli.js"
   },
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
     "test:watch": "vitest",
-    "clean": "rm -rf ../../dist/cli"
+    "clean": "rm -rf ./dist && rm -rf ../../dist/cli"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@atakora/lib": "*",
     "@azure/identity": "^4.0.0",
     "@azure/arm-subscriptions": "^5.0.0",
     "@azure/arm-resources": "^5.0.0",

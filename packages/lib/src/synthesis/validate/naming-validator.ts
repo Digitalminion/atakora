@@ -152,14 +152,14 @@ export class NamingValidator extends BaseValidator {
     errors: any[],
     warnings: any[]
   ): void {
-    // Generic maximum length
+    // Generic maximum length - only warn for long names
     if (name.length > 64) {
-      errors.push(
-        this.createError(
+      warnings.push(
+        this.createWarning(
           `Resource name '${name}' exceeds recommended maximum length of 64 characters`,
           `resources/${name}`,
           'NAME_TOO_LONG',
-          'Shorten the name to 64 characters or fewer'
+          'Consider shortening the name to 64 characters or fewer'
         )
       );
     }

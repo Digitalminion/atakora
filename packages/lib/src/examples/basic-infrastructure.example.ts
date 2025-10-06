@@ -50,7 +50,7 @@ export function createBasicInfrastructure(): App {
     environment: Environment.fromValue('nonprod'),
     instance: Instance.fromNumber(1),
     tags: {
-      managed_by: 'azure-arm-priv',
+      managed_by: 'atakora',
       cost_center: '1234',
       department: 'engineering',
     },

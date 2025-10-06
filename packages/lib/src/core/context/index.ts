@@ -19,7 +19,7 @@
  *
  * @example
  * ```typescript
- * import { Organization, Project, Environment, Instance } from '@azure-arm-priv/lib/core/context';
+ * import { Organization, Project, Environment, Instance } from '@atakora/lib/core/context';
  *
  * const org = Organization.fromValue('digital products');  // resourceName: "dp"
  * const project = new Project('colorai');

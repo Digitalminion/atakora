@@ -26,7 +26,7 @@ import type {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmPublicIpAddress, PublicIPAddressSku, PublicIPAllocationMethod } from '@azure-arm-priv/lib';
+ * import { ArmPublicIpAddress, PublicIPAddressSku, PublicIPAllocationMethod } from '@atakora/lib';
  *
  * const publicIp = new ArmPublicIpAddress(resourceGroup, 'PublicIp', {
  *   publicIpAddressName: 'pip-myapp-001',

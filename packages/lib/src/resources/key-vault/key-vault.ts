@@ -30,7 +30,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { KeyVault } from '@azure-arm-priv/lib';
+ * import { KeyVault } from '@atakora/lib';
  *
  * const vault = new KeyVault(resourceGroup, 'Secrets', {
  *   tenantId: '12345678-1234-1234-1234-123456789abc'

@@ -14,7 +14,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmApiManagement, ApiManagementSkuName } from '@azure-arm-priv/lib';
+ * import { ArmApiManagement, ApiManagementSkuName } from '@atakora/lib';
  *
  * const apim = new ArmApiManagement(resourceGroup, 'APIM', {
  *   serviceName: 'apim-colorai-nonprod',
@@ -34,7 +34,7 @@
  * @example
  * L2 usage (auto-generation):
  * ```typescript
- * import { ApiManagement } from '@azure-arm-priv/lib';
+ * import { ApiManagement } from '@atakora/lib';
  *
  * const apim = new ApiManagement(resourceGroup, 'Gateway', {
  *   publisherName: 'Avient ColorAI',

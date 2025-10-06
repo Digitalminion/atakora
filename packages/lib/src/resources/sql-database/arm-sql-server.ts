@@ -20,7 +20,7 @@ import type { ArmSqlServerProps, SqlServerVersion, PublicNetworkAccess } from '.
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmSqlServer, SqlServerVersion, PublicNetworkAccess } from '@azure-arm-priv/lib';
+ * import { ArmSqlServer, SqlServerVersion, PublicNetworkAccess } from '@atakora/lib';
  *
  * const sqlServer = new ArmSqlServer(resourceGroup, 'SqlServer', {
  *   serverName: 'sql-colorai-001',

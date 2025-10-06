@@ -13,8 +13,8 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "@azure-arm-priv/lib": ["./packages/lib/src/index.ts"],
-      "@azure-arm-priv/color": ["./packages/color/src/index.ts"]
+      "@atakora/lib": ["./packages/lib/src/index.ts"],
+      "@atakora/color": ["./packages/color/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "dist"]

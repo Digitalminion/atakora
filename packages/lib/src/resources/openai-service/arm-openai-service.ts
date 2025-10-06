@@ -26,7 +26,7 @@ import type {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmOpenAIService, CognitiveServicesSku } from '@azure-arm-priv/lib';
+ * import { ArmOpenAIService, CognitiveServicesSku } from '@atakora/lib';
  *
  * const openai = new ArmOpenAIService(resourceGroup, 'OpenAI', {
  *   accountName: 'oai-colorai-001',

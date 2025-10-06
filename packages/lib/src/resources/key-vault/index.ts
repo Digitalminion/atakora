@@ -14,7 +14,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmKeyVault, KeyVaultSkuName } from '@azure-arm-priv/lib';
+ * import { ArmKeyVault, KeyVaultSkuName } from '@atakora/lib';
  *
  * const vault = new ArmKeyVault(resourceGroup, 'Vault', {
  *   vaultName: 'kv-colorai-001',
@@ -30,7 +30,7 @@
  * @example
  * L2 usage (auto-generation):
  * ```typescript
- * import { KeyVault } from '@azure-arm-priv/lib';
+ * import { KeyVault } from '@atakora/lib';
  *
  * const vault = new KeyVault(resourceGroup, 'AppSecrets', {
  *   tenantId: '12345678-1234-1234-1234-123456789abc'

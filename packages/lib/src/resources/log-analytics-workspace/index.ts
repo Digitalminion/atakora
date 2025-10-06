@@ -14,7 +14,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmLogAnalyticsWorkspace, WorkspaceSku } from '@azure-arm-priv/lib';
+ * import { ArmLogAnalyticsWorkspace, WorkspaceSku } from '@atakora/lib';
  *
  * const workspace = new ArmLogAnalyticsWorkspace(resourceGroup, 'Workspace', {
  *   workspaceName: 'log-analytics-prod-001',
@@ -29,7 +29,7 @@
  * @example
  * L2 usage (auto-generation):
  * ```typescript
- * import { LogAnalyticsWorkspace } from '@azure-arm-priv/lib';
+ * import { LogAnalyticsWorkspace } from '@atakora/lib';
  *
  * const workspace = new LogAnalyticsWorkspace(resourceGroup, 'MainWorkspace', {
  *   retentionInDays: 90,

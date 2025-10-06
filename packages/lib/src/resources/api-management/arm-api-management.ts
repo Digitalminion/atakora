@@ -28,7 +28,7 @@ import type {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmApiManagement, ApiManagementSkuName } from '@azure-arm-priv/lib';
+ * import { ArmApiManagement, ApiManagementSkuName } from '@atakora/lib';
  *
  * const apim = new ArmApiManagement(resourceGroup, 'APIM', {
  *   serviceName: 'apim-colorai-nonprod',

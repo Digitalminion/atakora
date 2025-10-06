@@ -29,7 +29,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { SearchService } from '@azure-arm-priv/lib';
+ * import { SearchService } from '@atakora/lib';
  *
  * const searchService = new SearchService(resourceGroup, 'DataSearch');
  * ```

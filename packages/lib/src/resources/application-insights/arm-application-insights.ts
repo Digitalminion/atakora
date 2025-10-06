@@ -20,7 +20,7 @@ import type { ArmApplicationInsightsProps, ApplicationType, FlowType, PublicNetw
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmApplicationInsights, ApplicationType } from '@azure-arm-priv/lib';
+ * import { ArmApplicationInsights, ApplicationType } from '@atakora/lib';
  *
  * const appInsights = new ArmApplicationInsights(resourceGroup, 'AppInsights', {
  *   name: 'appi-colorai-nonprod-eus-01',

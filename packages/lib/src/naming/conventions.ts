@@ -91,7 +91,7 @@ export const DEFAULT_MAX_LENGTH = 60;
  *
  * @example
  * ```typescript
- * import { DEFAULT_CONVENTIONS } from '@azure-arm-priv/lib/naming';
+ * import { DEFAULT_CONVENTIONS } from '@atakora/lib/naming';
  *
  * console.log(DEFAULT_CONVENTIONS.separator); // "-"
  * console.log(DEFAULT_CONVENTIONS.patterns.storage); // "st"

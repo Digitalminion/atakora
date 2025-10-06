@@ -20,7 +20,7 @@ import type { ArmVirtualNetworkProps, AddressSpace } from './types';
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmVirtualNetwork } from '@azure-arm-priv/lib';
+ * import { ArmVirtualNetwork } from '@atakora/lib';
  *
  * const vnet = new ArmVirtualNetwork(resourceGroup, 'VNet', {
  *   virtualNetworkName: 'vnet-digital-products-colorai-nonprod-eastus-01',

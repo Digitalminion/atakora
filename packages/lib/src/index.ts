@@ -33,7 +33,7 @@
  * @example
  * Basic usage with L2 constructs:
  * ```typescript
- * import { App, SubscriptionStack, ResourceGroup, StorageAccount } from '@azure-arm-priv/lib';
+ * import { App, SubscriptionStack, ResourceGroup, StorageAccount } from '@atakora/lib';
  *
  * const app = new App();
  *
@@ -60,7 +60,7 @@
  * @example
  * Advanced usage with L1 constructs:
  * ```typescript
- * import { ArmStorageAccount } from '@azure-arm-priv/lib';
+ * import { ArmStorageAccount } from '@atakora/lib';
  *
  * const storage = new ArmStorageAccount(stack, 'Storage', {
  *   name: 'mystorageaccount',

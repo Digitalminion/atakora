@@ -96,7 +96,7 @@ export function createColorAIMonitoringStack(
     environment: Environment.fromValue('nonprod'),
     instance: Instance.fromNumber(1),
     tags: {
-      managed_by: 'azure-arm-priv',
+      managed_by: 'atakora',
       project: 'colorai',
       environment: 'nonprod',
       stack: 'monitoring',

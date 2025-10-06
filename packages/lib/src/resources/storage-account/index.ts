@@ -14,7 +14,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmStorageAccount, StorageAccountSkuName, StorageAccountKind } from '@azure-arm-priv/lib';
+ * import { ArmStorageAccount, StorageAccountSkuName, StorageAccountKind } from '@atakora/lib';
  *
  * const storage = new ArmStorageAccount(resourceGroup, 'Storage', {
  *   storageAccountName: 'stgcolorai001',
@@ -27,7 +27,7 @@
  * @example
  * L2 usage (auto-generation):
  * ```typescript
- * import { StorageAccount } from '@azure-arm-priv/lib';
+ * import { StorageAccount } from '@atakora/lib';
  *
  * const storage = new StorageAccount(resourceGroup, 'DataStorage');
  * // Auto-generates name, uses secure defaults

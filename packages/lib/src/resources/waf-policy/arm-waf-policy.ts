@@ -20,7 +20,7 @@ import type { ArmWafPolicyProps, PolicySettings, ManagedRules, CustomRule } from
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmWafPolicy, WafPolicyMode, WafState, WafRuleSetType } from '@azure-arm-priv/lib';
+ * import { ArmWafPolicy, WafPolicyMode, WafState, WafRuleSetType } from '@atakora/lib';
  *
  * const wafPolicy = new ArmWafPolicy(resourceGroup, 'WafPolicy', {
  *   policyName: 'waf-prod-eastus-01',

@@ -109,7 +109,7 @@ export interface AzureAppProps extends Omit<AppProps, 'context'> {
  * @example
  * Basic usage with automatic config loading:
  * ```typescript
- * import { AzureApp, SubscriptionStack } from '@azure-arm-priv/lib';
+ * import { AzureApp, SubscriptionStack } from '@atakora/lib';
  *
  * // Automatically loads config from:
  * // - ~/.azure-arm/config.json (user config via active profile)

@@ -14,7 +14,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmSubnet } from '@azure-arm-priv/lib';
+ * import { ArmSubnet } from '@atakora/lib';
  *
  * const subnet = new ArmSubnet(vnet, 'WebSubnet', {
  *   name: 'snet-web-01',
@@ -26,7 +26,7 @@
  * @example
  * L2 usage (auto-generation):
  * ```typescript
- * import { Subnet } from '@azure-arm-priv/lib';
+ * import { Subnet } from '@atakora/lib';
  *
  * const subnet = new Subnet(vnet, 'WebSubnet', {
  *   addressPrefix: '10.0.1.0/24'

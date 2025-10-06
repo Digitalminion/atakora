@@ -20,7 +20,7 @@ import type { ArmNetworkSecurityGroupProps, SecurityRule } from './types';
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmNetworkSecurityGroup, SecurityRuleProtocol, SecurityRuleAccess, SecurityRuleDirection } from '@azure-arm-priv/lib';
+ * import { ArmNetworkSecurityGroup, SecurityRuleProtocol, SecurityRuleAccess, SecurityRuleDirection } from '@atakora/lib';
  *
  * const nsg = new ArmNetworkSecurityGroup(resourceGroup, 'WebNSG', {
  *   networkSecurityGroupName: 'nsg-web-01',

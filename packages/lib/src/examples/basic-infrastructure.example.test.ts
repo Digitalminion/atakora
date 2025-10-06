@@ -55,7 +55,7 @@ describe('examples/basic-infrastructure', () => {
 
       // Should have stack tags plus RG-specific tags
       expect(networkRG.tags).toMatchObject({
-        managed_by: 'azure-arm-priv',
+        managed_by: 'atakora',
         cost_center: '1234',
         department: 'engineering',
         purpose: 'networking',

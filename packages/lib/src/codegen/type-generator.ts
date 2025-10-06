@@ -36,6 +36,7 @@ export class TypeGenerator {
    *
    * @param ir - Schema intermediate representation
    * @returns Generated TypeScript code
+   * @throws {Error} If referenced types are not defined
    */
   public generate(ir: SchemaIR): string {
     const lines: string[] = [];
@@ -46,23 +47,47 @@ export class TypeGenerator {
 
     // Generate shared type definitions first
     const generatedTypes = new Set<string>();
+    const referencedTypes = new Set<string>();
 
     for (const [name, typeDef] of ir.definitions) {
+      const typeName = this.toTypeName(name);
+
+      // Track this type as "generated" (available for reference)
+      // even if we don't emit an interface for it
+      generatedTypes.add(typeName);
+
+      // Generate type definitions based on kind
       if (typeDef.kind === 'object' && typeDef.properties) {
-        const typeName = this.toTypeName(name);
-        if (!generatedTypes.has(typeName)) {
+        // Object type with properties - generate interface
+        if (!lines.includes(`export interface ${typeName}`)) {
           lines.push(this.generateInterface(name, typeDef));
           lines.push('');
-          generatedTypes.add(typeName);
+        }
+      } else if (typeDef.kind === 'union') {
+        // Union type - generate type alias
+        if (!lines.includes(`export type ${typeName}`)) {
+          lines.push(this.generateTypeAlias(name, typeDef));
+          lines.push('');
         }
       }
+
+      // Track any type references in this definition
+      this.collectTypeReferences(typeDef, referencedTypes);
     }
 
     // Generate resource prop interfaces
     for (const resource of ir.resources) {
       lines.push(this.generateResourcePropsInterface(resource, ir));
       lines.push('');
+
+      // Track references in resource properties
+      for (const prop of resource.properties) {
+        this.collectTypeReferences(prop.type, referencedTypes);
+      }
     }
+
+    // Validate all referenced types are defined
+    this.validateTypeReferences(generatedTypes, referencedTypes, ir.metadata);
 
     return lines.join('\n');
   }
@@ -87,6 +112,28 @@ export class TypeGenerator {
  *
  * @packageDocumentation
  */`;
+  }
+
+  /**
+   * Generate TypeScript type alias for union types.
+   *
+   * @param name - Type definition name
+   * @param typeDef - Type definition
+   * @returns Generated type alias code
+   */
+  private generateTypeAlias(name: string, typeDef: TypeDefinition): string {
+    const lines: string[] = [];
+    const typeName = this.toTypeName(name);
+
+    // Type alias JSDoc
+    lines.push(`/**`);
+    lines.push(` * ${typeName} type.`);
+    lines.push(` */`);
+
+    // Type alias declaration
+    lines.push(`export type ${typeName} = ${typeDef.tsType};`);
+
+    return lines.join('\n');
   }
 
   /**
@@ -277,5 +324,82 @@ export class TypeGenerator {
       .replace(/PropertiesFormat$/, '')
       .replace(/Format$/, '')
       .replace(/Properties$/, 'Props');
+  }
+
+  /**
+   * Collect all type references from a type definition.
+   *
+   * @param typeDef - Type definition to scan
+   * @param referencedTypes - Set to collect references into
+   */
+  private collectTypeReferences(
+    typeDef: TypeDefinition,
+    referencedTypes: Set<string>
+  ): void {
+    if (typeDef.kind === 'reference') {
+      // Add the actual tsType which has been transformed
+      referencedTypes.add(typeDef.tsType);
+    } else if (typeDef.kind === 'array' && typeDef.elementType) {
+      this.collectTypeReferences(typeDef.elementType, referencedTypes);
+    } else if (typeDef.kind === 'union' && typeDef.unionTypes) {
+      for (const unionType of typeDef.unionTypes) {
+        this.collectTypeReferences(unionType, referencedTypes);
+      }
+    } else if (typeDef.kind === 'object' && typeDef.properties) {
+      for (const prop of typeDef.properties) {
+        this.collectTypeReferences(prop.type, referencedTypes);
+      }
+    }
+  }
+
+  /**
+   * Validate that all referenced types are actually defined.
+   *
+   * @param generatedTypes - Set of types that were generated
+   * @param referencedTypes - Set of types that were referenced
+   * @param metadata - Schema metadata for error messages
+   * @throws {Error} If any referenced type is not defined
+   */
+  private validateTypeReferences(
+    generatedTypes: Set<string>,
+    referencedTypes: Set<string>,
+    metadata: any
+  ): void {
+    const missingTypes: string[] = [];
+
+    for (const refType of referencedTypes) {
+      // Skip primitive types and common TypeScript types
+      const primitives = ['string', 'number', 'boolean', 'any', 'object'];
+      const isPrimitive = primitives.some((p) => refType.includes(p));
+      const isRecord = refType.startsWith('Record<');
+      const isArray = refType.endsWith('[]');
+
+      if (isPrimitive || isRecord || isArray) {
+        continue;
+      }
+
+      // Check if the referenced type was generated
+      if (!generatedTypes.has(refType)) {
+        missingTypes.push(refType);
+      }
+    }
+
+    if (missingTypes.length > 0) {
+      const errorMsg = [
+        `Type generation validation failed for ${metadata.provider}:`,
+        ``,
+        `The following types are referenced but not defined:`,
+        ...missingTypes.map((t) => `  - ${t}`),
+        ``,
+        `This indicates either:`,
+        `  1. Missing definitions in the ARM schema`,
+        `  2. A bug in the type name transformation logic`,
+        `  3. External type references that need to be imported`,
+        ``,
+        `Please review the schema and type generation logic.`,
+      ].join('\n');
+
+      throw new Error(errorMsg);
+    }
   }
 }

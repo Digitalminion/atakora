@@ -20,7 +20,7 @@ import type { ArmMetricAlertProps } from './types';
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmMetricAlert } from '@azure-arm-priv/lib';
+ * import { ArmMetricAlert } from '@atakora/lib';
  *
  * const alert = new ArmMetricAlert(resourceGroup, 'Alert', {
  *   name: 'alert-cpu-high',

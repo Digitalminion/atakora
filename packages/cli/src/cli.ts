@@ -10,7 +10,7 @@ export function cli() {
   const program = new Command();
 
   program
-    .name('azure-arm')
+    .name('atakora')
     .description('Azure ARM Infrastructure as Code CLI')
     .version('1.0.0');
 

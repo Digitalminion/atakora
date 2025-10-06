@@ -25,7 +25,7 @@ import type { VirtualNetworkLinkProps, IVirtualNetworkLink } from './virtual-net
  * @example
  * Link a VNet to a Private DNS zone:
  * ```typescript
- * import { VirtualNetworkLink } from '@azure-arm-priv/lib';
+ * import { VirtualNetworkLink } from '@atakora/lib';
  *
  * const link = new VirtualNetworkLink(resourceGroup, 'VNetLink', {
  *   privateDnsZoneName: 'privatelink.blob.core.windows.net',

@@ -14,7 +14,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmCosmosDbAccount, DatabaseAccountOfferType, ConsistencyLevel } from '@azure-arm-priv/lib';
+ * import { ArmCosmosDbAccount, DatabaseAccountOfferType, ConsistencyLevel } from '@atakora/lib';
  *
  * const cosmosAccount = new ArmCosmosDbAccount(resourceGroup, 'CosmosAccount', {
  *   databaseAccountName: 'cosmos-colorai-001',
@@ -36,7 +36,7 @@
  * @example
  * L2 usage (with defaults):
  * ```typescript
- * import { CosmosDbAccount } from '@azure-arm-priv/lib';
+ * import { CosmosDbAccount } from '@atakora/lib';
  *
  * const cosmosAccount = new CosmosDbAccount(resourceGroup, 'CosmosAccount', {
  *   location: 'eastus',

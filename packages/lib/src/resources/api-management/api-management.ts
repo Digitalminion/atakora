@@ -31,7 +31,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { ApiManagement } from '@azure-arm-priv/lib';
+ * import { ApiManagement } from '@atakora/lib';
  *
  * const apim = new ApiManagement(resourceGroup, 'Gateway', {
  *   publisherName: 'Avient ColorAI',

@@ -28,7 +28,7 @@ import type {
  * @example
  * Minimal usage (auto-generates name):
  * ```typescript
- * import { SqlServer } from '@azure-arm-priv/lib';
+ * import { SqlServer } from '@atakora/lib';
  *
  * const sqlServer = new SqlServer(resourceGroup, 'Database', {
  *   administratorLogin: 'sqladmin',

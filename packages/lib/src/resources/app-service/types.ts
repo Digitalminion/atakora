@@ -19,7 +19,7 @@ export enum AppServiceKind {
 
 /**
  * Managed service identity type.
- * @deprecated Use ManagedIdentityType from '@azure-arm-priv/lib' instead
+ * @deprecated Use ManagedIdentityType from '@atakora/lib' instead
  */
 export { ManagedIdentityType };
 
@@ -61,7 +61,7 @@ export enum ConnectionStringType {
 
 /**
  * Managed service identity configuration.
- * @deprecated Use ManagedServiceIdentity from '@azure-arm-priv/lib' instead
+ * @deprecated Use ManagedServiceIdentity from '@atakora/lib' instead
  */
 export type { ManagedServiceIdentity };
 

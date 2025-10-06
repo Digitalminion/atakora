@@ -27,7 +27,7 @@ import type {
  * @example
  * Minimal usage:
  * ```typescript
- * import { ActionGroup } from '@azure-arm-priv/lib';
+ * import { ActionGroup } from '@atakora/lib';
  *
  * const actionGroup = new ActionGroup(resourceGroup, 'Alerts', {
  *   groupShortName: 'alerts',

@@ -20,7 +20,7 @@ import type { ArmResourceGroupProps } from './types';
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmResourceGroup } from '@azure-arm-priv/lib';
+ * import { ArmResourceGroup } from '@atakora/lib';
  *
  * const rg = new ArmResourceGroup(stack, 'DataRG', {
  *   resourceGroupName: 'rg-digital-products-colorai-data-nonprod-eastus-01',

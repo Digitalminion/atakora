@@ -14,7 +14,7 @@
  * @example
  * Basic usage:
  * ```typescript
- * import { ResourceNameGenerator } from '@azure-arm-priv/lib/naming';
+ * import { ResourceNameGenerator } from '@atakora/lib/naming';
  *
  * const generator = new ResourceNameGenerator();
  *
@@ -32,7 +32,7 @@
  * @example
  * Custom conventions:
  * ```typescript
- * import { ResourceNameGenerator } from '@azure-arm-priv/lib/naming';
+ * import { ResourceNameGenerator } from '@atakora/lib/naming';
  *
  * const generator = new ResourceNameGenerator({
  *   separator: '_',

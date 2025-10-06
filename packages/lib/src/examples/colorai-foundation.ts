@@ -87,7 +87,7 @@ export function createColorAIFoundation(): App {
     environment: Environment.fromValue('nonprod'),
     instance: Instance.fromNumber(1),
     tags: {
-      managed_by: 'azure-arm-priv',
+      managed_by: 'atakora',
       project: 'colorai',
       environment: 'nonprod',
       cost_center: 'engineering',

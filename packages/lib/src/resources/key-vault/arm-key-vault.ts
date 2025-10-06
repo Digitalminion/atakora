@@ -25,7 +25,7 @@ import type {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmKeyVault, KeyVaultSkuName } from '@azure-arm-priv/lib';
+ * import { ArmKeyVault, KeyVaultSkuName } from '@atakora/lib';
  *
  * const vault = new ArmKeyVault(resourceGroup, 'Vault', {
  *   vaultName: 'kv-colorai-001',

@@ -24,7 +24,7 @@ import type {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmAppServicePlan, AppServicePlanSkuName, AppServicePlanSkuTier } from '@azure-arm-priv/lib';
+ * import { ArmAppServicePlan, AppServicePlanSkuName, AppServicePlanSkuTier } from '@atakora/lib';
  *
  * const plan = new ArmAppServicePlan(resourceGroup, 'Plan', {
  *   planName: 'asp-colorai-001',

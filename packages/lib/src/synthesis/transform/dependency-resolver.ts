@@ -101,6 +101,17 @@ export class DependencyResolver {
         dependencies.add(otherId);
       }
 
+      // Check for parent-child relationships based on resource type
+      // Child resources must depend on their parent
+      const parentType = this.getParentResourceType(resource.type);
+      if (parentType && otherResource.type === parentType) {
+        // Check if the parent resource name matches the child's parent name
+        const parentName = this.getParentResourceName(resource.name);
+        if (parentName && otherResource.name === parentName) {
+          dependencies.add(otherId);
+        }
+      }
+
       // Check for subnet dependencies (VMs depend on subnets)
       if (
         resource.type === 'Microsoft.Compute/virtualMachines' &&
@@ -117,13 +128,61 @@ export class DependencyResolver {
         dependencies.add(otherId);
       }
 
-      // Check for existing dependsOn
-      if (resource.dependsOn?.includes(otherResource.name)) {
+      // Check for App Service Plan dependencies
+      if (
+        resource.type === 'Microsoft.Web/sites' &&
+        otherResource.type === 'Microsoft.Web/serverfarms'
+      ) {
+        // App Service always depends on its App Service Plan
         dependencies.add(otherId);
       }
     }
 
     return dependencies;
+  }
+
+  /**
+   * Extract parent resource type from a child resource type
+   *
+   * @remarks
+   * For hierarchical resource types like "Microsoft.Network/virtualNetworks/subnets",
+   * this returns the parent type "Microsoft.Network/virtualNetworks"
+   *
+   * @param resourceType - Full resource type string
+   * @returns Parent resource type or null if no parent
+   */
+  private getParentResourceType(resourceType: string): string | null {
+    const parts = resourceType.split('/');
+
+    // Parent-child resources have at least 3 parts: provider/parentType/childType
+    if (parts.length < 3) {
+      return null;
+    }
+
+    // Return parent type (provider/parentType)
+    return parts.slice(0, -1).join('/');
+  }
+
+  /**
+   * Extract parent resource name from a child resource name
+   *
+   * @remarks
+   * For child resources with names like "vnet-name/subnet-name",
+   * this returns "vnet-name"
+   *
+   * @param resourceName - Full resource name string
+   * @returns Parent resource name or null if no parent
+   */
+  private getParentResourceName(resourceName: string): string | null {
+    const parts = resourceName.split('/');
+
+    // Parent-child resources have at least 2 parts: parentName/childName
+    if (parts.length < 2) {
+      return null;
+    }
+
+    // Return parent name (everything before the last slash)
+    return parts.slice(0, -1).join('/');
   }
 
   /**
@@ -207,14 +266,17 @@ export class DependencyResolver {
       const node = this.nodes.get(resourceId);
 
       if (!node || node.dependencies.size === 0) {
-        return resource;
+        // Remove any existing dependsOn from resource template
+        const { dependsOn, ...resourceWithoutDependsOn } = resource;
+        return resourceWithoutDependsOn;
       }
 
-      // Convert dependency IDs to resource names
+      // Convert dependency IDs to resourceId expressions
       const dependsOn = Array.from(node.dependencies).map((depId) => {
         const depNode = this.nodes.get(depId);
         if (!depNode) return depId;
-        return `[resourceId('${depNode.resource.type}', '${depNode.resource.name}')]`;
+
+        return this.generateResourceIdExpression(depNode.resource);
       });
 
       return {
@@ -225,11 +287,38 @@ export class DependencyResolver {
   }
 
   /**
+   * Generate ARM resourceId expression for a resource
+   *
+   * @remarks
+   * Handles both regular and child resources:
+   * - Regular: [resourceId('Microsoft.Storage/storageAccounts', 'myaccount')]
+   * - Child: [resourceId('Microsoft.Network/virtualNetworks/subnets', 'vnet-name', 'subnet-name')]
+   */
+  private generateResourceIdExpression(resource: ArmResource): string {
+    const nameParts = resource.name.split('/');
+
+    if (nameParts.length === 1) {
+      // Simple resource: [resourceId('type', 'name')]
+      return `[resourceId('${resource.type}', '${resource.name}')]`;
+    }
+
+    // Child resource: [resourceId('type', 'parent-name', 'child-name', ...)]
+    const nameArgs = nameParts.map(part => `'${part}'`).join(', ');
+    return `[resourceId('${resource.type}', ${nameArgs})]`;
+  }
+
+  /**
    * Perform topological sort of resources
    */
   topologicalSort(resources: ArmResource[]): ArmResource[] {
     const sorted: ArmResource[] = [];
     const visited = new Set<string>();
+
+    // Create a map of resource ID to resource object (with updated dependsOn)
+    const resourceMap = new Map<string, ArmResource>();
+    for (const resource of resources) {
+      resourceMap.set(this.getResourceIdentifier(resource), resource);
+    }
 
     const visit = (resourceId: string): void => {
       if (visited.has(resourceId)) return;
@@ -243,7 +332,9 @@ export class DependencyResolver {
       }
 
       visited.add(resourceId);
-      sorted.push(node.resource);
+      // Use the updated resource from the map, not the original from the node
+      const updatedResource = resourceMap.get(resourceId) || node.resource;
+      sorted.push(updatedResource);
     };
 
     for (const resource of resources) {

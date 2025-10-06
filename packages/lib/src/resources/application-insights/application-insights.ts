@@ -31,7 +31,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { ApplicationInsights } from '@azure-arm-priv/lib';
+ * import { ApplicationInsights } from '@atakora/lib';
  *
  * const appInsights = new ApplicationInsights(resourceGroup, 'WebApp', {
  *   workspace: logAnalyticsWorkspace

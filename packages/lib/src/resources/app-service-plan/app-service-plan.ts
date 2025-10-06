@@ -30,7 +30,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { AppServicePlan } from '@azure-arm-priv/lib';
+ * import { AppServicePlan } from '@atakora/lib';
  *
  * const plan = new AppServicePlan(resourceGroup, 'ApiPlan');
  * ```

@@ -26,7 +26,7 @@ import type {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmSearchService, SearchServiceSku, HostingMode } from '@azure-arm-priv/lib';
+ * import { ArmSearchService, SearchServiceSku, HostingMode } from '@atakora/lib';
  *
  * const search = new ArmSearchService(resourceGroup, 'SearchService', {
  *   serviceName: 'srch-colorai-001',

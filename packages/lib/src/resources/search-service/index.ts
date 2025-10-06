@@ -14,7 +14,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmSearchService, SearchServiceSku, HostingMode } from '@azure-arm-priv/lib';
+ * import { ArmSearchService, SearchServiceSku, HostingMode } from '@atakora/lib';
  *
  * const search = new ArmSearchService(resourceGroup, 'SearchService', {
  *   serviceName: 'srch-colorai-001',
@@ -32,7 +32,7 @@
  * @example
  * L2 usage (auto-generation):
  * ```typescript
- * import { SearchService } from '@azure-arm-priv/lib';
+ * import { SearchService } from '@atakora/lib';
  *
  * const searchService = new SearchService(resourceGroup, 'DataSearch');
  * // Auto-generates name, uses secure defaults

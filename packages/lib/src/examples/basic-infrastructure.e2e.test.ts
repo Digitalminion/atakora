@@ -88,7 +88,7 @@ describe('E2E: basic-infrastructure example', () => {
 
       expect(networkRG).toBeDefined();
       expect((networkRG as any).tags).toBeDefined();
-      expect((networkRG as any).tags.managed_by).toBe('azure-arm-priv');
+      expect((networkRG as any).tags.managed_by).toBe('atakora');
       expect((networkRG as any).tags.purpose).toBe('networking');
     });
   });

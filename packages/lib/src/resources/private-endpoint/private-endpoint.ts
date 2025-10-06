@@ -37,7 +37,7 @@ interface IResourceGroup {
  * @example
  * Minimal usage (auto-generates name):
  * ```typescript
- * import { PrivateEndpoint } from '@azure-arm-priv/lib';
+ * import { PrivateEndpoint } from '@atakora/lib';
  *
  * // Creates private endpoint with auto-generated name
  * const endpoint = new PrivateEndpoint(resourceGroup, 'StorageEndpoint', {

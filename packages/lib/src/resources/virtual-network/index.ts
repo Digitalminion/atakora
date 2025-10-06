@@ -14,7 +14,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmVirtualNetwork } from '@azure-arm-priv/lib';
+ * import { ArmVirtualNetwork } from '@atakora/lib';
  *
  * const vnet = new ArmVirtualNetwork(resourceGroup, 'VNet', {
  *   virtualNetworkName: 'vnet-explicit-name',
@@ -30,7 +30,7 @@
  * @example
  * L2 usage (auto-generation):
  * ```typescript
- * import { VirtualNetwork } from '@azure-arm-priv/lib';
+ * import { VirtualNetwork } from '@atakora/lib';
  *
  * const vnet = new VirtualNetwork(resourceGroup, 'MainVNet', {
  *   addressSpace: '10.0.0.0/16'

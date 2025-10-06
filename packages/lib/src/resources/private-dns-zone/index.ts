@@ -16,7 +16,7 @@
  * @example
  * L1 usage (explicit control):
  * ```typescript
- * import { ArmPrivateDnsZone } from '@azure-arm-priv/lib';
+ * import { ArmPrivateDnsZone } from '@atakora/lib';
  *
  * const zone = new ArmPrivateDnsZone(resourceGroup, 'BlobDnsZone', {
  *   zoneName: 'privatelink.blob.core.windows.net',
@@ -27,7 +27,7 @@
  * @example
  * L2 usage (with defaults):
  * ```typescript
- * import { PrivateDnsZone } from '@azure-arm-priv/lib';
+ * import { PrivateDnsZone } from '@atakora/lib';
  *
  * const zone = new PrivateDnsZone(resourceGroup, 'BlobDnsZone', {
  *   zoneName: 'privatelink.blob.core.windows.net'
