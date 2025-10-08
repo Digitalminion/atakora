@@ -1,5 +1,7 @@
 # Common Validation Errors
 
+[Home](../README.md) > [Guides](./README.md) > Common Validation Errors
+
 This guide documents all known deployment failures and validation errors in Atakora, with detailed explanations and fixes for each. Use this as a troubleshooting reference when you encounter validation errors.
 
 ## How to Use This Guide

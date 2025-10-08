@@ -1,5 +1,7 @@
 # Validation Architecture Guide
 
+[Home](../README.md) > [Guides](./README.md) > Validation Architecture
+
 ## Overview
 
 Atakora uses a **5-layer validation architecture** to catch errors early and provide fast feedback during development. Instead of discovering issues during lengthy Azure deployments (5-30 minutes), you'll catch most problems at compile-time or synthesis-time within seconds.

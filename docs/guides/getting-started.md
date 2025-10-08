@@ -1,5 +1,7 @@
 # Getting Started with Atakora
 
+[Home](../README.md) > [Guides](./README.md) > Getting Started
+
 ## What is Atakora?
 
 Atakora is a TypeScript-first infrastructure-as-code framework for Azure. Write your infrastructure in type-safe TypeScript and synthesize it into ARM (Azure Resource Manager) templates for deployment.
@@ -295,3 +297,7 @@ Browse example projects to see Atakora in action:
 - **Simple Web App** - Basic app service with database (coming soon)
 - **Multi-Tier Application** - VNet, subnets, app services, and SQL database (coming soon)
 - **Hub-Spoke Network** - Enterprise networking pattern (coming soon)
+
+---
+
+**Previous**: [Guides Home](./README.md) | **Next**: [Multi-Package Projects](./multi-package-projects.md)

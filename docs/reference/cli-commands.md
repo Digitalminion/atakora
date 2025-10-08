@@ -1,5 +1,7 @@
 # CLI Commands Reference
 
+[Home](../README.md) > [Reference](./README.md) > CLI Commands
+
 ## Overview
 
 The Atakora CLI provides commands for initializing projects, managing packages, synthesizing ARM templates, and deploying infrastructure to Azure.

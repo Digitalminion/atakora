@@ -1,5 +1,7 @@
 # Multi-Package Projects
 
+[Home](../README.md) > [Guides](./README.md) > Multi-Package Projects
+
 ## Overview
 
 Multi-package projects allow you to organize infrastructure code into separate, independent packages within a single workspace. Each package has its own infrastructure code, dependencies, and synthesized ARM templates, but shares the workspace-level configuration.

@@ -1,5 +1,7 @@
 # Manifest Schema Reference
 
+[Home](../README.md) > [Reference](./README.md) > Manifest Schema
+
 ## Overview
 
 The Atakora manifest is a JSON configuration file that defines your project structure, package organization, and synthesis settings. It's the central configuration that tracks all packages in your workspace and controls how infrastructure code is synthesized.

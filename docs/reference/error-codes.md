@@ -1,5 +1,7 @@
 # Error Code Reference
 
+[Home](../README.md) > [Reference](./README.md) > Error Codes
+
 Complete reference of all validation error codes in Atakora. Use this as a quick lookup when you encounter an error code.
 
 ## Quick Search
