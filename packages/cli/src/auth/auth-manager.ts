@@ -33,11 +33,14 @@ class AuthManager {
   getAuthService(cloud: CloudEnvironment = 'AzureCloud'): AzureAuthService {
     this.currentCloud = cloud;
 
-    if (!this.authServices.has(cloud)) {
-      this.authServices.set(cloud, new AzureAuthService(cloud));
+    let authService = this.authServices.get(cloud);
+
+    if (!authService) {
+      authService = new AzureAuthService(cloud);
+      this.authServices.set(cloud, authService);
     }
 
-    return this.authServices.get(cloud)!;
+    return authService;
   }
 
   /**
