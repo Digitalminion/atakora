@@ -6,6 +6,12 @@ import type {
   PrivateEndpointNetworkPolicies,
   PrivateLinkServiceNetworkPolicies,
 } from './types';
+import {
+  ValidationResult,
+  ValidationResultBuilder,
+  ValidationError,
+  isValidCIDR,
+} from '../../core/validation';
 
 /**
  * L1 construct for Azure Subnet.
@@ -193,47 +199,206 @@ export class ArmSubnet extends Resource {
    * Validates subnet properties against ARM constraints.
    *
    * @param props - Properties to validate
-   * @throws {Error} If validation fails
+   * @throws {ValidationError} If validation fails
    */
-  private validateProps(props: ArmSubnetProps): void {
+  protected validateProps(props: ArmSubnetProps): void {
     // Validate subnet name
     if (!props.name || props.name.trim() === '') {
-      throw new Error('Subnet name cannot be empty');
+      throw new ValidationError(
+        'Subnet name cannot be empty',
+        'Subnet names are required for all subnets',
+        'Provide a valid subnet name',
+        'name'
+      );
     }
 
     // Validate virtual network name
     if (!props.virtualNetworkName || props.virtualNetworkName.trim() === '') {
-      throw new Error('Virtual network name cannot be empty');
+      throw new ValidationError(
+        'Virtual network name cannot be empty',
+        'Subnets must specify the parent virtual network name',
+        'Provide the name of the virtual network this subnet belongs to',
+        'virtualNetworkName'
+      );
     }
 
     // Validate address prefix
     if (props.addressPrefixes && props.addressPrefixes.length > 0) {
       // Using addressPrefixes
       if (props.addressPrefix) {
-        throw new Error(
-          'Cannot specify both addressPrefix and addressPrefixes. Use one or the other.'
+        throw new ValidationError(
+          'Cannot specify both addressPrefix and addressPrefixes',
+          'Use either addressPrefix or addressPrefixes, not both',
+          'Remove one of these properties',
+          'addressPrefix/addressPrefixes'
         );
       }
+
+      // Validate each prefix
+      props.addressPrefixes.forEach((prefix, index) => {
+        if (!isValidCIDR(prefix)) {
+          throw new ValidationError(
+            `Invalid CIDR notation in addressPrefixes`,
+            `Address prefix at index ${index}: '${prefix}' is not valid CIDR notation`,
+            'Use format: xxx.xxx.xxx.xxx/yy (e.g., "10.0.1.0/24")',
+            `addressPrefixes[${index}]`
+          );
+        }
+      });
     } else {
       // Using addressPrefix
       if (!props.addressPrefix || props.addressPrefix.trim() === '') {
-        throw new Error('Either addressPrefix or addressPrefixes must be provided');
-      }
-
-      // Basic CIDR validation
-      const cidrPattern = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\/\d{1,2}$/;
-      if (!cidrPattern.test(props.addressPrefix)) {
-        throw new Error(
-          `Invalid CIDR notation for addressPrefix: ${props.addressPrefix}. ` +
-            `Expected format: xxx.xxx.xxx.xxx/xx (e.g., 10.0.1.0/24)`
+        throw new ValidationError(
+          'Either addressPrefix or addressPrefixes must be provided',
+          'Subnets require an address range',
+          'Provide addressPrefix with a valid CIDR notation (e.g., "10.0.1.0/24")',
+          'addressPrefix'
         );
       }
+
+      // Validate CIDR format
+      if (!isValidCIDR(props.addressPrefix)) {
+        throw new ValidationError(
+          'Invalid CIDR notation for addressPrefix',
+          `Value '${props.addressPrefix}' is not valid CIDR notation`,
+          'Use format: xxx.xxx.xxx.xxx/yy (e.g., "10.0.1.0/24")',
+          'addressPrefix'
+        );
+      }
+    }
+
+    // Validate delegations structure
+    if (props.delegations && props.delegations.length > 0) {
+      props.delegations.forEach((delegation, index) => {
+        if (!delegation.name || delegation.name.trim() === '') {
+          throw new ValidationError(
+            'Delegation missing name',
+            `Delegation at index ${index} has no name`,
+            'Add a name for the delegation (e.g., "delegation")',
+            `delegations[${index}].name`
+          );
+        }
+
+        if (!delegation.serviceName || delegation.serviceName.trim() === '') {
+          throw new ValidationError(
+            'Delegation missing serviceName',
+            `Delegation '${delegation.name}' has no serviceName`,
+            'Add a serviceName (e.g., "Microsoft.Web/serverFarms")',
+            `delegations[${index}].serviceName`
+          );
+        }
+      });
+    }
+
+    // Validate service endpoints
+    if (props.serviceEndpoints && props.serviceEndpoints.length > 0) {
+      props.serviceEndpoints.forEach((endpoint, index) => {
+        if (!endpoint.service || endpoint.service.trim() === '') {
+          throw new ValidationError(
+            'Service endpoint missing service',
+            `Service endpoint at index ${index} has no service`,
+            'Add a service name (e.g., "Microsoft.Storage")',
+            `serviceEndpoints[${index}].service`
+          );
+        }
+      });
     }
 
     // Validate sharingScope requirements
     if (props.sharingScope && props.defaultOutboundAccess !== false) {
-      throw new Error('sharingScope can only be set when defaultOutboundAccess is set to false');
+      throw new ValidationError(
+        'Invalid sharingScope configuration',
+        'sharingScope can only be set when defaultOutboundAccess is set to false',
+        'Set defaultOutboundAccess to false or remove sharingScope',
+        'sharingScope/defaultOutboundAccess'
+      );
     }
+  }
+
+  /**
+   * Validates ARM template structure before transformation.
+   *
+   * @remarks
+   * Validates the ARM-specific structure requirements for subnets.
+   * Ensures delegations and other nested properties are properly formatted.
+   *
+   * @returns Validation result with any errors or warnings
+   */
+  public validateArmStructure(): ValidationResult {
+    const builder = new ValidationResultBuilder();
+
+    // Generate ARM template to validate structure
+    const armTemplate = this.toArmTemplate() as any;
+
+    // Validate properties wrapper exists
+    if (!armTemplate.properties) {
+      builder.addError(
+        'Subnet ARM template missing properties wrapper',
+        'ARM template subnets must have a properties object',
+        'Ensure toArmTemplate() includes a properties object',
+        'armTemplate.properties'
+      );
+      return builder.build();
+    }
+
+    // Validate delegation structure (CRITICAL - matches VNet inline subnet validation)
+    if (armTemplate.properties.delegations) {
+      armTemplate.properties.delegations.forEach((delegation: any, index: number) => {
+        // Check if delegation has properties wrapper
+        if (!delegation.properties) {
+          builder.addError(
+            `Delegation at index ${index} missing properties wrapper`,
+            `ARM requires delegations to have format: { name: "...", properties: { serviceName: "..." } }`,
+            `Current structure is invalid. Expected: { name: "${delegation.name}", properties: { serviceName: "${delegation.serviceName || 'SERVICE_NAME'}" } }`,
+            `armTemplate.properties.delegations[${index}]`
+          );
+        } else if (!delegation.properties.serviceName) {
+          builder.addError(
+            `Delegation at index ${index} missing serviceName in properties`,
+            'Delegation properties must contain serviceName',
+            'Add serviceName to delegation.properties',
+            `armTemplate.properties.delegations[${index}].properties.serviceName`
+          );
+        }
+
+        // Validate serviceName is not at delegation root level
+        if (delegation.serviceName && !delegation.properties?.serviceName) {
+          builder.addError(
+            `Delegation at index ${index} has serviceName at wrong level`,
+            'serviceName must be inside properties object, not at delegation root',
+            `Move serviceName to properties: { name: "${delegation.name}", properties: { serviceName: "${delegation.serviceName}" } }`,
+            `armTemplate.properties.delegations[${index}]`
+          );
+        }
+      });
+    }
+
+    // Validate NSG reference format if present
+    if (armTemplate.properties.networkSecurityGroup) {
+      const nsgId = armTemplate.properties.networkSecurityGroup.id;
+
+      // Check if it's a literal string (wrong) vs ARM expression (correct)
+      if (typeof nsgId === 'string' && !nsgId.startsWith('[') && nsgId.includes('/networkSecurityGroups/')) {
+        builder.addWarning(
+          'NSG reference may be using literal ID instead of ARM expression',
+          `NSG ID: ${nsgId}`,
+          'Consider using ARM resourceId() expression: [resourceId(\'Microsoft.Network/networkSecurityGroups\', \'nsg-name\')]',
+          'armTemplate.properties.networkSecurityGroup.id'
+        );
+      }
+    }
+
+    // Validate addressPrefix is in properties
+    if (!armTemplate.properties.addressPrefix && !armTemplate.properties.addressPrefixes) {
+      builder.addError(
+        'Subnet missing address prefix in ARM template',
+        'ARM template must have either addressPrefix or addressPrefixes in properties',
+        'Ensure toArmTemplate() includes address prefix',
+        'armTemplate.properties.addressPrefix'
+      );
+    }
+
+    return builder.build();
   }
 
   /**

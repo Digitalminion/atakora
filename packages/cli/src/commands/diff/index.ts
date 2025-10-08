@@ -4,7 +4,7 @@ import ora from 'ora';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ResourceManagementClient } from '@azure/arm-resources';
-import { ConfigManager, ProfileConfig } from '../../config/config-manager';
+import { ConfigManager } from '../../config/config-manager';
 import { authManager } from '../../auth/auth-manager';
 
 // Types

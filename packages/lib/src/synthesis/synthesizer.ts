@@ -6,10 +6,12 @@ import { ResourceTransformer } from './transform/resource-transformer';
 import { DependencyResolver } from './transform/dependency-resolver';
 import { FileWriter } from './assembly/file-writer';
 import { ValidatorRegistry } from './validate/validator-registry';
+import { ValidationPipeline, ValidationLevel } from './validate/validation-pipeline';
 import { SchemaValidator } from './validate/schema-validator';
 import { NamingValidator } from './validate/naming-validator';
 import { LimitValidator } from './validate/limit-validator';
 import { DeploymentScope } from '../core/azure/scopes';
+import { Resource } from '../core/resource';
 
 /**
  * Main orchestrator for the synthesis pipeline
@@ -22,6 +24,7 @@ import { DeploymentScope } from '../core/azure/scopes';
  */
 export class Synthesizer {
   private validatorRegistry: ValidatorRegistry;
+  private validationPipeline: ValidationPipeline;
 
   constructor() {
     // Initialize validators
@@ -29,6 +32,9 @@ export class Synthesizer {
     this.validatorRegistry.register(new SchemaValidator());
     this.validatorRegistry.register(new NamingValidator());
     this.validatorRegistry.register(new LimitValidator());
+
+    // Initialize validation pipeline with registry
+    this.validationPipeline = new ValidationPipeline(this.validatorRegistry);
   }
 
   /**
@@ -51,11 +57,11 @@ export class Synthesizer {
       const prepareResult = this.prepare(app);
 
       // Phase 2: Transform - Convert to ARM JSON and resolve dependencies
-      const templates = await this.transform(prepareResult);
+      const { templates, resourcesByStack } = await this.transform(prepareResult);
 
       // Phase 3: Validate - Check ARM templates
       if (!opts.skipValidation) {
-        await this.validate(templates, opts.strict ?? false);
+        await this.validate(templates, resourcesByStack, opts.strict ?? false);
       }
 
       // Phase 4: Assembly - Write templates to disk
@@ -90,14 +96,21 @@ export class Synthesizer {
   /**
    * Phase 2: Transform - Convert to ARM JSON and resolve dependencies
    */
-  private async transform(prepareResult: any): Promise<Map<string, ArmTemplate>> {
+  private async transform(prepareResult: any): Promise<{
+    templates: Map<string, ArmTemplate>;
+    resourcesByStack: Map<string, Resource[]>;
+  }> {
     const { stackInfoMap } = prepareResult;
     const templates = new Map<string, ArmTemplate>();
+    const resourcesByStack = new Map<string, Resource[]>();
 
     const transformer = new ResourceTransformer();
     const dependencyResolver = new DependencyResolver();
 
     for (const [stackId, stackInfo] of stackInfoMap.entries()) {
+      // Store resources for validation
+      resourcesByStack.set(stackInfo.name, stackInfo.resources);
+
       // Transform resources to ARM JSON
       const armResources = transformer.transformAll(stackInfo.resources);
 
@@ -122,18 +135,33 @@ export class Synthesizer {
       templates.set(stackInfo.name, template);
     }
 
-    return templates;
+    return { templates, resourcesByStack };
   }
 
   /**
-   * Phase 3: Validate - Check ARM templates
+   * Phase 3: Validate - Check ARM templates using validation pipeline
    */
-  private async validate(templates: Map<string, ArmTemplate>, strict: boolean): Promise<void> {
+  private async validate(
+    templates: Map<string, ArmTemplate>,
+    resourcesByStack: Map<string, Resource[]>,
+    strict: boolean
+  ): Promise<void> {
     const allErrors = [];
     const allWarnings = [];
 
     for (const [stackName, template] of templates.entries()) {
-      const result = await this.validatorRegistry.validateAll(template, stackName);
+      const resources = resourcesByStack.get(stackName) || [];
+
+      // Run validation pipeline
+      const result = await this.validationPipeline.validate(
+        resources,
+        template,
+        stackName,
+        {
+          strict,
+          level: strict ? ValidationLevel.STRICT : ValidationLevel.NORMAL,
+        }
+      );
 
       allErrors.push(...result.errors);
       allWarnings.push(...result.warnings);

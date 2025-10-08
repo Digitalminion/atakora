@@ -1,7 +1,16 @@
 import { Construct } from '../../core/construct';
 import { Resource } from '../../core/resource';
 import { DeploymentScope } from '../../core/azure/scopes';
-import type { ArmVirtualNetworkProps, AddressSpace } from './types';
+import type { ArmVirtualNetworkProps, AddressSpace, InlineSubnetProps } from './types';
+import {
+  ValidationResult,
+  ValidationResultBuilder,
+  ValidationError,
+  isValidCIDR,
+  isWithinCIDR,
+  cidrsOverlap,
+} from '../../core/validation';
+import { NetworkResourceTransformer } from '../../synthesis/transform/type-safe-transformer';
 
 /**
  * L1 construct for Azure Virtual Network.
@@ -157,7 +166,7 @@ export class ArmVirtualNetwork extends Resource {
    * });
    * ```
    */
-  public readonly subnets?: any[];
+  public readonly subnets?: InlineSubnetProps[];
 
   /**
    * DHCP options.
@@ -211,64 +220,287 @@ export class ArmVirtualNetwork extends Resource {
    * Validates virtual network properties against ARM constraints.
    *
    * @param props - Properties to validate
-   * @throws {Error} If validation fails
+   * @throws {ValidationError} If validation fails
    */
-  private validateProps(props: ArmVirtualNetworkProps): void {
+  protected validateProps(props: ArmVirtualNetworkProps): void {
     // Validate virtual network name
     if (!props.virtualNetworkName || props.virtualNetworkName.trim() === '') {
-      throw new Error('Virtual network name cannot be empty');
+      throw new ValidationError(
+        'Virtual network name cannot be empty',
+        'VNet names are required for all virtual networks',
+        'Provide a valid virtual network name'
+      );
     }
 
     // Validate location
     if (!props.location || props.location.trim() === '') {
-      throw new Error('Location cannot be empty');
+      throw new ValidationError(
+        'Location cannot be empty',
+        'Virtual networks must be deployed to a specific Azure region',
+        'Provide a valid Azure region (e.g., "eastus", "westus2")'
+      );
     }
 
     // Validate resource group name
     if (!props.resourceGroupName || props.resourceGroupName.trim() === '') {
-      throw new Error('Resource group name cannot be empty');
+      throw new ValidationError(
+        'Resource group name cannot be empty',
+        'Virtual networks must be deployed to a resource group',
+        'Provide a valid resource group name'
+      );
     }
 
     // Validate address space
     if (!props.addressSpace || !props.addressSpace.addressPrefixes) {
-      throw new Error('Address space must be specified');
+      throw new ValidationError(
+        'Address space must be specified',
+        'Virtual networks require at least one address space',
+        'Add addressSpace with addressPrefixes array (e.g., { addressPrefixes: ["10.0.0.0/16"] })'
+      );
     }
 
     if (props.addressSpace.addressPrefixes.length === 0) {
-      throw new Error('Address space must contain at least one address prefix');
+      throw new ValidationError(
+        'Address space must contain at least one address prefix',
+        'The addressPrefixes array is empty',
+        'Add at least one CIDR range (e.g., "10.0.0.0/16")'
+      );
     }
 
     // Validate CIDR notation for each address prefix
-    props.addressSpace.addressPrefixes.forEach((prefix) => {
-      if (!this.isValidCIDR(prefix)) {
-        throw new Error(`Invalid CIDR notation: ${prefix}. Must be in format: x.x.x.x/y`);
+    props.addressSpace.addressPrefixes.forEach((prefix, index) => {
+      if (!isValidCIDR(prefix)) {
+        throw new ValidationError(
+          `Invalid CIDR notation in address prefix`,
+          `Address prefix at index ${index}: '${prefix}' is not valid CIDR notation`,
+          'Use format: xxx.xxx.xxx.xxx/yy (e.g., "10.0.0.0/16")',
+          `addressSpace.addressPrefixes[${index}]`
+        );
       }
     });
 
     // Validate subnets if provided
-    if (props.subnets) {
-      props.subnets.forEach((subnet) => {
-        if (!subnet.name || subnet.name.trim() === '') {
-          throw new Error('Subnet name cannot be empty');
-        }
-
-        if (!subnet.addressPrefix || !this.isValidCIDR(subnet.addressPrefix)) {
-          throw new Error(`Invalid subnet address prefix: ${subnet.addressPrefix}`);
-        }
-      });
+    if (props.subnets && props.subnets.length > 0) {
+      this.validateInlineSubnets(props.subnets, props.addressSpace);
     }
   }
 
   /**
-   * Validates CIDR notation.
+   * Validates inline subnet configurations.
    *
-   * @param cidr - CIDR string to validate
-   * @returns True if valid CIDR notation
+   * @param subnets - Inline subnet configurations
+   * @param addressSpace - VNet address space for range validation
+   * @throws {ValidationError} If validation fails
    */
-  private isValidCIDR(cidr: string): boolean {
-    // Basic CIDR validation: x.x.x.x/y
-    const cidrPattern = /^(\d{1,3}\.){3}\d{1,3}\/\d{1,2}$/;
-    return cidrPattern.test(cidr);
+  private validateInlineSubnets(subnets: InlineSubnetProps[], addressSpace: AddressSpace): void {
+    const subnetNames = new Set<string>();
+
+    subnets.forEach((subnet, index) => {
+      // Validate subnet name
+      if (!subnet.name || subnet.name.trim() === '') {
+        throw new ValidationError(
+          'Subnet name cannot be empty',
+          `Subnet at index ${index} has no name`,
+          'Provide a valid subnet name',
+          `subnets[${index}].name`
+        );
+      }
+
+      // Check for duplicate subnet names
+      if (subnetNames.has(subnet.name)) {
+        throw new ValidationError(
+          `Duplicate subnet name: ${subnet.name}`,
+          'Subnet names must be unique within a virtual network',
+          'Use a different name for this subnet',
+          `subnets[${index}].name`
+        );
+      }
+      subnetNames.add(subnet.name);
+
+      // Validate address prefix
+      if (!subnet.addressPrefix || subnet.addressPrefix.trim() === '') {
+        throw new ValidationError(
+          `Subnet ${subnet.name} missing addressPrefix`,
+          'Each inline subnet must have an addressPrefix property',
+          'Add addressPrefix with a valid CIDR notation (e.g., "10.0.1.0/24")',
+          `subnets[${index}].addressPrefix`
+        );
+      }
+
+      if (!isValidCIDR(subnet.addressPrefix)) {
+        throw new ValidationError(
+          `Invalid subnet address prefix for ${subnet.name}`,
+          `Address prefix '${subnet.addressPrefix}' is not valid CIDR notation`,
+          'Use format: xxx.xxx.xxx.xxx/yy (e.g., "10.0.1.0/24")',
+          `subnets[${index}].addressPrefix`
+        );
+      }
+
+      // Validate subnet is within VNet address space
+      const isWithinVnet = addressSpace.addressPrefixes.some((vnetCidr) =>
+        isWithinCIDR(subnet.addressPrefix, vnetCidr)
+      );
+
+      if (!isWithinVnet) {
+        throw new ValidationError(
+          `Subnet ${subnet.name} address prefix not within VNet address space`,
+          `Subnet CIDR '${subnet.addressPrefix}' is not within any VNet address prefix: ${addressSpace.addressPrefixes.join(', ')}`,
+          'Use an address prefix that falls within the VNet address space',
+          `subnets[${index}].addressPrefix`
+        );
+      }
+
+      // Validate delegations structure (CRITICAL - this caused deployment failure)
+      if (subnet.delegations && subnet.delegations.length > 0) {
+        subnet.delegations.forEach((delegation, delegationIndex) => {
+          if (!delegation.name || delegation.name.trim() === '') {
+            throw new ValidationError(
+              `Delegation in subnet ${subnet.name} missing name`,
+              'Each delegation must have a name property',
+              'Add a name for the delegation (e.g., "delegation")',
+              `subnets[${index}].delegations[${delegationIndex}].name`
+            );
+          }
+
+          if (!delegation.serviceName || delegation.serviceName.trim() === '') {
+            throw new ValidationError(
+              `Delegation in subnet ${subnet.name} missing serviceName`,
+              'Each delegation must have a serviceName property',
+              'Add a serviceName (e.g., "Microsoft.Web/serverFarms")',
+              `subnets[${index}].delegations[${delegationIndex}].serviceName`
+            );
+          }
+
+          // Note: The ARM transformation will wrap serviceName in properties object
+          // This is validated in validateArmStructure() after transformation
+        });
+      }
+
+      // Validate service endpoints
+      if (subnet.serviceEndpoints && subnet.serviceEndpoints.length > 0) {
+        subnet.serviceEndpoints.forEach((endpoint, endpointIndex) => {
+          if (!endpoint.service || endpoint.service.trim() === '') {
+            throw new ValidationError(
+              `Service endpoint in subnet ${subnet.name} missing service`,
+              'Each service endpoint must have a service property',
+              'Add a service name (e.g., "Microsoft.Storage")',
+              `subnets[${index}].serviceEndpoints[${endpointIndex}].service`
+            );
+          }
+        });
+      }
+    });
+
+    // Check for overlapping subnet ranges
+    for (let i = 0; i < subnets.length; i++) {
+      for (let j = i + 1; j < subnets.length; j++) {
+        if (cidrsOverlap(subnets[i].addressPrefix, subnets[j].addressPrefix)) {
+          throw new ValidationError(
+            `Overlapping subnet address ranges`,
+            `Subnet '${subnets[i].name}' (${subnets[i].addressPrefix}) overlaps with subnet '${subnets[j].name}' (${subnets[j].addressPrefix})`,
+            'Use non-overlapping CIDR ranges for subnets',
+            `subnets[${i}].addressPrefix, subnets[${j}].addressPrefix`
+          );
+        }
+      }
+    }
+  }
+
+  /**
+   * Validates ARM template structure before transformation.
+   *
+   * @remarks
+   * This validates the ARM-specific structure requirements that must be met
+   * after the toArmTemplate transformation. This catches issues that would
+   * cause deployment failures.
+   *
+   * **Critical Validations**:
+   * - Delegation structure has properties wrapper (caused "InvalidServiceNameOnDelegation" error)
+   * - Subnet address prefixes are at correct nesting level
+   * - NSG references use ARM expressions, not literal strings
+   *
+   * @returns Validation result with any errors or warnings
+   */
+  public validateArmStructure(): ValidationResult {
+    const builder = new ValidationResultBuilder();
+
+    // Generate ARM template to validate structure
+    const armTemplate = this.toArmTemplate() as any;
+
+    // Validate inline subnets in ARM format
+    if (armTemplate.properties?.subnets) {
+      armTemplate.properties.subnets.forEach((subnet: any, index: number) => {
+        // Validate subnet has properties wrapper
+        if (!subnet.properties) {
+          builder.addError(
+            `Subnet at index ${index} missing properties wrapper`,
+            'ARM template subnets must have a properties object',
+            'Ensure toArmTemplate() wraps subnet properties correctly',
+            `armTemplate.properties.subnets[${index}]`
+          );
+          return;
+        }
+
+        // Validate addressPrefix is in properties, not at root
+        if (subnet.addressPrefix && !subnet.properties.addressPrefix) {
+          builder.addError(
+            `Subnet ${subnet.name} has addressPrefix at wrong nesting level`,
+            'addressPrefix must be inside properties object, not at subnet root',
+            'Move addressPrefix to properties.addressPrefix',
+            `armTemplate.properties.subnets[${index}].addressPrefix`
+          );
+        }
+
+        // Validate delegation structure (CRITICAL - this caused deployment failure)
+        if (subnet.properties.delegations) {
+          subnet.properties.delegations.forEach((delegation: any, delegationIndex: number) => {
+            // Check if delegation has properties wrapper
+            if (!delegation.properties) {
+              builder.addError(
+                `Delegation in subnet ${subnet.name} missing properties wrapper`,
+                `ARM requires delegations to have format: { name: "...", properties: { serviceName: "..." } }`,
+                `Current structure is invalid. Expected: { name: "${delegation.name}", properties: { serviceName: "${delegation.serviceName || 'SERVICE_NAME'}" } }`,
+                `armTemplate.properties.subnets[${index}].properties.delegations[${delegationIndex}]`
+              );
+            } else if (!delegation.properties.serviceName) {
+              builder.addError(
+                `Delegation in subnet ${subnet.name} missing serviceName in properties`,
+                'Delegation properties must contain serviceName',
+                'Add serviceName to delegation.properties',
+                `armTemplate.properties.subnets[${index}].properties.delegations[${delegationIndex}].properties.serviceName`
+              );
+            }
+
+            // Validate serviceName is not at delegation root level
+            if (delegation.serviceName && !delegation.properties?.serviceName) {
+              builder.addError(
+                `Delegation in subnet ${subnet.name} has serviceName at wrong level`,
+                'serviceName must be inside properties object, not at delegation root',
+                `Move serviceName to properties: { name: "${delegation.name}", properties: { serviceName: "${delegation.serviceName}" } }`,
+                `armTemplate.properties.subnets[${index}].properties.delegations[${delegationIndex}]`
+              );
+            }
+          });
+        }
+
+        // Validate NSG reference format if present
+        if (subnet.properties.networkSecurityGroup) {
+          const nsgId = subnet.properties.networkSecurityGroup.id;
+
+          // Check if it's a literal string (wrong) vs ARM expression (correct)
+          if (typeof nsgId === 'string' && !nsgId.startsWith('[') && nsgId.includes('/networkSecurityGroups/')) {
+            builder.addWarning(
+              `NSG reference in subnet ${subnet.name} may be using literal ID instead of ARM expression`,
+              `NSG ID: ${nsgId}`,
+              'Consider using ARM resourceId() expression: [resourceId(\'Microsoft.Network/networkSecurityGroups\', \'nsg-name\')]',
+              `armTemplate.properties.subnets[${index}].properties.networkSecurityGroup.id`
+            );
+          }
+        }
+      });
+    }
+
+    return builder.build();
   }
 
   /**
@@ -292,8 +524,16 @@ export class ArmVirtualNetwork extends Resource {
    *     "subnets": [
    *       {
    *         "name": "subnet-1",
-   *         "addressPrefix": "10.0.1.0/24",
-   *         "networkSecurityGroup": { "id": "[resourceId(...)]" }
+   *         "properties": {
+   *           "addressPrefix": "10.0.1.0/24",
+   *           "networkSecurityGroup": { "id": "[resourceId(...)]" },
+   *           "delegations": [
+   *             {
+   *               "name": "delegation",
+   *               "properties": { "serviceName": "Microsoft.Web/serverFarms" }
+   *             }
+   *           ]
+   *         }
    *       }
    *     ]
    *   },
@@ -306,60 +546,30 @@ export class ArmVirtualNetwork extends Resource {
    * @returns ARM template resource object
    */
   public toArmTemplate(): object {
-    const template: any = {
+    // Use type-safe transformer for properties
+    const transformer = new NetworkResourceTransformer();
+
+    // Build properties input
+    const propertiesInput = {
+      addressSpace: this.addressSpace,
+      subnets: this.subnets,
+      dhcpOptions: this.dhcpOptions,
+      enableDdosProtection: this.enableDdosProtection,
+      enableVmProtection: this.enableVmProtection,
+    };
+
+    // Transform properties using type-safe transformer
+    const properties = transformer.transformVirtualNetworkProperties(propertiesInput);
+
+    // Build final ARM template
+    const template = {
       type: this.resourceType,
       apiVersion: this.apiVersion,
       name: this.virtualNetworkName,
       location: this.location,
       tags: Object.keys(this.tags).length > 0 ? this.tags : undefined,
-      properties: {
-        addressSpace: this.addressSpace,
-      },
+      properties,
     };
-
-    // Add inline subnets to properties.subnets array
-    // This enables atomic creation with the VNet (no separate subnet resources)
-    // Transform InlineSubnetProps to ARM subnet format: { name, properties: { addressPrefix, ... } }
-    if (this.subnets && this.subnets.length > 0) {
-      template.properties.subnets = this.subnets.map((subnet: any) => {
-        const { name, delegations, ...subnetProperties } = subnet;
-
-        // Transform delegations to ARM format: { name, properties: { serviceName } }
-        let transformedDelegations;
-        if (delegations && Array.isArray(delegations)) {
-          transformedDelegations = delegations.map((delegation: any) => {
-            const { name: delegationName, serviceName, ...delegationProps } = delegation;
-            return {
-              name: delegationName,
-              properties: {
-                serviceName,
-                ...delegationProps,
-              },
-            };
-          });
-        }
-
-        return {
-          name,
-          properties: {
-            ...subnetProperties,
-            ...(transformedDelegations && { delegations: transformedDelegations }),
-          },
-        };
-      });
-    }
-
-    if (this.dhcpOptions) {
-      template.properties.dhcpOptions = this.dhcpOptions;
-    }
-
-    if (this.enableDdosProtection) {
-      template.properties.enableDdosProtection = true;
-    }
-
-    if (this.enableVmProtection) {
-      template.properties.enableVmProtection = true;
-    }
 
     return template;
   }

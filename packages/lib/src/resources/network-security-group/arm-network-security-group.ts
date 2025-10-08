@@ -2,6 +2,12 @@ import { Construct } from '../../core/construct';
 import { Resource } from '../../core/resource';
 import { DeploymentScope } from '../../core/azure/scopes';
 import type { ArmNetworkSecurityGroupProps, SecurityRule } from './types';
+import {
+  ValidationResult,
+  ValidationResultBuilder,
+  ValidationError,
+  isValidPortRange,
+} from '../../core/validation';
 
 /**
  * L1 construct for Azure Network Security Group.
@@ -134,21 +140,29 @@ export class ArmNetworkSecurityGroup extends Resource {
    * Validates network security group properties against ARM constraints.
    *
    * @param props - Properties to validate
-   * @throws {Error} If validation fails
+   * @throws {ValidationError} If validation fails
    */
-  private validateProps(props: ArmNetworkSecurityGroupProps): void {
+  protected validateProps(props: ArmNetworkSecurityGroupProps): void {
     // Validate NSG name
     if (!props.networkSecurityGroupName || props.networkSecurityGroupName.trim() === '') {
-      throw new Error('Network security group name cannot be empty');
+      throw new ValidationError(
+        'Network security group name cannot be empty',
+        'NSG names are required for all network security groups',
+        'Provide a valid network security group name'
+      );
     }
 
     // Validate location
     if (!props.location || props.location.trim() === '') {
-      throw new Error('Location cannot be empty');
+      throw new ValidationError(
+        'Location cannot be empty',
+        'Network security groups must be deployed to a specific Azure region',
+        'Provide a valid Azure region (e.g., "eastus", "westus2")'
+      );
     }
 
     // Validate security rules if provided
-    if (props.securityRules) {
+    if (props.securityRules && props.securityRules.length > 0) {
       props.securityRules.forEach((rule, index) => {
         this.validateSecurityRule(rule, index);
       });
@@ -163,30 +177,56 @@ export class ArmNetworkSecurityGroup extends Resource {
    *
    * @param rule - Security rule to validate
    * @param index - Index in the rules array (for error messages)
-   * @throws {Error} If validation fails
+   * @throws {ValidationError} If validation fails
    */
   private validateSecurityRule(rule: SecurityRule, index: number): void {
     // Validate name
     if (!rule.name || rule.name.trim() === '') {
-      throw new Error(`Security rule at index ${index}: name cannot be empty`);
+      throw new ValidationError(
+        `Security rule at index ${index}: name cannot be empty`,
+        'All security rules must have a name',
+        'Provide a descriptive name for the rule (e.g., "AllowHTTP")',
+        `securityRules[${index}].name`
+      );
     }
 
     // Validate description length
     if (rule.description && rule.description.length > 140) {
-      throw new Error(`Security rule '${rule.name}': description cannot exceed 140 characters`);
+      throw new ValidationError(
+        `Security rule '${rule.name}': description too long`,
+        `Description has ${rule.description.length} characters but maximum is 140`,
+        'Shorten the description to 140 characters or less',
+        `securityRules[${index}].description`
+      );
     }
 
     // Validate priority range
     if (rule.priority < 100 || rule.priority > 4096) {
-      throw new Error(
-        `Security rule '${rule.name}': priority must be between 100 and 4096 (got ${rule.priority})`
+      throw new ValidationError(
+        `Security rule '${rule.name}': priority out of range`,
+        `Priority ${rule.priority} is not within valid range 100-4096`,
+        'Use a priority between 100 and 4096',
+        `securityRules[${index}].priority`
       );
     }
 
     // Validate that at least one source port is specified
     if (!rule.sourcePortRange && (!rule.sourcePortRanges || rule.sourcePortRanges.length === 0)) {
-      throw new Error(
-        `Security rule '${rule.name}': either sourcePortRange or sourcePortRanges must be specified`
+      throw new ValidationError(
+        `Security rule '${rule.name}': missing source port specification`,
+        'Either sourcePortRange or sourcePortRanges must be specified',
+        'Add sourcePortRange (e.g., "*" or "80" or "1000-2000")',
+        `securityRules[${index}].sourcePortRange`
+      );
+    }
+
+    // Validate source port range format
+    if (rule.sourcePortRange && !isValidPortRange(rule.sourcePortRange)) {
+      throw new ValidationError(
+        `Security rule '${rule.name}': invalid source port range`,
+        `Port range '${rule.sourcePortRange}' is not valid`,
+        'Use format: "*", single port (e.g., "80"), or range (e.g., "1000-2000")',
+        `securityRules[${index}].sourcePortRange`
       );
     }
 
@@ -195,8 +235,21 @@ export class ArmNetworkSecurityGroup extends Resource {
       !rule.destinationPortRange &&
       (!rule.destinationPortRanges || rule.destinationPortRanges.length === 0)
     ) {
-      throw new Error(
-        `Security rule '${rule.name}': either destinationPortRange or destinationPortRanges must be specified`
+      throw new ValidationError(
+        `Security rule '${rule.name}': missing destination port specification`,
+        'Either destinationPortRange or destinationPortRanges must be specified',
+        'Add destinationPortRange (e.g., "*" or "443" or "8000-9000")',
+        `securityRules[${index}].destinationPortRange`
+      );
+    }
+
+    // Validate destination port range format
+    if (rule.destinationPortRange && !isValidPortRange(rule.destinationPortRange)) {
+      throw new ValidationError(
+        `Security rule '${rule.name}': invalid destination port range`,
+        `Port range '${rule.destinationPortRange}' is not valid`,
+        'Use format: "*", single port (e.g., "443"), or range (e.g., "8000-9000")',
+        `securityRules[${index}].destinationPortRange`
       );
     }
 
@@ -205,8 +258,11 @@ export class ArmNetworkSecurityGroup extends Resource {
       !rule.sourceAddressPrefix &&
       (!rule.sourceAddressPrefixes || rule.sourceAddressPrefixes.length === 0)
     ) {
-      throw new Error(
-        `Security rule '${rule.name}': either sourceAddressPrefix or sourceAddressPrefixes must be specified`
+      throw new ValidationError(
+        `Security rule '${rule.name}': missing source address specification`,
+        'Either sourceAddressPrefix or sourceAddressPrefixes must be specified',
+        'Add sourceAddressPrefix (e.g., "*", "Internet", or CIDR like "10.0.0.0/24")',
+        `securityRules[${index}].sourceAddressPrefix`
       );
     }
 
@@ -215,8 +271,41 @@ export class ArmNetworkSecurityGroup extends Resource {
       !rule.destinationAddressPrefix &&
       (!rule.destinationAddressPrefixes || rule.destinationAddressPrefixes.length === 0)
     ) {
-      throw new Error(
-        `Security rule '${rule.name}': either destinationAddressPrefix or destinationAddressPrefixes must be specified`
+      throw new ValidationError(
+        `Security rule '${rule.name}': missing destination address specification`,
+        'Either destinationAddressPrefix or destinationAddressPrefixes must be specified',
+        'Add destinationAddressPrefix (e.g., "*", "VirtualNetwork", or CIDR like "10.0.1.0/24")',
+        `securityRules[${index}].destinationAddressPrefix`
+      );
+    }
+
+    // Validate protocol
+    if (!rule.protocol) {
+      throw new ValidationError(
+        `Security rule '${rule.name}': missing protocol`,
+        'Protocol is required for all security rules',
+        'Specify protocol: "Tcp", "Udp", "Icmp", or "*"',
+        `securityRules[${index}].protocol`
+      );
+    }
+
+    // Validate access
+    if (!rule.access) {
+      throw new ValidationError(
+        `Security rule '${rule.name}': missing access`,
+        'Access (Allow/Deny) is required for all security rules',
+        'Specify access: "Allow" or "Deny"',
+        `securityRules[${index}].access`
+      );
+    }
+
+    // Validate direction
+    if (!rule.direction) {
+      throw new ValidationError(
+        `Security rule '${rule.name}': missing direction`,
+        'Direction is required for all security rules',
+        'Specify direction: "Inbound" or "Outbound"',
+        `securityRules[${index}].direction`
       );
     }
   }
@@ -225,25 +314,102 @@ export class ArmNetworkSecurityGroup extends Resource {
    * Validates that all priorities are unique.
    *
    * @param rules - Security rules to validate
-   * @throws {Error} If duplicate priorities are found
+   * @throws {ValidationError} If duplicate priorities are found
    */
   private validateUniquePriorities(rules: SecurityRule[]): void {
-    const priorities = new Set<number>();
-    const duplicates: number[] = [];
+    const priorities = new Map<number, string>();
+    const duplicates: Array<{ priority: number; rules: string[] }> = [];
 
     rules.forEach((rule) => {
       if (priorities.has(rule.priority)) {
-        duplicates.push(rule.priority);
+        const existingRule = priorities.get(rule.priority)!;
+        duplicates.push({
+          priority: rule.priority,
+          rules: [existingRule, rule.name],
+        });
       }
-      priorities.add(rule.priority);
+      priorities.set(rule.priority, rule.name);
     });
 
     if (duplicates.length > 0) {
-      throw new Error(
-        `Security rules have duplicate priorities: ${duplicates.join(', ')}. ` +
-          `Each rule must have a unique priority.`
+      const duplicateDetails = duplicates
+        .map((d) => `Priority ${d.priority}: rules [${d.rules.join(', ')}]`)
+        .join('; ');
+
+      throw new ValidationError(
+        'Security rules have duplicate priorities',
+        duplicateDetails,
+        'Each security rule must have a unique priority. Assign different priority values to each rule.',
+        'securityRules[].priority'
       );
     }
+  }
+
+  /**
+   * Validates ARM template structure before transformation.
+   *
+   * @remarks
+   * Validates the ARM-specific structure requirements for network security groups.
+   * Ensures security rules are properly formatted and have consistent direction/protocol combinations.
+   *
+   * @returns Validation result with any errors or warnings
+   */
+  public validateArmStructure(): ValidationResult {
+    const builder = new ValidationResultBuilder();
+
+    // Generate ARM template to validate structure
+    const armTemplate = this.toArmTemplate() as any;
+
+    // Validate security rules structure in ARM format
+    if (armTemplate.properties?.securityRules) {
+      armTemplate.properties.securityRules.forEach((rule: any, index: number) => {
+        // Validate rule has properties wrapper
+        if (!rule.properties) {
+          builder.addError(
+            `Security rule at index ${index} missing properties wrapper`,
+            'ARM template security rules must have a properties object',
+            'Ensure toArmTemplate() wraps rule properties correctly',
+            `armTemplate.properties.securityRules[${index}]`
+          );
+          return;
+        }
+
+        // Validate priority is in properties
+        if (rule.priority !== undefined && rule.properties.priority === undefined) {
+          builder.addError(
+            `Security rule ${rule.name} has priority at wrong nesting level`,
+            'Priority must be inside properties object, not at rule root',
+            'Move priority to properties.priority',
+            `armTemplate.properties.securityRules[${index}].priority`
+          );
+        }
+
+        // Validate direction consistency with port ranges
+        if (rule.properties.direction === 'Inbound' && rule.properties.destinationPortRange === '*') {
+          builder.addWarning(
+            `Security rule ${rule.name} allows all inbound ports`,
+            'Inbound rule with destination port "*" may be overly permissive',
+            'Consider restricting to specific ports for better security',
+            `armTemplate.properties.securityRules[${index}].properties.destinationPortRange`
+          );
+        }
+
+        // Validate protocol consistency with port specifications
+        if (
+          rule.properties.protocol === 'Icmp' &&
+          (rule.properties.destinationPortRange !== '*' || rule.properties.sourcePortRange !== '*')
+        ) {
+          builder.addWarning(
+            `Security rule ${rule.name} uses ICMP with specific ports`,
+            'ICMP protocol does not use ports; port specifications are ignored',
+            'Use "*" for both source and destination ports with ICMP',
+            `armTemplate.properties.securityRules[${index}].properties.protocol`
+          );
+        }
+      });
+    }
+
+    return builder.build();
   }
 
   /**
