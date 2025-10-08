@@ -108,9 +108,8 @@ export class ValidationPipeline {
 
     // Layer 2: Transformation validation
     if (!opts.skip?.transformation) {
-      const transformResult = await this.runLayer(
-        'Transformation',
-        () => this.validateTransformations(resources, template)
+      const transformResult = await this.runLayer('Transformation', () =>
+        this.validateTransformations(resources, template)
       );
       layerResults.push(transformResult);
 
@@ -122,9 +121,8 @@ export class ValidationPipeline {
 
     // Layer 3: ARM structure validation
     if (!opts.skip?.structure) {
-      const structureResult = await this.runLayer(
-        'ARM Structure',
-        () => this.validateArmStructure(template)
+      const structureResult = await this.runLayer('ARM Structure', () =>
+        this.validateArmStructure(template)
       );
       layerResults.push(structureResult);
 
@@ -136,9 +134,8 @@ export class ValidationPipeline {
 
     // Layer 4: Deployment sequence validation
     if (!opts.skip?.deployment) {
-      const deploymentResult = await this.runLayer(
-        'Deployment Sequence',
-        () => this.validateDeploymentSequence(template)
+      const deploymentResult = await this.runLayer('Deployment Sequence', () =>
+        this.validateDeploymentSequence(template)
       );
       layerResults.push(deploymentResult);
 
@@ -150,9 +147,8 @@ export class ValidationPipeline {
 
     // Layer 5: Schema validation (always runs last)
     if (!opts.skip?.schema) {
-      const schemaResult = await this.runLayer(
-        'Schema',
-        () => this.validateSchema(template, stackName)
+      const schemaResult = await this.runLayer('Schema', () =>
+        this.validateSchema(template, stackName)
       );
       layerResults.push(schemaResult);
     }
@@ -164,7 +160,9 @@ export class ValidationPipeline {
    * Normalize validation options with defaults
    */
   private normalizeOptions(options?: ValidationOptions): Required<ValidationOptions> {
-    const level = options?.strict ? ValidationLevel.STRICT : (options?.level || ValidationLevel.NORMAL);
+    const level = options?.strict
+      ? ValidationLevel.STRICT
+      : options?.level || ValidationLevel.NORMAL;
 
     return {
       level,
@@ -196,11 +194,13 @@ export class ValidationPipeline {
 
       return {
         layer: layerName,
-        errors: [{
-          severity: ValidationSeverity.ERROR,
-          message: `${layerName} validation failed: ${error instanceof Error ? error.message : String(error)}`,
-          code: 'LAYER_FAILURE',
-        }],
+        errors: [
+          {
+            severity: ValidationSeverity.ERROR,
+            message: `${layerName} validation failed: ${error instanceof Error ? error.message : String(error)}`,
+            code: 'LAYER_FAILURE',
+          },
+        ],
         warnings: [],
         duration,
       };
@@ -210,7 +210,10 @@ export class ValidationPipeline {
   /**
    * Check if validation should exit early
    */
-  private shouldEarlyExit(result: LayerValidationResult, options: Required<ValidationOptions>): boolean {
+  private shouldEarlyExit(
+    result: LayerValidationResult,
+    options: Required<ValidationOptions>
+  ): boolean {
     // Always exit early on errors
     if (result.errors.length > 0) {
       return true;
@@ -506,9 +509,7 @@ export class ValidationPipeline {
    */
   private requiresProperties(resourceType: string): boolean {
     // Most Azure resources require properties, except for a few like resource groups
-    const noPropertiesRequired = [
-      'Microsoft.Resources/resourceGroups',
-    ];
+    const noPropertiesRequired = ['Microsoft.Resources/resourceGroups'];
 
     return !noPropertiesRequired.includes(resourceType);
   }

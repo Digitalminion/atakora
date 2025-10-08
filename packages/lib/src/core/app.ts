@@ -78,8 +78,8 @@ export interface AppProps {
  * const stack = new SubscriptionStack(app, 'MyStack', {
  *   subscription: Subscription.fromId('...'),
  *   location: 'eastus',
- *   organization: new Organization('digital-products'),
- *   project: new Project('colorai'),
+ *   organization: new Organization('digital-minion'),
+ *   project: new Project('authr'),
  *   environment: Environment.fromValue('nonprod'),
  *   instance: Instance.fromNumber(1)
  * });

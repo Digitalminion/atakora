@@ -21,8 +21,8 @@ describe('resources/public-ip-address/PublicIpAddress', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
       tags: {
@@ -38,7 +38,7 @@ describe('resources/public-ip-address/PublicIpAddress', () => {
 
       // Should auto-generate name with pip prefix
       expect(publicIp.publicIpAddressName).toMatch(/^pip-/);
-      expect(publicIp.publicIpAddressName).toContain('dp-colorai');
+      expect(publicIp.publicIpAddressName).toContain('dp-authr');
     });
 
     it('should use provided public IP address name when specified', () => {

@@ -23,7 +23,7 @@ import type { ArmAppServicePlanProps, AppServicePlanSku, AppServicePlanKind } fr
  * import { ArmAppServicePlan, AppServicePlanSkuName, AppServicePlanSkuTier } from '@atakora/lib';
  *
  * const plan = new ArmAppServicePlan(resourceGroup, 'Plan', {
- *   planName: 'asp-colorai-001',
+ *   planName: 'asp-authr-001',
  *   location: 'eastus',
  *   sku: {
  *     name: AppServicePlanSkuName.B1,

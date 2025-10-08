@@ -278,7 +278,7 @@ function validateResourceGroupName(name: string, errors: string[], warnings: str
  * const result = validateGenerationParams({
  *   resourceType: 'storage',
  *   organization: 'dp',
- *   project: 'colorai'
+ *   project: 'authr'
  * });
  * ```
  */

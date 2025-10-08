@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   createBasicInfrastructure,
-  createColorAIInfrastructure,
+  createAuthRInfrastructure,
   createMultiRegionInfrastructure,
 } from './basic-infrastructure.example';
 
@@ -78,7 +78,7 @@ describe('E2E: basic-infrastructure example', () => {
       const networkRG = children.find((c) => c.node.id === 'NetworkRG');
 
       expect(networkRG).toBeDefined();
-      expect((networkRG as any).resourceGroupName).toMatch(/^rg-dp-colorai-/);
+      expect((networkRG as any).resourceGroupName).toMatch(/^rg-dp-authr-/);
       expect((networkRG as any).resourceGroupName).toContain('nonprod');
       expect((networkRG as any).resourceGroupName).toContain('eus');
     });
@@ -97,9 +97,9 @@ describe('E2E: basic-infrastructure example', () => {
     });
   });
 
-  describe('createColorAIInfrastructure()', () => {
+  describe('createAuthRInfrastructure()', () => {
     it('should create app with 5 resource groups', () => {
-      const app = createColorAIInfrastructure();
+      const app = createAuthRInfrastructure();
       const foundation = app.allStacks[0];
 
       const children = foundation.node.children;
@@ -109,7 +109,7 @@ describe('E2E: basic-infrastructure example', () => {
     });
 
     it('should name resource groups according to purpose', () => {
-      const app = createColorAIInfrastructure();
+      const app = createAuthRInfrastructure();
       const foundation = app.allStacks[0];
 
       const children = foundation.node.children;
@@ -123,7 +123,7 @@ describe('E2E: basic-infrastructure example', () => {
     });
 
     it('should create virtual network in connectivity RG', () => {
-      const app = createColorAIInfrastructure();
+      const app = createAuthRInfrastructure();
       const foundation = app.allStacks[0];
 
       const allChildren: any[] = [];

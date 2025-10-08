@@ -91,7 +91,7 @@ export interface DatabaseSku {
  * @example
  * ```typescript
  * const props: ArmSqlServerProps = {
- *   serverName: 'sql-colorai-001',
+ *   serverName: 'sql-authr-001',
  *   location: 'eastus',
  *   administratorLogin: 'sqladmin',
  *   administratorLoginPassword: 'P@ssw0rd123!',
@@ -196,7 +196,7 @@ export interface SqlServerProps {
    * @remarks
    * If not provided, will be auto-generated using the stack's naming context.
    * - Format: `sql-{org}-{project}-{purpose}-{env}-{geo}-{instance}`
-   * - Example: `sql-dp-colorai-database-np-eus-01`
+   * - Example: `sql-dp-authr-database-np-eus-01`
    *
    * The `purpose` is derived from the construct ID.
    */
@@ -294,7 +294,7 @@ export interface ISqlServer {
  * @example
  * ```typescript
  * const props: ArmSqlDatabaseProps = {
- *   serverName: 'sql-colorai-001',
+ *   serverName: 'sql-authr-001',
  *   databaseName: 'mydb',
  *   location: 'eastus',
  *   sku: {

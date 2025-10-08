@@ -20,13 +20,13 @@ describe('resources/resource-group/ResourceGroup', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
       tags: {
         managed_by: 'terraform',
-        project: 'colorai',
+        project: 'authr',
       },
     });
   });
@@ -37,8 +37,8 @@ describe('resources/resource-group/ResourceGroup', () => {
 
       // Should auto-generate name using stack context
       expect(rg.resourceGroupName).toContain('rg-');
-      expect(rg.resourceGroupName).toContain('dp'); // digital-products abbreviation
-      expect(rg.resourceGroupName).toContain('colorai');
+      expect(rg.resourceGroupName).toContain('dp'); // digital-minion abbreviation
+      expect(rg.resourceGroupName).toContain('authr');
       expect(rg.resourceGroupName).toContain('datarg'); // purpose from ID
       expect(rg.resourceGroupName).toContain('nonprod');
       expect(rg.resourceGroupName).toContain('eus');
@@ -76,7 +76,7 @@ describe('resources/resource-group/ResourceGroup', () => {
 
       expect(rg.tags).toEqual({
         managed_by: 'terraform', // from stack
-        project: 'colorai', // from stack
+        project: 'authr', // from stack
         owner: 'platform-team', // from props
       });
     });
@@ -191,7 +191,7 @@ describe('resources/resource-group/ResourceGroup', () => {
 
       expect(rg.tags).toEqual({
         managed_by: 'terraform',
-        project: 'colorai',
+        project: 'authr',
         costCenter: '1234',
         owner: 'data-team',
       });
@@ -241,8 +241,8 @@ describe('resources/resource-group/ResourceGroup', () => {
       const westStack = new SubscriptionStack(app, 'WestStack', {
         subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
         geography: Geography.fromValue('westus2'),
-        organization: Organization.fromValue('digital-products'),
-        project: new Project('colorai'),
+        organization: Organization.fromValue('digital-minion'),
+        project: new Project('authr'),
         environment: Environment.fromValue('nonprod'),
         instance: Instance.fromNumber(1),
       });
@@ -257,8 +257,8 @@ describe('resources/resource-group/ResourceGroup', () => {
       const prodStack = new SubscriptionStack(app, 'ProdStack', {
         subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
         geography: Geography.fromValue('eastus'),
-        organization: Organization.fromValue('digital-products'),
-        project: new Project('colorai'),
+        organization: Organization.fromValue('digital-minion'),
+        project: new Project('authr'),
         environment: Environment.fromValue('production'),
         instance: Instance.fromNumber(1),
       });
@@ -284,8 +284,8 @@ describe('resources/resource-group/ResourceGroup', () => {
     });
   });
 
-  describe('ColorAI reference architecture', () => {
-    it('should support creating 5 resource groups like ColorAI', () => {
+  describe('AuthR reference architecture', () => {
+    it('should support creating 5 resource groups like AuthR', () => {
       const foundation = new ResourceGroup(stack, 'FoundationRG');
       const connectivity = new ResourceGroup(stack, 'ConnectivityRG');
       const data = new ResourceGroup(stack, 'DataRG');

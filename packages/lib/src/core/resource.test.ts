@@ -34,8 +34,8 @@ describe('core/Resource', () => {
 
     const subscription = Subscription.fromId('12345678-1234-1234-1234-123456789abc');
     const geography = Geography.fromValue('eastus');
-    const organization = Organization.fromValue('digital-products');
-    const project = new Project('colorai');
+    const organization = Organization.fromValue('digital-minion');
+    const project = new Project('authr');
     const environment = Environment.fromValue('nonprod');
     const instance = Instance.fromNumber(1);
 

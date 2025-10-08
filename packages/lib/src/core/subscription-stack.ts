@@ -53,7 +53,7 @@ export interface SubscriptionStackProps {
  * - Deploy subscription-level resources (policies, RBAC, budgets)
  * - Contain nested ResourceGroupStack deployments
  *
- * This matches the ColorAI foundation stack pattern.
+ * This matches the AuthR foundation stack pattern.
  *
  * @example
  * Basic usage:
@@ -61,8 +61,8 @@ export interface SubscriptionStackProps {
  * const app = new App();
  *
  * const subscription = Subscription.fromId('12345678-1234-1234-1234-123456789abc');
- * const org = Organization.fromValue('digital-products');
- * const project = new Project('colorai');
+ * const org = Organization.fromValue('digital-minion');
+ * const project = new Project('authr');
  * const env = Environment.fromValue('nonprod');
  * const geo = Geography.fromValue('eastus');
  * const instance = Instance.fromNumber(1);
@@ -78,7 +78,7 @@ export interface SubscriptionStackProps {
  *
  * // Generate resource names
  * const rgName = foundation.generateResourceName('rg', 'data');
- * // Result: "rg-digital-products-colorai-data-nonprod-eus-00"
+ * // Result: "rg-digital-minion-authr-data-nonprod-eus-00"
  * ```
  */
 export class SubscriptionStack extends Construct {
@@ -176,7 +176,7 @@ export class SubscriptionStack extends Construct {
    * @example
    * ```typescript
    * const rgName = stack.generateResourceName('rg', 'data');
-   * // Result: "rg-digital-products-colorai-data-nonprod-eus-00"
+   * // Result: "rg-digital-minion-authr-data-nonprod-eus-00"
    * ```
    */
   public generateResourceName(resourceType: string, purpose?: string): string {

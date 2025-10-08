@@ -10,19 +10,19 @@ import { NamingComponent, type NamingComponentOptions } from '../types';
  * @example
  * Basic usage:
  * ```typescript
- * const org = new Organization('digital products');
- * console.log(org.value);        // "digital products"
- * console.log(org.title);        // "Digital Products"
- * console.log(org.resourceName); // "digital-products"
+ * const org = new Organization('Digital Minion');
+ * console.log(org.value);        // "Digital Minion"
+ * console.log(org.title);        // "Digital Minion"
+ * console.log(org.resourceName); // "digital-minion"
  * ```
  *
  * @example
  * With custom values:
  * ```typescript
  * const org = new Organization({
- *   value: 'Digital Products Division',
+ *   value: 'Digital Minion Division',
  *   resourceName: 'dp',
- *   title: 'Digital Products'
+ *   title: 'Digital Minion'
  * });
  * console.log(org.resourceName); // "dp"
  * ```
@@ -38,11 +38,11 @@ export class Organization extends NamingComponent {
    * @example
    * ```typescript
    * // Simple string
-   * const org1 = new Organization('digital products');
+   * const org1 = new Organization('Digital Minion');
    *
    * // With custom resource name
    * const org2 = new Organization({
-   *   value: 'Digital Products',
+   *   value: 'Digital Minion',
    *   resourceName: 'dp'
    * });
    * ```
@@ -81,8 +81,8 @@ export class Organization extends NamingComponent {
    * Common organization abbreviations for well-known organizations.
    */
   public static readonly ABBREVIATIONS: Record<string, string> = {
-    'digital products': 'dp',
-    'digital-products': 'dp',
+    'Digital Minion': 'dp',
+    'digital-minion': 'dp',
     engineering: 'eng',
     marketing: 'mkt',
     'information technology': 'it',
@@ -100,7 +100,7 @@ export class Organization extends NamingComponent {
    *
    * @example
    * ```typescript
-   * const org = Organization.fromValue('digital products');
+   * const org = Organization.fromValue('Digital Minion');
    * // Uses abbreviation "dp" for resource name
    * ```
    */

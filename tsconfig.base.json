@@ -13,8 +13,7 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "@atakora/lib": ["./packages/lib/src/index.ts"],
-      "@atakora/color": ["./packages/color/src/index.ts"]
+      "@atakora/lib": ["./packages/lib/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "dist"]

@@ -66,7 +66,7 @@ describe('synthesis/transform/ResourceTransformer', () => {
         name: 'mystorageaccount',
         tags: {
           environment: 'nonprod',
-          project: 'colorai',
+          project: 'authr',
         },
       });
 
@@ -74,7 +74,7 @@ describe('synthesis/transform/ResourceTransformer', () => {
 
       expect(armResource.tags).toEqual({
         environment: 'nonprod',
-        project: 'colorai',
+        project: 'authr',
       });
     });
 

@@ -21,8 +21,8 @@
  * ```typescript
  * import { Organization, Project, Environment, Instance } from '@atakora/lib/core/context';
  *
- * const org = Organization.fromValue('digital products');  // resourceName: "dp"
- * const project = new Project('colorai');
+ * const org = Organization.fromValue('Digital Minion');  // resourceName: "dp"
+ * const project = new Project('authr');
  * const env = Environment.fromValue('production');         // abbreviation: "prod"
  * const instance = Instance.fromNumber(1);                 // resourceName: "01"
  * ```

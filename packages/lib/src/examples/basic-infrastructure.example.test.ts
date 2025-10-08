@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   createBasicInfrastructure,
-  createColorAIInfrastructure,
+  createAuthRInfrastructure,
   createMultiRegionInfrastructure,
 } from './basic-infrastructure.example';
 
@@ -74,9 +74,9 @@ describe('examples/basic-infrastructure', () => {
     });
   });
 
-  describe('createColorAIInfrastructure()', () => {
+  describe('createAuthRInfrastructure()', () => {
     it('should create 5 resource groups', () => {
-      const app = createColorAIInfrastructure();
+      const app = createAuthRInfrastructure();
       const stack = app.allStacks[0];
 
       const resourceGroups = stack.node.children.filter(
@@ -87,7 +87,7 @@ describe('examples/basic-infrastructure', () => {
     });
 
     it('should create resource groups with correct purposes', () => {
-      const app = createColorAIInfrastructure();
+      const app = createAuthRInfrastructure();
       const stack = app.allStacks[0];
 
       const foundationRG = stack.node.children.find(
@@ -103,7 +103,7 @@ describe('examples/basic-infrastructure', () => {
     });
 
     it('should create virtual network in connectivity RG', () => {
-      const app = createColorAIInfrastructure();
+      const app = createAuthRInfrastructure();
       const stack = app.allStacks[0];
 
       const connectivityRG = stack.node.children.find(
@@ -120,7 +120,7 @@ describe('examples/basic-infrastructure', () => {
     });
 
     it('should use correct naming convention', () => {
-      const app = createColorAIInfrastructure();
+      const app = createAuthRInfrastructure();
       const stack = app.allStacks[0];
 
       const connectivityRG = stack.node.children.find(
@@ -129,8 +129,8 @@ describe('examples/basic-infrastructure', () => {
 
       // Should follow pattern: rg-{org}-{project}-{purpose}-{env}-{geo}-{instance}
       expect(connectivityRG.resourceGroupName).toContain('rg-');
-      expect(connectivityRG.resourceGroupName).toContain('dp'); // digital-products
-      expect(connectivityRG.resourceGroupName).toContain('colorai');
+      expect(connectivityRG.resourceGroupName).toContain('dp'); // digital-minion
+      expect(connectivityRG.resourceGroupName).toContain('authr');
       expect(connectivityRG.resourceGroupName).toContain('nonprod');
       expect(connectivityRG.resourceGroupName).toContain('eus'); // eastus
       expect(connectivityRG.resourceGroupName).toContain('01');

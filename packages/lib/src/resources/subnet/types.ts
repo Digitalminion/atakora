@@ -213,7 +213,7 @@ export interface SubnetProps {
    * @remarks
    * If not provided, will be auto-generated using the parent's naming context:
    * - Format: `snet-{org}-{project}-{purpose}-{env}-{geo}-{instance}`
-   * - Example: `snet-digital-products-colorai-web-nonprod-eus-00`
+   * - Example: `snet-digital-minion-authr-web-nonprod-eus-00`
    *
    * The `purpose` is derived from the construct ID (e.g., 'WebSubnet' -> 'websubnet').
    */

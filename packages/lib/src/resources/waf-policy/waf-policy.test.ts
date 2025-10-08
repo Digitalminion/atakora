@@ -29,8 +29,8 @@ describe('resources/waf-policy/WafPolicy', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
     });
@@ -44,7 +44,7 @@ describe('resources/waf-policy/WafPolicy', () => {
     it('should create WAF policy with auto-generated name', () => {
       const wafPolicy = new WafPolicy(resourceGroup, 'MainWaf');
 
-      expect(wafPolicy.policyName).toBe('waf-dp-colorai-mainwaf-nonprod-eus-00');
+      expect(wafPolicy.policyName).toBe('waf-dp-authr-mainwaf-nonprod-eus-00');
       expect(wafPolicy.location).toBe('eastus');
     });
 
@@ -438,7 +438,7 @@ describe('resources/waf-policy/WafPolicy', () => {
     it('should auto-generate name with stack context', () => {
       const wafPolicy = new WafPolicy(resourceGroup, 'AppWaf');
 
-      expect(wafPolicy.policyName).toMatch(/^waf-dp-colorai-/);
+      expect(wafPolicy.policyName).toMatch(/^waf-dp-authr-/);
     });
 
     it('should convert construct ID to purpose', () => {

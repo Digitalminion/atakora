@@ -48,8 +48,8 @@ describe('naming/generator', () => {
 
       const baseParams: ResourceNameParams = {
         resourceType: 'vnet',
-        organization: 'digital-products',
-        project: 'colorai',
+        organization: 'digital-minion',
+        project: 'authr',
         environment: 'nonprod',
         geography: 'eastus',
         instance: '01',
@@ -57,7 +57,7 @@ describe('naming/generator', () => {
 
       it('should generate basic resource name', () => {
         const name = generator.generateName(baseParams);
-        expect(name).toBe('vnet-digital-products-colorai-nonprod-eastus-01');
+        expect(name).toBe('vnet-digital-minion-authr-nonprod-eastus-01');
       });
 
       it('should include purpose when provided', () => {
@@ -65,7 +65,7 @@ describe('naming/generator', () => {
           ...baseParams,
           purpose: 'data',
         });
-        expect(name).toBe('vnet-digital-products-colorai-data-nonprod-eastus-01');
+        expect(name).toBe('vnet-digital-minion-authr-data-nonprod-eastus-01');
       });
 
       it('should include additional suffix when provided', () => {
@@ -73,7 +73,7 @@ describe('naming/generator', () => {
           ...baseParams,
           additionalSuffix: 'backup',
         });
-        expect(name).toBe('vnet-digital-products-colorai-nonprod-eastus-01-backup');
+        expect(name).toBe('vnet-digital-minion-authr-nonprod-eastus-01-backup');
       });
 
       it('should handle storage accounts specially (no hyphens, lowercase)', () => {
@@ -85,7 +85,7 @@ describe('naming/generator', () => {
         });
 
         // Name gets truncated to 24 chars max for storage
-        expect(name).toBe('stdigitalproductscolorai'); // truncated
+        expect(name).toBe('stdigitalproductsauthr'); // truncated
         expect(name).not.toContain('-');
         expect(name.length).toBeLessThanOrEqual(24);
 
@@ -101,7 +101,7 @@ describe('naming/generator', () => {
         });
 
         // Name gets truncated to 24 chars max for key vaults
-        expect(name).toBe('kv-digital-products-colo'); // truncated
+        expect(name).toBe('kv-digital-minion-colo'); // truncated
         expect(name).toMatch(/^[a-z0-9-]+$/);
         expect(name.length).toBeLessThanOrEqual(24);
 
@@ -146,7 +146,7 @@ describe('naming/generator', () => {
       it('should use custom separator', () => {
         const customGen = new ResourceNameGenerator({ separator: '_' });
         const name = customGen.generateName(baseParams);
-        expect(name).toBe('vnet_digital-products_colorai_nonprod_eastus_01');
+        expect(name).toBe('vnet_digital-minion_authr_nonprod_eastus_01');
       });
 
       it('should respect custom patterns', () => {
@@ -303,7 +303,7 @@ describe('naming/generator', () => {
         const params: ResourceNameParams = {
           resourceType: 'storage',
           organization: 'dp',
-          project: 'colorai',
+          project: 'authr',
           environment: 'nonprod',
           geography: 'eus',
           instance: '01',

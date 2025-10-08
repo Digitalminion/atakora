@@ -17,7 +17,7 @@
  * import { ArmCosmosDbAccount, DatabaseAccountOfferType, ConsistencyLevel } from '@atakora/lib';
  *
  * const cosmosAccount = new ArmCosmosDbAccount(resourceGroup, 'CosmosAccount', {
- *   databaseAccountName: 'cosmos-colorai-001',
+ *   databaseAccountName: 'cosmos-authr-001',
  *   location: 'eastus',
  *   databaseAccountOfferType: DatabaseAccountOfferType.STANDARD,
  *   locations: [

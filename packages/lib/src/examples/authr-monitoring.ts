@@ -1,9 +1,8 @@
 /**
- * Example: ColorAI Monitoring Stack
+ * Example: AuthR Monitoring Stack
  *
  * @remarks
- * This example demonstrates the ColorAI monitoring and observability stack
- * following the Bicep reference implementation.
+ * This example demonstrates the AuthR monitoring and observability stack.
  *
  * Creates:
  * - Application Insights (linked to Log Analytics)
@@ -17,8 +16,6 @@
  * - Azure Portal Dashboard
  *
  * Note: This stack depends on the foundation stack's Log Analytics Workspace.
- *
- * Reference: avient-colorai-azure-config-nonprod/bicep/stacks/monitoring/
  *
  * @packageDocumentation
  */
@@ -46,10 +43,10 @@ import {
 } from '../index';
 
 /**
- * Creates the ColorAI monitoring stack with comprehensive observability.
+ * Creates the AuthR monitoring stack with comprehensive observability.
  *
  * @remarks
- * This example follows the ColorAI reference architecture for monitoring infrastructure.
+ * This example follows the AuthR reference architecture for monitoring infrastructure.
  * It creates a complete monitoring stack with Application Insights, alerts, and dashboards.
  *
  * The monitoring stack includes:
@@ -73,31 +70,31 @@ import {
  * const appServiceId = '/subscriptions/.../sites/app-service';
  * const apimId = '/subscriptions/.../service/apim';
  *
- * const app = createColorAIMonitoringStack(logAnalyticsId, appServiceId, apimId);
+ * const app = createAuthRMonitoringStack(logAnalyticsId, appServiceId, apimId);
  * await app.synth(); // Generate ARM templates
  * ```
  */
-export function createColorAIMonitoringStack(
+export function createAuthRMonitoringStack(
   logAnalyticsWorkspaceId: string,
   appServiceId: string,
   apimId: string
 ): App {
   // Initialize the app
   const app = new App({
-    outdir: 'arm.out/colorai-monitoring',
+    outdir: 'arm.out/authr-monitoring',
   });
 
-  // Create monitoring stack with ColorAI context
-  const monitoring = new SubscriptionStack(app, 'ColorAIMonitoring', {
+  // Create monitoring stack with AuthR context
+  const monitoring = new SubscriptionStack(app, 'AuthRMonitoring', {
     subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
     geography: Geography.fromValue('eastus'),
-    organization: Organization.fromValue('digital-products'),
-    project: new Project('colorai'),
+    organization: Organization.fromValue('digital-minion'),
+    project: new Project('authr'),
     environment: Environment.fromValue('nonprod'),
     instance: Instance.fromNumber(1),
     tags: {
       managed_by: 'atakora',
-      project: 'colorai',
+      project: 'authr',
       environment: 'nonprod',
       stack: 'monitoring',
     },
@@ -128,12 +125,12 @@ export function createColorAIMonitoringStack(
   // ========================================================================
 
   const actionGroup = new ActionGroup(monitoringRG, 'AdminActionGroup', {
-    groupShortName: 'ColorAI',
+    groupShortName: 'AuthR',
     enabled: true,
     emailReceivers: [
       {
         name: 'admin',
-        emailAddress: 'admin@avient.com',
+        emailAddress: 'admin@example.com',
         useCommonAlertSchema: true,
       },
     ],
@@ -290,12 +287,12 @@ export function createColorAIMonitoringStack(
   // Output Information
   // ========================================================================
 
-  console.log('ColorAI Monitoring Stack created:');
+  console.log('AuthR Monitoring Stack created:');
   console.log(`  Application Insights: ${appInsights.name}`);
   console.log(`    - Instrumentation Key: <redacted>`);
   console.log(`    - Connection String: <redacted>`);
   console.log(`  Action Group: ${actionGroup.actionGroupName}`);
-  console.log(`    - Short Name: ColorAI`);
+  console.log(`    - Short Name: AuthR`);
   console.log(`    - Email Receivers: 1`);
   console.log(`  Metric Alerts: 5`);
   console.log(`    - App Service Availability (Severity 1)`);
@@ -311,7 +308,7 @@ export function createColorAIMonitoringStack(
  * Run the example
  *
  * @remarks
- * Execute this example to generate ARM templates for the ColorAI monitoring stack.
+ * Execute this example to generate ARM templates for the AuthR monitoring stack.
  */
 if (require.main === module) {
   // Example resource IDs (replace with actual IDs)
@@ -322,9 +319,9 @@ if (require.main === module) {
   const apimId =
     '/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/rg-connectivity/providers/Microsoft.ApiManagement/service/apim';
 
-  const app = createColorAIMonitoringStack(logAnalyticsId, appServiceId, apimId);
+  const app = createAuthRMonitoringStack(logAnalyticsId, appServiceId, apimId);
   app.synth().catch((error) => {
-    console.error('Failed to synthesize ColorAI monitoring stack:', error);
+    console.error('Failed to synthesize AuthR monitoring stack:', error);
     process.exit(1);
   });
 }

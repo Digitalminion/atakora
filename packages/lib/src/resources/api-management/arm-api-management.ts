@@ -31,13 +31,13 @@ import type {
  * import { ArmApiManagement, ApiManagementSkuName } from '@atakora/lib';
  *
  * const apim = new ArmApiManagement(resourceGroup, 'APIM', {
- *   serviceName: 'apim-colorai-nonprod',
+ *   serviceName: 'apim-authr-nonprod',
  *   location: 'eastus',
  *   sku: {
  *     name: ApiManagementSkuName.DEVELOPER,
  *     capacity: 1
  *   },
- *   publisherName: 'Avient ColorAI',
+ *   publisherName: 'Avient AuthR',
  *   publisherEmail: 'admin@avient.com',
  *   identity: {
  *     type: 'SystemAssigned'
@@ -49,13 +49,13 @@ import type {
  * With VNet integration:
  * ```typescript
  * const apim = new ArmApiManagement(resourceGroup, 'APIM', {
- *   serviceName: 'apim-colorai-prod',
+ *   serviceName: 'apim-authr-prod',
  *   location: 'eastus',
  *   sku: {
  *     name: ApiManagementSkuName.PREMIUM,
  *     capacity: 2
  *   },
- *   publisherName: 'Avient ColorAI',
+ *   publisherName: 'Avient AuthR',
  *   publisherEmail: 'admin@avient.com',
  *   identity: {
  *     type: 'SystemAssigned'

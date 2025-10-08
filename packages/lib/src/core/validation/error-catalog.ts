@@ -159,7 +159,8 @@ const storage = new StorageAccount(stack, 'Storage', {
 const subnet = new Subnet(vnet, 'AppSubnet', {
   addressPrefix: '10.0.1.0/24', // Within VNet range
 });`,
-    suggestion: 'Ensure the subnet CIDR is within the VNet address space. For VNet 10.0.0.0/16, subnets must be 10.0.x.x/y where y >= 16.',
+    suggestion:
+      'Ensure the subnet CIDR is within the VNet address space. For VNet 10.0.0.0/16, subnets must be 10.0.x.x/y where y >= 16.',
     relatedDocs: '/docs/guides/common-validation-errors.md#net001',
     severity: ErrorSeverity.ERROR,
   },
@@ -177,7 +178,8 @@ const subnet = new Subnet(vnet, 'AppSubnet', {
 const subnet2 = new Subnet(vnet, 'Subnet2', {
   addressPrefix: '10.0.2.0/24', // No overlap
 });`,
-    suggestion: 'Assign non-overlapping CIDR ranges to each subnet. Use a subnet planning tool or calculator to avoid overlaps.',
+    suggestion:
+      'Assign non-overlapping CIDR ranges to each subnet. Use a subnet planning tool or calculator to avoid overlaps.',
     relatedDocs: '/docs/guides/common-validation-errors.md#net002',
     severity: ErrorSeverity.ERROR,
   },
@@ -198,7 +200,8 @@ const subnet2 = new Subnet(vnet, 'Subnet2', {
     { name: 'AllowHTTP', priority: 110, ... }, // Unique priority
   ],
 });`,
-    suggestion: 'Assign unique priorities to each NSG rule. Leave gaps (10-100) between priorities to allow for future rules.',
+    suggestion:
+      'Assign unique priorities to each NSG rule. Leave gaps (10-100) between priorities to allow for future rules.',
     relatedDocs: '/docs/guides/common-validation-errors.md#sec001',
     severity: ErrorSeverity.ERROR,
   },
@@ -216,7 +219,8 @@ const subnet2 = new Subnet(vnet, 'Subnet2', {
     example: `const vnet = new VirtualNetwork(stack, 'VNet', {
   addressSpace: ['10.0.0.0/16'], // Array of strings
 });`,
-    suggestion: 'Check the property type definition and ensure your value matches. Use TypeScript for compile-time validation.',
+    suggestion:
+      'Check the property type definition and ensure your value matches. Use TypeScript for compile-time validation.',
     relatedDocs: '/docs/guides/validation-architecture.md#layer-1-compile-time-type-safety',
     severity: ErrorSeverity.ERROR,
   },
@@ -232,7 +236,8 @@ const subnet2 = new Subnet(vnet, 'Subnet2', {
     message: 'Resource {resource} failed schema validation: {details}',
     description: `The generated ARM resource doesn't match Azure's schema requirements. This could be due to missing required fields, invalid values, or incorrect structure.`,
     example: `// Ensure all required fields are provided and match schema`,
-    suggestion: 'Check the Azure ARM schema documentation for the resource type and API version. Ensure all required properties are set.',
+    suggestion:
+      'Check the Azure ARM schema documentation for the resource type and API version. Ensure all required properties are set.',
     relatedDocs: '/docs/guides/validation-architecture.md#layer-5-schema-compliance-synthesis-time',
     severity: ErrorSeverity.ERROR,
   },
@@ -257,10 +262,7 @@ export class ValidationError extends Error {
   public readonly severity: ErrorSeverity;
   public readonly context?: Record<string, string>;
 
-  constructor(
-    errorCode: ErrorCode,
-    context?: Record<string, string>,
-  ) {
+  constructor(errorCode: ErrorCode, context?: Record<string, string>) {
     const errorDef = ErrorCatalog[errorCode];
     const message = interpolate(errorDef.message, context);
 
@@ -286,10 +288,7 @@ export class ValidationError extends Error {
    * Format error for display
    */
   public format(): string {
-    const lines = [
-      `ValidationError [${this.code}]: ${this.title}`,
-      `  ${this.message}`,
-    ];
+    const lines = [`ValidationError [${this.code}]: ${this.title}`, `  ${this.message}`];
 
     if (this.context) {
       lines.push('');
@@ -310,7 +309,7 @@ export class ValidationError extends Error {
     if (this.example) {
       lines.push('');
       lines.push('Example:');
-      this.example.split('\n').forEach(line => {
+      this.example.split('\n').forEach((line) => {
         lines.push(`  ${line}`);
       });
     }
@@ -359,7 +358,7 @@ function interpolate(template: string, context?: Record<string, string>): string
  */
 export function createValidationError(
   code: ErrorCode,
-  context?: Record<string, string>,
+  context?: Record<string, string>
 ): ValidationError {
   return new ValidationError(code, context);
 }
@@ -375,9 +374,7 @@ export function getErrorDefinition(code: ErrorCode): ErrorDefinition {
  * Get all errors in a category
  */
 export function getErrorsByCategory(category: ErrorCategory): ErrorDefinition[] {
-  return Object.values(ErrorCatalog).filter(
-    error => error.category === category
-  );
+  return Object.values(ErrorCatalog).filter((error) => error.category === category);
 }
 
 /**
@@ -385,7 +382,7 @@ export function getErrorsByCategory(category: ErrorCategory): ErrorDefinition[] 
  */
 export function searchErrors(keyword: string): ErrorDefinition[] {
   const lowerKeyword = keyword.toLowerCase();
-  return Object.values(ErrorCatalog).filter(error => {
+  return Object.values(ErrorCatalog).filter((error) => {
     return (
       error.code.toLowerCase().includes(lowerKeyword) ||
       error.title.toLowerCase().includes(lowerKeyword) ||

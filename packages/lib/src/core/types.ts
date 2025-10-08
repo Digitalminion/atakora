@@ -10,13 +10,13 @@ export interface INamingComponent {
 
   /**
    * Title-cased representation suitable for display.
-   * @example "Digital Products"
+   * @example "Digital Minion"
    */
   readonly title: string;
 
   /**
    * Kebab-cased representation suitable for resource names.
-   * @example "digital-products"
+   * @example "digital-minion"
    */
   readonly resourceName: string;
 
@@ -103,8 +103,8 @@ export abstract class NamingComponent implements INamingComponent {
    *
    * @example
    * ```typescript
-   * normalizeToResourceName("Digital Products") // "digital-products"
-   * normalizeToResourceName("colorai") // "colorai"
+   * normalizeToResourceName("Digital Minion") // "digital-minion"
+   * normalizeToResourceName("authr") // "authr"
    * normalizeToResourceName("East US 2") // "east-us-2"
    * ```
    */
@@ -126,8 +126,8 @@ export abstract class NamingComponent implements INamingComponent {
    *
    * @example
    * ```typescript
-   * normalizeToTitle("digital products") // "Digital Products"
-   * normalizeToTitle("colorai") // "Colorai"
+   * normalizeToTitle("Digital Minion") // "Digital Minion"
+   * normalizeToTitle("authr") // "Colorai"
    * normalizeToTitle("east-us-2") // "East-Us-2"
    * ```
    */

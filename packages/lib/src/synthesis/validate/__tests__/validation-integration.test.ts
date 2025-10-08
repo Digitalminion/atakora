@@ -26,8 +26,7 @@ describe('ARM Template Validation Integration', () => {
   describe('Template Structure Validation', () => {
     it('should validate well-formed ARM template', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [],
       };
@@ -47,8 +46,7 @@ describe('ARM Template Validation Integration', () => {
 
     it('should validate template has specific resource type', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -66,8 +64,7 @@ describe('ARM Template Validation Integration', () => {
 
     it('should validate template has resource with specific name', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -226,8 +223,7 @@ describe('ARM Template Validation Integration', () => {
   describe('Deployment Simulation', () => {
     it('should simulate successful deployment with correct dependencies', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -261,8 +257,7 @@ describe('ARM Template Validation Integration', () => {
 
     it('should detect circular dependencies', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {

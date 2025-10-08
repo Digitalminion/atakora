@@ -1,0 +1,17 @@
+{
+  "name": "{{projectName}}",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "synth": "atakora synth",
+    "synth:{{defaultPackage}}": "atakora synth --package {{defaultPackage}}",
+    "deploy": "atakora deploy",
+    "build": "tsc --build"
+  },
+  "devDependencies": {
+    "@atakora/cli": "^1.0.0",
+    "@atakora/lib": "^1.0.0",
+    "typescript": "^5.0.0"
+  }
+}

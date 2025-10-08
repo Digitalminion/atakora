@@ -31,7 +31,7 @@ import type {
  * import { ArmStorageAccount, StorageAccountSkuName, StorageAccountKind } from '@atakora/lib';
  *
  * const storage = new ArmStorageAccount(resourceGroup, 'Storage', {
- *   storageAccountName: 'stgcolorai001',
+ *   storageAccountName: 'stgauthr001',
  *   location: 'eastus',
  *   sku: { name: StorageAccountSkuName.STANDARD_LRS },
  *   kind: StorageAccountKind.STORAGE_V2

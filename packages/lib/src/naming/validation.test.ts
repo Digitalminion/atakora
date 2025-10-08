@@ -215,8 +215,8 @@ describe('naming/validation', () => {
   describe('validateGenerationParams()', () => {
     const validParams = {
       resourceType: 'vnet',
-      organization: 'digital-products',
-      project: 'colorai',
+      organization: 'digital-minion',
+      project: 'authr',
       environment: 'nonprod',
       geography: 'eastus',
       instance: '01',

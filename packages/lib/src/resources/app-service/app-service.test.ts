@@ -29,8 +29,8 @@ describe('resources/app-service/AppService', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
       tags: {
@@ -50,7 +50,7 @@ describe('resources/app-service/AppService', () => {
       // Should auto-generate name with app prefix
       expect(appService.siteName).toMatch(/^app-/);
       expect(appService.siteName).toContain('dp'); // Abbreviated org
-      expect(appService.siteName).toContain('colorai'); // Project
+      expect(appService.siteName).toContain('authr'); // Project
     });
 
     it('should use provided site name when specified', () => {
@@ -589,7 +589,7 @@ describe('resources/app-service/AppService', () => {
   describe('complex scenarios', () => {
     it('should create production-ready App Service with all features', () => {
       const appService = new AppService(resourceGroup, 'ProductionApp', {
-        siteName: 'app-colorai-prod',
+        siteName: 'app-authr-prod',
         serverFarmId: appServicePlan,
         kind: AppServiceKind.APP,
         identity: {
@@ -610,7 +610,7 @@ describe('resources/app-service/AppService', () => {
         detailedErrorLoggingEnabled: true,
         tags: {
           environment: 'production',
-          project: 'colorai',
+          project: 'authr',
         },
       });
 
@@ -622,11 +622,11 @@ describe('resources/app-service/AppService', () => {
         ConnectionStringType.SQL_AZURE
       );
 
-      expect(appService.siteName).toBe('app-colorai-prod');
+      expect(appService.siteName).toBe('app-authr-prod');
       expect(appService.httpsOnly).toBe(true);
       expect(appService.tags).toMatchObject({
         environment: 'production',
-        project: 'colorai',
+        project: 'authr',
       });
     });
 

@@ -21,8 +21,8 @@ describe('resources/storage-account/StorageAccount', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
       tags: {
@@ -38,7 +38,7 @@ describe('resources/storage-account/StorageAccount', () => {
 
       // Should auto-generate name with no hyphens, lowercase only
       expect(storage.storageAccountName).toMatch(/^st[a-z0-9]+$/);
-      expect(storage.storageAccountName).toContain('dpcolorai'); // Abbreviated org + project
+      expect(storage.storageAccountName).toContain('dpauthr'); // Abbreviated org + project
       expect(storage.storageAccountName.length).toBeLessThanOrEqual(24);
       expect(storage.storageAccountName).not.toContain('-'); // No hyphens in storage names
     });

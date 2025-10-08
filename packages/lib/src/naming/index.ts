@@ -20,13 +20,13 @@
  *
  * const vnetName = generator.generateName({
  *   resourceType: 'vnet',
- *   organization: 'digital-products',
- *   project: 'colorai',
+ *   organization: 'digital-minion',
+ *   project: 'authr',
  *   environment: 'nonprod',
  *   geography: 'eastus',
  *   instance: '01'
  * });
- * // Result: "vnet-digital-products-colorai-nonprod-eastus-01"
+ * // Result: "vnet-digital-minion-authr-nonprod-eastus-01"
  * ```
  *
  * @example

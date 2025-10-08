@@ -23,7 +23,7 @@ import type { ArmKeyVaultProps, KeyVaultSku, PublicNetworkAccess, NetworkRuleSet
  * import { ArmKeyVault, KeyVaultSkuName } from '@atakora/lib';
  *
  * const vault = new ArmKeyVault(resourceGroup, 'Vault', {
- *   vaultName: 'kv-colorai-001',
+ *   vaultName: 'kv-authr-001',
  *   location: 'eastus',
  *   tenantId: '12345678-1234-1234-1234-123456789abc',
  *   sku: {

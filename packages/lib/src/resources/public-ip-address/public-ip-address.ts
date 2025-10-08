@@ -276,7 +276,7 @@ export class PublicIpAddress extends Construct implements IPublicIpAddress {
    * @remarks
    * Public IP address names follow the pattern:
    * - pip-{org}-{project}-{purpose}-{env}-{geo}-{instance}
-   * - Example: pip-dp-colorai-app-np-eus-01
+   * - Example: pip-dp-authr-app-np-eus-01
    */
   private resolvePublicIpAddressName(id: string, props?: PublicIpAddressProps): string {
     // If name provided explicitly, use it

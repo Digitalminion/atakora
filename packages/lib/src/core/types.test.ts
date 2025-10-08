@@ -10,35 +10,35 @@ describe('core/types', () => {
   describe('NamingComponent', () => {
     describe('constructor', () => {
       it('should create from simple string value', () => {
-        const component = new TestNamingComponent('digital-products');
-        expect(component.value).toBe('digital-products');
-        expect(component.resourceName).toBe('digital-products');
+        const component = new TestNamingComponent('digital-minion');
+        expect(component.value).toBe('digital-minion');
+        expect(component.resourceName).toBe('digital-minion');
         expect(component.title).toBe('Digital-products'); // Treats hyphenated as single word
       });
 
       it('should create from options object', () => {
         const component = new TestNamingComponent({
-          value: 'digital-products',
+          value: 'digital-minion',
           resourceName: 'dp',
-          title: 'Digital Products',
+          title: 'Digital Minion',
         });
-        expect(component.value).toBe('digital-products');
+        expect(component.value).toBe('digital-minion');
         expect(component.resourceName).toBe('dp');
-        expect(component.title).toBe('Digital Products');
+        expect(component.title).toBe('Digital Minion');
       });
 
       it('should auto-generate resourceName when not provided', () => {
         const component = new TestNamingComponent({
-          value: 'Digital Products',
+          value: 'Digital Minion',
         });
-        expect(component.resourceName).toBe('digital-products');
+        expect(component.resourceName).toBe('digital-minion');
       });
 
       it('should auto-generate title when not provided', () => {
         const component = new TestNamingComponent({
-          value: 'digital products',
+          value: 'Digital Minion',
         });
-        expect(component.title).toBe('Digital Products');
+        expect(component.title).toBe('Digital Minion');
       });
 
       it('should throw error for empty value', () => {
@@ -57,8 +57,8 @@ describe('core/types', () => {
       });
 
       it('should replace spaces with hyphens', () => {
-        const component = new TestNamingComponent('Digital Products');
-        expect(component.resourceName).toBe('digital-products');
+        const component = new TestNamingComponent('Digital Minion');
+        expect(component.resourceName).toBe('digital-minion');
       });
 
       it('should remove special characters', () => {
@@ -83,7 +83,7 @@ describe('core/types', () => {
 
       it('should handle mixed spacing', () => {
         const component = new TestNamingComponent('  Digital   Products  ');
-        expect(component.resourceName).toBe('digital-products');
+        expect(component.resourceName).toBe('digital-minion');
       });
 
       it('should preserve numbers', () => {
@@ -99,40 +99,40 @@ describe('core/types', () => {
 
     describe('normalizeToTitle()', () => {
       it('should capitalize first letter of each word', () => {
-        const component = new TestNamingComponent('digital products');
-        expect(component.title).toBe('Digital Products');
+        const component = new TestNamingComponent('Digital Minion');
+        expect(component.title).toBe('Digital Minion');
       });
 
       it('should handle single words', () => {
-        const component = new TestNamingComponent('colorai');
+        const component = new TestNamingComponent('authr');
         expect(component.title).toBe('Colorai');
       });
 
       it('should handle all uppercase input', () => {
-        const component = new TestNamingComponent('DIGITAL PRODUCTS');
-        expect(component.title).toBe('Digital Products');
+        const component = new TestNamingComponent('Digital Minion');
+        expect(component.title).toBe('Digital Minion');
       });
 
       it('should handle mixed case input', () => {
-        const component = new TestNamingComponent('DiGiTaL pRoDuCtS');
-        expect(component.title).toBe('Digital Products');
+        const component = new TestNamingComponent('Digital Minion');
+        expect(component.title).toBe('Digital Minion');
       });
 
       it('should trim whitespace', () => {
-        const component = new TestNamingComponent('  digital products  ');
-        expect(component.title).toBe('Digital Products');
+        const component = new TestNamingComponent('  Digital Minion  ');
+        expect(component.title).toBe('Digital Minion');
       });
 
       it('should handle multiple spaces', () => {
         const component = new TestNamingComponent('digital    products');
-        expect(component.title).toBe('Digital Products');
+        expect(component.title).toBe('Digital Minion');
       });
     });
 
     describe('toString()', () => {
       it('should return resourceName', () => {
-        const component = new TestNamingComponent('Digital Products');
-        expect(component.toString()).toBe('digital-products');
+        const component = new TestNamingComponent('Digital Minion');
+        expect(component.toString()).toBe('digital-minion');
       });
 
       it('should work with string concatenation', () => {
@@ -144,13 +144,13 @@ describe('core/types', () => {
 
     describe('toJSON()', () => {
       it('should return object with all properties', () => {
-        const component = new TestNamingComponent('Digital Products');
+        const component = new TestNamingComponent('Digital Minion');
         const json = component.toJSON();
 
         expect(json).toEqual({
-          value: 'Digital Products',
-          resourceName: 'digital-products',
-          title: 'Digital Products',
+          value: 'Digital Minion',
+          resourceName: 'digital-minion',
+          title: 'Digital Minion',
         });
       });
 
@@ -167,8 +167,8 @@ describe('core/types', () => {
 
     describe('Edge cases', () => {
       it('should handle numbers in input', () => {
-        const component = new TestNamingComponent('colorai2024');
-        expect(component.resourceName).toBe('colorai2024');
+        const component = new TestNamingComponent('authr2024');
+        expect(component.resourceName).toBe('authr2024');
       });
 
       it('should handle hyphens in input', () => {

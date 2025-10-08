@@ -21,8 +21,8 @@ describe('resources/app-service-plan/AppServicePlan', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
       tags: {
@@ -39,7 +39,7 @@ describe('resources/app-service-plan/AppServicePlan', () => {
       // Should auto-generate name with asp prefix
       expect(plan.planName).toMatch(/^asp-/);
       expect(plan.planName).toContain('dp'); // Abbreviated org
-      expect(plan.planName).toContain('colorai'); // Project
+      expect(plan.planName).toContain('authr'); // Project
     });
 
     it('should use provided plan name when specified', () => {

@@ -225,11 +225,7 @@ export class ArmExpressionValidator extends BaseValidator {
         // Check if subnet has name
         if (!subnet || typeof subnet !== 'object') {
           errors.push(
-            this.createError(
-              `Subnet at index ${i} is invalid`,
-              subnetPath,
-              'INVALID_SUBNET'
-            )
+            this.createError(`Subnet at index ${i} is invalid`, subnetPath, 'INVALID_SUBNET')
           );
           continue;
         }
@@ -262,7 +258,10 @@ export class ArmExpressionValidator extends BaseValidator {
         const subnetProps = subnet.properties as any;
 
         // Validate addressPrefix is present
-        if (typeof subnetProps.addressPrefix !== 'string' || subnetProps.addressPrefix.length === 0) {
+        if (
+          typeof subnetProps.addressPrefix !== 'string' ||
+          subnetProps.addressPrefix.length === 0
+        ) {
           errors.push(
             this.createError(
               `Subnet '${subnet.name}' is missing addressPrefix in properties`,
@@ -453,11 +452,7 @@ export class ArmExpressionValidator extends BaseValidator {
 
     if (!ref.id || typeof ref.id !== 'string') {
       errors.push(
-        this.createError(
-          `Resource reference is missing 'id' property`,
-          path,
-          'MISSING_RESOURCE_ID'
-        )
+        this.createError(`Resource reference is missing 'id' property`, path, 'MISSING_RESOURCE_ID')
       );
       return;
     }

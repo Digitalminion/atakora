@@ -205,16 +205,16 @@ describe('azure/Subscription', () => {
     it('should create fully configured subscription', () => {
       const sub = new Subscription({
         subscriptionId: '12345678-1234-1234-1234-123456789abc',
-        displayName: 'ColorAI NonProd',
+        displayName: 'AuthR NonProd',
         tenantId: '87654321-4321-4321-4321-cba987654321',
         abbreviation: 'nonprod',
       });
 
       expect(sub.subscriptionId).toBe('12345678-1234-1234-1234-123456789abc');
-      expect(sub.displayName).toBe('ColorAI NonProd');
+      expect(sub.displayName).toBe('AuthR NonProd');
       expect(sub.tenantId).toBe('87654321-4321-4321-4321-cba987654321');
       expect(sub.abbreviation).toBe('nonprod');
-      expect(sub.resourceName).toBe('sub-colorai-nonprod');
+      expect(sub.resourceName).toBe('sub-authr-nonprod');
     });
   });
 });

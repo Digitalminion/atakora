@@ -16,11 +16,11 @@
  * @example
  * ```typescript
  * const props: ArmResourceGroupProps = {
- *   resourceGroupName: 'rg-digital-products-colorai-data-nonprod-eastus-01',
+ *   resourceGroupName: 'rg-digital-minion-authr-data-nonprod-eastus-01',
  *   location: 'eastus',
  *   tags: {
  *     environment: 'nonprod',
- *     project: 'colorai'
+ *     project: 'authr'
  *   }
  * };
  * ```
@@ -80,7 +80,7 @@ export interface ResourceGroupProps {
    * @remarks
    * If not provided, will be auto-generated using the stack's naming context:
    * - Format: `rg-{org}-{project}-{purpose}-{env}-{geo}-{instance}`
-   * - Example: `rg-digital-products-colorai-data-nonprod-eus-00`
+   * - Example: `rg-digital-minion-authr-data-nonprod-eus-00`
    *
    * The `purpose` is derived from the construct ID (e.g., 'DataRG' -> 'data').
    */

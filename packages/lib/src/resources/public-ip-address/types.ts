@@ -158,7 +158,7 @@ export interface PublicIpAddressProps {
    * @remarks
    * If not provided, will be auto-generated using the stack's naming context.
    * - Format: `pip-{org}-{project}-{purpose}-{env}-{geo}-{instance}`
-   * - Example: `pip-dp-colorai-app-np-eus-01`
+   * - Example: `pip-dp-authr-app-np-eus-01`
    *
    * The `purpose` is derived from the construct ID.
    */

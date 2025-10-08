@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-The ARM template generation phase has been successfully completed, producing valid JSON templates for both Foundation and ColorAI stacks. However, actual Azure deployment has not yet been executed. This post-mortem covers the pre-deployment validation and architectural review of the generated templates.
+The ARM template generation phase has been successfully completed, producing valid JSON templates for both Foundation and AuthR stacks. However, actual Azure deployment has not yet been executed. This post-mortem covers the pre-deployment validation and architectural review of the generated templates.
 
 ---
 
@@ -18,7 +18,7 @@ The ARM template generation phase has been successfully completed, producing val
 ### Template Generation Phase (SUCCESSFUL)
 
 - **Foundation Stack**: Generated successfully with 36 resources
-- **ColorAI Stack**: Generated successfully with 1 resource
+- **AuthR Stack**: Generated successfully with 1 resource
 - **Manifest**: Properly created with stack metadata
 - **JSON Validation**: Both templates pass JSON syntax validation
 
@@ -42,7 +42,7 @@ The ARM template generation phase has been successfully completed, producing val
 - **Compute**: App Service Plan, App Service
 - **AI Services**: Azure OpenAI, Cognitive Search
 
-#### ColorAI.json (1 resource)
+#### AuthR.json (1 resource)
 
 - Single resource deployment (details to be confirmed)
 

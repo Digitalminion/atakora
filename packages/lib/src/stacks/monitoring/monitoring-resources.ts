@@ -2,7 +2,7 @@
  * Monitoring resource type definitions
  *
  * @remarks
- * This module defines interfaces for monitoring resources used in the ColorAI stack.
+ * This module defines interfaces for monitoring resources used in the AuthR stack.
  *
  * @packageDocumentation
  */
@@ -12,7 +12,7 @@ import type { IActionGroup } from '../../resources/action-group/types';
 import type { IMetricAlert } from '../../resources/metric-alert/types';
 
 /**
- * Complete monitoring infrastructure for ColorAI
+ * Complete monitoring infrastructure for AuthR
  */
 export interface IMonitoringInfrastructure {
   /**
@@ -72,7 +72,7 @@ export enum AlertSeverity {
 }
 
 /**
- * Common alert thresholds for ColorAI monitoring
+ * Common alert thresholds for AuthR monitoring
  */
 export const AlertThresholds = {
   /**

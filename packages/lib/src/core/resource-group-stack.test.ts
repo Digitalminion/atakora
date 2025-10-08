@@ -20,8 +20,8 @@ describe('core/ResourceGroupStack', () => {
 
     const subscription = Subscription.fromId('12345678-1234-1234-1234-123456789abc');
     const geography = Geography.fromValue('eastus');
-    const organization = Organization.fromValue('digital-products');
-    const project = new Project('colorai');
+    const organization = Organization.fromValue('digital-minion');
+    const project = new Project('authr');
     const environment = Environment.fromValue('nonprod');
     const instance = Instance.fromNumber(1);
 
@@ -43,7 +43,7 @@ describe('core/ResourceGroupStack', () => {
     it('should create resource group stack', () => {
       const rgStack = new ResourceGroupStack(subscriptionStack, 'DataStack', {
         resourceGroup: {
-          resourceGroupName: 'rg-digital-products-colorai-data-nonprod-eus-00',
+          resourceGroupName: 'rg-digital-minion-authr-data-nonprod-eus-00',
           location: 'eastus',
         },
       });

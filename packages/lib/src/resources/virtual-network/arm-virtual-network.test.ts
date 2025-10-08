@@ -21,8 +21,8 @@ describe('resources/virtual-network/ArmVirtualNetwork', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
     });
@@ -71,13 +71,13 @@ describe('resources/virtual-network/ArmVirtualNetwork', () => {
         },
         tags: {
           environment: 'nonprod',
-          project: 'colorai',
+          project: 'authr',
         },
       });
 
       expect(vnet.tags).toEqual({
         environment: 'nonprod',
-        project: 'colorai',
+        project: 'authr',
       });
     });
 
@@ -447,9 +447,9 @@ describe('resources/virtual-network/ArmVirtualNetwork', () => {
       });
     });
 
-    it('should support ColorAI VNet pattern', () => {
-      const vnet = new ArmVirtualNetwork(resourceGroup, 'ColorAIVNet', {
-        virtualNetworkName: 'vnet-colorai-nonprod-eastus-01',
+    it('should support AuthR VNet pattern', () => {
+      const vnet = new ArmVirtualNetwork(resourceGroup, 'AuthRVNet', {
+        virtualNetworkName: 'vnet-authr-nonprod-eastus-01',
         location: 'eastus',
         resourceGroupName: 'rg-connectivity',
         addressSpace: {

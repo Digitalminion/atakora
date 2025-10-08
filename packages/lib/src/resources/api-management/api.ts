@@ -25,9 +25,9 @@ import { ApiProtocol, ApiType } from './types';
  * ```typescript
  * const api = new ArmApiManagementApi(apimService, 'BackendAPI', {
  *   apiManagementService: apimService,
- *   apiName: 'colorai-api',
+ *   apiName: 'authr-api',
  *   properties: {
- *     displayName: 'ColorAI Backend API',
+ *     displayName: 'AuthR Backend API',
  *     path: 'api',
  *     serviceUrl: 'https://backend.azurewebsites.net',
  *     protocols: [ApiProtocol.HTTPS]
@@ -228,7 +228,7 @@ export class ArmApiManagementApi extends Resource {
  * ```typescript
  * const api = new ApiManagementApi(apimService, 'BackendAPI', {
  *   apiManagementService: apimService,
- *   displayName: 'ColorAI Backend API',
+ *   displayName: 'AuthR Backend API',
  *   serviceUrl: 'https://backend.azurewebsites.net'
  * });
  * ```

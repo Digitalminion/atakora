@@ -7,7 +7,7 @@ import type {
 
 /**
  * Default prefix patterns for Azure resource types.
- * Based on ColorAI PowerShell implementation and Azure best practices.
+ * Based on AuthR PowerShell implementation and Azure best practices.
  *
  * @see {@link https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations}
  */

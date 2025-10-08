@@ -21,8 +21,8 @@ describe('resources/openai-service/OpenAIService', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
       tags: {
@@ -38,7 +38,7 @@ describe('resources/openai-service/OpenAIService', () => {
 
       // Should auto-generate name with oai prefix
       expect(openai.accountName).toMatch(/^oai-/);
-      expect(openai.accountName).toContain('colorai'); // Project name
+      expect(openai.accountName).toContain('authr'); // Project name
       expect(openai.accountName.length).toBeLessThanOrEqual(64);
       expect(openai.accountName.endsWith('-')).toBe(false); // Should not end with hyphen
     });
@@ -53,15 +53,15 @@ describe('resources/openai-service/OpenAIService', () => {
 
     it('should auto-generate customSubDomainName to match account name', () => {
       const openai = new OpenAIService(resourceGroup, 'GPT', {
-        accountName: 'oai-colorai-test',
+        accountName: 'oai-authr-test',
       });
 
-      expect(openai.customSubDomainName).toBe('oai-colorai-test');
+      expect(openai.customSubDomainName).toBe('oai-authr-test');
     });
 
     it('should use provided customSubDomainName when specified', () => {
       const openai = new OpenAIService(resourceGroup, 'GPT', {
-        accountName: 'oai-colorai-test',
+        accountName: 'oai-authr-test',
         customSubDomainName: 'custom-subdomain',
       });
 
@@ -234,7 +234,7 @@ describe('resources/openai-service/OpenAIService', () => {
       expect(openai.customSubDomainName).toBe(openai.accountName);
     });
 
-    it('should apply ColorAI secure defaults', () => {
+    it('should apply AuthR secure defaults', () => {
       const openai = new OpenAIService(resourceGroup, 'Secure');
 
       const armTemplate = (openai as any).armOpenAIService.toArmTemplate();
@@ -282,11 +282,11 @@ describe('resources/openai-service/OpenAIService', () => {
 
     it('should extract account name from complex resource ID', () => {
       const accountId =
-        '/subscriptions/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/resourceGroups/rg-colorai-data-nonprod-eus-00/providers/Microsoft.CognitiveServices/accounts/oai-colorai-prod-001';
+        '/subscriptions/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/resourceGroups/rg-authr-data-nonprod-eus-00/providers/Microsoft.CognitiveServices/accounts/oai-authr-prod-001';
 
       const openai = OpenAIService.fromAccountId(stack, 'Imported', accountId);
 
-      expect(openai.accountName).toBe('oai-colorai-prod-001');
+      expect(openai.accountName).toBe('oai-authr-prod-001');
     });
   });
 

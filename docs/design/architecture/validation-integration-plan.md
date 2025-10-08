@@ -37,6 +37,7 @@ This document describes how the five validation layers work together to prevent 
 **When It Runs:** TypeScript compilation
 **What It Catches:** Type mismatches, missing required properties, invalid structures
 **Integration Points:**
+
 - Resource classes must return strongly-typed ARM resources from `toArmTemplate()`
 - ResourceTransformer uses type guards to validate transformation output
 - Compilation fails if types don't match
@@ -44,16 +45,18 @@ This document describes how the five validation layers work together to prevent 
 ```typescript
 // Resource must return correct type
 class VirtualNetwork extends Resource {
-  toArmTemplate(): ArmVirtualNetwork {  // Not 'any'
+  toArmTemplate(): ArmVirtualNetwork {
+    // Not 'any'
     return {
       type: 'Microsoft.Network/virtualNetworks',
       apiVersion: '2024-01-01',
       name: this.name,
-      properties: {  // TypeScript ensures this structure
+      properties: {
+        // TypeScript ensures this structure
         addressSpace: {
-          addressPrefixes: this.addressPrefixes
-        }
-      }
+          addressPrefixes: this.addressPrefixes,
+        },
+      },
     };
   }
 }
@@ -64,6 +67,7 @@ class VirtualNetwork extends Resource {
 **When It Runs:** Resource instantiation and method calls
 **What It Catches:** Invalid property values, business logic violations, relationship errors
 **Integration Points:**
+
 - Called from Resource constructor
 - Validates before any transformation occurs
 - Can access parent/child construct relationships
@@ -86,6 +90,7 @@ class Subnet extends Resource {
 **When It Runs:** After transformation to ARM JSON
 **What It Catches:** ARM-specific structure requirements, property wrappers, reference formats
 **Integration Points:**
+
 - Runs in ResourceTransformer after `toArmTemplate()` call
 - Validates the generated ARM JSON structure
 - Uses type guards and structural validators
@@ -114,6 +119,7 @@ class ResourceTransformer {
 **When It Runs:** After all resources are transformed
 **What It Catches:** Dependency cycles, deployment timing issues, service lockdown problems
 **Integration Points:**
+
 - Runs in Synthesizer after all transformations
 - Simulates deployment sequence
 - Validates cross-resource dependencies
@@ -144,6 +150,7 @@ class DeploymentValidator {
 **When It Runs:** Final validation before writing templates
 **What It Catches:** Schema violations, API version mismatches, provider-specific rules
 **Integration Points:**
+
 - Uses Azure Resource Manager schemas
 - Validates complete template structure
 - Final gate before template generation
@@ -198,10 +205,10 @@ Each layer provides specific error information that flows up to the user:
 ```typescript
 interface ValidationError {
   layer: 'type' | 'construct' | 'structure' | 'deployment' | 'schema';
-  code: string;        // e.g., 'ARM001'
-  message: string;     // Human-readable error
-  path: string;        // Location in construct tree
-  suggestion: string;  // How to fix it
+  code: string; // e.g., 'ARM001'
+  message: string; // Human-readable error
+  path: string; // Location in construct tree
+  suggestion: string; // How to fix it
   documentation: string; // Link to docs
 }
 ```
@@ -211,11 +218,13 @@ interface ValidationError {
 ### Fail-Fast vs. Collect-All
 
 **Development Time (Layers 1-2):** Fail-fast
+
 - TypeScript compilation stops on first error
 - Construct validation throws immediately
 - Provides fastest feedback during development
 
 **Synthesis Time (Layers 3-5):** Collect-all within layer, fail-fast between layers
+
 - Each layer collects all errors before reporting
 - If Layer 3 fails, Layers 4-5 don't run
 - Provides comprehensive error report per layer
@@ -250,10 +259,10 @@ class SynthesisValidator {
 
 ```typescript
 enum ValidationLevel {
-  STRICT = 'strict',     // All warnings are errors
-  NORMAL = 'normal',     // Default behavior
-  LENIENT = 'lenient',   // Only critical errors
-  NONE = 'none'          // Skip validation (dangerous!)
+  STRICT = 'strict', // All warnings are errors
+  NORMAL = 'normal', // Default behavior
+  LENIENT = 'lenient', // Only critical errors
+  NONE = 'none', // Skip validation (dangerous!)
 }
 ```
 
@@ -269,7 +278,7 @@ interface ValidationConfig {
     schema: { enabled: boolean; strict: boolean };
   };
   customValidators: Validator[];
-  excludeResources: string[];  // Resource types to skip
+  excludeResources: string[]; // Resource types to skip
 }
 ```
 
@@ -311,9 +320,7 @@ class ParallelValidator {
     const groups = this.groupIndependentResources(resources);
 
     // Validate each group in parallel
-    const results = await Promise.all(
-      groups.map(group => this.validateGroup(group))
-    );
+    const results = await Promise.all(groups.map((group) => this.validateGroup(group)));
 
     return results.flat();
   }
@@ -364,9 +371,12 @@ export interface ValidationHooks {
 ```typescript
 describe('Layer 2: Construct Validation', () => {
   it('validates subnet delegation structure', () => {
-    expect(() => new Subnet(vnet, 'subnet', {
-      delegation: { serviceName: 'service' }  // Missing properties wrapper
-    })).toThrow('Delegation must be wrapped in properties');
+    expect(
+      () =>
+        new Subnet(vnet, 'subnet', {
+          delegation: { serviceName: 'service' }, // Missing properties wrapper
+        })
+    ).toThrow('Delegation must be wrapped in properties');
   });
 });
 ```
@@ -381,7 +391,7 @@ describe('Validation Pipeline Integration', () => {
 
     // This should fail at Layer 3 (structure validation)
     const vnet = new VirtualNetwork(stack, 'vnet', {
-      addressSpace: ['10.0.0.0/16']  // Should be { addressPrefixes: [...] }
+      addressSpace: ['10.0.0.0/16'], // Should be { addressPrefixes: [...] }
     });
 
     const result = await app.synth();
@@ -416,8 +426,8 @@ class ValidationTelemetry {
       layer: result.layer,
       duration: result.duration,
       errorCount: result.errors.length,
-      errorCodes: result.errors.map(e => e.code),
-      resourceType: result.resourceType
+      errorCodes: result.errors.map((e) => e.code),
+      resourceType: result.resourceType,
     });
   }
 }

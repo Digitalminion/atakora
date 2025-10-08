@@ -233,11 +233,7 @@ export const armTemplateMatchers = {
   /**
    * Validates that a function throws a validation error
    */
-  toThrowValidationError(
-    received: () => void,
-    expectedMessage?: string,
-    expectedCode?: string
-  ) {
+  toThrowValidationError(received: () => void, expectedMessage?: string, expectedCode?: string) {
     let thrownError: any;
     try {
       received();
@@ -260,8 +256,7 @@ export const armTemplateMatchers = {
     if (!isValidationError) {
       return {
         pass: false,
-        message: () =>
-          `Expected validation error but got: ${JSON.stringify(thrownError, null, 2)}`,
+        message: () => `Expected validation error but got: ${JSON.stringify(thrownError, null, 2)}`,
       };
     }
 

@@ -29,7 +29,7 @@ import type {
  * import { ArmSearchService, SearchServiceSku, HostingMode } from '@atakora/lib';
  *
  * const search = new ArmSearchService(resourceGroup, 'SearchService', {
- *   serviceName: 'srch-colorai-001',
+ *   serviceName: 'srch-authr-001',
  *   location: 'eastus',
  *   sku: { name: SearchServiceSku.BASIC },
  *   properties: {

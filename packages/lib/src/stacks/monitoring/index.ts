@@ -1,5 +1,5 @@
 /**
- * ColorAI Monitoring Stack exports
+ * AuthR Monitoring Stack exports
  *
  * @packageDocumentation
  */

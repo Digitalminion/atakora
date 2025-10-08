@@ -33,8 +33,8 @@ describe('resources/api-management/ApiManagement', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
       tags: {
@@ -47,19 +47,19 @@ describe('resources/api-management/ApiManagement', () => {
   describe('ApiManagement L2 construct', () => {
     it('should create API Management service with auto-generated name', () => {
       const apim = new ApiManagement(resourceGroup, 'Gateway', {
-        publisherName: 'Avient ColorAI',
+        publisherName: 'Avient AuthR',
         publisherEmail: 'admin@avient.com',
       });
 
       expect(apim.serviceName).toMatch(/^apim-/);
-      expect(apim.serviceName).toContain('dp-colorai');
+      expect(apim.serviceName).toContain('dp-authr');
       expect(apim.location).toBe('eastus');
     });
 
     it('should use provided service name when specified', () => {
       const apim = new ApiManagement(resourceGroup, 'Gateway', {
         serviceName: 'apim-custom',
-        publisherName: 'Avient ColorAI',
+        publisherName: 'Avient AuthR',
         publisherEmail: 'admin@avient.com',
       });
 
@@ -68,7 +68,7 @@ describe('resources/api-management/ApiManagement', () => {
 
     it('should default SKU to Developer for non-prod', () => {
       const apim = new ApiManagement(resourceGroup, 'Gateway', {
-        publisherName: 'Avient ColorAI',
+        publisherName: 'Avient AuthR',
         publisherEmail: 'admin@avient.com',
       });
 
@@ -78,7 +78,7 @@ describe('resources/api-management/ApiManagement', () => {
 
     it('should use provided SKU when specified', () => {
       const apim = new ApiManagement(resourceGroup, 'Gateway', {
-        publisherName: 'Avient ColorAI',
+        publisherName: 'Avient AuthR',
         publisherEmail: 'admin@avient.com',
         sku: ApiManagementSkuName.PREMIUM,
       });
@@ -89,7 +89,7 @@ describe('resources/api-management/ApiManagement', () => {
 
     it('should merge tags with parent', () => {
       const apim = new ApiManagement(resourceGroup, 'Gateway', {
-        publisherName: 'Avient ColorAI',
+        publisherName: 'Avient AuthR',
         publisherEmail: 'admin@avient.com',
         tags: {
           purpose: 'api-gateway',
@@ -105,7 +105,7 @@ describe('resources/api-management/ApiManagement', () => {
     it('should compute gateway URL correctly', () => {
       const apim = new ApiManagement(resourceGroup, 'Gateway', {
         serviceName: 'apim-test',
-        publisherName: 'Avient ColorAI',
+        publisherName: 'Avient AuthR',
         publisherEmail: 'admin@avient.com',
       });
 
@@ -119,7 +119,7 @@ describe('resources/api-management/ApiManagement', () => {
 
     beforeEach(() => {
       apim = new ApiManagement(resourceGroup, 'Gateway', {
-        publisherName: 'Avient ColorAI',
+        publisherName: 'Avient AuthR',
         publisherEmail: 'admin@avient.com',
       });
     });
@@ -127,7 +127,7 @@ describe('resources/api-management/ApiManagement', () => {
     it('should create API with sanitized name', () => {
       const api = new ApiManagementApi(apim, 'BackendAPI', {
         apiManagementService: apim,
-        displayName: 'ColorAI Backend API',
+        displayName: 'AuthR Backend API',
         serviceUrl: 'https://backend.azurewebsites.net',
       });
 
@@ -138,7 +138,7 @@ describe('resources/api-management/ApiManagement', () => {
     it('should use provided path when specified', () => {
       const api = new ApiManagementApi(apim, 'BackendAPI', {
         apiManagementService: apim,
-        displayName: 'ColorAI Backend API',
+        displayName: 'AuthR Backend API',
         serviceUrl: 'https://backend.azurewebsites.net',
         path: 'api/v1',
       });
@@ -149,7 +149,7 @@ describe('resources/api-management/ApiManagement', () => {
     it('should default to HTTPS protocol', () => {
       const api = new ApiManagementApi(apim, 'BackendAPI', {
         apiManagementService: apim,
-        displayName: 'ColorAI Backend API',
+        displayName: 'AuthR Backend API',
         serviceUrl: 'https://backend.azurewebsites.net',
       });
 
@@ -163,24 +163,24 @@ describe('resources/api-management/ApiManagement', () => {
 
     beforeEach(() => {
       apim = new ApiManagement(resourceGroup, 'Gateway', {
-        publisherName: 'Avient ColorAI',
+        publisherName: 'Avient AuthR',
         publisherEmail: 'admin@avient.com',
       });
     });
 
     it('should create product with sanitized name', () => {
-      const product = new ApiManagementProduct(apim, 'ColorAIProduct', {
+      const product = new ApiManagementProduct(apim, 'AuthRProduct', {
         apiManagementService: apim,
-        displayName: 'ColorAI Product',
+        displayName: 'AuthR Product',
       });
 
       expect(product.productName).toMatch(/^[a-z0-9-]+$/);
     });
 
     it('should default to published state', () => {
-      const product = new ApiManagementProduct(apim, 'ColorAIProduct', {
+      const product = new ApiManagementProduct(apim, 'AuthRProduct', {
         apiManagementService: apim,
-        displayName: 'ColorAI Product',
+        displayName: 'AuthR Product',
       });
 
       // State is set internally in L1 construct
@@ -188,10 +188,10 @@ describe('resources/api-management/ApiManagement', () => {
     });
 
     it('should use provided product name when specified', () => {
-      const product = new ApiManagementProduct(apim, 'ColorAIProduct', {
+      const product = new ApiManagementProduct(apim, 'AuthRProduct', {
         apiManagementService: apim,
         productName: 'custom-product',
-        displayName: 'ColorAI Product',
+        displayName: 'AuthR Product',
       });
 
       expect(product.productName).toBe('custom-product');
@@ -204,19 +204,19 @@ describe('resources/api-management/ApiManagement', () => {
 
     beforeEach(() => {
       apim = new ApiManagement(resourceGroup, 'Gateway', {
-        publisherName: 'Avient ColorAI',
+        publisherName: 'Avient AuthR',
         publisherEmail: 'admin@avient.com',
       });
-      product = new ApiManagementProduct(apim, 'ColorAIProduct', {
+      product = new ApiManagementProduct(apim, 'AuthRProduct', {
         apiManagementService: apim,
-        displayName: 'ColorAI Product',
+        displayName: 'AuthR Product',
       });
     });
 
     it('should create subscription with product scope', () => {
-      const subscription = new ApiManagementSubscription(apim, 'ColorAISubscription', {
+      const subscription = new ApiManagementSubscription(apim, 'AuthRSubscription', {
         apiManagementService: apim,
-        displayName: 'ColorAI Subscription',
+        displayName: 'AuthR Subscription',
         scopeProduct: product,
       });
 
@@ -226,18 +226,18 @@ describe('resources/api-management/ApiManagement', () => {
 
     it('should throw error if no scope provided', () => {
       expect(() => {
-        new ApiManagementSubscription(apim, 'ColorAISubscription', {
+        new ApiManagementSubscription(apim, 'AuthRSubscription', {
           apiManagementService: apim,
-          displayName: 'ColorAI Subscription',
+          displayName: 'AuthR Subscription',
         });
       }).toThrow('Either scopeProduct or scopeApi must be provided');
     });
 
     it('should use provided subscription name when specified', () => {
-      const subscription = new ApiManagementSubscription(apim, 'ColorAISubscription', {
+      const subscription = new ApiManagementSubscription(apim, 'AuthRSubscription', {
         apiManagementService: apim,
         subscriptionName: 'custom-subscription',
-        displayName: 'ColorAI Subscription',
+        displayName: 'AuthR Subscription',
         scopeProduct: product,
       });
 
@@ -251,12 +251,12 @@ describe('resources/api-management/ApiManagement', () => {
 
     beforeEach(() => {
       apim = new ApiManagement(resourceGroup, 'Gateway', {
-        publisherName: 'Avient ColorAI',
+        publisherName: 'Avient AuthR',
         publisherEmail: 'admin@avient.com',
       });
       api = new ApiManagementApi(apim, 'BackendAPI', {
         apiManagementService: apim,
-        displayName: 'ColorAI Backend API',
+        displayName: 'AuthR Backend API',
         serviceUrl: 'https://backend.azurewebsites.net',
       });
     });

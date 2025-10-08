@@ -227,7 +227,7 @@ export class StorageAccount extends Construct implements IStorageAccount {
    * New naming convention for global uniqueness:
    * - Format: sto<project><instance><8-char-hash>
    * - Hash is generated from full resource name to ensure uniqueness
-   * - Example: stocolorai0312ab34cd
+   * - Example: stoauthr0312ab34cd
    */
   private resolveStorageAccountName(id: string, props?: StorageAccountProps): string {
     // If name provided explicitly, use it

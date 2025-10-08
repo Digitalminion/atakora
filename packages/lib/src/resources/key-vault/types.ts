@@ -286,7 +286,7 @@ export interface KeyVaultProps {
   readonly sku?: KeyVaultSkuName;
 
   /**
-   * Enable RBAC authorization (optional - default: true for ColorAI).
+   * Enable RBAC authorization (optional - default: true for AuthR).
    */
   readonly enableRbacAuthorization?: boolean;
 
@@ -306,7 +306,7 @@ export interface KeyVaultProps {
   readonly enablePurgeProtection?: boolean;
 
   /**
-   * Public network access (optional - default: disabled for ColorAI).
+   * Public network access (optional - default: disabled for AuthR).
    */
   readonly publicNetworkAccess?: PublicNetworkAccess;
 

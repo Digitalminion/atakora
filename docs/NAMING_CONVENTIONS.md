@@ -14,7 +14,7 @@
 
 ## Overview
 
-The Azure ARM Priv library uses a consistent, context-aware naming convention system inspired by the ColorAI PowerShell implementation and Azure Cloud Adoption Framework best practices.
+The Azure ARM Priv library uses a consistent, context-aware naming convention system inspired by the AuthR PowerShell implementation and Azure Cloud Adoption Framework best practices.
 
 ### Key Principles
 
@@ -45,7 +45,7 @@ The Azure ARM Priv library uses a consistent, context-aware naming convention sy
 | ------------- | ------------------------------ | ------------- | -------- |
 | `prefix`      | Resource type abbreviation     | `rg`, `vnet`  | Yes      |
 | `org`         | Organization identifier        | `dp`, `fin`   | Yes      |
-| `project`     | Project name                   | `colorai`     | Yes      |
+| `project`     | Project name                   | `authr`       | Yes      |
 | `resource_id` | Unique resource identifier     | `networkrg`   | Yes      |
 | `environment` | Environment type               | `nonprod`     | Yes      |
 | `geography`   | Azure region abbreviation      | `eus`, `wus2` | Yes      |
@@ -60,11 +60,11 @@ Can be customized per stack or globally (see [Configuration](#configuration)).
 ### Example Names
 
 ```
-rg-dp-colorai-networkrg-nonprod-eus-00        # Resource Group
-vnet-dp-colorai-mainvnet-nonprod-eus-00       # Virtual Network
-stdpcoloraiappstoragnonprodeus01              # Storage Account (no hyphens)
-kv-dp-colorai-appkv-nonprod-eus-00            # Key Vault
-st-dp-colorai-datastorage-production-wus2-02  # Storage (production, west us 2, instance 2)
+rg-dp-authr-networkrg-nonprod-eus-00        # Resource Group
+vnet-dp-authr-mainvnet-nonprod-eus-00       # Virtual Network
+stdpauthrappstoragnonprodeus01              # Storage Account (no hyphens)
+kv-dp-authr-appkv-nonprod-eus-00            # Key Vault
+st-dp-authr-datastorage-production-wus2-02  # Storage (production, west us 2, instance 2)
 ```
 
 ## Context Components
@@ -76,7 +76,7 @@ Identifies the organizational unit or business area.
 **Format**: Short abbreviation (2-4 characters)
 **Examples**:
 
-- `dp` - Digital Products
+- `dp` - Digital Minion
 - `fin` - Finance
 - `hr` - Human Resources
 - `it` - Information Technology
@@ -96,7 +96,7 @@ The project or application name.
 **Format**: Lowercase, alphanumeric (no special characters)
 **Examples**:
 
-- `colorai`
+- `authr`
 - `salesportal`
 - `inventory`
 
@@ -105,7 +105,7 @@ The project or application name.
 ```typescript
 import { Project } from '@atakora/lib';
 
-const project = new Project('colorai');
+const project = new Project('authr');
 ```
 
 ### Environment
@@ -198,65 +198,65 @@ Based on [Azure Cloud Adoption Framework abbreviations](https://learn.microsoft.
 
 #### Core Infrastructure
 
-| Resource Type          | Prefix     | Example                                    |
-| ---------------------- | ---------- | ------------------------------------------ |
-| Resource Group         | `rg`       | `rg-dp-colorai-networkrg-nonprod-eus-00`   |
-| Landing Zone RG        | `rg-lz`    | `rg-lz-dp-platform-nonprod-eus-00`         |
-| Platform RG            | `rg-pl`    | `rg-pl-dp-shared-nonprod-eus-00`           |
-| Stack                  | `stk`      | `stk-dp-colorai-foundation-nonprod-eus-00` |
-| Virtual Network        | `vnet`     | `vnet-dp-colorai-main-nonprod-eus-00`      |
-| Subnet                 | `snet`     | `snet-dp-colorai-app-nonprod-eus-00`       |
-| Network Security Group | `nsg`      | `nsg-dp-colorai-app-nonprod-eus-00`        |
-| Public IP              | `pip`      | `pip-dp-colorai-gateway-nonprod-eus-00`    |
-| Private Endpoint       | `pe`       | `pe-dp-colorai-storage-nonprod-eus-00`     |
-| Private Link Service   | `pls`      | `pls-dp-colorai-app-nonprod-eus-00`        |
-| DNS Zone Link          | `dns-link` | `dns-link-dp-colorai-vnet-nonprod-eus-00`  |
+| Resource Type          | Prefix     | Example                                  |
+| ---------------------- | ---------- | ---------------------------------------- |
+| Resource Group         | `rg`       | `rg-dp-authr-networkrg-nonprod-eus-00`   |
+| Landing Zone RG        | `rg-lz`    | `rg-lz-dp-platform-nonprod-eus-00`       |
+| Platform RG            | `rg-pl`    | `rg-pl-dp-shared-nonprod-eus-00`         |
+| Stack                  | `stk`      | `stk-dp-authr-foundation-nonprod-eus-00` |
+| Virtual Network        | `vnet`     | `vnet-dp-authr-main-nonprod-eus-00`      |
+| Subnet                 | `snet`     | `snet-dp-authr-app-nonprod-eus-00`       |
+| Network Security Group | `nsg`      | `nsg-dp-authr-app-nonprod-eus-00`        |
+| Public IP              | `pip`      | `pip-dp-authr-gateway-nonprod-eus-00`    |
+| Private Endpoint       | `pe`       | `pe-dp-authr-storage-nonprod-eus-00`     |
+| Private Link Service   | `pls`      | `pls-dp-authr-app-nonprod-eus-00`        |
+| DNS Zone Link          | `dns-link` | `dns-link-dp-authr-vnet-nonprod-eus-00`  |
 
 #### Compute Services
 
-| Resource Type       | Prefix | Example                              |
-| ------------------- | ------ | ------------------------------------ |
-| App Service         | `app`  | `app-dp-colorai-api-nonprod-eus-00`  |
-| App Service Plan    | `asp`  | `asp-dp-colorai-main-nonprod-eus-00` |
-| Application Gateway | `agw`  | `agw-dp-colorai-main-nonprod-eus-00` |
-| WAF Policy          | `waf`  | `waf-dp-colorai-main-nonprod-eus-00` |
+| Resource Type       | Prefix | Example                            |
+| ------------------- | ------ | ---------------------------------- |
+| App Service         | `app`  | `app-dp-authr-api-nonprod-eus-00`  |
+| App Service Plan    | `asp`  | `asp-dp-authr-main-nonprod-eus-00` |
+| Application Gateway | `agw`  | `agw-dp-authr-main-nonprod-eus-00` |
+| WAF Policy          | `waf`  | `waf-dp-authr-main-nonprod-eus-00` |
 
 #### Data Services
 
-| Resource Type   | Prefix   | Example                                      |
-| --------------- | -------- | -------------------------------------------- |
-| Storage Account | `st`     | `stdpcoloraiappstoragnonprodeus01` (special) |
-| Key Vault       | `kv`     | `kv-dp-colorai-app-nonprod-eus-00`           |
-| Cosmos DB       | `cosmos` | `cosmos-dp-colorai-main-nonprod-eus-00`      |
-| Azure Search    | `srch`   | `srch-dp-colorai-main-nonprod-eus-00`        |
+| Resource Type   | Prefix   | Example                                    |
+| --------------- | -------- | ------------------------------------------ |
+| Storage Account | `st`     | `stdpauthrappstoragnonprodeus01` (special) |
+| Key Vault       | `kv`     | `kv-dp-authr-app-nonprod-eus-00`           |
+| Cosmos DB       | `cosmos` | `cosmos-dp-authr-main-nonprod-eus-00`      |
+| Azure Search    | `srch`   | `srch-dp-authr-main-nonprod-eus-00`        |
 
 #### AI Services
 
-| Resource Type | Prefix | Example                              |
-| ------------- | ------ | ------------------------------------ |
-| OpenAI        | `oai`  | `oai-dp-colorai-main-nonprod-eus-00` |
+| Resource Type | Prefix | Example                            |
+| ------------- | ------ | ---------------------------------- |
+| OpenAI        | `oai`  | `oai-dp-authr-main-nonprod-eus-00` |
 
 #### API Services
 
-| Resource Type  | Prefix | Example                               |
-| -------------- | ------ | ------------------------------------- |
-| API Management | `apim` | `apim-dp-colorai-main-nonprod-eus-00` |
+| Resource Type  | Prefix | Example                             |
+| -------------- | ------ | ----------------------------------- |
+| API Management | `apim` | `apim-dp-authr-main-nonprod-eus-00` |
 
 #### Monitoring Services
 
-| Resource Type           | Prefix  | Example                                   |
-| ----------------------- | ------- | ----------------------------------------- |
-| Log Analytics Workspace | `law`   | `law-dp-colorai-main-nonprod-eus-00`      |
-| Application Insights    | `ai`    | `ai-dp-colorai-main-nonprod-eus-00`       |
-| Action Group            | `ag`    | `ag-dp-colorai-alerts-nonprod-eus-00`     |
-| Dashboard               | `dash`  | `dash-dp-colorai-overview-nonprod-eus-00` |
-| Alert                   | `alert` | `alert-dp-colorai-cpu-nonprod-eus-00`     |
+| Resource Type           | Prefix  | Example                                 |
+| ----------------------- | ------- | --------------------------------------- |
+| Log Analytics Workspace | `law`   | `law-dp-authr-main-nonprod-eus-00`      |
+| Application Insights    | `ai`    | `ai-dp-authr-main-nonprod-eus-00`       |
+| Action Group            | `ag`    | `ag-dp-authr-alerts-nonprod-eus-00`     |
+| Dashboard               | `dash`  | `dash-dp-authr-overview-nonprod-eus-00` |
+| Alert                   | `alert` | `alert-dp-authr-cpu-nonprod-eus-00`     |
 
 #### External Services
 
-| Resource Type | Prefix | Example                             |
-| ------------- | ------ | ----------------------------------- |
-| Snowflake     | `sf`   | `sf-dp-colorai-main-nonprod-eus-00` |
+| Resource Type | Prefix | Example                           |
+| ------------- | ------ | --------------------------------- |
+| Snowflake     | `sf`   | `sf-dp-authr-main-nonprod-eus-00` |
 
 ### Customizing Prefixes
 
@@ -267,7 +267,7 @@ const stack = new SubscriptionStack(app, 'MyStack', {
   subscription: Subscription.fromId('...'),
   geography: Geography.fromValue('eastus'),
   organization: Organization.fromValue('dp'),
-  project: new Project('colorai'),
+  project: new Project('authr'),
   environment: Environment.fromValue('nonprod'),
   instance: Instance.fromNumber(1),
   namingConventions: {
@@ -301,8 +301,8 @@ Storage accounts have unique Azure naming constraints:
 **Example**:
 
 ```
-Standard pattern:    st-dp-colorai-appstorage-nonprod-eus-00
-Storage account:     stdpcoloraiappstoragnonprodeus01
+Standard pattern:    st-dp-authr-appstorage-nonprod-eus-00
+Storage account:     stdpauthrappstoragnonprodeus01
 ```
 
 **Code**:
@@ -310,7 +310,7 @@ Storage account:     stdpcoloraiappstoragnonprodeus01
 ```typescript
 new StorageAccount(rg, 'AppStorage', {
   // Name automatically formatted for storage account rules
-  accountName: 'appstorage', // Becomes 'stdpcoloraiappstoragnonprodeus01'
+  accountName: 'appstorage', // Becomes 'stdpauthrappstoragnonprodeus01'
 });
 ```
 
@@ -335,7 +335,7 @@ Key Vaults have specific naming requirements:
 
 ```typescript
 new KeyVault(rg, 'AppKeyVault', {
-  // Name: kv-dp-colorai-appkeyvault-nonprod-eus-00
+  // Name: kv-dp-authr-appkeyvault-nonprod-eus-00
 });
 ```
 
@@ -353,7 +353,7 @@ Resource groups have generous length limits (90 characters) and fewer restrictio
 
 ```typescript
 new ResourceGroup(stack, 'NetworkRG', {
-  // Name: rg-dp-colorai-networkrg-nonprod-eus-00
+  // Name: rg-dp-authr-networkrg-nonprod-eus-00
 });
 ```
 
@@ -389,7 +389,7 @@ const stack = new SubscriptionStack(app, 'MyStack', {
   subscription: Subscription.fromId('...'),
   geography: Geography.fromValue('eastus'),
   organization: Organization.fromValue('dp'),
-  project: new Project('colorai'),
+  project: new Project('authr'),
   environment: Environment.fromValue('nonprod'),
   instance: Instance.fromNumber(1),
   namingConventions: {
@@ -438,7 +438,7 @@ The naming system validates:
 ```
 Error: Resource name exceeds maximum length
   Resource Type: Microsoft.Storage/storageAccounts
-  Generated Name: stdpcoloraiverylongnamethatexceedslimitnonprodeus01
+  Generated Name: stdpauthrverylongnamethatexceedslimitnonprodeus01
   Actual Length: 56
   Maximum Length: 24
   Suggestion: Shorten the resource ID or use a shorter project name
@@ -457,13 +457,13 @@ const stack = new SubscriptionStack(app, 'Foundation', {
   subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
   geography: Geography.fromValue('eastus'),
   organization: Organization.fromValue('dp'),
-  project: new Project('colorai'),
+  project: new Project('authr'),
   environment: Environment.fromValue('nonprod'),
   instance: Instance.fromNumber(1),
 });
 
 const rg = new ResourceGroup(stack, 'NetworkRG');
-// Generated name: rg-dp-colorai-networkrg-nonprod-eus-00
+// Generated name: rg-dp-authr-networkrg-nonprod-eus-00
 ```
 
 ### Multi-Region Deployment
@@ -474,26 +474,26 @@ const eastStack = new SubscriptionStack(app, 'EastStack', {
   subscription: Subscription.fromId('...'),
   geography: Geography.fromValue('eastus'),
   organization: Organization.fromValue('dp'),
-  project: new Project('colorai'),
+  project: new Project('authr'),
   environment: Environment.fromValue('production'),
   instance: Instance.fromNumber(1),
 });
 
 const eastRG = new ResourceGroup(eastStack, 'NetworkRG');
-// Generated name: rg-dp-colorai-networkrg-production-eus-01
+// Generated name: rg-dp-authr-networkrg-production-eus-01
 
 // West US - Instance 2
 const westStack = new SubscriptionStack(app, 'WestStack', {
   subscription: Subscription.fromId('...'),
   geography: Geography.fromValue('westus2'),
   organization: Organization.fromValue('dp'),
-  project: new Project('colorai'),
+  project: new Project('authr'),
   environment: Environment.fromValue('production'),
   instance: Instance.fromNumber(2),
 });
 
 const westRG = new ResourceGroup(westStack, 'NetworkRG');
-// Generated name: rg-dp-colorai-networkrg-production-wus2-02
+// Generated name: rg-dp-authr-networkrg-production-wus2-02
 ```
 
 ### Complex Infrastructure
@@ -503,37 +503,37 @@ const stack = new SubscriptionStack(app, 'Infrastructure', {
   subscription: Subscription.fromId('...'),
   geography: Geography.fromValue('eastus'),
   organization: Organization.fromValue('dp'),
-  project: new Project('colorai'),
+  project: new Project('authr'),
   environment: Environment.fromValue('nonprod'),
   instance: Instance.fromNumber(1),
 });
 
-// Resource Group: rg-dp-colorai-networkrg-nonprod-eus-00
+// Resource Group: rg-dp-authr-networkrg-nonprod-eus-00
 const networkRG = new ResourceGroup(stack, 'NetworkRG');
 
-// Virtual Network: vnet-dp-colorai-mainvnet-nonprod-eus-00
+// Virtual Network: vnet-dp-authr-mainvnet-nonprod-eus-00
 const vnet = new VirtualNetwork(networkRG, 'MainVNet', {
   addressSpace: '10.0.0.0/16',
 });
 
-// Subnet: snet-dp-colorai-appsubnet-nonprod-eus-00
+// Subnet: snet-dp-authr-appsubnet-nonprod-eus-00
 const appSubnet = new Subnet(vnet, 'AppSubnet', {
   addressPrefix: '10.0.1.0/24',
 });
 
-// NSG: nsg-dp-colorai-appnsg-nonprod-eus-00
+// NSG: nsg-dp-authr-appnsg-nonprod-eus-00
 const appNSG = new NetworkSecurityGroup(networkRG, 'AppNSG');
 
-// Resource Group: rg-dp-colorai-datarg-nonprod-eus-00
+// Resource Group: rg-dp-authr-datarg-nonprod-eus-00
 const dataRG = new ResourceGroup(stack, 'DataRG');
 
-// Storage Account: stdpcoloraiappstoragnonprodeus01
+// Storage Account: stdpauthrappstoragnonprodeus01
 const storage = new StorageAccount(dataRG, 'AppStorage');
 
-// Key Vault: kv-dp-colorai-appkv-nonprod-eus-00
+// Key Vault: kv-dp-authr-appkv-nonprod-eus-00
 const keyVault = new KeyVault(dataRG, 'AppKV');
 
-// Cosmos DB: cosmos-dp-colorai-maindb-nonprod-eus-00
+// Cosmos DB: cosmos-dp-authr-maindb-nonprod-eus-00
 const cosmosDB = new CosmosDB(dataRG, 'MainDB');
 ```
 

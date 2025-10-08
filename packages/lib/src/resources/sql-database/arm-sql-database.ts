@@ -23,7 +23,7 @@ import type { ArmSqlDatabaseProps, DatabaseSku } from './types';
  * import { ArmSqlDatabase, DatabaseSkuTier } from '@atakora/lib';
  *
  * const database = new ArmSqlDatabase(resourceGroup, 'Database', {
- *   serverName: 'sql-colorai-001',
+ *   serverName: 'sql-authr-001',
  *   databaseName: 'mydb',
  *   location: 'eastus',
  *   sku: {

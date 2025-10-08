@@ -1,0 +1,20 @@
+import { AzureApp, SubscriptionStack } from '@atakora/lib';
+
+const app = new AzureApp({
+  organization: '{{organization}}',
+  project: '{{project}}',
+});
+
+const foundation = new SubscriptionStack(app, 'Foundation', {
+  subscriptionId: process.env.AZURE_SUBSCRIPTION_ID!,
+  environment: 'nonprod',
+  instance: 1,
+});
+
+// Add your infrastructure here
+// Example:
+// const rg = new ResourceGroup(foundation, 'Platform', {
+//   tags: { purpose: 'infrastructure' }
+// });
+
+app.synth();

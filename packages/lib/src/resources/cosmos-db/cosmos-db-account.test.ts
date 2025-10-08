@@ -25,11 +25,11 @@ describe('CosmosDbAccount', () => {
 
     it('should use provided database account name', () => {
       const account = new CosmosDbAccount(mockScope, 'TestAccount', {
-        databaseAccountName: 'cosmos-colorai-001',
+        databaseAccountName: 'cosmos-authr-001',
         location: 'eastus',
       });
 
-      expect(account.databaseAccountName).toBe('cosmos-colorai-001');
+      expect(account.databaseAccountName).toBe('cosmos-authr-001');
     });
 
     it('should auto-generate database account name if not provided', () => {

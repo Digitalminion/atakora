@@ -40,7 +40,7 @@ describe('ArmCosmosDbAccount', () => {
 
     it('should create resource ID correctly', () => {
       const account = new ArmCosmosDbAccount(mockScope, 'TestAccount', {
-        databaseAccountName: 'cosmos-colorai-001',
+        databaseAccountName: 'cosmos-authr-001',
         location: 'eastus',
         databaseAccountOfferType: DatabaseAccountOfferType.STANDARD,
         locations: [
@@ -52,7 +52,7 @@ describe('ArmCosmosDbAccount', () => {
       });
 
       expect(account.resourceId).toBe(
-        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-colorai-001'
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-authr-001'
       );
       expect(account.accountId).toBe(account.resourceId);
     });

@@ -11,7 +11,6 @@ const path = require('path');
 const packages = [
   { name: 'lib', src: 'dist/lib', dest: 'packages/lib/dist' },
   { name: 'cli', src: 'dist/cli', dest: 'packages/cli/dist' },
-  { name: 'color', src: 'dist/color', dest: 'packages/color/dist' },
 ];
 
 /**

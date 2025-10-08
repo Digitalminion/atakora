@@ -41,21 +41,21 @@ describe('naming/scoped-naming', () => {
         const name = generateScopedName({
           scope: DeploymentScope.ManagementGroup,
           resourceType: 'mg',
-          organization: 'digital-products',
+          organization: 'digital-minion',
         });
 
-        expect(name).toContain('digital-products');
+        expect(name).toContain('digital-minion');
       });
 
       it('should generate management group name with purpose', () => {
         const name = generateScopedName({
           scope: DeploymentScope.ManagementGroup,
           resourceType: 'mg',
-          organization: 'digital-products',
+          organization: 'digital-minion',
           purpose: 'platform',
         });
 
-        expect(name).toContain('digital-products');
+        expect(name).toContain('digital-minion');
         expect(name).toContain('platform');
       });
 
@@ -73,7 +73,7 @@ describe('naming/scoped-naming', () => {
           generateScopedName({
             scope: DeploymentScope.ManagementGroup,
             resourceType: 'mg',
-            organization: 'digital-products',
+            organization: 'digital-minion',
           });
         }).not.toThrow();
       });
@@ -83,8 +83,8 @@ describe('naming/scoped-naming', () => {
       const baseParams = {
         scope: DeploymentScope.Subscription,
         resourceType: 'rg',
-        organization: 'digital-products',
-        project: 'colorai',
+        organization: 'digital-minion',
+        project: 'authr',
         environment: 'nonprod',
         geography: 'eastus',
         instance: '01',
@@ -93,8 +93,8 @@ describe('naming/scoped-naming', () => {
       it('should generate full subscription-scoped name', () => {
         const name = generateScopedName(baseParams);
 
-        expect(name).toContain('digital-products');
-        expect(name).toContain('colorai');
+        expect(name).toContain('digital-minion');
+        expect(name).toContain('authr');
         expect(name).toContain('nonprod');
         expect(name).toContain('eastus');
         expect(name).toContain('01');
@@ -107,8 +107,8 @@ describe('naming/scoped-naming', () => {
         });
 
         expect(name).toContain('data');
-        expect(name).toContain('digital-products');
-        expect(name).toContain('colorai');
+        expect(name).toContain('digital-minion');
+        expect(name).toContain('authr');
       });
 
       it('should require all naming components for subscription scope', () => {
@@ -116,8 +116,8 @@ describe('naming/scoped-naming', () => {
           generateScopedName({
             scope: DeploymentScope.Subscription,
             resourceType: 'rg',
-            organization: 'digital-products',
-            project: 'colorai',
+            organization: 'digital-minion',
+            project: 'authr',
             // Missing: environment, geography, instance
           });
         }).toThrow();
@@ -174,7 +174,7 @@ describe('naming/scoped-naming', () => {
         scope: DeploymentScope.ResourceGroup,
         resourceType: 'storage',
         organization: 'dp',
-        project: 'colorai',
+        project: 'authr',
         environment: 'nonprod',
         geography: 'eus',
         instance: '01',
@@ -184,7 +184,7 @@ describe('naming/scoped-naming', () => {
         const name = generateScopedName(baseParams);
 
         expect(name).toContain('dp');
-        expect(name).toContain('colorai');
+        expect(name).toContain('authr');
         expect(name).toContain('nonprod');
         expect(name).toContain('eus');
         expect(name).toContain('01');
@@ -251,7 +251,7 @@ describe('naming/scoped-naming', () => {
           scope: DeploymentScope.Subscription,
           resourceType: 'rg',
           organization: 'dp',
-          project: 'colorai',
+          project: 'authr',
           environment: 'nonprod',
           geography: 'eus',
           instance: '01',
@@ -269,7 +269,7 @@ describe('naming/scoped-naming', () => {
             scope: DeploymentScope.Subscription,
             resourceType: 'rg',
             organization: 'dp',
-            project: 'colorai',
+            project: 'authr',
             environment: 'nonprod',
             geography: 'eus',
             instance: '01',
@@ -291,7 +291,7 @@ describe('naming/scoped-naming', () => {
             scope: DeploymentScope.Subscription,
             resourceType: 'rg',
             organization: 'dp',
-            project: 'colorai',
+            project: 'authr',
             environment: 'nonprod',
             geography: 'eus',
             instance: '01',
@@ -346,7 +346,7 @@ describe('naming/scoped-naming', () => {
         const result = validateScopedParams({
           scope: DeploymentScope.ManagementGroup,
           resourceType: 'mg',
-          organization: 'digital-products',
+          organization: 'digital-minion',
         });
 
         expect(result.isValid).toBe(true);
@@ -367,7 +367,7 @@ describe('naming/scoped-naming', () => {
         const result = validateScopedParams({
           scope: DeploymentScope.ManagementGroup,
           resourceType: 'mg',
-          organization: 'digital-products',
+          organization: 'digital-minion',
         });
 
         expect(result.isValid).toBe(true);
@@ -378,8 +378,8 @@ describe('naming/scoped-naming', () => {
       const validParams = {
         scope: DeploymentScope.Subscription,
         resourceType: 'rg',
-        organization: 'digital-products',
-        project: 'colorai',
+        organization: 'digital-minion',
+        project: 'authr',
         environment: 'nonprod',
         geography: 'eastus',
         instance: '01',
@@ -457,7 +457,7 @@ describe('naming/scoped-naming', () => {
         scope: DeploymentScope.ResourceGroup,
         resourceType: 'storage',
         organization: 'dp',
-        project: 'colorai',
+        project: 'authr',
         environment: 'nonprod',
         geography: 'eus',
         instance: '01',

@@ -21,8 +21,8 @@ describe('resources/sql-database/SqlServer', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
     });
@@ -212,11 +212,11 @@ describe('resources/sql-database/SqlServer', () => {
 
     it('should parse server name from complex resource ID', () => {
       const serverId =
-        '/subscriptions/abc-def-ghi/resourceGroups/rg-prod-001/providers/Microsoft.Sql/servers/sql-colorai-prod-001';
+        '/subscriptions/abc-def-ghi/resourceGroups/rg-prod-001/providers/Microsoft.Sql/servers/sql-authr-prod-001';
 
       const sqlServer = SqlServer.fromServerId(resourceGroup, 'ImportedServer', serverId);
 
-      expect(sqlServer.serverName).toBe('sql-colorai-prod-001');
+      expect(sqlServer.serverName).toBe('sql-authr-prod-001');
     });
 
     it('should return unknown location for imported server', () => {

@@ -21,7 +21,7 @@ import type {
  * - Auto-generates custom subdomain name to match account name (required for OpenAI)
  * - Defaults location to parent resource group's location
  * - Merges tags with parent tags
- * - ColorAI secure defaults: S0 SKU, public network disabled, network ACLs deny all
+ * - AuthR secure defaults: S0 SKU, public network disabled, network ACLs deny all
  *
  * **ARM Resource Type**: `Microsoft.CognitiveServices/accounts`
  * **API Version**: `2023-05-01`
@@ -40,7 +40,7 @@ import type {
  * With custom properties:
  * ```typescript
  * const openai = new OpenAIService(resourceGroup, 'AI', {
- *   accountName: 'oai-colorai-custom',
+ *   accountName: 'oai-authr-custom',
  *   publicNetworkAccess: PublicNetworkAccess.ENABLED,
  *   tags: { purpose: 'ml-inference' }
  * });
@@ -104,7 +104,7 @@ export class OpenAIService extends Construct implements IOpenAIService {
    * @example
    * ```typescript
    * const openai = new OpenAIService(resourceGroup, 'GPT', {
-   *   accountName: 'oai-colorai-gpt',
+   *   accountName: 'oai-authr-gpt',
    *   publicNetworkAccess: PublicNetworkAccess.ENABLED
    * });
    * ```
@@ -276,7 +276,7 @@ export class OpenAIService extends Construct implements IOpenAIService {
    * New naming convention for global uniqueness:
    * - Format: oai-<project>-<instance>-<8-char-hash>
    * - Hash is generated from full resource name to ensure uniqueness
-   * - Example: oai-colorai-03-a1b2c3d4
+   * - Example: oai-authr-03-a1b2c3d4
    */
   private resolveAccountName(id: string, props?: OpenAIServiceProps): string {
     // If name provided explicitly, use it

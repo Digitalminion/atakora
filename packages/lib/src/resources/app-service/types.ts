@@ -285,7 +285,7 @@ export interface SiteConfig {
  * @example
  * ```typescript
  * const props: ArmAppServiceProps = {
- *   siteName: 'app-colorai-001',
+ *   siteName: 'app-authr-001',
  *   location: 'eastus',
  *   serverFarmId: '/subscriptions/.../serverfarms/asp-001',
  *   kind: AppServiceKind.APP,
@@ -415,7 +415,7 @@ export interface AppServiceProps {
    * @remarks
    * If not provided, will be auto-generated using the stack's naming context.
    * - Format: `app-{org}-{project}-{purpose}-{env}-{geo}-{instance}`
-   * - Example: `app-dp-colorai-api-np-eus-01`
+   * - Example: `app-dp-authr-api-np-eus-01`
    *
    * The `purpose` is derived from the construct ID.
    */

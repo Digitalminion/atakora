@@ -34,7 +34,7 @@ import type {
  * import { ApiManagement } from '@atakora/lib';
  *
  * const apim = new ApiManagement(resourceGroup, 'Gateway', {
- *   publisherName: 'Avient ColorAI',
+ *   publisherName: 'Avient AuthR',
  *   publisherEmail: 'admin@avient.com'
  * });
  * ```
@@ -43,7 +43,7 @@ import type {
  * With VNet integration:
  * ```typescript
  * const apim = new ApiManagement(resourceGroup, 'Gateway', {
- *   publisherName: 'Avient ColorAI',
+ *   publisherName: 'Avient AuthR',
  *   publisherEmail: 'admin@avient.com',
  *   sku: ApiManagementSkuName.PREMIUM,
  *   capacity: 2,
@@ -56,7 +56,7 @@ import type {
  * Multi-region Premium deployment:
  * ```typescript
  * const apim = new ApiManagement(resourceGroup, 'Gateway', {
- *   publisherName: 'Avient ColorAI',
+ *   publisherName: 'Avient AuthR',
  *   publisherEmail: 'admin@avient.com',
  *   sku: ApiManagementSkuName.PREMIUM,
  *   capacity: 2,
@@ -138,7 +138,7 @@ export class ApiManagement extends Construct implements IApiManagement {
    * @example
    * ```typescript
    * const apim = new ApiManagement(resourceGroup, 'Gateway', {
-   *   publisherName: 'Avient ColorAI',
+   *   publisherName: 'Avient AuthR',
    *   publisherEmail: 'admin@avient.com',
    *   sku: ApiManagementSkuName.PREMIUM,
    *   tags: { purpose: 'api-gateway' }

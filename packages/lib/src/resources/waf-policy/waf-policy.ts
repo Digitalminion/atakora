@@ -333,7 +333,7 @@ export class WafPolicy extends Construct implements IWafPolicy {
    * @remarks
    * WAF policy names follow the pattern:
    * - waf-{org}-{project}-{purpose}-{env}-{geo}-{instance}
-   * - Example: waf-dp-colorai-app-np-eus-01
+   * - Example: waf-dp-authr-app-np-eus-01
    */
   private resolvePolicyName(id: string, props?: WafPolicyProps): string {
     // If name provided explicitly, use it

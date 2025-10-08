@@ -31,6 +31,7 @@ Atakora's multi-layer validation prevents this by catching errors progressively:
 **When it runs:** During TypeScript compilation (before any code executes)
 
 **What it validates:**
+
 - Property types match expected structures
 - Required properties are provided
 - Enum values are valid
@@ -57,6 +58,7 @@ const vnet = new VirtualNetwork(stack, 'VNet', {
 **When it runs:** When you create resource constructs in your code
 
 **What it validates:**
+
 - Business logic constraints (CIDR ranges, port numbers, etc.)
 - Resource-specific requirements (subnet within VNet range)
 - Cross-resource dependencies
@@ -88,6 +90,7 @@ const subnet = new Subnet(vnet, 'Subnet', {
 **When it runs:** During template synthesis, before generating ARM JSON
 
 **What it validates:**
+
 - ARM-specific structural requirements
 - Property wrapper correctness (e.g., `properties` object required)
 - Resource reference format (`resourceId()` expressions)
@@ -126,6 +129,7 @@ const subnet = new Subnet(vnet, 'AppSubnet', {
 **When it runs:** During template synthesis, after ARM structure validation
 
 **What it validates:**
+
 - Dependency chains are complete
 - Resource ordering is correct
 - Timing constraints (e.g., no premature network lockdowns)
@@ -164,6 +168,7 @@ const storage = new StorageAccount(stack, 'Storage', {
 **When it runs:** During template synthesis, as final validation
 
 **What it validates:**
+
 - Generated JSON matches Azure ARM schemas
 - API version compatibility
 - Provider-specific requirements
@@ -205,6 +210,7 @@ Here's when each layer executes during your development workflow:
 ```
 
 **Typical Performance:**
+
 - Layers 1-2: Instant to <100ms
 - Layers 3-5: 200-500ms for typical templates (100 resources)
 - **Total validation overhead:** <1 second
@@ -293,6 +299,7 @@ npm run build
 ```
 
 Common fixes:
+
 - Change `addressSpace: 'x.x.x.x/x'` to `addressSpace: ['x.x.x.x/x']`
 - Add required properties identified by TypeScript
 - Fix enum values that don't match type definitions
@@ -306,6 +313,7 @@ npx atakora synth
 ```
 
 Common fixes:
+
 - Wrap delegation in `properties` object
 - Ensure subnet CIDR within VNet range
 - Fix NSG rule priorities
@@ -315,6 +323,7 @@ Common fixes:
 Synthesis will catch ARM structural problems:
 
 Common fixes:
+
 - Use `resourceId()` expressions instead of literal strings
 - Ensure `addressPrefix` is inside `properties` object
 - Add required ARM property wrappers
@@ -324,6 +333,7 @@ Common fixes:
 Address any deployment sequence problems:
 
 Common fixes:
+
 - Set `publicNetworkAccess: 'Enabled'` during deployment
 - Ensure dependency chains are complete
 - Fix resource ordering issues
@@ -517,8 +527,8 @@ For large templates (500+ resources), you can optimize validation:
 ```typescript
 const app = new App({
   validation: {
-    parallel: true,      // Validate resources in parallel
-    cacheResults: true,  // Cache validation results
+    parallel: true, // Validate resources in parallel
+    cacheResults: true, // Cache validation results
   },
 });
 ```

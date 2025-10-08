@@ -10,10 +10,10 @@ import { NamingComponent, type NamingComponentOptions } from '../types';
  * @example
  * Basic usage:
  * ```typescript
- * const project = new Project('colorai');
- * console.log(project.value);        // "colorai"
+ * const project = new Project('authr');
+ * console.log(project.value);        // "authr"
  * console.log(project.title);        // "Colorai"
- * console.log(project.resourceName); // "colorai"
+ * console.log(project.resourceName); // "authr"
  * ```
  *
  * @example
@@ -36,13 +36,13 @@ export class Project extends NamingComponent {
    * @example
    * ```typescript
    * // Simple string
-   * const project1 = new Project('colorai');
+   * const project1 = new Project('authr');
    *
    * // With custom values
    * const project2 = new Project({
-   *   value: 'ColorAI',
-   *   resourceName: 'colorai',
-   *   title: 'ColorAI Platform'
+   *   value: 'AuthR',
+   *   resourceName: 'authr',
+   *   title: 'AuthR Platform'
    * });
    * ```
    */

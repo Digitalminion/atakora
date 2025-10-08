@@ -23,7 +23,7 @@ import type { ArmAppServiceProps, ManagedServiceIdentity, SiteConfig } from './t
  * import { ArmAppService, AppServiceKind, ManagedIdentityType } from '@atakora/lib';
  *
  * const app = new ArmAppService(resourceGroup, 'WebApp', {
- *   siteName: 'app-colorai-001',
+ *   siteName: 'app-authr-001',
  *   location: 'eastus',
  *   serverFarmId: '/subscriptions/.../serverfarms/asp-001',
  *   kind: 'app',

@@ -17,13 +17,13 @@
  * import { ArmApiManagement, ApiManagementSkuName } from '@atakora/lib';
  *
  * const apim = new ArmApiManagement(resourceGroup, 'APIM', {
- *   serviceName: 'apim-colorai-nonprod',
+ *   serviceName: 'apim-authr-nonprod',
  *   location: 'eastus',
  *   sku: {
  *     name: ApiManagementSkuName.DEVELOPER,
  *     capacity: 1
  *   },
- *   publisherName: 'Avient ColorAI',
+ *   publisherName: 'Avient AuthR',
  *   publisherEmail: 'admin@avient.com',
  *   identity: {
  *     type: 'SystemAssigned'
@@ -37,7 +37,7 @@
  * import { ApiManagement } from '@atakora/lib';
  *
  * const apim = new ApiManagement(resourceGroup, 'Gateway', {
- *   publisherName: 'Avient ColorAI',
+ *   publisherName: 'Avient AuthR',
  *   publisherEmail: 'admin@avient.com'
  * });
  * // Auto-generates name, uses secure defaults, disables legacy TLS

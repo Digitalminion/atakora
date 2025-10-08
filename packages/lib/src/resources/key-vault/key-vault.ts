@@ -20,7 +20,7 @@ import type {
  * - Auto-generates Key Vault name following naming conventions
  * - Defaults location to parent resource group's location
  * - Merges tags with parent tags
- * - ColorAI secure defaults: RBAC enabled, soft delete enabled, public network disabled
+ * - AuthR secure defaults: RBAC enabled, soft delete enabled, public network disabled
  * - Environment-aware SKU: premium for prod, standard for nonprod
  *
  * **ARM Resource Type**: `Microsoft.KeyVault/vaults`
@@ -156,7 +156,7 @@ export class KeyVault extends Construct implements IKeyVault {
       tenantId: this.tenantId,
       sku: this.sku,
       properties: {
-        // ColorAI defaults: RBAC enabled (not access policies)
+        // AuthR defaults: RBAC enabled (not access policies)
         enableRbacAuthorization: props?.enableRbacAuthorization ?? true,
         // Soft delete enabled (90 days retention)
         enableSoftDelete: props?.enableSoftDelete ?? true,
@@ -245,7 +245,7 @@ export class KeyVault extends Construct implements IKeyVault {
    * New naming convention for global uniqueness:
    * - Format: kv-<project>-<instance>-<8-char-hash>
    * - Hash is generated from full resource name to ensure uniqueness
-   * - Example: kv-colorai-03-a1b2c3d4
+   * - Example: kv-authr-03-a1b2c3d4
    */
   private resolveVaultName(id: string, props?: KeyVaultProps): string {
     // If name provided explicitly, use it

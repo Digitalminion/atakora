@@ -385,7 +385,10 @@ export class ArmNetworkSecurityGroup extends Resource {
         }
 
         // Validate direction consistency with port ranges
-        if (rule.properties.direction === 'Inbound' && rule.properties.destinationPortRange === '*') {
+        if (
+          rule.properties.direction === 'Inbound' &&
+          rule.properties.destinationPortRange === '*'
+        ) {
           builder.addWarning(
             `Security rule ${rule.name} allows all inbound ports`,
             'Inbound rule with destination port "*" may be overly permissive',

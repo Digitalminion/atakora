@@ -153,15 +153,10 @@ export class Synthesizer {
       const resources = resourcesByStack.get(stackName) || [];
 
       // Run validation pipeline
-      const result = await this.validationPipeline.validate(
-        resources,
-        template,
-        stackName,
-        {
-          strict,
-          level: strict ? ValidationLevel.STRICT : ValidationLevel.NORMAL,
-        }
-      );
+      const result = await this.validationPipeline.validate(resources, template, stackName, {
+        strict,
+        level: strict ? ValidationLevel.STRICT : ValidationLevel.NORMAL,
+      });
 
       allErrors.push(...result.errors);
       allWarnings.push(...result.warnings);

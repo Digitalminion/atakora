@@ -206,7 +206,7 @@ export interface OpenAIServiceProps {
   readonly customSubDomainName?: string;
 
   /**
-   * Public network access (optional - default: Disabled for ColorAI).
+   * Public network access (optional - default: Disabled for AuthR).
    */
   readonly publicNetworkAccess?: PublicNetworkAccess;
 

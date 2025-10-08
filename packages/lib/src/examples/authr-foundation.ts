@@ -1,10 +1,9 @@
 /**
- * Example: ColorAI Foundation Stack
+ * Example: AuthR Foundation Stack
  *
  * @remarks
- * This example demonstrates the ColorAI reference architecture foundation layer.
- * It creates the core infrastructure following the production pattern from
- * avient-colorai-azure-config-nonprod.
+ * This example demonstrates the AuthR reference architecture foundation layer.
+ * It creates the core infrastructure following the production pattern.
  *
  * This example creates:
  * - 5 Resource Groups (foundation, connectivity, data, application, monitoring)
@@ -39,10 +38,10 @@ import {
 } from '../index';
 
 /**
- * Creates the ColorAI foundation infrastructure.
+ * Creates the AuthR foundation infrastructure.
  *
  * @remarks
- * This example follows the ColorAI production architecture:
+ * This example follows the AuthR production architecture:
  *
  * **Resource Groups (5)**:
  * - Foundation: Core networking resources
@@ -68,27 +67,27 @@ import {
  *
  * @example
  * ```typescript
- * import { createColorAIFoundation } from './examples/colorai-foundation';
+ * import { createAuthRFoundation } from './examples/authr-foundation';
  *
- * const app = createColorAIFoundation();
+ * const app = createAuthRFoundation();
  * await app.synth();
  * ```
  */
-export function createColorAIFoundation(): App {
+export function createAuthRFoundation(): App {
   // Initialize the app
   const app = new App();
 
-  // Create foundation stack with ColorAI context
+  // Create foundation stack with AuthR context
   const foundation = new SubscriptionStack(app, 'Foundation', {
     subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
     geography: Geography.fromValue('eastus'),
-    organization: Organization.fromValue('digital-products'),
-    project: new Project('colorai'),
+    organization: Organization.fromValue('digital-minion'),
+    project: new Project('authr'),
     environment: Environment.fromValue('nonprod'),
     instance: Instance.fromNumber(1),
     tags: {
       managed_by: 'atakora',
-      project: 'colorai',
+      project: 'authr',
       environment: 'nonprod',
       cost_center: 'engineering',
     },
@@ -340,7 +339,7 @@ export function createColorAIFoundation(): App {
   // Output Summary
   // ============================================================================
 
-  console.log('ColorAI Foundation Infrastructure Created:');
+  console.log('AuthR Foundation Infrastructure Created:');
   console.log('\nResource Groups (5):');
   console.log(`  ✓ ${foundationRG.resourceGroupName} (networking)`);
   console.log(`  ✓ ${connectivityRG.resourceGroupName} (ingress-gateway)`);
@@ -378,7 +377,7 @@ export function createColorAIFoundation(): App {
  * Main execution (for standalone testing).
  */
 if (require.main === module) {
-  const app = createColorAIFoundation();
+  const app = createAuthRFoundation();
   console.log('\n✓ Foundation stack created successfully');
   console.log('  Run synthesis to generate ARM templates');
 }

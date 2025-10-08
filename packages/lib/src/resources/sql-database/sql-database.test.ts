@@ -23,8 +23,8 @@ describe('resources/sql-database/SqlDatabase', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
     });
@@ -197,12 +197,12 @@ describe('resources/sql-database/SqlDatabase', () => {
 
     it('should parse database name from complex resource ID', () => {
       const databaseId =
-        '/subscriptions/abc-def-ghi/resourceGroups/rg-prod-001/providers/Microsoft.Sql/servers/sql-colorai-prod-001/databases/production-db';
+        '/subscriptions/abc-def-ghi/resourceGroups/rg-prod-001/providers/Microsoft.Sql/servers/sql-authr-prod-001/databases/production-db';
 
       const database = SqlDatabase.fromDatabaseId(sqlServer, 'ImportedDatabase', databaseId);
 
       expect(database.databaseName).toBe('production-db');
-      expect(database.serverName).toBe('sql-colorai-prod-001');
+      expect(database.serverName).toBe('sql-authr-prod-001');
     });
 
     it('should return unknown location for imported database', () => {

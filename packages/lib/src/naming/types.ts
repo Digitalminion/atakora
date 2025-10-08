@@ -160,8 +160,8 @@ export interface NamingConventionConfig {
  * ```typescript
  * const params: ResourceNameParams = {
  *   resourceType: 'vnet',
- *   organization: 'digital-products',
- *   project: 'colorai',
+ *   organization: 'digital-minion',
+ *   project: 'authr',
  *   environment: 'nonprod',
  *   geography: 'eastus',
  *   instance: '01'
@@ -176,12 +176,12 @@ export interface ResourceNameParams {
   readonly resourceType: string;
 
   /**
-   * Organization name (e.g., 'digital-products', 'engineering').
+   * Organization name (e.g., 'digital-minion', 'engineering').
    */
   readonly organization: string;
 
   /**
-   * Project name (e.g., 'colorai', 'analytics').
+   * Project name (e.g., 'authr', 'analytics').
    */
   readonly project: string;
 

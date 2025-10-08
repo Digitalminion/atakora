@@ -249,7 +249,10 @@ export function isValidArmVirtualNetworkProperties(
   }
 
   // addressSpace must have addressPrefixes array
-  if (!Array.isArray(p.addressSpace.addressPrefixes) || p.addressSpace.addressPrefixes.length === 0) {
+  if (
+    !Array.isArray(p.addressSpace.addressPrefixes) ||
+    p.addressSpace.addressPrefixes.length === 0
+  ) {
     return false;
   }
 

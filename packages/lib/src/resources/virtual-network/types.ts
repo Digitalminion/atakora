@@ -117,7 +117,7 @@ export interface InlineSubnetProps {
  * @example
  * ```typescript
  * const props: ArmVirtualNetworkProps = {
- *   virtualNetworkName: 'vnet-digital-products-colorai-nonprod-eastus-01',
+ *   virtualNetworkName: 'vnet-digital-minion-authr-nonprod-eastus-01',
  *   location: 'eastus',
  *   addressSpace: {
  *     addressPrefixes: ['10.0.0.0/16']

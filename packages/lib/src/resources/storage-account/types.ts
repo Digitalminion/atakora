@@ -123,7 +123,7 @@ export interface NetworkAcls {
  * @example
  * ```typescript
  * const props: ArmStorageAccountProps = {
- *   storageAccountName: 'stgcolorai001',
+ *   storageAccountName: 'stgauthr001',
  *   location: 'eastus',
  *   sku: { name: StorageAccountSkuName.STANDARD_LRS },
  *   kind: StorageAccountKind.STORAGE_V2,
@@ -235,7 +235,7 @@ export interface StorageAccountProps {
    * If not provided, will be auto-generated using the stack's naming context.
    * Special handling: no hyphens, lowercase only, max 24 chars.
    * - Format: `st{org}{project}{purpose}{env}{geo}{instance}`
-   * - Example: `stdpcoloraidatanpeus01`
+   * - Example: `stdpauthrdatanpeus01`
    *
    * The `purpose` is derived from the construct ID.
    */
@@ -293,7 +293,7 @@ export interface StorageAccountProps {
    * Public network access setting.
    *
    * @remarks
-   * Defaults to Disabled for ColorAI security pattern.
+   * Defaults to Disabled for AuthR security pattern.
    */
   readonly publicNetworkAccess?: PublicNetworkAccess;
 

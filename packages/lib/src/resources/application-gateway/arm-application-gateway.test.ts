@@ -102,8 +102,8 @@ describe('resources/application-gateway/ArmApplicationGateway', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
     });
@@ -151,14 +151,14 @@ describe('resources/application-gateway/ArmApplicationGateway', () => {
       const props = createValidProps();
       props.tags = {
         environment: 'nonprod',
-        project: 'colorai',
+        project: 'authr',
       };
 
       const appgw = new ArmApplicationGateway(resourceGroup, 'AppGw', props);
 
       expect(appgw.tags).toEqual({
         environment: 'nonprod',
-        project: 'colorai',
+        project: 'authr',
       });
     });
 

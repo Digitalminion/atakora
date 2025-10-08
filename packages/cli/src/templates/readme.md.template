@@ -1,0 +1,33 @@
+# {{project}}
+
+Azure infrastructure for {{organization}}.
+
+## Getting Started
+
+Install dependencies:
+```bash
+npm install
+```
+
+Synthesize ARM templates:
+```bash
+npm run synth
+```
+
+Templates will be generated in `.atakora/arm.out/{{defaultPackage}}/`
+
+## Structure
+
+- `packages/{{defaultPackage}}/` - Infrastructure code
+- `.atakora/manifest.json` - Project configuration
+- `.atakora/arm.out/` - Generated ARM templates
+
+## Adding Packages
+
+```bash
+npx atakora add frontend
+```
+
+## Deployment
+
+[Add deployment instructions]

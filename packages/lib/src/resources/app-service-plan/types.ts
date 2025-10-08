@@ -89,7 +89,7 @@ export interface AppServicePlanSku {
  * @example
  * ```typescript
  * const props: ArmAppServicePlanProps = {
- *   planName: 'asp-colorai-001',
+ *   planName: 'asp-authr-001',
  *   location: 'eastus',
  *   sku: {
  *     name: AppServicePlanSkuName.B1,
@@ -181,7 +181,7 @@ export interface AppServicePlanProps {
    * @remarks
    * If not provided, will be auto-generated using the stack's naming context.
    * - Format: `asp-{org}-{project}-{purpose}-{env}-{geo}-{instance}`
-   * - Example: `asp-dp-colorai-api-np-eus-01`
+   * - Example: `asp-dp-authr-api-np-eus-01`
    *
    * The `purpose` is derived from the construct ID.
    */

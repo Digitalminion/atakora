@@ -29,13 +29,13 @@ import type {
  * import { ArmOpenAIService, CognitiveServicesSku } from '@atakora/lib';
  *
  * const openai = new ArmOpenAIService(resourceGroup, 'OpenAI', {
- *   accountName: 'oai-colorai-001',
+ *   accountName: 'oai-authr-001',
  *   location: 'eastus',
  *   sku: {
  *     name: CognitiveServicesSku.S0
  *   },
  *   properties: {
- *     customSubDomainName: 'oai-colorai-001'
+ *     customSubDomainName: 'oai-authr-001'
  *   }
  * });
  * ```

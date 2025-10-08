@@ -378,11 +378,15 @@ export class ArmSubnet extends Resource {
       const nsgId = armTemplate.properties.networkSecurityGroup.id;
 
       // Check if it's a literal string (wrong) vs ARM expression (correct)
-      if (typeof nsgId === 'string' && !nsgId.startsWith('[') && nsgId.includes('/networkSecurityGroups/')) {
+      if (
+        typeof nsgId === 'string' &&
+        !nsgId.startsWith('[') &&
+        nsgId.includes('/networkSecurityGroups/')
+      ) {
         builder.addWarning(
           'NSG reference may be using literal ID instead of ARM expression',
           `NSG ID: ${nsgId}`,
-          'Consider using ARM resourceId() expression: [resourceId(\'Microsoft.Network/networkSecurityGroups\', \'nsg-name\')]',
+          "Consider using ARM resourceId() expression: [resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-name')]",
           'armTemplate.properties.networkSecurityGroup.id'
         );
       }

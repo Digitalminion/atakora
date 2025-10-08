@@ -23,11 +23,11 @@ import type { ArmResourceGroupProps } from './types';
  * import { ArmResourceGroup } from '@atakora/lib';
  *
  * const rg = new ArmResourceGroup(stack, 'DataRG', {
- *   resourceGroupName: 'rg-digital-products-colorai-data-nonprod-eastus-01',
+ *   resourceGroupName: 'rg-digital-minion-authr-data-nonprod-eastus-01',
  *   location: 'eastus',
  *   tags: {
  *     environment: 'nonprod',
- *     project: 'colorai'
+ *     project: 'authr'
  *   }
  * });
  * ```

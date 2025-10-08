@@ -86,7 +86,8 @@ export class NetworkResourceTransformer {
    */
   private transformSingleSubnet(subnet: InlineSubnetInput): ArmSubnet {
     // Extract name and other properties
-    const { name, addressPrefix, delegations, networkSecurityGroup, serviceEndpoints, ...rest } = subnet;
+    const { name, addressPrefix, delegations, networkSecurityGroup, serviceEndpoints, ...rest } =
+      subnet;
 
     // Validate required fields
     if (!name || typeof name !== 'string') {
@@ -144,11 +145,15 @@ export class NetworkResourceTransformer {
     }
 
     if ('privateEndpointNetworkPolicies' in rest) {
-      properties.privateEndpointNetworkPolicies = rest.privateEndpointNetworkPolicies as 'Enabled' | 'Disabled';
+      properties.privateEndpointNetworkPolicies = rest.privateEndpointNetworkPolicies as
+        | 'Enabled'
+        | 'Disabled';
     }
 
     if ('privateLinkServiceNetworkPolicies' in rest) {
-      properties.privateLinkServiceNetworkPolicies = rest.privateLinkServiceNetworkPolicies as 'Enabled' | 'Disabled';
+      properties.privateLinkServiceNetworkPolicies = rest.privateLinkServiceNetworkPolicies as
+        | 'Enabled'
+        | 'Disabled';
     }
 
     return {
@@ -184,7 +189,11 @@ export class NetworkResourceTransformer {
         serviceName = delegation.serviceName;
       }
       // Or if it's in properties wrapper (already ARM format)
-      else if ('properties' in delegation && delegation.properties && typeof delegation.properties === 'object') {
+      else if (
+        'properties' in delegation &&
+        delegation.properties &&
+        typeof delegation.properties === 'object'
+      ) {
         const props = delegation.properties as any;
         if ('serviceName' in props && typeof props.serviceName === 'string') {
           serviceName = props.serviceName;
@@ -284,7 +293,9 @@ export class NetworkResourceTransformer {
   /**
    * Transform virtual network properties
    */
-  transformVirtualNetworkProperties(input: VirtualNetworkPropertiesInput): ArmVirtualNetworkProperties {
+  transformVirtualNetworkProperties(
+    input: VirtualNetworkPropertiesInput
+  ): ArmVirtualNetworkProperties {
     const properties: ArmVirtualNetworkProperties = {
       addressSpace: {
         addressPrefixes: input.addressSpace.addressPrefixes,

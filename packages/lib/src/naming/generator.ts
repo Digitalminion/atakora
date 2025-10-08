@@ -25,13 +25,13 @@ import { generateScopedName, type ScopedResourceNameParams } from './scoped-nami
  *
  * const vnetName = generator.generateName({
  *   resourceType: 'vnet',
- *   organization: 'digital-products',
- *   project: 'colorai',
+ *   organization: 'digital-minion',
+ *   project: 'authr',
  *   environment: 'nonprod',
  *   geography: 'eastus',
  *   instance: '01'
  * });
- * // Result: "vnet-digital-products-colorai-nonprod-eastus-01"
+ * // Result: "vnet-digital-minion-authr-nonprod-eastus-01"
  * ```
  *
  * @example
@@ -53,12 +53,12 @@ import { generateScopedName, type ScopedResourceNameParams } from './scoped-nami
  * const storageName = generator.generateName({
  *   resourceType: 'storage',
  *   organization: 'dp',
- *   project: 'colorai',
+ *   project: 'authr',
  *   environment: 'nonprod',
  *   geography: 'eus',
  *   instance: '01'
  * });
- * // Result: "stdpcolorainonprodeus01" (no hyphens, lowercase, max 24 chars)
+ * // Result: "stdpauthrnonprodeus01" (no hyphens, lowercase, max 24 chars)
  * ```
  */
 export class ResourceNameGenerator {
@@ -68,7 +68,7 @@ export class ResourceNameGenerator {
    * Creates a new ResourceNameGenerator instance.
    *
    * @param config - Optional custom naming convention configuration.
-   *                 If not provided, uses default conventions from ColorAI implementation.
+   *                 If not provided, uses default conventions from AuthR implementation.
    *
    * @example
    * ```typescript
@@ -105,8 +105,8 @@ export class ResourceNameGenerator {
    * // Basic resource name
    * const name = generator.generateName({
    *   resourceType: 'vnet',
-   *   organization: 'digital-products',
-   *   project: 'colorai',
+   *   organization: 'digital-minion',
+   *   project: 'authr',
    *   environment: 'nonprod',
    *   geography: 'eastus',
    *   instance: '01'
@@ -115,8 +115,8 @@ export class ResourceNameGenerator {
    * // With purpose
    * const subnetName = generator.generateName({
    *   resourceType: 'subnet',
-   *   organization: 'digital-products',
-   *   project: 'colorai',
+   *   organization: 'digital-minion',
+   *   project: 'authr',
    *   purpose: 'data',
    *   environment: 'nonprod',
    *   geography: 'eastus',
@@ -355,14 +355,14 @@ export class ResourceNameGenerator {
    * const rgName = generator.generateForScope({
    *   scope: DeploymentScope.Subscription,
    *   resourceType: 'rg',
-   *   organization: 'digital-products',
-   *   project: 'colorai',
+   *   organization: 'digital-minion',
+   *   project: 'authr',
    *   purpose: 'data',
    *   environment: 'nonprod',
    *   geography: 'eastus',
    *   instance: '01'
    * });
-   * // Result: "rg-digital-products-colorai-data-nonprod-eastus-01"
+   * // Result: "rg-digital-minion-authr-data-nonprod-eastus-01"
    * ```
    *
    * @example
@@ -371,10 +371,10 @@ export class ResourceNameGenerator {
    * const mgName = generator.generateForScope({
    *   scope: DeploymentScope.ManagementGroup,
    *   resourceType: 'mg',
-   *   organization: 'digital-products',
+   *   organization: 'digital-minion',
    *   purpose: 'platform'
    * });
-   * // Result: "mg-digital-products-platform"
+   * // Result: "mg-digital-minion-platform"
    * ```
    */
   public generateForScope(params: ScopedResourceNameParams): string {

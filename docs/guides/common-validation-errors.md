@@ -35,6 +35,7 @@ These errors occur when the generated ARM template structure doesn't match Azure
 ### ARM001: Invalid Delegation Structure
 
 **Error Message:**
+
 ```
 ValidationError [ARM001]: Delegation structure requires properties wrapper
   at: MyStack/VNet/AppSubnet/delegation
@@ -57,6 +58,7 @@ This is an ARM-specific requirement that doesn't exist in other cloud providers,
 Wrap your delegation's `serviceName` in a `properties` object:
 
 **Before (Incorrect):**
+
 ```typescript
 const subnet = new Subnet(vnet, 'AppSubnet', {
   addressPrefix: '10.0.1.0/24',
@@ -67,6 +69,7 @@ const subnet = new Subnet(vnet, 'AppSubnet', {
 ```
 
 **After (Correct):**
+
 ```typescript
 const subnet = new Subnet(vnet, 'AppSubnet', {
   addressPrefix: '10.0.1.0/24',
@@ -110,6 +113,7 @@ The correct structure produces this ARM JSON:
 ### ARM002: Subnet Address Prefix Incorrect
 
 **Error Message:**
+
 ```
 ValidationError [ARM002]: Subnet addressPrefix must be inside properties object
   at: MyStack/VNet/AppSubnet
@@ -130,6 +134,7 @@ This typically occurs when using older code or when the subnet properties haven'
 Ensure `addressPrefix` is properly nested in the subnet properties:
 
 **Before (Incorrect):**
+
 ```typescript
 // This is usually an internal transformation issue, but if you're
 // manually constructing ARM templates or using raw props:
@@ -143,6 +148,7 @@ Ensure `addressPrefix` is properly nested in the subnet properties:
 ```
 
 **After (Correct):**
+
 ```typescript
 const subnet = new Subnet(vnet, 'MySubnet', {
   addressPrefix: '10.0.1.0/24', // ✅ Atakora handles nesting
@@ -164,6 +170,7 @@ If you're using Atakora's `Subnet` construct and still seeing this error, it's l
 #### Azure Deployment Error
 
 If you see this error during Azure deployment:
+
 ```
 Code: NoAddressPrefixOrPoolProvided
 Message: Subnet 'MySubnet' does not have address prefix or pool provided
@@ -176,6 +183,7 @@ This indicates the `addressPrefix` wasn't found at the expected location in your
 ### ARM003: Invalid Resource Reference
 
 **Error Message:**
+
 ```
 ValidationError [ARM003]: Resource reference must use ARM expression syntax
   at: MyStack/AppSubnet/networkSecurityGroup
@@ -192,6 +200,7 @@ Resource references in ARM templates must use ARM expression syntax (`[resourceI
 ARM templates use a specific expression language for resource references. Literal strings don't establish proper dependencies, and ARM won't be able to resolve the resource correctly during deployment.
 
 This often happens when:
+
 - Copying resource IDs from Azure Portal
 - Using hardcoded strings from documentation
 - Trying to reference existing resources incorrectly
@@ -201,6 +210,7 @@ This often happens when:
 Use ARM expression syntax for resource references:
 
 **Before (Incorrect):**
+
 ```typescript
 const subnet = new Subnet(vnet, 'AppSubnet', {
   addressPrefix: '10.0.1.0/24',
@@ -214,6 +224,7 @@ const subnet = new Subnet(vnet, 'AppSubnet', {
 **After (Correct):**
 
 For resources in the same template:
+
 ```typescript
 const nsg = new NetworkSecurityGroup(stack, 'MyNSG', {
   // ... NSG configuration
@@ -228,6 +239,7 @@ const subnet = new Subnet(vnet, 'AppSubnet', {
 ```
 
 For existing resources:
+
 ```typescript
 import { ResourceReference } from '@atakora/lib';
 
@@ -255,9 +267,7 @@ Correct references use ARM expressions:
       "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'MyNSG')]"
     }
   },
-  "dependsOn": [
-    "[resourceId('Microsoft.Network/networkSecurityGroups', 'MyNSG')]"
-  ]
+  "dependsOn": ["[resourceId('Microsoft.Network/networkSecurityGroups', 'MyNSG')]"]
 }
 ```
 
@@ -270,6 +280,7 @@ These errors occur when resource configurations prevent Azure from provisioning 
 ### ARM004: Network Access Lockdown
 
 **Error Message:**
+
 ```
 ValidationError [ARM004]: Network access locked down before deployment
   resource: MyStack/Storage
@@ -286,6 +297,7 @@ You've configured a service (like Storage Account, Key Vault, or Cosmos DB) with
 Azure Resource Manager needs network access to create and configure resources. When you set `publicNetworkAccess: 'Disabled'` in the deployment template, ARM can't complete the provisioning process, causing the deployment to timeout or fail.
 
 This is a chicken-and-egg problem:
+
 - You want the resource locked down for security
 - But ARM needs access to create it
 - The resource doesn't exist yet to lock down
@@ -369,6 +381,7 @@ These errors relate to network configuration and CIDR ranges.
 ### NET001: Subnet CIDR Outside VNet Range
 
 **Error Message:**
+
 ```
 ValidationError [NET001]: Subnet CIDR not within VNet range
   at: MyStack/VNet/AppSubnet
@@ -384,6 +397,7 @@ You've configured a subnet with an `addressPrefix` (CIDR range) that falls outsi
 #### Why It Happened
 
 This usually happens when:
+
 - Copy-pasting subnet configurations between different VNets
 - Using default examples without updating CIDR ranges
 - Misunderstanding CIDR notation
@@ -393,6 +407,7 @@ This usually happens when:
 Ensure the subnet CIDR is within the VNet range:
 
 **Before (Incorrect):**
+
 ```typescript
 const vnet = new VirtualNetwork(stack, 'VNet', {
   addressSpace: ['10.0.0.0/16'], // VNet: 10.0.0.0 - 10.0.255.255
@@ -404,6 +419,7 @@ const subnet = new Subnet(vnet, 'AppSubnet', {
 ```
 
 **After (Correct):**
+
 ```typescript
 const vnet = new VirtualNetwork(stack, 'VNet', {
   addressSpace: ['10.0.0.0/16'], // VNet: 10.0.0.0 - 10.0.255.255
@@ -430,6 +446,7 @@ VNet: 10.0.0.0/16
 ### NET002: Overlapping Subnet Address Spaces
 
 **Error Message:**
+
 ```
 ValidationError [NET002]: Overlapping subnet address spaces
   subnet1: MyStack/VNet/Subnet1 (10.0.1.0/24)
@@ -444,6 +461,7 @@ You've defined two subnets with overlapping CIDR ranges. Each subnet must have a
 #### Why It Happened
 
 This typically occurs when:
+
 - Reusing subnet configurations
 - Incorrectly calculating CIDR ranges
 - Not accounting for all subnets in the VNet
@@ -453,6 +471,7 @@ This typically occurs when:
 Ensure each subnet has a unique address range:
 
 **Before (Incorrect):**
+
 ```typescript
 const subnet1 = new Subnet(vnet, 'Subnet1', {
   addressPrefix: '10.0.1.0/24', // 10.0.1.0 - 10.0.1.255
@@ -465,6 +484,7 @@ const subnet2 = new Subnet(vnet, 'Subnet2', {
 ```
 
 **After (Correct):**
+
 ```typescript
 const subnet1 = new Subnet(vnet, 'Subnet1', {
   addressPrefix: '10.0.1.0/24', // 10.0.1.0 - 10.0.1.255
@@ -485,10 +505,10 @@ const VNetCIDR = '10.0.0.0/16';
 
 // /24 subnets (256 addresses each)
 const subnets = {
-  gateway: '10.0.0.0/24',    // .0 - .255
-  app: '10.0.1.0/24',        // .0 - .255
-  data: '10.0.2.0/24',       // .0 - .255
-  private: '10.0.3.0/24',    // .0 - .255
+  gateway: '10.0.0.0/24', // .0 - .255
+  app: '10.0.1.0/24', // .0 - .255
+  data: '10.0.2.0/24', // .0 - .255
+  private: '10.0.3.0/24', // .0 - .255
   // ... up to 10.0.255.0/24
 };
 ```
@@ -502,6 +522,7 @@ These errors relate to security configurations like Network Security Groups.
 ### SEC001: NSG Rule Priority Conflict
 
 **Error Message:**
+
 ```
 ValidationError [SEC001]: NSG rule priority conflict
   rule1: AllowHTTPS (priority: 100)
@@ -516,6 +537,7 @@ You've configured two or more NSG rules with the same priority value. Each secur
 #### Why It Happened
 
 This typically occurs when:
+
 - Copy-pasting rule configurations
 - Not tracking priority assignments
 - Using default priority values
@@ -525,6 +547,7 @@ This typically occurs when:
 Assign unique priorities to each rule:
 
 **Before (Incorrect):**
+
 ```typescript
 const nsg = new NetworkSecurityGroup(stack, 'AppNSG', {
   securityRules: [
@@ -553,6 +576,7 @@ const nsg = new NetworkSecurityGroup(stack, 'AppNSG', {
 ```
 
 **After (Correct):**
+
 ```typescript
 const nsg = new NetworkSecurityGroup(stack, 'AppNSG', {
   securityRules: [
@@ -606,6 +630,7 @@ const securityRules = [
 ```
 
 **Priority rules:**
+
 - Lower numbers = higher priority (processed first)
 - Range: 100-4096
 - Leave gaps (10-100) between rules for future additions

@@ -22,11 +22,11 @@ import { ProductState } from './types';
  *
  * @example
  * ```typescript
- * const product = new ArmApiManagementProduct(apimService, 'ColorAIProduct', {
+ * const product = new ArmApiManagementProduct(apimService, 'AuthRProduct', {
  *   apiManagementService: apimService,
- *   productName: 'colorai-product',
+ *   productName: 'authr-product',
  *   properties: {
- *     displayName: 'ColorAI Product',
+ *     displayName: 'AuthR Product',
  *     subscriptionRequired: true,
  *     approvalRequired: false,
  *     state: ProductState.PUBLISHED
@@ -187,10 +187,10 @@ export class ArmApiManagementProduct extends Resource {
  *
  * @example
  * ```typescript
- * const product = new ApiManagementProduct(apimService, 'ColorAIProduct', {
+ * const product = new ApiManagementProduct(apimService, 'AuthRProduct', {
  *   apiManagementService: apimService,
- *   displayName: 'ColorAI Product',
- *   description: 'Product for ColorAI API access'
+ *   displayName: 'AuthR Product',
+ *   description: 'Product for AuthR API access'
  * });
  * ```
  */

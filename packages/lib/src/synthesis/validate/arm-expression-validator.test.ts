@@ -16,8 +16,7 @@ describe('ArmExpressionValidator', () => {
   describe('Valid Templates', () => {
     it('should validate a simple valid template', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -42,8 +41,7 @@ describe('ArmExpressionValidator', () => {
 
     it('should validate VNet with inline subnets with correct structure', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -76,8 +74,7 @@ describe('ArmExpressionValidator', () => {
 
     it('should validate subnet with correct delegation structure', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -118,8 +115,7 @@ describe('ArmExpressionValidator', () => {
 
     it('should validate subnet with NSG reference using resourceId expression', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -155,8 +151,7 @@ describe('ArmExpressionValidator', () => {
 
     it('should validate dependencies with resourceId expressions', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -187,8 +182,7 @@ describe('ArmExpressionValidator', () => {
   describe('Invalid Subnet Structure', () => {
     it('should error when subnet is missing properties wrapper', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -223,8 +217,7 @@ describe('ArmExpressionValidator', () => {
 
     it('should error when delegation is missing properties wrapper', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -270,8 +263,7 @@ describe('ArmExpressionValidator', () => {
   describe('Invalid NSG References', () => {
     it('should error when NSG reference uses literal resource ID', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -311,8 +303,7 @@ describe('ArmExpressionValidator', () => {
 
     it('should error when NSG reference is not an ARM expression', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -353,8 +344,7 @@ describe('ArmExpressionValidator', () => {
   describe('Invalid Dependencies', () => {
     it('should error when dependency uses literal resource ID', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -385,8 +375,7 @@ describe('ArmExpressionValidator', () => {
 
     it('should error when dependency is missing brackets around ARM expression', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -417,8 +406,7 @@ describe('ArmExpressionValidator', () => {
   describe('Network Security Group Validation', () => {
     it('should error when security rule is missing properties wrapper', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -455,8 +443,7 @@ describe('ArmExpressionValidator', () => {
   describe('Storage Account Validation', () => {
     it('should error when virtual network rule uses literal resource ID', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -495,8 +482,7 @@ describe('ArmExpressionValidator', () => {
   describe('Output Validation', () => {
     it('should error when output is missing brackets around ARM expression', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [],
         outputs: {
@@ -520,8 +506,7 @@ describe('ArmExpressionValidator', () => {
   describe('Property Validation', () => {
     it('should error when nested property is missing brackets around ARM expression', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -551,8 +536,7 @@ describe('ArmExpressionValidator', () => {
 
     it('should warn when property uses literal resource ID', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -582,8 +566,7 @@ describe('ArmExpressionValidator', () => {
   describe('Complex Scenarios', () => {
     it('should validate complex VNet with multiple subnets, NSGs, and delegations', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -654,8 +637,7 @@ describe('ArmExpressionValidator', () => {
 
     it('should detect multiple errors in a single template', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {

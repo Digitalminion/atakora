@@ -5,6 +5,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'child_process';
 import { TemplateValidator, ValidationSeverity } from '../../validation';
+import { ManifestManager } from '../../manifest/manifest-manager';
+import { isLegacyManifest, type PackageConfiguration } from '../../manifest/types';
 
 // Types for assembly and manifest
 interface StackManifest {
@@ -55,149 +57,80 @@ interface ArmTemplate {
   variables?: Record<string, unknown>;
 }
 
+interface SynthesisResult {
+  packageName: string;
+  assembly: CloudAssembly;
+  success: boolean;
+  error?: Error;
+}
+
 export function createSynthCommand(): Command {
   const synth = new Command('synth')
     .description('Synthesize ARM templates from TypeScript constructs')
-    .argument('[app]', 'Path to app file (e.g., bin/app.ts)', 'bin/app.ts')
-    .option('-o, --output <dir>', 'Output directory for synthesized templates', 'arm.out')
+    .option('-p, --package <name>', 'Synthesize a specific package from manifest')
+    .option('-a, --all', 'Synthesize all enabled packages from manifest')
+    .option('-o, --output <dir>', 'Output directory for synthesized templates (overrides manifest)')
     .option('--skip-validation', 'Skip template validation')
     .option('--validate-only', 'Validate templates without writing files')
     .option('--stack <stack>', 'Only synthesize specific stack(s)', collectStacks, [])
     .option('--single-file', 'Merge all stacks into a single template with nested deployments')
-    .action(async (appPath, options) => {
-      const spinner = ora('Loading application...').start();
+    .action(async (options) => {
+      const spinner = ora('Loading manifest...').start();
 
       try {
-        // Resolve app path
-        const resolvedAppPath = path.resolve(appPath);
+        // Load manifest
+        const manifestManager = new ManifestManager(process.cwd());
 
-        if (!fs.existsSync(resolvedAppPath)) {
-          spinner.fail(chalk.red(`App file not found: ${appPath}`));
-          console.log(chalk.cyan('\nMake sure your app file exists at the specified path'));
+        if (!manifestManager.exists()) {
+          spinner.fail(chalk.red('Manifest not found'));
+          console.log(
+            chalk.cyan('\nNo manifest found. Initialize a project with: ') +
+              chalk.bold('atakora init')
+          );
           process.exit(1);
         }
 
-        spinner.text = 'Compiling TypeScript...';
+        const manifest = manifestManager.read();
 
-        // Import and execute the app using tsx
-        // Find tsx CLI path
-        let tsxPath: string;
-        try {
-          // Use import.meta.resolve in Node 20+, fallback to require.resolve
-          const tsxMainPath = require.resolve('tsx');
-          tsxPath = path.join(tsxMainPath, '../cli.mjs');
-        } catch {
-          throw new Error('tsx package not found. Install it with: npm install tsx');
+        // Determine which packages to synthesize
+        const packagesToSynthesize = determinePackages(manifest, options, spinner);
+
+        if (packagesToSynthesize.length === 0) {
+          spinner.fail(chalk.red('No packages to synthesize'));
+          process.exit(1);
         }
 
-        // Create a temporary synthesis script
-        const synthScript = `
-          (async () => {
-            try {
-              const appModule = require('${resolvedAppPath.replace(/\\/g, '/')}');
-              const app = appModule.app || appModule.default;
+        spinner.succeed(chalk.green('Manifest loaded'));
 
-              if (!app) {
-                throw new Error('App file must export an "app" or default export');
-              }
+        // Synthesize each package
+        const results: SynthesisResult[] = [];
 
-              if (typeof app.synth !== 'function') {
-                throw new Error('Exported app must have a synth() method');
-              }
+        for (const pkg of packagesToSynthesize) {
+          const packageName = getPackageName(pkg);
+          const result = await synthesizePackage(
+            packageName,
+            pkg,
+            manifest,
+            options,
+            manifestManager
+          );
+          results.push(result);
 
-              // Set output directory
-              app.outdir = '${options.output}';
-
-              // Synthesize
-              const assembly = await app.synth();
-
-              // Output result as JSON
-              console.log(JSON.stringify(assembly, null, 2));
-            } catch (error) {
-              console.error('Synthesis error:', error);
-              process.exit(1);
-            }
-          })();
-        `;
-
-        const tempScriptPath = path.join(process.cwd(), '.synth-temp.js');
-        fs.writeFileSync(tempScriptPath, synthScript);
-
-        spinner.text = 'Synthesizing templates...';
-
-        let synthOutput: string;
-        try {
-          synthOutput = execSync(`node "${tsxPath}" "${tempScriptPath}"`, {
-            encoding: 'utf-8',
-            cwd: process.cwd(),
-            maxBuffer: 10 * 1024 * 1024, // 10MB buffer
-          });
-        } catch (execError: unknown) {
-          // Clean up temp script before throwing
-          if (fs.existsSync(tempScriptPath)) {
-            fs.unlinkSync(tempScriptPath);
-          }
-
-          // Type guard for exec error
-          const isExecError = (
-            err: unknown
-          ): err is { status?: number; stdout?: string; stderr?: string; message?: string } => {
-            return typeof err === 'object' && err !== null;
-          };
-
-          if (isExecError(execError)) {
-            // Include all output in error message
-            const errorOutput = [
-              execError.stdout ? `stdout: ${execError.stdout}` : '',
-              execError.stderr ? `stderr: ${execError.stderr}` : '',
-            ]
-              .filter(Boolean)
-              .join('\n');
-
-            throw new Error(
-              `Synthesis execution failed (exit code ${execError.status}):\n${errorOutput || execError.message || 'Unknown error'}`
-            );
-          }
-
-          throw new Error(`Synthesis execution failed: ${String(execError)}`);
-        }
-
-        // Clean up temp script
-        if (fs.existsSync(tempScriptPath)) {
-          fs.unlinkSync(tempScriptPath);
-        }
-
-        // Parse synthesis result
-        const assembly = JSON.parse(synthOutput.trim());
-
-        // If single-file flag is set, merge templates
-        if (options.singleFile) {
-          mergeSingleFile(assembly, options);
-        }
-
-        spinner.succeed(chalk.green('Templates synthesized successfully'));
-
-        // Validate templates unless skipped
-        if (!options.skipValidation) {
-          spinner.text = 'Validating templates...';
-          spinner.start();
-
-          const validationResults = validateTemplates(assembly);
-
-          if (validationResults.hasErrors) {
-            spinner.fail(chalk.red('Template validation failed'));
-            console.log(validationResults.formatted);
+          // Exit early on error unless synthesizing all
+          if (!result.success && !options.all) {
             process.exit(1);
-          } else if (validationResults.hasWarnings) {
-            spinner.warn(chalk.yellow('Template validation passed with warnings'));
-            console.log(validationResults.formatted);
-          } else {
-            spinner.succeed(chalk.green('Template validation passed'));
           }
         }
 
-        // Display synthesis results
-        displaySynthesisResults(assembly, options);
+        // Display summary for multi-package synthesis
+        if (results.length > 1) {
+          displayMultiPackageSummary(results);
+        }
+
+        // Exit with error if any package failed
+        if (results.some((r) => !r.success)) {
+          process.exit(1);
+        }
       } catch (error) {
         spinner.fail(chalk.red('Synthesis failed'));
 
@@ -222,6 +155,297 @@ export function createSynthCommand(): Command {
 }
 
 /**
+ * Determine which packages to synthesize based on options and manifest
+ */
+function determinePackages(
+  manifest: any,
+  options: { package?: string; all?: boolean },
+  spinner: any
+): any[] {
+  const isLegacy = isLegacyManifest(manifest);
+
+  // Handle --all flag
+  if (options.all) {
+    if (isLegacy) {
+      return manifest.packages.filter((pkg: any) => pkg.enabled !== false);
+    } else {
+      return Object.entries(manifest.packages)
+        .filter(([_, pkg]: [string, any]) => pkg.enabled !== false)
+        .map(([name, config]: [string, any]) => ({ name, ...config }));
+    }
+  }
+
+  // Handle --package flag
+  if (options.package) {
+    if (isLegacy) {
+      const pkg = manifest.packages.find((p: any) => p.name === options.package);
+      if (!pkg) {
+        spinner.fail(chalk.red(`Package '${options.package}' not found in manifest`));
+        process.exit(1);
+      }
+      return [pkg];
+    } else {
+      const config = manifest.packages[options.package];
+      if (!config) {
+        spinner.fail(chalk.red(`Package '${options.package}' not found in manifest`));
+        process.exit(1);
+      }
+      return [{ name: options.package, ...config }];
+    }
+  }
+
+  // Default: synthesize default package
+  if (!manifest.defaultPackage) {
+    spinner.fail(chalk.red('No default package specified in manifest'));
+    console.log(
+      chalk.cyan('\nSet a default package with: ') + chalk.bold('atakora set-default <package>')
+    );
+    process.exit(1);
+  }
+
+  if (isLegacy) {
+    const pkg = manifest.packages.find((p: any) => p.name === manifest.defaultPackage);
+    if (!pkg) {
+      spinner.fail(chalk.red(`Default package '${manifest.defaultPackage}' not found`));
+      process.exit(1);
+    }
+    return [pkg];
+  } else {
+    const config = manifest.packages[manifest.defaultPackage];
+    if (!config) {
+      spinner.fail(chalk.red(`Default package '${manifest.defaultPackage}' not found`));
+      process.exit(1);
+    }
+    return [{ name: manifest.defaultPackage, ...config }];
+  }
+}
+
+/**
+ * Get package name from package object (handles legacy and modern formats)
+ */
+function getPackageName(pkg: any): string {
+  return pkg.name;
+}
+
+/**
+ * Synthesize a single package
+ */
+async function synthesizePackage(
+  packageName: string,
+  packageConfig: any,
+  manifest: any,
+  options: any,
+  manifestManager: ManifestManager
+): Promise<SynthesisResult> {
+  const spinner = ora(`Synthesizing package: ${chalk.bold(packageName)}`).start();
+
+  try {
+    // Resolve package path
+    const packagePath = path.resolve(process.cwd(), packageConfig.path);
+
+    // Determine entry point (legacy uses 'entryPoint', modern uses 'entry')
+    const entryPoint = packageConfig.entry || packageConfig.entryPoint || 'bin/app.ts';
+    const appPath = path.join(packagePath, entryPoint);
+
+    if (!fs.existsSync(appPath)) {
+      throw new Error(`App file not found: ${appPath}`);
+    }
+
+    spinner.text = `Compiling TypeScript for ${packageName}...`;
+
+    // Find tsx CLI path
+    let tsxPath: string;
+    try {
+      const tsxMainPath = require.resolve('tsx');
+      tsxPath = path.join(tsxMainPath, '../cli.mjs');
+    } catch {
+      throw new Error('tsx package not found. Install it with: npm install tsx');
+    }
+
+    // Determine output directory
+    const globalOutputDir =
+      options.output || manifest.outputDirectory || ManifestManager.DEFAULT_OUTPUT_DIR;
+    const packageOutputDir = path.join(globalOutputDir, packageName);
+
+    // Create a temporary synthesis script
+    const synthScript = `
+      (async () => {
+        try {
+          const appModule = require('${appPath.replace(/\\/g, '/')}');
+          const app = appModule.app || appModule.default;
+
+          if (!app) {
+            throw new Error('App file must export an "app" or default export');
+          }
+
+          if (typeof app.synth !== 'function') {
+            throw new Error('Exported app must have a synth() method');
+          }
+
+          // Set output directory
+          app.outdir = '${packageOutputDir.replace(/\\/g, '/')}';
+
+          // Synthesize
+          const assembly = await app.synth();
+
+          // Output result as JSON
+          console.log(JSON.stringify(assembly, null, 2));
+        } catch (error) {
+          console.error('Synthesis error:', error);
+          process.exit(1);
+        }
+      })();
+    `;
+
+    const tempScriptPath = path.join(process.cwd(), `.synth-temp-${packageName}.js`);
+    fs.writeFileSync(tempScriptPath, synthScript);
+
+    spinner.text = `Synthesizing templates for ${packageName}...`;
+
+    let synthOutput: string;
+    try {
+      synthOutput = execSync(`node "${tsxPath}" "${tempScriptPath}"`, {
+        encoding: 'utf-8',
+        cwd: process.cwd(),
+        maxBuffer: 10 * 1024 * 1024, // 10MB buffer
+      });
+    } catch (execError: unknown) {
+      // Clean up temp script before throwing
+      if (fs.existsSync(tempScriptPath)) {
+        fs.unlinkSync(tempScriptPath);
+      }
+
+      // Type guard for exec error
+      const isExecError = (
+        err: unknown
+      ): err is { status?: number; stdout?: string; stderr?: string; message?: string } => {
+        return typeof err === 'object' && err !== null;
+      };
+
+      if (isExecError(execError)) {
+        // Include all output in error message
+        const errorOutput = [
+          execError.stdout ? `stdout: ${execError.stdout}` : '',
+          execError.stderr ? `stderr: ${execError.stderr}` : '',
+        ]
+          .filter(Boolean)
+          .join('\n');
+
+        throw new Error(
+          `Synthesis execution failed (exit code ${execError.status}):\n${errorOutput || execError.message || 'Unknown error'}`
+        );
+      }
+
+      throw new Error(`Synthesis execution failed: ${String(execError)}`);
+    }
+
+    // Clean up temp script
+    if (fs.existsSync(tempScriptPath)) {
+      fs.unlinkSync(tempScriptPath);
+    }
+
+    // Parse synthesis result
+    const assembly = JSON.parse(synthOutput.trim());
+
+    // If single-file flag is set, merge templates
+    if (options.singleFile) {
+      mergeSingleFile(assembly, options);
+    }
+
+    spinner.succeed(chalk.green(`Templates synthesized for ${packageName}`));
+
+    // Validate templates unless skipped
+    if (!options.skipValidation) {
+      spinner.text = `Validating templates for ${packageName}...`;
+      spinner.start();
+
+      const validationResults = validateTemplates(assembly);
+
+      if (validationResults.hasErrors) {
+        spinner.fail(chalk.red(`Template validation failed for ${packageName}`));
+        console.log(validationResults.formatted);
+        return {
+          packageName,
+          assembly,
+          success: false,
+          error: new Error('Validation failed'),
+        };
+      } else if (validationResults.hasWarnings) {
+        spinner.warn(chalk.yellow(`Template validation passed with warnings for ${packageName}`));
+        console.log(validationResults.formatted);
+      } else {
+        spinner.succeed(chalk.green(`Template validation passed for ${packageName}`));
+      }
+    }
+
+    // Display synthesis results
+    displaySynthesisResults(assembly, options, packageName);
+
+    return {
+      packageName,
+      assembly,
+      success: true,
+    };
+  } catch (error) {
+    spinner.fail(chalk.red(`Synthesis failed for ${packageName}`));
+
+    if (error instanceof Error) {
+      console.error(chalk.red(`\nError in ${packageName}: ` + error.message));
+
+      // Show stack trace for debugging
+      if (process.env.DEBUG) {
+        console.error(chalk.gray('\n' + error.stack));
+      }
+    }
+
+    return {
+      packageName,
+      assembly: { stacks: [], directory: '' },
+      success: false,
+      error: error instanceof Error ? error : new Error(String(error)),
+    };
+  }
+}
+
+/**
+ * Display summary for multi-package synthesis
+ */
+function displayMultiPackageSummary(results: SynthesisResult[]): void {
+  console.log(chalk.bold('\n\n📦 Multi-Package Synthesis Summary'));
+  console.log(chalk.gray('═'.repeat(80)));
+
+  const successful = results.filter((r) => r.success);
+  const failed = results.filter((r) => !r.success);
+
+  console.log(chalk.cyan(`\nTotal packages: ${results.length}`));
+  console.log(chalk.green(`Successful: ${successful.length}`));
+  if (failed.length > 0) {
+    console.log(chalk.red(`Failed: ${failed.length}`));
+  }
+
+  if (successful.length > 0) {
+    console.log(chalk.bold('\n✓ Successful packages:'));
+    for (const result of successful) {
+      const stackCount = Array.isArray(result.assembly.stacks)
+        ? result.assembly.stacks.length
+        : Object.keys(result.assembly.stacks).length;
+      console.log(chalk.green(`  • ${result.packageName}`) + chalk.gray(` (${stackCount} stacks)`));
+    }
+  }
+
+  if (failed.length > 0) {
+    console.log(chalk.bold('\n✗ Failed packages:'));
+    for (const result of failed) {
+      console.log(
+        chalk.red(`  • ${result.packageName}`) + chalk.gray(` - ${result.error?.message}`)
+      );
+    }
+  }
+
+  console.log(chalk.gray('═'.repeat(80)));
+}
+
+/**
  * Collect multiple --stack options into an array.
  */
 function collectStacks(value: string, previous: string[]): string[] {
@@ -233,9 +457,11 @@ function collectStacks(value: string, previous: string[]): string[] {
  */
 function displaySynthesisResults(
   assembly: CloudAssembly,
-  options: { validateOnly?: boolean }
+  options: { validateOnly?: boolean },
+  packageName?: string
 ): void {
-  console.log(chalk.bold('\n📦 Synthesis Results'));
+  const header = packageName ? `📦 Synthesis Results: ${packageName}` : '📦 Synthesis Results';
+  console.log(chalk.bold(`\n${header}`));
   console.log(chalk.gray('═'.repeat(80)));
 
   // Convert stacks object to array if needed
@@ -305,7 +531,7 @@ function displaySynthesisResults(
     console.log(chalk.green(`\n✓ Templates written to ${assembly.directory}`));
     console.log(chalk.cyan('\nNext steps:'));
     console.log(chalk.white(`  • Review templates: ${chalk.bold('ls ' + assembly.directory)}`));
-    console.log(chalk.white(`  • Deploy to Azure: ${chalk.bold('azure-arm deploy')}`));
+    console.log(chalk.white(`  • Deploy to Azure: ${chalk.bold('atakora deploy')}`));
   }
 }
 

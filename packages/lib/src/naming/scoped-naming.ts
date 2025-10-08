@@ -84,14 +84,14 @@ export interface ScopedResourceNameParams {
  * const name = generateScopedName({
  *   scope: DeploymentScope.Subscription,
  *   resourceType: 'rg',
- *   organization: 'digital-products',
- *   project: 'colorai',
+ *   organization: 'digital-minion',
+ *   project: 'authr',
  *   purpose: 'data',
  *   environment: 'nonprod',
  *   geography: 'eastus',
  *   instance: '01'
  * });
- * // Result: "rg-data-digital-products-colorai-nonprod-eastus-01"
+ * // Result: "rg-data-digital-minion-authr-nonprod-eastus-01"
  * ```
  *
  * @example
@@ -100,10 +100,10 @@ export interface ScopedResourceNameParams {
  * const name = generateScopedName({
  *   scope: DeploymentScope.ManagementGroup,
  *   resourceType: 'mg',
- *   organization: 'digital-products',
+ *   organization: 'digital-minion',
  *   purpose: 'platform'
  * });
- * // Result: "mg-digital-products-platform"
+ * // Result: "mg-digital-minion-platform"
  * ```
  */
 export function generateScopedName(
@@ -197,8 +197,8 @@ export function generateScopedName(
  * const result = validateScopedParams({
  *   scope: DeploymentScope.Subscription,
  *   resourceType: 'rg',
- *   organization: 'digital-products',
- *   project: 'colorai'
+ *   organization: 'digital-minion',
+ *   project: 'authr'
  *   // Missing: environment, geography, instance
  * });
  * // result.isValid === false

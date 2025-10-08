@@ -209,8 +209,7 @@ describe('Known Deployment Failures - MUST CATCH THESE', () => {
 
     it('MUST detect storage account locked down without private endpoint', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           createNetworkLockedStorageAccount({
@@ -226,16 +225,13 @@ describe('Known Deployment Failures - MUST CATCH THESE', () => {
       const result = simulator.simulate(template);
 
       expect(result.success).toBe(false);
-      expect(result.errors.some((e) => e.code === 'NETWORK_LOCKDOWN_WITHOUT_ENDPOINT')).toBe(
-        true
-      );
+      expect(result.errors.some((e) => e.code === 'NETWORK_LOCKDOWN_WITHOUT_ENDPOINT')).toBe(true);
       expect(result.timeoutRisks).toContain('Microsoft.Storage/storageAccounts/stgproddata');
     });
 
     it('MUST accept storage account with public access during deployment', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           createNetworkLockedStorageAccount({
@@ -256,8 +252,7 @@ describe('Known Deployment Failures - MUST CATCH THESE', () => {
 
     it('MUST accept storage account with private endpoint dependency', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -294,8 +289,7 @@ describe('Known Deployment Failures - MUST CATCH THESE', () => {
 
     it('MUST detect OpenAI service locked down without private endpoint', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           createNetworkLockedOpenAIService({
@@ -311,16 +305,13 @@ describe('Known Deployment Failures - MUST CATCH THESE', () => {
       const result = simulator.simulate(template);
 
       expect(result.success).toBe(false);
-      expect(result.errors.some((e) => e.code === 'NETWORK_LOCKDOWN_WITHOUT_ENDPOINT')).toBe(
-        true
-      );
+      expect(result.errors.some((e) => e.code === 'NETWORK_LOCKDOWN_WITHOUT_ENDPOINT')).toBe(true);
       expect(result.timeoutRisks).toContain('Microsoft.CognitiveServices/accounts/openai-prod');
     });
 
     it('MUST accept OpenAI service with public access during deployment', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           createNetworkLockedOpenAIService({
@@ -349,8 +340,7 @@ describe('Known Deployment Failures - MUST CATCH THESE', () => {
 
     it('MUST detect simple circular dependency', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -389,8 +379,7 @@ describe('Known Deployment Failures - MUST CATCH THESE', () => {
 
     it('MUST warn about missing dependency', () => {
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           {
@@ -398,9 +387,7 @@ describe('Known Deployment Failures - MUST CATCH THESE', () => {
             apiVersion: '2024-07-01',
             name: 'pe-storage',
             location: 'eastus',
-            dependsOn: [
-              "[resourceId('Microsoft.Storage/storageAccounts', 'nonexistent-storage')]",
-            ],
+            dependsOn: ["[resourceId('Microsoft.Storage/storageAccounts', 'nonexistent-storage')]"],
             properties: {},
           },
         ],
@@ -420,8 +407,7 @@ describe('Known Deployment Failures - MUST CATCH THESE', () => {
       // can be detected in a single template
 
       const template: ArmTemplate = {
-        $schema:
-          'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+        $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
         contentVersion: '1.0.0.0',
         resources: [
           // FAIL: VNet with invalid delegation

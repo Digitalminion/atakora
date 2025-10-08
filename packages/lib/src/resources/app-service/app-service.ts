@@ -458,7 +458,7 @@ export class AppService extends Construct implements IAppService {
    * New naming convention for global uniqueness:
    * - Format: appsrv-<project>-<instance>-<8-char-hash>
    * - Hash is generated from full resource name to ensure uniqueness
-   * - Example: appsrv-colorai-03-a1b2c3d4
+   * - Example: appsrv-authr-03-a1b2c3d4
    */
   private resolveSiteName(id: string, props: AppServiceProps): string {
     // If name provided explicitly, use it

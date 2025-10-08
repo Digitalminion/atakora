@@ -24,12 +24,12 @@ import { SubscriptionState } from './types';
  *
  * @example
  * ```typescript
- * const subscription = new ArmApiManagementSubscription(apimService, 'ColorAISubscription', {
+ * const subscription = new ArmApiManagementSubscription(apimService, 'AuthRSubscription', {
  *   apiManagementService: apimService,
- *   subscriptionName: 'colorai-subscription',
+ *   subscriptionName: 'authr-subscription',
  *   properties: {
- *     displayName: 'ColorAI Subscription',
- *     scope: '/products/colorai-product',
+ *     displayName: 'AuthR Subscription',
+ *     scope: '/products/authr-product',
  *     state: SubscriptionState.ACTIVE
  *   }
  * });
@@ -173,9 +173,9 @@ export class ArmApiManagementSubscription extends Resource {
  *
  * @example
  * ```typescript
- * const subscription = new ApiManagementSubscription(apimService, 'ColorAISubscription', {
+ * const subscription = new ApiManagementSubscription(apimService, 'AuthRSubscription', {
  *   apiManagementService: apimService,
- *   displayName: 'ColorAI Subscription',
+ *   displayName: 'AuthR Subscription',
  *   scopeProduct: product
  * });
  * ```

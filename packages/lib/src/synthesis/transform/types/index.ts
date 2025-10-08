@@ -126,9 +126,7 @@ export function isArmStorageAccount(obj: unknown): obj is ArmStorageAccount {
 
   const resource = obj as ArmResourceBase;
   return (
-    resource.type === 'Microsoft.Storage/storageAccounts' &&
-    'sku' in resource &&
-    'kind' in resource
+    resource.type === 'Microsoft.Storage/storageAccounts' && 'sku' in resource && 'kind' in resource
   );
 }
 

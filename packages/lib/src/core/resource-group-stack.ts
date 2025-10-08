@@ -57,7 +57,7 @@ export interface ResourceGroupStackProps {
  * ```typescript
  * const dataStack = new ResourceGroupStack(foundation, 'Data', {
  *   resourceGroup: {
- *     resourceGroupName: 'rg-digital-products-colorai-data-nonprod-eus-00',
+ *     resourceGroupName: 'rg-digital-minion-authr-data-nonprod-eus-00',
  *     location: 'eastus'
  *   }
  * });
@@ -131,7 +131,7 @@ export class ResourceGroupStack extends Construct {
    * @example
    * ```typescript
    * const storageName = stack.generateResourceName('storage');
-   * // Result: "stdpcolorainonprodeus01"
+   * // Result: "stdpauthrnonprodeus01"
    * ```
    */
   public generateResourceName(resourceType: string, purpose?: string): string {

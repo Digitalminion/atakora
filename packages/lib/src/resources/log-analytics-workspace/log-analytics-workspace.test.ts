@@ -21,8 +21,8 @@ describe('resources/log-analytics-workspace/LogAnalyticsWorkspace', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
       tags: {
@@ -38,8 +38,8 @@ describe('resources/log-analytics-workspace/LogAnalyticsWorkspace', () => {
 
       // Should auto-generate name using stack context
       expect(workspace.workspaceName).toContain('log-');
-      expect(workspace.workspaceName).toContain('dp'); // digital-products abbreviation
-      expect(workspace.workspaceName).toContain('colorai');
+      expect(workspace.workspaceName).toContain('dp'); // digital-minion abbreviation
+      expect(workspace.workspaceName).toContain('authr');
       expect(workspace.workspaceName).toContain('mainworkspace'); // purpose from ID
     });
 

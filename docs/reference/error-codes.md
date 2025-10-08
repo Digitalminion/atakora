@@ -5,6 +5,7 @@ Complete reference of all validation error codes in Atakora. Use this as a quick
 ## Quick Search
 
 **By Category:**
+
 - [ARM Structure Errors](#arm-structure-errors) (ARM001-ARM099)
 - [Deployment Errors](#deployment-errors) (ARM004-ARM099)
 - [Networking Errors](#networking-errors) (NET001-NET099)
@@ -13,6 +14,7 @@ Complete reference of all validation error codes in Atakora. Use this as a quick
 - [Schema Errors](#schema-errors) (SCHEMA001-SCHEMA099)
 
 **By Severity:**
+
 - 🔴 Error - Blocks synthesis/deployment
 - 🟡 Warning - Should be addressed but doesn't block
 - 🔵 Info - Informational message
@@ -32,16 +34,17 @@ Errors related to ARM template structure and format requirements.
 **Description:** ARM requires delegation objects to be wrapped in a properties field. The serviceName must be inside properties: { serviceName: "..." }. This is an ARM-specific requirement that applies to subnet delegations.
 
 **Fix:**
+
 ```typescript
 // ❌ Incorrect
 delegation: {
-  serviceName: 'Microsoft.Web/serverFarms'
+  serviceName: 'Microsoft.Web/serverFarms';
 }
 
 // ✅ Correct
 delegation: {
   properties: {
-    serviceName: 'Microsoft.Web/serverFarms'
+    serviceName: 'Microsoft.Web/serverFarms';
   }
 }
 ```
@@ -59,6 +62,7 @@ delegation: {
 **Description:** ARM subnet structure requires addressPrefix to be nested inside the properties field, not at the root level of the subnet object. This is part of ARM's resource property pattern.
 
 **Fix:**
+
 ```typescript
 // ✅ Correct - Atakora handles this automatically
 const subnet = new Subnet(vnet, 'MySubnet', {
@@ -87,6 +91,7 @@ const subnet = new Subnet(vnet, 'MySubnet', {
 **Description:** Resource references in ARM templates must use ARM expression syntax with resourceId() function, not literal strings. Literal strings don't establish proper dependencies and won't resolve correctly during deployment.
 
 **Fix:**
+
 ```typescript
 // ❌ Incorrect
 networkSecurityGroup: {
@@ -117,6 +122,7 @@ Errors related to deployment timing and resource provisioning.
 **Description:** The resource has publicNetworkAccess set to 'Disabled' in the deployment template. Azure Resource Manager needs network access to provision resources. Setting publicNetworkAccess to 'Disabled' before deployment prevents ARM from completing provisioning, causing timeouts or failures.
 
 **Fix:**
+
 ```typescript
 // Phase 1: Deploy with access enabled
 const storage = new StorageAccount(stack, 'Storage', {
@@ -144,6 +150,7 @@ Errors related to network configuration and CIDR ranges.
 **Description:** The subnet's addressPrefix (CIDR range) falls outside the VNet's addressSpace. All subnets must be within their parent VNet's address range. Check your CIDR calculations.
 
 **Fix:**
+
 ```typescript
 // ❌ Incorrect
 const vnet = new VirtualNetwork(stack, 'VNet', {
@@ -175,6 +182,7 @@ const subnet = new Subnet(vnet, 'Subnet', {
 **Description:** Two or more subnets have overlapping CIDR ranges. Each subnet must have a unique, non-overlapping address space within the VNet. Overlapping subnets cause deployment failures.
 
 **Fix:**
+
 ```typescript
 // ❌ Incorrect - Overlapping
 const subnet1 = new Subnet(vnet, 'Subnet1', {
@@ -210,6 +218,7 @@ Errors related to security configurations.
 **Description:** Two or more NSG rules have the same priority value. Each security rule in a Network Security Group must have a unique priority between 100 and 4096. Lower numbers have higher priority.
 
 **Fix:**
+
 ```typescript
 // ❌ Incorrect - Duplicate priorities
 securityRules: [
@@ -225,6 +234,7 @@ securityRules: [
 ```
 
 **Priority Guidelines:**
+
 - Range: 100-4096
 - Lower number = higher priority (processed first)
 - Leave gaps (10-100) between rules
@@ -251,6 +261,7 @@ Errors caught by TypeScript type system.
 **Description:** A property value doesn't match the expected type. This is caught at compile-time by TypeScript but reported here for runtime scenarios.
 
 **Fix:**
+
 ```typescript
 // ❌ Incorrect - Type mismatch
 const vnet = new VirtualNetwork(stack, 'VNet', {
@@ -280,6 +291,7 @@ Errors related to Azure ARM schema compliance.
 **Description:** The generated ARM resource doesn't match Azure's schema requirements. This could be due to missing required fields, invalid values, or incorrect structure.
 
 **Fix:**
+
 - Check Azure ARM schema documentation for the resource type
 - Ensure all required properties are provided
 - Verify property values match allowed patterns/enums
@@ -293,16 +305,17 @@ Errors related to Azure ARM schema compliance.
 
 Error codes are organized by prefix:
 
-| Prefix | Range | Category | Description |
-|--------|-------|----------|-------------|
-| ARM | 001-099 | ARM Structure | ARM template structure and format |
-| ARM | 004-099 | Deployment | Deployment timing and provisioning |
-| NET | 001-099 | Networking | Network configuration and CIDR |
-| SEC | 001-099 | Security | Security rules and configurations |
-| TYPE | 001-099 | Type Safety | TypeScript type validation |
-| SCHEMA | 001-099 | Schema | ARM schema compliance |
+| Prefix | Range   | Category      | Description                        |
+| ------ | ------- | ------------- | ---------------------------------- |
+| ARM    | 001-099 | ARM Structure | ARM template structure and format  |
+| ARM    | 004-099 | Deployment    | Deployment timing and provisioning |
+| NET    | 001-099 | Networking    | Network configuration and CIDR     |
+| SEC    | 001-099 | Security      | Security rules and configurations  |
+| TYPE   | 001-099 | Type Safety   | TypeScript type validation         |
+| SCHEMA | 001-099 | Schema        | ARM schema compliance              |
 
 **Reserved for future use:**
+
 - SYNTH001-099: Synthesis pipeline errors
 - RES001-099: Resource-specific errors
 - REF001-099: Reference resolution errors
@@ -318,7 +331,7 @@ Error codes are organized by prefix:
 import {
   createValidationError,
   getErrorDefinition,
-  ErrorCatalog
+  ErrorCatalog,
 } from '@atakora/lib/core/validation/error-catalog';
 
 // Throw a validation error
@@ -327,7 +340,7 @@ throw createValidationError('ARM001');
 // With context
 throw createValidationError('NET001', {
   subnetCidr: '192.168.1.0/24',
-  vnetCidr: '10.0.0.0/16'
+  vnetCidr: '10.0.0.0/16',
 });
 
 // Get error details without throwing
@@ -357,7 +370,11 @@ try {
 ### Searching Errors
 
 ```typescript
-import { searchErrors, getErrorsByCategory, ErrorCategory } from '@atakora/lib/core/validation/error-catalog';
+import {
+  searchErrors,
+  getErrorsByCategory,
+  ErrorCategory,
+} from '@atakora/lib/core/validation/error-catalog';
 
 // Search by keyword
 const delegationErrors = searchErrors('delegation');
@@ -374,13 +391,14 @@ When adding a new validation error:
 
 1. **Choose the Right Category:**
    - Use existing prefixes when possible
-   - ARM* for template structure issues
-   - NET* for networking problems
-   - SEC* for security issues
+   - ARM\* for template structure issues
+   - NET\* for networking problems
+   - SEC\* for security issues
    - etc.
 
 2. **Add to Error Catalog:**
    Edit `/packages/lib/src/core/validation/error-catalog.ts`:
+
    ```typescript
    ARM005: {
      code: 'ARM005',
@@ -441,6 +459,7 @@ This section is auto-generated from the error catalog:
 **Total Errors Defined:** 8
 
 **By Category:**
+
 - ARM Structure: 3 errors
 - Deployment: 1 error
 - Networking: 2 errors
@@ -449,11 +468,13 @@ This section is auto-generated from the error catalog:
 - Schema: 1 error (template/placeholder)
 
 **By Severity:**
+
 - 🔴 Error: 8
 - 🟡 Warning: 0
 - 🔵 Info: 0
 
 **Most Common Errors (based on user reports):**
+
 1. ARM001 - Invalid Delegation Structure
 2. NET001 - Subnet CIDR Outside VNet Range
 3. ARM003 - Invalid Resource Reference
@@ -461,5 +482,5 @@ This section is auto-generated from the error catalog:
 
 ---
 
-*Last Updated: 2025-10-08*
-*Error Catalog Version: 1.0.0*
+_Last Updated: 2025-10-08_
+_Error Catalog Version: 1.0.0_

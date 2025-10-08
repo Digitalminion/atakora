@@ -36,7 +36,7 @@ Azure ARM Priv is a TypeScript library for defining Azure infrastructure as code
 ```
 ┌─────────────────────────────────────────────────────┐
 │ L3: Pattern Constructs                              │
-│ - ColorAI Infrastructure                            │
+│ - AuthR Infrastructure                            │
 │ - Complete multi-tier architectures                 │
 └─────────────────────────────────────────────────────┘
                          ↓
@@ -67,7 +67,7 @@ Each package has a clear responsibility:
 
 - **@atakora/lib**: Core library with constructs, naming, synthesis
 - **@atakora/cli**: Command-line interface for authentication and deployment
-- **@atakora/color**: Reference implementation (ColorAI infrastructure)
+- **@atakora/color**: Reference implementation (AuthR infrastructure)
 
 ## System Architecture
 
@@ -156,7 +156,7 @@ atakora/
 │   │   └── package.json
 │   └── color/                     # Reference implementation
 │       ├── src/
-│       │   └── infrastructure/   # ColorAI infrastructure
+│       │   └── infrastructure/   # AuthR infrastructure
 │       └── package.json
 └── dist/                          # Build output
 ```
@@ -194,8 +194,8 @@ A deployment unit representing a scope within Azure (subscription or resource gr
 const stack = new SubscriptionStack(app, 'MyStack', {
   subscription: Subscription.fromId('...'),
   geography: Geography.fromValue('eastus'),
-  organization: Organization.fromValue('digital-products'),
-  project: new Project('colorai'),
+  organization: Organization.fromValue('digital-minion'),
+  project: new Project('authr'),
   environment: Environment.fromValue('nonprod'),
   instance: Instance.fromNumber(1),
 });
@@ -296,14 +296,14 @@ Developer-friendly abstractions with sensible defaults.
 new ResourceGroup(stack, 'MyRG', {
   tags: { purpose: 'networking' },
 });
-// Name auto-generated: "rg-dp-colorai-myrg-nonprod-eus-00"
+// Name auto-generated: "rg-dp-authr-myrg-nonprod-eus-00"
 ```
 
 ### L3 Constructs (Pattern-Based)
 
 Complete architecture patterns (future).
 
-**Naming**: Pattern-specific (e.g., `ColorAIInfrastructure`)
+**Naming**: Pattern-specific (e.g., `AuthRInfrastructure`)
 **Properties**: Very high-level, minimal configuration
 **Use Case**: Standard reference architectures
 
@@ -325,7 +325,7 @@ See [NAMING_CONVENTIONS.md](./NAMING_CONVENTIONS.md) for detailed information.
 {prefix}-{org}-{project}-{resource_id}-{environment}-{geography}-{instance}
 ```
 
-Example: `rg-dp-colorai-networkrg-nonprod-eus-00`
+Example: `rg-dp-authr-networkrg-nonprod-eus-00`
 
 ## Synthesis Pipeline
 

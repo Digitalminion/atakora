@@ -1,0 +1,13 @@
+{
+  "name": "@{{organization}}/{{packageName}}",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "synth": "node dist/main.js"
+  },
+  "dependencies": {
+    "@atakora/lib": "*"
+  }
+}

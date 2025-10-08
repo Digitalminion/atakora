@@ -29,7 +29,7 @@ import type {
  * import { ArmApplicationInsights, ApplicationType } from '@atakora/lib';
  *
  * const appInsights = new ArmApplicationInsights(resourceGroup, 'AppInsights', {
- *   name: 'appi-colorai-nonprod-eus-00',
+ *   name: 'appi-authr-nonprod-eus-00',
  *   location: 'eastus',
  *   kind: 'web',
  *   applicationType: ApplicationType.WEB,

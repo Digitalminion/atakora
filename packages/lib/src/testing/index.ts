@@ -23,7 +23,4 @@ export {
 export { armTemplateMatchers, setupArmMatchers } from './arm-template-matchers';
 
 // Deployment simulator
-export {
-  DeploymentSimulator,
-  type DeploymentSimulationResult,
-} from './deployment-simulator';
+export { DeploymentSimulator, type DeploymentSimulationResult } from './deployment-simulator';

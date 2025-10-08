@@ -21,8 +21,8 @@ describe('resources/search-service/SearchService', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
       tags: {
@@ -38,7 +38,7 @@ describe('resources/search-service/SearchService', () => {
 
       // Should auto-generate name with hyphens allowed
       expect(search.serviceName).toMatch(/^srch-/);
-      expect(search.serviceName).toContain('dp-colorai'); // Abbreviated org + project
+      expect(search.serviceName).toContain('dp-authr'); // Abbreviated org + project
       expect(search.serviceName.length).toBeLessThanOrEqual(60);
     });
 
@@ -238,10 +238,10 @@ describe('resources/search-service/SearchService', () => {
   describe('fromServiceId', () => {
     it('should create search service reference from service ID', () => {
       const serviceId =
-        '/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/rg-data/providers/Microsoft.Search/searchServices/srch-colorai-001';
+        '/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/rg-data/providers/Microsoft.Search/searchServices/srch-authr-001';
       const search = SearchService.fromServiceId(stack, 'ExistingSearch', serviceId);
 
-      expect(search.serviceName).toBe('srch-colorai-001');
+      expect(search.serviceName).toBe('srch-authr-001');
       expect(search.serviceId).toBe(serviceId);
     });
 
@@ -274,7 +274,7 @@ describe('resources/search-service/SearchService', () => {
     it('should inherit tags from parent resource group', () => {
       const rgWithTags = new ResourceGroup(stack, 'RGWithTags', {
         tags: {
-          project: 'colorai',
+          project: 'authr',
           team: 'data',
         },
       });
@@ -283,7 +283,7 @@ describe('resources/search-service/SearchService', () => {
 
       expect(search.tags).toMatchObject({
         managed_by: 'terraform',
-        project: 'colorai',
+        project: 'authr',
         team: 'data',
       });
     });
@@ -291,7 +291,7 @@ describe('resources/search-service/SearchService', () => {
     it('should override parent tags with provided tags', () => {
       const rgWithTags = new ResourceGroup(stack, 'RGWithTags', {
         tags: {
-          project: 'colorai',
+          project: 'authr',
           environment: 'dev',
         },
       });
@@ -305,7 +305,7 @@ describe('resources/search-service/SearchService', () => {
 
       expect(search.tags).toMatchObject({
         managed_by: 'terraform',
-        project: 'colorai',
+        project: 'authr',
         environment: 'prod', // Overridden
         purpose: 'ai-search', // New
       });

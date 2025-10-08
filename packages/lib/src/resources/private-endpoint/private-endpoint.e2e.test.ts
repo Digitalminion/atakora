@@ -39,7 +39,7 @@ describe('E2E: Private Endpoint with Storage Account + Subnet', () => {
       const stack = new SubscriptionStack(app, 'E2EStack', {
         subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
         geography: Geography.fromValue('eastus'),
-        organization: Organization.fromValue('digital-products'),
+        organization: Organization.fromValue('digital-minion'),
         project: new Project('pe-test'),
         environment: Environment.fromValue('nonprod'),
         instance: Instance.fromNumber(1),
@@ -96,7 +96,7 @@ describe('E2E: Private Endpoint with Storage Account + Subnet', () => {
       const stack = new SubscriptionStack(app, 'MultiEndpointStack', {
         subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
         geography: Geography.fromValue('eastus'),
-        organization: Organization.fromValue('digital-products'),
+        organization: Organization.fromValue('digital-minion'),
         project: new Project('multi-pe'),
         environment: Environment.fromValue('nonprod'),
         instance: Instance.fromNumber(1),
@@ -142,7 +142,7 @@ describe('E2E: Private Endpoint with Storage Account + Subnet', () => {
       const stack = new SubscriptionStack(new App(), 'TestStack', {
         subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
         geography: Geography.fromValue('eastus'),
-        organization: Organization.fromValue('digital-products'),
+        organization: Organization.fromValue('digital-minion'),
         project: new Project('test'),
         environment: Environment.fromValue('nonprod'),
         instance: Instance.fromNumber(1),
@@ -179,7 +179,7 @@ describe('E2E: Private Endpoint with Storage Account + Subnet', () => {
       const stack = new SubscriptionStack(new App(), 'TestStack', {
         subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
         geography: Geography.fromValue('eastus'),
-        organization: Organization.fromValue('digital-products'),
+        organization: Organization.fromValue('digital-minion'),
         project: new Project('test'),
         environment: Environment.fromValue('nonprod'),
         instance: Instance.fromNumber(1),
@@ -221,7 +221,7 @@ describe('E2E: Private Endpoint with Storage Account + Subnet', () => {
       const stack = new SubscriptionStack(new App(), 'TestStack', {
         subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
         geography: Geography.fromValue('eastus'),
-        organization: Organization.fromValue('digital-products'),
+        organization: Organization.fromValue('digital-minion'),
         project: new Project('test'),
         environment: Environment.fromValue('nonprod'),
         instance: Instance.fromNumber(1),
@@ -260,7 +260,7 @@ describe('E2E: Private Endpoint with Storage Account + Subnet', () => {
       const stack = new SubscriptionStack(new App(), 'TestStack', {
         subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
         geography: Geography.fromValue('eastus'),
-        organization: Organization.fromValue('digital-products'),
+        organization: Organization.fromValue('digital-minion'),
         project: new Project('test'),
         environment: Environment.fromValue('nonprod'),
         instance: Instance.fromNumber(1),
@@ -296,7 +296,7 @@ describe('E2E: Private Endpoint with Storage Account + Subnet', () => {
       const stack = new SubscriptionStack(new App(), 'TestStack', {
         subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
         geography: Geography.fromValue('eastus'),
-        organization: Organization.fromValue('digital-products'),
+        organization: Organization.fromValue('digital-minion'),
         project: new Project('test'),
         environment: Environment.fromValue('nonprod'),
         instance: Instance.fromNumber(1),
@@ -323,7 +323,7 @@ describe('E2E: Private Endpoint with Storage Account + Subnet', () => {
         tags: {
           Environment: 'Production',
           CostCenter: '12345',
-          Application: 'ColorAI',
+          Application: 'AuthR',
         },
       });
 
@@ -354,7 +354,7 @@ describe('E2E: Private Endpoint with Storage Account + Subnet', () => {
       expect(template.tags).toBeDefined();
       expect(template.tags.Environment).toBe('Production');
       expect(template.tags.CostCenter).toBe('12345');
-      expect(template.tags.Application).toBe('ColorAI');
+      expect(template.tags.Application).toBe('AuthR');
     });
   });
 });

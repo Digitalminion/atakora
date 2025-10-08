@@ -1,9 +1,9 @@
 /**
- * ColorAI Monitoring Stack
+ * AuthR Monitoring Stack
  *
  * @remarks
  * This stack creates comprehensive monitoring and observability infrastructure
- * following the ColorAI reference architecture.
+ * following the AuthR reference architecture.
  *
  * **Components**:
  * - Application Insights (web app monitoring)
@@ -28,8 +28,6 @@ import {
   ActionGroup,
   MetricAlert,
   ApplicationType,
-  FlowType,
-  RequestSource,
   MetricAlertOperator,
   TimeAggregation,
   CriterionType,
@@ -72,7 +70,7 @@ export interface MonitoringStackProps {
 }
 
 /**
- * ColorAI Monitoring Stack construct
+ * AuthR Monitoring Stack construct
  *
  * @remarks
  * Creates a complete monitoring solution with:
@@ -141,7 +139,7 @@ export class MonitoringStack extends Construct {
     // ============================================================================
 
     this.actionGroup = new ActionGroup(this, 'AlertActionGroup', {
-      groupShortName: 'ColorAI',
+      groupShortName: 'AuthR',
       emailReceivers: [
         {
           name: 'admin',

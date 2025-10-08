@@ -45,8 +45,8 @@ export function createBasicInfrastructure(): App {
   const foundation = new SubscriptionStack(app, 'Foundation', {
     subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
     geography: Geography.fromValue('eastus'),
-    organization: Organization.fromValue('digital-products'),
-    project: new Project('colorai'),
+    organization: Organization.fromValue('digital-minion'),
+    project: new Project('authr'),
     environment: Environment.fromValue('nonprod'),
     instance: Instance.fromNumber(1),
     tags: {
@@ -57,14 +57,14 @@ export function createBasicInfrastructure(): App {
   });
 
   // Create resource groups with auto-generated names
-  // Name will be: "rg-dp-colorai-networkrg-nonprod-eus-00"
+  // Name will be: "rg-dp-authr-networkrg-nonprod-eus-00"
   const networkRG = new ResourceGroup(foundation, 'NetworkRG', {
     tags: {
       purpose: 'networking',
     },
   });
 
-  // Name will be: "rg-dp-colorai-applicationrg-nonprod-eus-00"
+  // Name will be: "rg-dp-authr-applicationrg-nonprod-eus-00"
   const appRG = new ResourceGroup(foundation, 'ApplicationRG', {
     tags: {
       purpose: 'applications',
@@ -72,7 +72,7 @@ export function createBasicInfrastructure(): App {
   });
 
   // Create virtual network in network resource group
-  // Name will be: "vnet-dp-colorai-mainvnet-nonprod-eus-00"
+  // Name will be: "vnet-dp-authr-mainvnet-nonprod-eus-00"
   const vnet = new VirtualNetwork(networkRG, 'MainVNet', {
     addressSpace: '10.0.0.0/16',
     dnsServers: ['10.0.0.4', '10.0.0.5'],
@@ -92,34 +92,34 @@ export function createBasicInfrastructure(): App {
 }
 
 /**
- * Creates a ColorAI-style infrastructure setup.
+ * Creates a AuthR-style infrastructure setup.
  *
  * @remarks
- * This example follows the ColorAI reference architecture:
+ * This example follows the AuthR reference architecture:
  * - 5 Resource Groups (foundation, connectivity, data, application, monitoring)
  * - 1 Virtual Network with 4 subnets (gateway, application, data, private-endpoints)
  * - All resources follow the naming convention
  * - Tags are properly inherited and merged
  */
-export function createColorAIInfrastructure(): App {
+export function createAuthRInfrastructure(): App {
   const app = new App();
 
   // Create foundation stack
   const foundation = new SubscriptionStack(app, 'Foundation', {
     subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
     geography: Geography.fromValue('eastus'),
-    organization: Organization.fromValue('digital-products'),
-    project: new Project('colorai'),
+    organization: Organization.fromValue('digital-minion'),
+    project: new Project('authr'),
     environment: Environment.fromValue('nonprod'),
     instance: Instance.fromNumber(1),
     tags: {
       managed_by: 'terraform',
-      project: 'colorai',
+      project: 'authr',
       environment: 'nonprod',
     },
   });
 
-  // Create 5 resource groups following ColorAI pattern
+  // Create 5 resource groups following AuthR pattern
   const foundationRG = new ResourceGroup(foundation, 'FoundationRG', {
     tags: { purpose: 'foundation-resources' },
   });
@@ -154,7 +154,7 @@ export function createColorAIInfrastructure(): App {
   //   addressPrefix: '10.0.0.0/24'
   // });
 
-  console.log('ColorAI Infrastructure created:');
+  console.log('AuthR Infrastructure created:');
   console.log(`  Resource Groups: 5`);
   console.log(`    - ${foundationRG.resourceGroupName}`);
   console.log(`    - ${connectivityRG.resourceGroupName}`);
@@ -180,8 +180,8 @@ export function createMultiRegionInfrastructure(): App {
   const eastStack = new SubscriptionStack(app, 'EastStack', {
     subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
     geography: Geography.fromValue('eastus'),
-    organization: Organization.fromValue('digital-products'),
-    project: new Project('colorai'),
+    organization: Organization.fromValue('digital-minion'),
+    project: new Project('authr'),
     environment: Environment.fromValue('production'),
     instance: Instance.fromNumber(1),
   });
@@ -190,8 +190,8 @@ export function createMultiRegionInfrastructure(): App {
   const westStack = new SubscriptionStack(app, 'WestStack', {
     subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
     geography: Geography.fromValue('westus2'),
-    organization: Organization.fromValue('digital-products'),
-    project: new Project('colorai'),
+    organization: Organization.fromValue('digital-minion'),
+    project: new Project('authr'),
     environment: Environment.fromValue('production'),
     instance: Instance.fromNumber(2),
   });
@@ -235,8 +235,8 @@ export function createExplicitInfrastructure(): App {
   const stack = new SubscriptionStack(app, 'Stack', {
     subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
     geography: Geography.fromValue('eastus'),
-    organization: Organization.fromValue('digital-products'),
-    project: new Project('colorai'),
+    organization: Organization.fromValue('digital-minion'),
+    project: new Project('authr'),
     environment: Environment.fromValue('nonprod'),
     instance: Instance.fromNumber(1),
   });

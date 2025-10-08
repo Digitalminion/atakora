@@ -47,7 +47,7 @@ import type {
  * Multi-region Cosmos DB account:
  * ```typescript
  * const cosmosAccount = new CosmosDbAccount(resourceGroup, 'CosmosAccount', {
- *   databaseAccountName: 'cosmos-colorai-001',
+ *   databaseAccountName: 'cosmos-authr-001',
  *   location: 'eastus',
  *   additionalLocations: ['westus', 'northeurope'],
  *   enableAutomaticFailover: true
@@ -145,7 +145,7 @@ export class CosmosDbAccount extends Construct implements ICosmosDbAccount {
    * New naming convention for global uniqueness:
    * - Format: cosdb-<project>-<instance>-<8-char-hash>
    * - Hash is generated from full resource name to ensure uniqueness
-   * - Example: cosdb-colorai-03-a1b2c3d4
+   * - Example: cosdb-authr-03-a1b2c3d4
    */
   private generateAccountName(id: string): string {
     // Auto-generate name using parent's naming context

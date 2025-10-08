@@ -526,11 +526,7 @@ export interface ArmTemplateDocument {
 /**
  * Deployment scope levels
  */
-export type ArmDeploymentScope =
-  | 'resourceGroup'
-  | 'subscription'
-  | 'managementGroup'
-  | 'tenant';
+export type ArmDeploymentScope = 'resourceGroup' | 'subscription' | 'managementGroup' | 'tenant';
 
 /**
  * Common Azure regions

@@ -156,7 +156,7 @@ export class SearchService extends Construct implements ISearchService {
    *
    * @example
    * ```typescript
-   * const serviceId = '/subscriptions/12345/resourceGroups/rg-data/providers/Microsoft.Search/searchServices/srch-colorai-001';
+   * const serviceId = '/subscriptions/12345/resourceGroups/rg-data/providers/Microsoft.Search/searchServices/srch-authr-001';
    * const searchService = SearchService.fromServiceId(stack, 'ExistingSearch', serviceId);
    * ```
    */

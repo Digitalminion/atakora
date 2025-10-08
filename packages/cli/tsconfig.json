@@ -9,5 +9,6 @@
     "tsBuildInfoFile": "../../dist/cli/.tsbuildinfo"
   },
   "references": [{ "path": "../lib" }],
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.test.ts"]
 }

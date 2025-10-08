@@ -160,10 +160,10 @@ export function createDeployCommand(): Command {
         const credential = authService.getCredential();
         const client = new ResourceManagementClient(credential, profile.subscriptionId);
 
-        // Extract resource group name from ColorAI stack (if it exists)
+        // Extract resource group name from AuthR stack (if it exists)
         let resourceGroupName: string | undefined;
-        if (manifest.stacks['ColorAI']) {
-          const colorAIPath = path.join(assemblyPath, manifest.stacks['ColorAI'].templatePath);
+        if (manifest.stacks['AuthR']) {
+          const colorAIPath = path.join(assemblyPath, manifest.stacks['AuthR'].templatePath);
           const colorAITemplate = JSON.parse(fs.readFileSync(colorAIPath, 'utf-8')) as ArmTemplate;
           const rgResource = colorAITemplate.resources?.find(
             (r) => r.type === 'Microsoft.Resources/resourceGroups'
@@ -215,7 +215,7 @@ async function deployStack(
     // Validate resource group name for resource group scoped deployments
     if (!isSubscriptionScope && !resourceGroupName) {
       throw new Error(
-        `Resource group name not found. The ColorAI stack must be deployed first to create the resource group.`
+        `Resource group name not found. The AuthR stack must be deployed first to create the resource group.`
       );
     }
 

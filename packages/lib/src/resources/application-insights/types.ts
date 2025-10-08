@@ -57,7 +57,7 @@ export enum IngestionMode {
  * @example
  * ```typescript
  * const props: ArmApplicationInsightsProps = {
- *   name: 'appi-colorai-nonprod-eus-00',
+ *   name: 'appi-authr-nonprod-eus-00',
  *   location: 'eastus',
  *   kind: 'web',
  *   applicationType: ApplicationType.WEB,
@@ -195,7 +195,7 @@ export interface ApplicationInsightsProps {
    * @remarks
    * If not provided, will be auto-generated using the stack's naming context:
    * - Format: `appi-{org}-{project}-{purpose}-{env}-{geo}-{instance}`
-   * - Example: `appi-digital-products-colorai-main-nonprod-eus-00`
+   * - Example: `appi-digital-minion-authr-main-nonprod-eus-00`
    *
    * The `purpose` is derived from the construct ID.
    */

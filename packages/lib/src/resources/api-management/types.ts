@@ -155,13 +155,13 @@ export interface AdditionalLocation {
  * @example
  * ```typescript
  * const props: ArmApiManagementProps = {
- *   serviceName: 'apim-colorai-nonprod',
+ *   serviceName: 'apim-authr-nonprod',
  *   location: 'eastus',
  *   sku: {
  *     name: ApiManagementSkuName.DEVELOPER,
  *     capacity: 1
  *   },
- *   publisherName: 'Avient ColorAI',
+ *   publisherName: 'Avient AuthR',
  *   publisherEmail: 'admin@avient.com',
  *   identity: {
  *     type: 'SystemAssigned'
@@ -286,13 +286,13 @@ export interface ArmApiManagementProps {
  * ```typescript
  * // Minimal usage - auto-generates name and uses defaults
  * const apim = new ApiManagement(resourceGroup, 'Gateway', {
- *   publisherName: 'Avient ColorAI',
+ *   publisherName: 'Avient AuthR',
  *   publisherEmail: 'admin@avient.com'
  * });
  *
  * // With VNet integration
  * const apim = new ApiManagement(resourceGroup, 'Gateway', {
- *   publisherName: 'Avient ColorAI',
+ *   publisherName: 'Avient AuthR',
  *   publisherEmail: 'admin@avient.com',
  *   sku: ApiManagementSkuName.PREMIUM,
  *   capacity: 2,
@@ -308,7 +308,7 @@ export interface ApiManagementProps {
    * @remarks
    * If not provided, will be auto-generated using the stack's naming context.
    * - Format: `apim-{org}-{project}-{purpose}-{env}-{geo}-{instance}`
-   * - Example: `apim-dp-colorai-gateway-np-eus-01`
+   * - Example: `apim-dp-authr-gateway-np-eus-01`
    *
    * The `purpose` is derived from the construct ID.
    */

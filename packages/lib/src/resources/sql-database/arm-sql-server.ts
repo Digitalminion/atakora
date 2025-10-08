@@ -23,7 +23,7 @@ import type { ArmSqlServerProps, SqlServerVersion, PublicNetworkAccess } from '.
  * import { ArmSqlServer, SqlServerVersion, PublicNetworkAccess } from '@atakora/lib';
  *
  * const sqlServer = new ArmSqlServer(resourceGroup, 'SqlServer', {
- *   serverName: 'sql-colorai-001',
+ *   serverName: 'sql-authr-001',
  *   location: 'eastus',
  *   administratorLogin: 'sqladmin',
  *   administratorLoginPassword: 'P@ssw0rd123!',

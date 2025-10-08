@@ -21,8 +21,8 @@ describe('resources/network-security-group/NetworkSecurityGroup', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscription: Subscription.fromId('12345678-1234-1234-1234-123456789abc'),
       geography: Geography.fromValue('eastus'),
-      organization: Organization.fromValue('digital-products'),
-      project: new Project('colorai'),
+      organization: Organization.fromValue('digital-minion'),
+      project: new Project('authr'),
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
       tags: {
@@ -38,8 +38,8 @@ describe('resources/network-security-group/NetworkSecurityGroup', () => {
 
       // Should auto-generate name using stack context
       expect(nsg.networkSecurityGroupName).toContain('nsg-');
-      expect(nsg.networkSecurityGroupName).toContain('dp'); // digital-products abbreviation
-      expect(nsg.networkSecurityGroupName).toContain('colorai');
+      expect(nsg.networkSecurityGroupName).toContain('dp'); // digital-minion abbreviation
+      expect(nsg.networkSecurityGroupName).toContain('authr');
       expect(nsg.networkSecurityGroupName).toContain('webnsg'); // purpose from ID
     });
 
