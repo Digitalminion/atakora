@@ -112,10 +112,10 @@ export abstract class NamingComponent implements INamingComponent {
     return value
       .trim()
       .toLowerCase()
-      .replace(/\s+/g, '-')           // Replace whitespace with hyphens
-      .replace(/[^a-z0-9-]/g, '')     // Remove non-alphanumeric except hyphens
-      .replace(/-+/g, '-')            // Collapse multiple hyphens
-      .replace(/^-|-$/g, '');         // Remove leading/trailing hyphens
+      .replace(/\s+/g, '-') // Replace whitespace with hyphens
+      .replace(/[^a-z0-9-]/g, '') // Remove non-alphanumeric except hyphens
+      .replace(/-+/g, '-') // Collapse multiple hyphens
+      .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
   }
 
   /**
@@ -135,7 +135,7 @@ export abstract class NamingComponent implements INamingComponent {
     return value
       .trim()
       .split(/\s+/)
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ');
   }
 

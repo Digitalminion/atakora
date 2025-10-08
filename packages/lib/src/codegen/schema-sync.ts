@@ -168,8 +168,9 @@ export class SchemaSyncPipeline {
           walkDir(fullPath);
         } else if (file.endsWith('.json')) {
           // Filter by schema patterns if configured
-          const shouldInclude = this.config.schemaPatterns.length === 0 ||
-            this.config.schemaPatterns.some(pattern => {
+          const shouldInclude =
+            this.config.schemaPatterns.length === 0 ||
+            this.config.schemaPatterns.some((pattern) => {
               return fullPath.includes(pattern);
             });
 
@@ -232,8 +233,8 @@ export class SchemaSyncPipeline {
     lines.push('═══════════════════════');
     lines.push('');
 
-    const successful = results.filter(r => !r.error);
-    const failed = results.filter(r => r.error);
+    const successful = results.filter((r) => !r.error);
+    const failed = results.filter((r) => r.error);
 
     lines.push(`Total schemas processed: ${results.length}`);
     lines.push(`✓ Successful: ${successful.length}`);
@@ -296,13 +297,13 @@ async function main() {
   console.log(report);
 
   // Exit with error code if any failed
-  const hasErrors = results.some(r => r.error);
+  const hasErrors = results.some((r) => r.error);
   process.exit(hasErrors ? 1 : 0);
 }
 
 // Run if executed directly
 if (require.main === module) {
-  main().catch(error => {
+  main().catch((error) => {
     console.error('Fatal error:', error);
     process.exit(1);
   });

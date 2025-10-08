@@ -51,8 +51,4 @@ export type {
 } from './types';
 
 // Enums
-export {
-  PublicIPAddressSku,
-  PublicIPAllocationMethod,
-  IpVersion,
-} from './types';
+export { PublicIPAddressSku, PublicIPAllocationMethod, IpVersion } from './types';

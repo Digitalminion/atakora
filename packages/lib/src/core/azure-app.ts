@@ -65,12 +65,12 @@ export interface ProjectConfig {
   /**
    * Project context values
    */
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 
   /**
    * Other project configuration options
    */
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -163,7 +163,8 @@ export class AzureApp extends App {
   constructor(props?: AzureAppProps) {
     // Load configurations
     const projectConfigPath = props?.projectConfigPath ?? './azure-arm.json';
-    const userConfigPath = props?.userConfigPath ?? path.join(os.homedir(), '.azure-arm', 'config.json');
+    const userConfigPath =
+      props?.userConfigPath ?? path.join(os.homedir(), '.azure-arm', 'config.json');
 
     // Load project config (may not exist, that's okay)
     const projectConfig = AzureApp.loadProjectConfig(projectConfigPath);
@@ -173,12 +174,14 @@ export class AzureApp extends App {
 
     // Merge contexts: user config < project config < props.context
     const mergedContext = {
-      ...(userConfig ? {
-        subscriptionId: userConfig.subscriptionId,
-        tenantId: userConfig.tenantId,
-        cloud: userConfig.cloud,
-        ...(userConfig.location && { defaultLocation: userConfig.location })
-      } : {}),
+      ...(userConfig
+        ? {
+            subscriptionId: userConfig.subscriptionId,
+            tenantId: userConfig.tenantId,
+            cloud: userConfig.cloud,
+            ...(userConfig.location && { defaultLocation: userConfig.location }),
+          }
+        : {}),
       ...projectConfig.context,
       ...props?.context,
     };
@@ -232,7 +235,10 @@ export class AzureApp extends App {
    *
    * @internal
    */
-  private static loadUserConfig(configPath: string, profileOverride?: string): ProfileConfig | null {
+  private static loadUserConfig(
+    configPath: string,
+    profileOverride?: string
+  ): ProfileConfig | null {
     // Return null if file doesn't exist (user hasn't run `azure-arm config login` yet)
     if (!fs.existsSync(configPath)) {
       return null;

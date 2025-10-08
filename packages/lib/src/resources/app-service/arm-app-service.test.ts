@@ -38,7 +38,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-test-001',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
       });
 
       expect(appService.siteName).toBe('app-test-001');
@@ -55,7 +56,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-test-002',
         location: 'westus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-002',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-002',
         kind: 'app,linux',
         identity: {
           type: ManagedIdentityType.SYSTEM_ASSIGNED,
@@ -68,7 +70,8 @@ describe('resources/app-service/ArmAppService', () => {
           minTlsVersion: MinTlsVersion.TLS_1_2,
         },
         httpsOnly: true,
-        virtualNetworkSubnetId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1',
+        virtualNetworkSubnetId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1',
         tags: {
           environment: 'test',
         },
@@ -87,7 +90,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-test-003',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-003',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-003',
       });
 
       expect(appService.resourceType).toBe('Microsoft.Web/sites');
@@ -97,7 +101,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-test-004',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-004',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-004',
       });
 
       expect(appService.apiVersion).toBe('2023-01-01');
@@ -107,7 +112,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-test-005',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-005',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-005',
       });
 
       expect(appService.resourceId).toBe(
@@ -120,7 +126,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'my-app-service',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-006',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-006',
       });
 
       expect(appService.defaultHostName).toBe('my-app-service.azurewebsites.net');
@@ -133,7 +140,8 @@ describe('resources/app-service/ArmAppService', () => {
         new ArmAppService(stack, 'WebApp', {
           siteName: '',
           location: 'eastus',
-          serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+          serverFarmId:
+            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         });
       }).toThrow('App Service name cannot be empty');
     });
@@ -143,7 +151,8 @@ describe('resources/app-service/ArmAppService', () => {
         new ArmAppService(stack, 'WebApp', {
           siteName: 'a',
           location: 'eastus',
-          serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+          serverFarmId:
+            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         });
       }).toThrow('App Service name must be 2-60 characters');
     });
@@ -153,7 +162,8 @@ describe('resources/app-service/ArmAppService', () => {
         new ArmAppService(stack, 'WebApp', {
           siteName: 'a'.repeat(61),
           location: 'eastus',
-          serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+          serverFarmId:
+            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         });
       }).toThrow('App Service name must be 2-60 characters');
     });
@@ -163,7 +173,8 @@ describe('resources/app-service/ArmAppService', () => {
         new ArmAppService(stack, 'WebApp', {
           siteName: '-app-test',
           location: 'eastus',
-          serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+          serverFarmId:
+            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         });
       }).toThrow('App Service name must start and end with alphanumeric characters');
     });
@@ -173,7 +184,8 @@ describe('resources/app-service/ArmAppService', () => {
         new ArmAppService(stack, 'WebApp', {
           siteName: 'app-test-',
           location: 'eastus',
-          serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+          serverFarmId:
+            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         });
       }).toThrow('App Service name must start and end with alphanumeric characters');
     });
@@ -183,7 +195,8 @@ describe('resources/app-service/ArmAppService', () => {
         new ArmAppService(stack, 'WebApp', {
           siteName: 'app_test_001',
           location: 'eastus',
-          serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+          serverFarmId:
+            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         });
       }).toThrow('App Service name must start and end with alphanumeric characters');
     });
@@ -192,7 +205,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-test-001',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
       });
 
       expect(appService.siteName).toBe('app-test-001');
@@ -203,7 +217,8 @@ describe('resources/app-service/ArmAppService', () => {
         new ArmAppService(stack, 'WebApp', {
           siteName: 'app-test-001',
           location: '',
-          serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+          serverFarmId:
+            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         });
       }).toThrow('Location cannot be empty');
     });
@@ -224,7 +239,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-identity-sa',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         identity: {
           type: ManagedIdentityType.SYSTEM_ASSIGNED,
         },
@@ -237,11 +253,13 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-identity-ua',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         identity: {
           type: ManagedIdentityType.USER_ASSIGNED,
           userAssignedIdentities: {
-            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id1': {},
+            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id1':
+              {},
           },
         },
       });
@@ -254,11 +272,13 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-identity-both',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         identity: {
           type: ManagedIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED,
           userAssignedIdentities: {
-            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id1': {},
+            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id1':
+              {},
           },
         },
       });
@@ -270,7 +290,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-identity-none',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         identity: {
           type: ManagedIdentityType.NONE,
         },
@@ -285,7 +306,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-config-linux',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         siteConfig: {
           linuxFxVersion: 'PYTHON|3.11',
         },
@@ -298,7 +320,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-config-dotnet',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         siteConfig: {
           netFrameworkVersion: 'v6.0',
         },
@@ -311,7 +334,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-config-appsettings',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         siteConfig: {
           appSettings: [
             { name: 'ENVIRONMENT', value: 'production' },
@@ -329,7 +353,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-config-connstr',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         siteConfig: {
           connectionStrings: [
             {
@@ -343,14 +368,17 @@ describe('resources/app-service/ArmAppService', () => {
 
       expect(appService.siteConfig?.connectionStrings).toHaveLength(1);
       expect(appService.siteConfig?.connectionStrings?.[0].name).toBe('Database');
-      expect(appService.siteConfig?.connectionStrings?.[0].type).toBe(ConnectionStringType.SQL_AZURE);
+      expect(appService.siteConfig?.connectionStrings?.[0].type).toBe(
+        ConnectionStringType.SQL_AZURE
+      );
     });
 
     it('should support alwaysOn configuration', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-config-alwayson',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         siteConfig: {
           alwaysOn: true,
         },
@@ -363,7 +391,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-config-http2',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         siteConfig: {
           http20Enabled: true,
         },
@@ -376,7 +405,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-config-ftps',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         siteConfig: {
           ftpsState: FtpsState.DISABLED,
         },
@@ -389,7 +419,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-config-tls',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         siteConfig: {
           minTlsVersion: MinTlsVersion.TLS_1_2,
         },
@@ -402,7 +433,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-config-cors',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         siteConfig: {
           cors: {
             allowedOrigins: ['https://example.com', 'https://app.example.com'],
@@ -419,7 +451,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-config-vnet',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         siteConfig: {
           vnetRouteAllEnabled: true,
         },
@@ -432,7 +465,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-config-iprestrict',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         siteConfig: {
           ipSecurityRestrictions: [
             {
@@ -455,8 +489,10 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-vnet-integration',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
-        virtualNetworkSubnetId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/app-subnet',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        virtualNetworkSubnetId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/app-subnet',
       });
 
       expect(appService.virtualNetworkSubnetId).toBe(
@@ -468,7 +504,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-no-vnet',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
       });
 
       expect(appService.virtualNetworkSubnetId).toBeUndefined();
@@ -480,7 +517,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-minimal',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
       });
 
       const template = appService.toArmTemplate() as any;
@@ -498,7 +536,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-with-identity',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         identity: {
           type: ManagedIdentityType.SYSTEM_ASSIGNED,
         },
@@ -514,7 +553,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-with-config',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         siteConfig: {
           linuxFxVersion: 'PYTHON|3.11',
           alwaysOn: true,
@@ -534,7 +574,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-https-only',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         httpsOnly: true,
       });
 
@@ -547,7 +588,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-with-tags',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         tags: {
           environment: 'production',
           project: 'colorai',
@@ -566,7 +608,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-with-kind',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         kind: 'app,linux',
       });
 
@@ -579,8 +622,10 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-with-vnet',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
-        virtualNetworkSubnetId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/app-subnet',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        virtualNetworkSubnetId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/app-subnet',
       });
 
       const template = appService.toArmTemplate() as any;
@@ -596,7 +641,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-kv-identity',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         keyVaultReferenceIdentity: 'SystemAssigned',
       });
 
@@ -607,7 +653,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-client-affinity',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         clientAffinityEnabled: false,
       });
 
@@ -618,7 +665,8 @@ describe('resources/app-service/ArmAppService', () => {
       const appService = new ArmAppService(stack, 'WebApp', {
         siteName: 'app-storage-required',
         location: 'eastus',
-        serverFarmId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
+        serverFarmId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001',
         storageAccountRequired: false,
       });
 

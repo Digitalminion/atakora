@@ -127,11 +127,7 @@ export class ArmLogAnalyticsWorkspace extends Resource {
    * @throws {Error} If location is empty
    * @throws {Error} If SKU is not provided
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props: ArmLogAnalyticsWorkspaceProps
-  ) {
+  constructor(scope: Construct, id: string, props: ArmLogAnalyticsWorkspaceProps) {
     super(scope, id);
 
     // Validate required properties
@@ -170,9 +166,7 @@ export class ArmLogAnalyticsWorkspace extends Resource {
     }
 
     if (props.workspaceName.length < 4 || props.workspaceName.length > 63) {
-      throw new Error(
-        `Workspace name must be 4-63 characters (got ${props.workspaceName.length})`
-      );
+      throw new Error(`Workspace name must be 4-63 characters (got ${props.workspaceName.length})`);
     }
 
     // Validate name pattern: ^[A-Za-z0-9][A-Za-z0-9-]+[A-Za-z0-9]$
@@ -180,7 +174,7 @@ export class ArmLogAnalyticsWorkspace extends Resource {
     if (!namePattern.test(props.workspaceName)) {
       throw new Error(
         `Workspace name must start and end with alphanumeric characters, ` +
-        `and can contain hyphens in between (got: ${props.workspaceName})`
+          `and can contain hyphens in between (got: ${props.workspaceName})`
       );
     }
 

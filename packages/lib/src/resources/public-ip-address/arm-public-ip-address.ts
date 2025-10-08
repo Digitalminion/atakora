@@ -200,10 +200,7 @@ export class ArmPublicIpAddress extends Resource {
 
     // Validate idleTimeoutInMinutes range (4-30)
     if (props.properties.idleTimeoutInMinutes !== undefined) {
-      if (
-        props.properties.idleTimeoutInMinutes < 4 ||
-        props.properties.idleTimeoutInMinutes > 30
-      ) {
+      if (props.properties.idleTimeoutInMinutes < 4 || props.properties.idleTimeoutInMinutes > 30) {
         throw new Error(
           `Idle timeout must be between 4 and 30 minutes (got ${props.properties.idleTimeoutInMinutes})`
         );
@@ -214,9 +211,7 @@ export class ArmPublicIpAddress extends Resource {
     if (props.properties.domainNameLabel) {
       const label = props.properties.domainNameLabel;
       if (label.length < 3 || label.length > 63) {
-        throw new Error(
-          `Domain name label must be 3-63 characters (got ${label.length})`
-        );
+        throw new Error(`Domain name label must be 3-63 characters (got ${label.length})`);
       }
 
       // Pattern: must start with letter, end with letter or number, contain only lowercase letters, numbers, and hyphens

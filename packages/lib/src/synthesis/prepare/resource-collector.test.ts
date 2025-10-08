@@ -11,7 +11,11 @@ class TestResource extends Resource {
   readonly resourceId: string;
   readonly name: string;
 
-  constructor(scope: Construct, id: string, props: ResourceProps & { resourceType: string; name: string }) {
+  constructor(
+    scope: Construct,
+    id: string,
+    props: ResourceProps & { resourceType: string; name: string }
+  ) {
     super(scope, id, props);
     this.resourceType = props.resourceType;
     this.name = props.name;
@@ -182,7 +186,7 @@ describe('synthesis/prepare/ResourceCollector', () => {
       stack.node.addMetadata('azure:arm:stack', {});
       Object.defineProperty(stack.constructor, 'name', { value: 'SubscriptionStack' });
 
-      const resource = new TestResource(stack,'ResourceGroup', {
+      const resource = new TestResource(stack, 'ResourceGroup', {
         resourceType: 'Microsoft.Resources/resourceGroups',
         name: 'rg1',
       });
@@ -200,7 +204,7 @@ describe('synthesis/prepare/ResourceCollector', () => {
       stack.node.addMetadata('azure:arm:stack', {});
       Object.defineProperty(stack.constructor, 'name', { value: 'ResourceGroupStack' });
 
-      const resource = new TestResource(stack,'ResourceGroup', {
+      const resource = new TestResource(stack, 'ResourceGroup', {
         resourceType: 'Microsoft.Resources/resourceGroups',
         name: 'rg1',
       });
@@ -218,7 +222,7 @@ describe('synthesis/prepare/ResourceCollector', () => {
       stack.node.addMetadata('azure:arm:stack', {});
       Object.defineProperty(stack.constructor, 'name', { value: 'ResourceGroupStack' });
 
-      const resource = new TestResource(stack,'Storage', {
+      const resource = new TestResource(stack, 'Storage', {
         resourceType: 'Microsoft.Storage/storageAccounts',
         name: 'storage1',
       });
@@ -236,7 +240,7 @@ describe('synthesis/prepare/ResourceCollector', () => {
       stack.node.addMetadata('azure:arm:stack', {});
       Object.defineProperty(stack.constructor, 'name', { value: 'ResourceGroupStack' });
 
-      const resource = new TestResource(stack,'Policy', {
+      const resource = new TestResource(stack, 'Policy', {
         resourceType: 'Microsoft.Authorization/policyDefinitions',
         name: 'policy1',
       });

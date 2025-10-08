@@ -37,6 +37,7 @@ Azure resources frequently need to reference other resources (e.g., Private Endp
 ## Considered Options
 
 ### Option 1: Duck-Typed Interfaces (Current Approach)
+
 ```typescript
 export interface ISubnet {
   readonly subnetId: string;
@@ -49,11 +50,13 @@ constructor(scope: Construct, id: string, props: {
 ```
 
 **Pros**:
+
 - ✅ Simple, minimal typing
 - ✅ Easy to implement imported resources
 - ✅ Works with any object that has the right shape
 
 **Cons**:
+
 - ❌ No compile-time validation of resource types
 - ❌ Easy to pass wrong resource type
 - ❌ No IntelliSense for allowed resource types
@@ -62,6 +65,7 @@ constructor(scope: Construct, id: string, props: {
 ---
 
 ### Option 2: Generic Reference Type with Resource Type Constraint
+
 ```typescript
 export interface IResource {
   readonly resourceId: string;
@@ -97,11 +101,13 @@ constructor(scope: Construct, id: string, props: {
 ```
 
 **Pros**:
+
 - ✅ Strong type safety at construct boundaries
 - ✅ Explicit resource type expectations
 - ✅ Supports validation during synthesis
 
 **Cons**:
+
 - ❌ More verbose for developers
 - ❌ Requires wrapping all references
 - ❌ Less ergonomic API
@@ -109,6 +115,7 @@ constructor(scope: Construct, id: string, props: {
 ---
 
 ### Option 3: Union Types with Runtime Validation (RECOMMENDED)
+
 ```typescript
 // Define domain-specific interfaces
 export interface ISubnet {
@@ -160,6 +167,7 @@ private resolveResourceId(resource: IPrivateLinkResource | string): string {
 ```
 
 **Pros**:
+
 - ✅ Clean, intuitive API - `subnet: mySubnet` or `subnet: "/subscriptions/..."`
 - ✅ TypeScript IntelliSense guides developers
 - ✅ Runtime validation catches errors during synth
@@ -167,6 +175,7 @@ private resolveResourceId(resource: IPrivateLinkResource | string): string {
 - ✅ Balances type safety with flexibility
 
 **Cons**:
+
 - ⚠️ Type validation happens at runtime, not compile-time
 - ⚠️ Requires explicit runtime checks in each construct
 
@@ -177,6 +186,7 @@ private resolveResourceId(resource: IPrivateLinkResource | string): string {
 **Chosen Option: Option 3 - Union Types with Runtime Validation**
 
 This approach provides the best balance of:
+
 - **Developer ergonomics** - Natural TypeScript syntax
 - **Type safety** - IntelliSense + runtime validation
 - **Flexibility** - Supports both constructs and raw IDs
@@ -209,6 +219,7 @@ export interface IPrivateLinkResource {
 ```
 
 **Pattern**: Each resource type exports an `IResourceName` interface with:
+
 - **Required**: Primary resource ID property (`subnetId`, `storageAccountId`, etc.)
 - **Optional**: Additional metadata useful for references (`name`, `location`, etc.)
 
@@ -277,13 +288,15 @@ export class PrivateEndpoint extends Construct {
       privateEndpointName: this.privateEndpointName,
       location: this.location,
       subnet: {
-        id: subnetId,  // ✅ Now properly passed!
+        id: subnetId, // ✅ Now properly passed!
       },
-      privateLinkServiceConnections: [{
-        name: props.connectionName || `${this.privateEndpointName}-connection`,
-        privateLinkServiceId: resourceId,  // ✅ Now properly passed!
-        groupIds: props.groupIds,  // ✅ Now properly passed!
-      }],
+      privateLinkServiceConnections: [
+        {
+          name: props.connectionName || `${this.privateEndpointName}-connection`,
+          privateLinkServiceId: resourceId, // ✅ Now properly passed!
+          groupIds: props.groupIds, // ✅ Now properly passed!
+        },
+      ],
     });
   }
 
@@ -296,7 +309,7 @@ export class PrivateEndpoint extends Construct {
       if (!subnet.includes('/subnets/')) {
         throw new Error(
           `Invalid subnet ID format: ${subnet}. ` +
-          `Expected format: /subscriptions/.../virtualNetworks/.../subnets/...`
+            `Expected format: /subscriptions/.../virtualNetworks/.../subnets/...`
         );
       }
       return subnet;
@@ -319,7 +332,7 @@ export class PrivateEndpoint extends Construct {
       if (!resource.startsWith('/subscriptions/')) {
         throw new Error(
           `Invalid resource ID format: ${resource}. ` +
-          `Expected format: /subscriptions/.../resourceGroups/.../providers/Microsoft.*/...`
+            `Expected format: /subscriptions/.../resourceGroups/.../providers/Microsoft.*/...`
         );
       }
       return resource;
@@ -374,6 +387,7 @@ export class PrivateEndpoint extends Construct implements IPrivateEndpoint {
 ```
 
 **Pattern**: Every L2 construct should provide:
+
 - `fromResourceId(scope, id, resourceId)` - Import by full ARM ID
 - `fromResourceName(scope, id, name, resourceGroup?)` - Import by name (constructs ID)
 
@@ -449,13 +463,14 @@ const subnet = new Subnet(vnet, 'PrivateEndpointSubnet', {
 
 // ✅ Strongly-typed construct references
 const privateEndpoint = new PrivateEndpoint(resourceGroup, 'StoragePE', {
-  subnet: subnet,                           // Subnet construct
-  targetResource: storageAccount,           // StorageAccount construct
+  subnet: subnet, // Subnet construct
+  targetResource: storageAccount, // StorageAccount construct
   groupIds: ['blob'],
 });
 ```
 
 **Generated ARM Template**:
+
 ```json
 {
   "type": "Microsoft.Network/privateEndpoints",
@@ -465,13 +480,15 @@ const privateEndpoint = new PrivateEndpoint(resourceGroup, 'StoragePE', {
     "subnet": {
       "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'vnet-...', 'snet-pe')]"
     },
-    "privateLinkServiceConnections": [{
-      "name": "pe-datastorage-connection",
-      "properties": {
-        "privateLinkServiceId": "[resourceId('Microsoft.Storage/storageAccounts', 'mystorageaccount')]",
-        "groupIds": ["blob"]
+    "privateLinkServiceConnections": [
+      {
+        "name": "pe-datastorage-connection",
+        "properties": {
+          "privateLinkServiceId": "[resourceId('Microsoft.Storage/storageAccounts', 'mystorageaccount')]",
+          "groupIds": ["blob"]
+        }
       }
-    }]
+    ]
   }
 }
 ```
@@ -521,17 +538,20 @@ const privateEndpoint = new PrivateEndpoint(resourceGroup, 'ManualPE', {
 ## Validation Strategy
 
 ### Compile-Time Validation (TypeScript)
+
 - ✅ IntelliSense shows valid property names (`subnetId`, `resourceId`)
 - ✅ Type errors for passing wrong construct types
 - ✅ Required properties enforced at type level
 
 ### Synth-Time Validation (Runtime)
+
 - ✅ Validate resource ID format (basic pattern matching)
 - ✅ Check required properties exist on construct references
 - ✅ Validate cross-resource compatibility (e.g., groupIds match target resource type)
 - ✅ Fail fast with actionable error messages
 
 ### Synthesis Validation (Grace's Pipeline)
+
 - ✅ Verify all references resolved to valid IDs in ARM template
 - ✅ Check `dependsOn` arrays are complete
 - ✅ Validate cross-stack references use correct scope
@@ -541,6 +561,7 @@ const privateEndpoint = new PrivateEndpoint(resourceGroup, 'ManualPE', {
 ## Consequences
 
 ### Positive
+
 - ✅ **Consistent pattern** across all cross-resource references
 - ✅ **Type-safe** with good IntelliSense support
 - ✅ **Flexible** - supports constructs, imports, and raw IDs
@@ -549,11 +570,13 @@ const privateEndpoint = new PrivateEndpoint(resourceGroup, 'ManualPE', {
 - ✅ **Extensible** - easy to add new resource types
 
 ### Negative
+
 - ⚠️ **Runtime validation required** - adds overhead to construct initialization
 - ⚠️ **Boilerplate resolution methods** - each construct needs resolve methods
 - ⚠️ **Duck typing risks** - wrong object shapes only caught at runtime
 
 ### Neutral
+
 - ℹ️ Requires all L2 constructs to implement resolution pattern consistently
 - ℹ️ Requires Grace to implement synthesis-time reference validation
 - ℹ️ Requires documentation of common `groupIds` for each service type

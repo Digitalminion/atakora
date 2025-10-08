@@ -88,3 +88,9 @@ export {
 // Scope-aware naming
 export { generateScopedName, validateScopedParams } from './scoped-naming';
 export type { ScopedResourceNameParams } from './scoped-naming';
+
+// Construct ID utilities
+export { constructIdToPurpose, getServiceAbbreviation } from './construct-id-utils';
+
+// Naming service
+export { NamingService } from './naming-service';

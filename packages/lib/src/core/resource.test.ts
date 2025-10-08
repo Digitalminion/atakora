@@ -274,7 +274,7 @@ describe('core/Resource', () => {
       const resource = new TestResource(resourceGroupStack, 'MyResource', {
         name: 'test-resource',
         tags: {
-          'CostCenter': '12345',
+          CostCenter: '12345',
           'billing:department': 'engineering',
           'created-by': 'automation',
         },

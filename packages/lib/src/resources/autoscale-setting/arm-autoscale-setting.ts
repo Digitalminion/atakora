@@ -41,11 +41,7 @@ export class ArmAutoscaleSetting extends Resource {
   public readonly tags: Record<string, string>;
   public readonly resourceId: string;
 
-  constructor(
-    scope: Construct,
-    id: string,
-    props: ArmAutoscaleSettingProps
-  ) {
+  constructor(scope: Construct, id: string, props: ArmAutoscaleSettingProps) {
     super(scope, id);
 
     this.validateProps(props);

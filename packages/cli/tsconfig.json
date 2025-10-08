@@ -8,8 +8,6 @@
     "declarationMap": true,
     "tsBuildInfoFile": "../../dist/cli/.tsbuildinfo"
   },
-  "references": [
-    { "path": "../lib" }
-  ],
+  "references": [{ "path": "../lib" }],
   "include": ["src/**/*"]
 }

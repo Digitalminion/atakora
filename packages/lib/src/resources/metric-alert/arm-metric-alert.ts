@@ -134,11 +134,7 @@ export class ArmMetricAlert extends Resource {
    * @param id - Unique identifier for this construct within the parent scope
    * @param props - Metric alert properties
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props: ArmMetricAlertProps
-  ) {
+  constructor(scope: Construct, id: string, props: ArmMetricAlertProps) {
     super(scope, id);
 
     // Validate required properties

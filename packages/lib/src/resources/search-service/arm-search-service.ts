@@ -181,7 +181,7 @@ export class ArmSearchService extends Resource {
     if (!namePattern.test(props.serviceName)) {
       throw new Error(
         `Search service name must contain only lowercase letters, numbers, and hyphens, ` +
-        `and cannot start or end with a hyphen (got: ${props.serviceName})`
+          `and cannot start or end with a hyphen (got: ${props.serviceName})`
       );
     }
 
@@ -199,9 +199,7 @@ export class ArmSearchService extends Resource {
     if (props.properties?.replicaCount !== undefined) {
       const replicaCount = props.properties.replicaCount;
       if (replicaCount < 1 || replicaCount > 12) {
-        throw new Error(
-          `Replica count must be between 1 and 12 (got ${replicaCount})`
-        );
+        throw new Error(`Replica count must be between 1 and 12 (got ${replicaCount})`);
       }
     }
 

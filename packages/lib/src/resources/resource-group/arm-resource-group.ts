@@ -55,8 +55,7 @@ export class ArmResourceGroup extends Resource {
   /**
    * Deployment scope for resource groups.
    */
-  public readonly scope: DeploymentScope.Subscription =
-    DeploymentScope.Subscription;
+  public readonly scope: DeploymentScope.Subscription = DeploymentScope.Subscription;
 
   /**
    * Name of the resource group.
@@ -97,11 +96,7 @@ export class ArmResourceGroup extends Resource {
    * @throws {Error} If location is empty
    * @throws {Error} If resourceGroupName contains invalid characters
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props: ArmResourceGroupProps
-  ) {
+  constructor(scope: Construct, id: string, props: ArmResourceGroupProps) {
     super(scope, id);
 
     // Validate required properties
@@ -141,8 +136,8 @@ export class ArmResourceGroup extends Resource {
     if (!namePattern.test(props.resourceGroupName)) {
       throw new Error(
         `Resource group name contains invalid characters. ` +
-        `Must match pattern: ^[-\\w\\._\\(\\)]+$ ` +
-        `(alphanumeric, hyphens, underscores, periods, parentheses)`
+          `Must match pattern: ^[-\\w\\._\\(\\)]+$ ` +
+          `(alphanumeric, hyphens, underscores, periods, parentheses)`
       );
     }
 

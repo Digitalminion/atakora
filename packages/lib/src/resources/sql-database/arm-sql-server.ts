@@ -152,9 +152,7 @@ export class ArmSqlServer extends Resource {
     }
 
     if (props.serverName.length < 1 || props.serverName.length > 63) {
-      throw new Error(
-        `SQL Server name must be 1-63 characters (got ${props.serverName.length})`
-      );
+      throw new Error(`SQL Server name must be 1-63 characters (got ${props.serverName.length})`);
     }
 
     // Validate name pattern: ^[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$ or ^[a-z0-9]$

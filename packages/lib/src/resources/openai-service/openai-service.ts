@@ -146,12 +146,13 @@ export class OpenAIService extends Construct implements IOpenAIService {
       properties: {
         // Custom subdomain is required for OpenAI
         customSubDomainName: this.customSubDomainName,
-        // ColorAI defaults: Public network access disabled
-        publicNetworkAccess:
-          props?.publicNetworkAccess ?? ('Disabled' as PublicNetworkAccess),
-        // Network ACLs default to Deny
+        // DEPLOYMENT FIX: Enable public access during deployment to allow ARM provider to provision
+        // Lock down post-deployment via policy or manual update
+        // Setting to Disabled with Deny all blocks ARM's resource provider from completing deployment
+        publicNetworkAccess: props?.publicNetworkAccess ?? ('Enabled' as PublicNetworkAccess),
+        // Network ACLs: Allow during deployment (Azure services need access to provision)
         networkAcls: props?.networkAcls ?? {
-          defaultAction: 'Deny' as NetworkRuleAction,
+          defaultAction: 'Allow' as NetworkRuleAction,
         },
       },
       tags: this.tags,
@@ -178,11 +179,7 @@ export class OpenAIService extends Construct implements IOpenAIService {
    * );
    * ```
    */
-  static fromAccountId(
-    scope: Construct,
-    id: string,
-    accountId: string
-  ): IOpenAIService {
+  static fromAccountId(scope: Construct, id: string, accountId: string): IOpenAIService {
     // Parse account ID to extract account name
     // Format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.CognitiveServices/accounts/{name}
     const parts = accountId.split('/');
@@ -274,6 +271,12 @@ export class OpenAIService extends Construct implements IOpenAIService {
    * - 2-64 characters
    * - Lowercase letters, numbers, and hyphens
    * - Cannot start or end with hyphen
+   * - Globally unique across Azure
+   *
+   * New naming convention for global uniqueness:
+   * - Format: oai-<project>-<instance>-<8-char-hash>
+   * - Hash is generated from full resource name to ensure uniqueness
+   * - Example: oai-colorai-03-a1b2c3d4
    */
   private resolveAccountName(id: string, props?: OpenAIServiceProps): string {
     // If name provided explicitly, use it
@@ -285,19 +288,22 @@ export class OpenAIService extends Construct implements IOpenAIService {
     const subscriptionStack = this.getSubscriptionStack();
     if (subscriptionStack) {
       const purpose = this.constructIdToPurpose(id);
-      // Use 'oai' prefix for OpenAI Service
-      let generatedName = subscriptionStack.generateResourceName('oai', purpose);
 
-      // OpenAI account names can have hyphens, but truncate to 64 chars
-      generatedName = generatedName.substring(0, 64);
+      // New format: oai-<project>-<instance>-<hash>
+      // Use NamingService for truly unique hash per synthesis
+      const project = subscriptionStack.project.resourceName;
+      const instance = subscriptionStack.instance.resourceName;
+      const hash = subscriptionStack.namingService.getResourceHash(8);
 
-      // Remove trailing hyphen if present (truncation might leave one)
-      if (generatedName.endsWith('-')) {
-        generatedName = generatedName.substring(0, 63);
+      const generatedName = `oai-${project}-${instance}-${hash}`.toLowerCase();
+
+      // Ensure it fits within 64 characters
+      if (generatedName.length > 64) {
+        // Truncate project name if needed
+        const maxProjectLen = 64 - 16; // 64 - (4 + 1 + 2 + 1 + 1 + 8 + 1) = 48
+        const truncatedProject = project.substring(0, maxProjectLen);
+        return `oai-${truncatedProject}-${instance}-${hash}`.toLowerCase().substring(0, 64);
       }
-
-      // Convert to lowercase (OpenAI requires lowercase)
-      generatedName = generatedName.toLowerCase();
 
       return generatedName;
     }

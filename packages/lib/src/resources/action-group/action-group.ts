@@ -1,10 +1,7 @@
 import { Construct } from '../../core/construct';
 import type { IResourceGroup } from '../resource-group/types';
 import { ArmActionGroup } from './arm-action-group';
-import type {
-  ActionGroupProps,
-  IActionGroup,
-} from './types';
+import type { ActionGroupProps, IActionGroup } from './types';
 
 /**
  * L2 construct for Azure Action Group.
@@ -116,11 +113,7 @@ export class ActionGroup extends Construct implements IActionGroup {
    * });
    * ```
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props: ActionGroupProps
-  ) {
+  constructor(scope: Construct, id: string, props: ActionGroupProps) {
     super(scope, id);
 
     // Get parent resource group
@@ -188,7 +181,7 @@ export class ActionGroup extends Construct implements IActionGroup {
 
     throw new Error(
       'ActionGroup must be created within or under a ResourceGroup. ' +
-      'Ensure the parent scope is a ResourceGroup or has one in its hierarchy.'
+        'Ensure the parent scope is a ResourceGroup or has one in its hierarchy.'
     );
   }
 
@@ -228,10 +221,7 @@ export class ActionGroup extends Construct implements IActionGroup {
    * @param props - Action group properties
    * @returns Resolved action group name
    */
-  private resolveActionGroupName(
-    id: string,
-    props?: ActionGroupProps
-  ): string {
+  private resolveActionGroupName(id: string, props?: ActionGroupProps): string {
     // If name provided explicitly, use it
     if (props?.actionGroupName) {
       return props.actionGroupName;

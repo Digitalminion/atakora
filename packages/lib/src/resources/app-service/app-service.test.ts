@@ -110,7 +110,8 @@ describe('resources/app-service/AppService', () => {
     });
 
     it('should accept string resource ID for serverFarmId', () => {
-      const planId = '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001';
+      const planId =
+        '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/serverfarms/asp-001';
       const appService = new AppService(resourceGroup, 'WebApp', {
         serverFarmId: planId,
       });
@@ -149,7 +150,8 @@ describe('resources/app-service/AppService', () => {
         identity: {
           type: ManagedIdentityType.USER_ASSIGNED,
           userAssignedIdentities: {
-            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id1': {},
+            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id1':
+              {},
           },
         },
       });
@@ -321,9 +323,7 @@ describe('resources/app-service/AppService', () => {
     it('should update existing app setting', () => {
       const appService = new AppService(resourceGroup, 'WebApp', {
         serverFarmId: appServicePlan.planId,
-        appSettings: [
-          { name: 'ENVIRONMENT', value: 'development' },
-        ],
+        appSettings: [{ name: 'ENVIRONMENT', value: 'development' }],
       });
 
       appService.addAppSetting('ENVIRONMENT', 'production');
@@ -434,14 +434,16 @@ describe('resources/app-service/AppService', () => {
         serverFarmId: appServicePlan.planId,
       });
 
-      const subnetId = '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/app-subnet';
+      const subnetId =
+        '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/app-subnet';
       appService.enableVNetIntegration(subnetId);
 
       expect(appService.siteName).toBeDefined();
     });
 
     it('should work with pre-configured VNet integration', () => {
-      const subnetId = '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/app-subnet';
+      const subnetId =
+        '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/app-subnet';
       const appService = new AppService(resourceGroup, 'WebApp', {
         serverFarmId: appServicePlan.planId,
         virtualNetworkSubnetId: subnetId,
@@ -455,7 +457,8 @@ describe('resources/app-service/AppService', () => {
         serverFarmId: appServicePlan.planId,
       });
 
-      const subnetId = '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/app-subnet';
+      const subnetId =
+        '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/app-subnet';
       appService.enableVNetIntegration(subnetId);
 
       expect(appService.siteName).toBeDefined();
@@ -464,7 +467,8 @@ describe('resources/app-service/AppService', () => {
 
   describe('fromSiteId static method', () => {
     it('should create reference from site ID', () => {
-      const siteId = '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/sites/app-existing';
+      const siteId =
+        '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/sites/app-existing';
       const appRef = AppService.fromSiteId(resourceGroup, 'ExistingApp', siteId);
 
       expect(appRef.siteName).toBe('app-existing');
@@ -479,7 +483,8 @@ describe('resources/app-service/AppService', () => {
     });
 
     it('should extract location from parent resource group', () => {
-      const siteId = '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/sites/app-existing';
+      const siteId =
+        '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Web/sites/app-existing';
       const appRef = AppService.fromSiteId(resourceGroup, 'ExistingApp', siteId);
 
       expect(appRef.location).toBe('eastus');
@@ -632,7 +637,8 @@ describe('resources/app-service/AppService', () => {
         vnetRouteAllEnabled: true,
       });
 
-      const subnetId = '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/app-subnet';
+      const subnetId =
+        '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/app-subnet';
       appService.enableVNetIntegration(subnetId);
       appService.addAppSetting('VNET_ENABLED', 'true');
 

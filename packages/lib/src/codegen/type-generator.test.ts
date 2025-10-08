@@ -114,9 +114,7 @@ describe('TypeGenerator', () => {
 
       // Should not generate 'type' or 'apiVersion' properties
       // (these are handled by constructs automatically)
-      const propsInterfaceMatch = code.match(
-        /export interface Arm\w+Props \{([^}]+)\}/s
-      );
+      const propsInterfaceMatch = code.match(/export interface Arm\w+Props \{([^}]+)\}/s);
 
       if (propsInterfaceMatch) {
         const propsBody = propsInterfaceMatch[1];

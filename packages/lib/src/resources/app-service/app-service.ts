@@ -300,11 +300,7 @@ export class AppService extends Construct implements IAppService {
    * );
    * ```
    */
-  public addConnectionString(
-    name: string,
-    value: string,
-    type: ConnectionStringType
-  ): void {
+  public addConnectionString(name: string, value: string, type: ConnectionStringType): void {
     // Check if connection string already exists
     const existingIndex = this.connectionStrings.findIndex((c) => c.name === name);
 
@@ -351,11 +347,7 @@ export class AppService extends Construct implements IAppService {
    * );
    * ```
    */
-  public static fromSiteId(
-    scope: Construct,
-    id: string,
-    siteId: string
-  ): IAppService {
+  public static fromSiteId(scope: Construct, id: string, siteId: string): IAppService {
     // Extract site name from resource ID
     const siteNameMatch = siteId.match(/\/sites\/([^/]+)$/);
     if (!siteNameMatch) {
@@ -368,8 +360,9 @@ export class AppService extends Construct implements IAppService {
     let location = 'unknown';
     let current: Construct | undefined = scope;
     while (current) {
-      if ((current as any).location) {
-        location = (current as any).location;
+      const candidate = current as unknown as { location?: string };
+      if (candidate.location) {
+        location = candidate.location;
         break;
       }
       current = current.node.scope;
@@ -417,11 +410,13 @@ export class AppService extends Construct implements IAppService {
    * @param construct - Construct to check
    * @returns True if construct has ResourceGroup properties
    */
-  private isResourceGroup(construct: any): construct is IResourceGroup {
+  private isResourceGroup(construct: unknown): construct is IResourceGroup {
+    const candidate = construct as { resourceGroupName?: unknown; location?: unknown };
     return (
-      construct &&
-      typeof construct.resourceGroupName === 'string' &&
-      typeof construct.location === 'string'
+      construct !== null &&
+      typeof construct === 'object' &&
+      typeof candidate.resourceGroupName === 'string' &&
+      typeof candidate.location === 'string'
     );
   }
 
@@ -433,8 +428,8 @@ export class AppService extends Construct implements IAppService {
    */
   private getParentTags(scope: Construct): Record<string, string> {
     // Try to get tags from parent
-    const parent = scope as any;
-    if (parent && typeof parent.tags === 'object') {
+    const parent = scope as unknown as { tags?: Record<string, string> };
+    if (parent && typeof parent.tags === 'object' && parent.tags) {
       return parent.tags;
     }
     return {};
@@ -447,6 +442,24 @@ export class AppService extends Construct implements IAppService {
    * @param props - App Service properties
    * @returns Resolved site name
    */
+  /**
+   * Resolves the App Service site name from props or auto-generates it.
+   *
+   * @param id - Construct ID
+   * @param props - App Service properties
+   * @returns Resolved site name
+   *
+   * @remarks
+   * App Service names have constraints:
+   * - 2-60 characters
+   * - Alphanumeric and hyphens
+   * - Globally unique across Azure (for azurewebsites.net URL)
+   *
+   * New naming convention for global uniqueness:
+   * - Format: appsrv-<project>-<instance>-<8-char-hash>
+   * - Hash is generated from full resource name to ensure uniqueness
+   * - Example: appsrv-colorai-03-a1b2c3d4
+   */
   private resolveSiteName(id: string, props: AppServiceProps): string {
     // If name provided explicitly, use it
     if (props.siteName) {
@@ -457,14 +470,34 @@ export class AppService extends Construct implements IAppService {
     const subscriptionStack = this.getSubscriptionStack();
     if (subscriptionStack) {
       const purpose = this.constructIdToPurpose(id);
-      const rawName = subscriptionStack.generateResourceName('app', purpose);
 
-      // Ensure name doesn't exceed 60 characters
-      return rawName.substring(0, 60);
+      // New format: appsrv-<project>-<instance>-<hash>
+      // Use NamingService for truly unique hash per synthesis
+      const stackData = subscriptionStack as {
+        project?: { resourceName?: string };
+        instance?: { resourceName?: string };
+        namingService?: { getResourceHash: (length: number) => string };
+      };
+
+      const project = stackData.project?.resourceName || 'unknown';
+      const instance = stackData.instance?.resourceName || 'unknown';
+      const hash = stackData.namingService?.getResourceHash(8) || 'unknown';
+
+      const generatedName = `appsrv-${project}-${instance}-${hash}`;
+
+      // Ensure it fits within 60 characters
+      if (generatedName.length > 60) {
+        // Truncate project name if needed
+        const maxProjectLen = 60 - 19; // 60 - (7 + 1 + 2 + 1 + 1 + 8 + 1) = 41
+        const truncatedProject = project.substring(0, maxProjectLen);
+        return `appsrv-${truncatedProject}-${instance}-${hash}`.substring(0, 60);
+      }
+
+      return generatedName;
     }
 
     // Fallback: construct a basic name from ID (ensure max 60 chars)
-    const fallbackName = `app-${id.toLowerCase()}`;
+    const fallbackName = `appsrv-${id.toLowerCase()}`;
     return fallbackName.substring(0, 60);
   }
 
@@ -479,8 +512,25 @@ export class AppService extends Construct implements IAppService {
       return serverFarmId;
     }
 
-    // It's an IAppServicePlan interface
-    return serverFarmId.planId;
+    // It's an IAppServicePlan interface - convert to ARM resourceId() expression
+    return this.buildAppServicePlanReference(serverFarmId.planId);
+  }
+
+  /**
+   * Builds an App Service Plan reference for ARM templates.
+   * Extracts the plan name from the resource ID and creates a full resource ID expression.
+   *
+   * @param planId - Full resource ID of the App Service Plan
+   * @returns ARM concat() expression building full resource ID
+   */
+  private buildAppServicePlanReference(planId: string): string {
+    // Extract plan name from resource ID
+    // Format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Web/serverfarms/{planName}
+    const parts = planId.split('/');
+    const planName = parts[parts.length - 1];
+
+    // Build full resource ID using concat() to ensure correct subscription and resource group
+    return `[concat(subscription().id, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Web/serverfarms/', '${planName}')]`;
   }
 
   /**
@@ -488,15 +538,19 @@ export class AppService extends Construct implements IAppService {
    *
    * @returns SubscriptionStack or undefined if not found
    */
-  private getSubscriptionStack(): any {
+  private getSubscriptionStack(): unknown {
     let current: Construct | undefined = this.node.scope;
 
     while (current) {
       // Check if current is a SubscriptionStack using duck typing
+      const candidate = current as unknown as {
+        generateResourceName?: unknown;
+        subscriptionId?: unknown;
+      };
       if (
         current &&
-        typeof (current as any).generateResourceName === 'function' &&
-        typeof (current as any).subscriptionId === 'string'
+        typeof candidate.generateResourceName === 'function' &&
+        typeof candidate.subscriptionId === 'string'
       ) {
         return current;
       }

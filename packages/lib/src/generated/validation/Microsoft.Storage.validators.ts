@@ -44,13 +44,13 @@ export function validateStorageAccounts(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -69,13 +69,13 @@ export function validateStorageAccountsBlobServices(props: any): ValidationResul
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -94,7 +94,7 @@ export function validateStorageAccountsBlobServicesContainers(props: any): Valid
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -106,7 +106,7 @@ export function validateStorageAccountsBlobServicesContainers(props: any): Valid
           path: 'name',
           message: 'Property "name" must be at least 3 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
       if (props.name.length > 63) {
@@ -114,7 +114,7 @@ export function validateStorageAccountsBlobServicesContainers(props: any): Valid
           path: 'name',
           message: 'Property "name" must be at most 63 characters',
           code: 'STRING_TOO_LONG',
-          fix: 'Shorten the value of "name" to 63 characters or less'
+          fix: 'Shorten the value of "name" to 63 characters or less',
         });
       }
     }
@@ -122,7 +122,7 @@ export function validateStorageAccountsBlobServicesContainers(props: any): Valid
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -132,7 +132,9 @@ export function validateStorageAccountsBlobServicesContainers(props: any): Valid
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateStorageAccountsBlobServicesContainersImmutabilityPolicies(props: any): ValidationResult {
+export function validateStorageAccountsBlobServicesContainersImmutabilityPolicies(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -141,13 +143,13 @@ export function validateStorageAccountsBlobServicesContainersImmutabilityPolicie
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -166,7 +168,7 @@ export function validateStorageAccountsEncryptionScopes(props: any): ValidationR
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -178,7 +180,7 @@ export function validateStorageAccountsEncryptionScopes(props: any): ValidationR
           path: 'name',
           message: 'Property "name" must be at least 3 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
       if (props.name.length > 63) {
@@ -186,7 +188,7 @@ export function validateStorageAccountsEncryptionScopes(props: any): ValidationR
           path: 'name',
           message: 'Property "name" must be at most 63 characters',
           code: 'STRING_TOO_LONG',
-          fix: 'Shorten the value of "name" to 63 characters or less'
+          fix: 'Shorten the value of "name" to 63 characters or less',
         });
       }
     }
@@ -194,7 +196,7 @@ export function validateStorageAccountsEncryptionScopes(props: any): ValidationR
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -213,13 +215,13 @@ export function validateStorageAccountsFileServices(props: any): ValidationResul
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -238,7 +240,7 @@ export function validateStorageAccountsFileServicesShares(props: any): Validatio
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -250,7 +252,7 @@ export function validateStorageAccountsFileServicesShares(props: any): Validatio
           path: 'name',
           message: 'Property "name" must be at least 3 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
       if (props.name.length > 63) {
@@ -258,7 +260,7 @@ export function validateStorageAccountsFileServicesShares(props: any): Validatio
           path: 'name',
           message: 'Property "name" must be at most 63 characters',
           code: 'STRING_TOO_LONG',
-          fix: 'Shorten the value of "name" to 63 characters or less'
+          fix: 'Shorten the value of "name" to 63 characters or less',
         });
       }
     }
@@ -266,7 +268,7 @@ export function validateStorageAccountsFileServicesShares(props: any): Validatio
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -285,13 +287,13 @@ export function validateStorageAccountsInventoryPolicies(props: any): Validation
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -310,7 +312,7 @@ export function validateStorageAccountsLocalUsers(props: any): ValidationResult 
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -322,7 +324,7 @@ export function validateStorageAccountsLocalUsers(props: any): ValidationResult 
           path: 'name',
           message: 'Property "name" must be at least 3 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
       if (props.name.length > 64) {
@@ -330,7 +332,7 @@ export function validateStorageAccountsLocalUsers(props: any): ValidationResult 
           path: 'name',
           message: 'Property "name" must be at most 64 characters',
           code: 'STRING_TOO_LONG',
-          fix: 'Shorten the value of "name" to 64 characters or less'
+          fix: 'Shorten the value of "name" to 64 characters or less',
         });
       }
     }
@@ -338,7 +340,7 @@ export function validateStorageAccountsLocalUsers(props: any): ValidationResult 
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -357,13 +359,13 @@ export function validateStorageAccountsManagementPolicies(props: any): Validatio
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -382,7 +384,7 @@ export function validateStorageAccountsObjectReplicationPolicies(props: any): Va
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -394,7 +396,7 @@ export function validateStorageAccountsObjectReplicationPolicies(props: any): Va
           path: 'name',
           message: 'Property "name" must be at least 1 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
     }
@@ -402,7 +404,7 @@ export function validateStorageAccountsObjectReplicationPolicies(props: any): Va
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -421,13 +423,13 @@ export function validateStorageAccountsPrivateEndpointConnections(props: any): V
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -446,13 +448,13 @@ export function validateStorageAccountsQueueServices(props: any): ValidationResu
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -471,13 +473,13 @@ export function validateStorageAccountsQueueServicesQueues(props: any): Validati
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -496,13 +498,13 @@ export function validateStorageAccountsStorageTaskAssignments(props: any): Valid
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -521,13 +523,13 @@ export function validateStorageAccountsTableServices(props: any): ValidationResu
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -546,12 +548,12 @@ export function validateStorageAccountsTableServicesTables(props: any): Validati
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }

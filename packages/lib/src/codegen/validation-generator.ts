@@ -128,10 +128,7 @@ export interface ValidationResult {
   /**
    * Generate validator function for a resource.
    */
-  private generateResourceValidator(
-    resource: ResourceDefinition,
-    ir: SchemaIR
-  ): string {
+  private generateResourceValidator(resource: ResourceDefinition, ir: SchemaIR): string {
     const lines: string[] = [];
     const validatorName = `validate${this.toPascalCase(resource.name)}`;
     const propsTypeName = `Arm${this.toPascalCase(resource.name)}Props`;
@@ -151,10 +148,7 @@ export interface ValidationResult {
 
     // Validate required properties
     for (const prop of resource.properties) {
-      if (
-        prop.required &&
-        !['type', 'apiVersion', 'resources'].includes(prop.name)
-      ) {
+      if (prop.required && !['type', 'apiVersion', 'resources'].includes(prop.name)) {
         lines.push(`  // Validate required property: ${prop.name}`);
         lines.push(`  if (props.${prop.name} === undefined || props.${prop.name} === null) {`);
         lines.push(`    errors.push({`);
@@ -188,10 +182,7 @@ export interface ValidationResult {
   /**
    * Generate validation code for a property with constraints.
    */
-  private generatePropertyValidation(
-    prop: PropertyDefinition,
-    indent: string
-  ): string[] {
+  private generatePropertyValidation(prop: PropertyDefinition, indent: string): string[] {
     const lines: string[] = [];
     const constraints = prop.constraints!;
 
@@ -206,7 +197,9 @@ export interface ValidationResult {
         lines.push(`${indent}    if (props.${prop.name}.length < ${constraints.minLength}) {`);
         lines.push(`${indent}      errors.push({`);
         lines.push(`${indent}        path: '${prop.name}',`);
-        lines.push(`${indent}        message: 'Property "${prop.name}" must be at least ${constraints.minLength} characters',`);
+        lines.push(
+          `${indent}        message: 'Property "${prop.name}" must be at least ${constraints.minLength} characters',`
+        );
         lines.push(`${indent}        code: 'STRING_TOO_SHORT',`);
         lines.push(`${indent}        fix: 'Provide a longer value for "${prop.name}"'`);
         lines.push(`${indent}      });`);
@@ -217,9 +210,13 @@ export interface ValidationResult {
         lines.push(`${indent}    if (props.${prop.name}.length > ${constraints.maxLength}) {`);
         lines.push(`${indent}      errors.push({`);
         lines.push(`${indent}        path: '${prop.name}',`);
-        lines.push(`${indent}        message: 'Property "${prop.name}" must be at most ${constraints.maxLength} characters',`);
+        lines.push(
+          `${indent}        message: 'Property "${prop.name}" must be at most ${constraints.maxLength} characters',`
+        );
         lines.push(`${indent}        code: 'STRING_TOO_LONG',`);
-        lines.push(`${indent}        fix: 'Shorten the value of "${prop.name}" to ${constraints.maxLength} characters or less'`);
+        lines.push(
+          `${indent}        fix: 'Shorten the value of "${prop.name}" to ${constraints.maxLength} characters or less'`
+        );
         lines.push(`${indent}      });`);
         lines.push(`${indent}    }`);
       }
@@ -235,9 +232,13 @@ export interface ValidationResult {
         lines.push(`${indent}    if (props.${prop.name} < ${constraints.minimum}) {`);
         lines.push(`${indent}      errors.push({`);
         lines.push(`${indent}        path: '${prop.name}',`);
-        lines.push(`${indent}        message: 'Property "${prop.name}" must be at least ${constraints.minimum}',`);
+        lines.push(
+          `${indent}        message: 'Property "${prop.name}" must be at least ${constraints.minimum}',`
+        );
         lines.push(`${indent}        code: 'VALUE_TOO_SMALL',`);
-        lines.push(`${indent}        fix: 'Increase the value of "${prop.name}" to ${constraints.minimum} or greater'`);
+        lines.push(
+          `${indent}        fix: 'Increase the value of "${prop.name}" to ${constraints.minimum} or greater'`
+        );
         lines.push(`${indent}      });`);
         lines.push(`${indent}    }`);
       }
@@ -246,9 +247,13 @@ export interface ValidationResult {
         lines.push(`${indent}    if (props.${prop.name} > ${constraints.maximum}) {`);
         lines.push(`${indent}      errors.push({`);
         lines.push(`${indent}        path: '${prop.name}',`);
-        lines.push(`${indent}        message: 'Property "${prop.name}" must be at most ${constraints.maximum}',`);
+        lines.push(
+          `${indent}        message: 'Property "${prop.name}" must be at most ${constraints.maximum}',`
+        );
         lines.push(`${indent}        code: 'VALUE_TOO_LARGE',`);
-        lines.push(`${indent}        fix: 'Decrease the value of "${prop.name}" to ${constraints.maximum} or less'`);
+        lines.push(
+          `${indent}        fix: 'Decrease the value of "${prop.name}" to ${constraints.maximum} or less'`
+        );
         lines.push(`${indent}      });`);
         lines.push(`${indent}    }`);
       }
@@ -264,9 +269,13 @@ export interface ValidationResult {
       lines.push(`${indent}    if (!pattern.test(props.${prop.name})) {`);
       lines.push(`${indent}      errors.push({`);
       lines.push(`${indent}        path: '${prop.name}',`);
-      lines.push(`${indent}        message: 'Property "${prop.name}" does not match required pattern',`);
+      lines.push(
+        `${indent}        message: 'Property "${prop.name}" does not match required pattern',`
+      );
       lines.push(`${indent}        code: 'PATTERN_MISMATCH',`);
-      lines.push(`${indent}        fix: 'Ensure "${prop.name}" matches the pattern: ${escapedPattern}'`);
+      lines.push(
+        `${indent}        fix: 'Ensure "${prop.name}" matches the pattern: ${escapedPattern}'`
+      );
       lines.push(`${indent}      });`);
       lines.push(`${indent}    }`);
       lines.push(`${indent}  }`);
@@ -274,12 +283,14 @@ export interface ValidationResult {
 
     // Enum constraints
     if (constraints.enum && constraints.enum.length > 0) {
-      const enumValues = constraints.enum.map(v => `'${v}'`).join(', ');
+      const enumValues = constraints.enum.map((v) => `'${v}'`).join(', ');
       lines.push(`${indent}  const allowedValues = [${enumValues}];`);
       lines.push(`${indent}  if (!allowedValues.includes(props.${prop.name})) {`);
       lines.push(`${indent}    errors.push({`);
       lines.push(`${indent}      path: '${prop.name}',`);
-      lines.push(`${indent}      message: 'Property "${prop.name}" must be one of: ${enumValues}',`);
+      lines.push(
+        `${indent}      message: 'Property "${prop.name}" must be one of: ${enumValues}',`
+      );
       lines.push(`${indent}      code: 'INVALID_ENUM_VALUE',`);
       lines.push(`${indent}      fix: 'Use one of the allowed values: ${enumValues}'`);
       lines.push(`${indent}    });`);

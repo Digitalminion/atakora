@@ -134,13 +134,7 @@ describe('resources/resource-group/ArmResourceGroup', () => {
     });
 
     it('should accept valid characters (alphanumeric, hyphen, underscore, period, parentheses)', () => {
-      const validNames = [
-        'rg-test',
-        'rg_test',
-        'rg.test',
-        'rg(test)',
-        'rg-test_123.456(789)',
-      ];
+      const validNames = ['rg-test', 'rg_test', 'rg.test', 'rg(test)', 'rg-test_123.456(789)'];
 
       validNames.forEach((name) => {
         const rg = new ArmResourceGroup(stack, `RG-${name}`, {
@@ -154,11 +148,11 @@ describe('resources/resource-group/ArmResourceGroup', () => {
 
     it('should throw error for invalid characters in resource group name', () => {
       const invalidNames = [
-        'rg@test',      // @ not allowed
-        'rg#test',      // # not allowed
-        'rg$test',      // $ not allowed
-        'rg test',      // space not allowed
-        'rg!test',      // ! not allowed
+        'rg@test', // @ not allowed
+        'rg#test', // # not allowed
+        'rg$test', // $ not allowed
+        'rg test', // space not allowed
+        'rg!test', // ! not allowed
       ];
 
       invalidNames.forEach((name) => {

@@ -1,6 +1,7 @@
 import { Construct } from '../../core/construct';
 import type { IResourceGroup } from '../resource-group/types';
 import { ArmSearchService } from './arm-search-service';
+import { constructIdToPurpose as utilConstructIdToPurpose } from '../../naming/construct-id-utils';
 import type {
   SearchServiceProps,
   ISearchService,
@@ -159,11 +160,7 @@ export class SearchService extends Construct implements ISearchService {
    * const searchService = SearchService.fromServiceId(stack, 'ExistingSearch', serviceId);
    * ```
    */
-  public static fromServiceId(
-    scope: Construct,
-    id: string,
-    serviceId: string
-  ): ISearchService {
+  public static fromServiceId(scope: Construct, id: string, serviceId: string): ISearchService {
     // Parse the service ID to extract serviceName and location
     const parts = serviceId.split('/');
     const serviceName = parts[parts.length - 1];
@@ -290,7 +287,7 @@ export class SearchService extends Construct implements ISearchService {
    * @param id - Construct ID
    * @returns Purpose string for naming
    */
-  private constructIdToPurpose(id: string): string {
-    return id.toLowerCase();
+  private constructIdToPurpose(id: string): string | undefined {
+    return utilConstructIdToPurpose(id, 'search', ['searchservice', 'srch']);
   }
 }

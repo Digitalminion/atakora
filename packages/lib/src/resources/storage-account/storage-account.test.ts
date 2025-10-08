@@ -130,7 +130,10 @@ describe('resources/storage-account/StorageAccount', () => {
     });
 
     it('should truncate name to 24 characters', () => {
-      const storage = new StorageAccount(resourceGroup, 'VeryLongStorageAccountNameThatExceedsLimit');
+      const storage = new StorageAccount(
+        resourceGroup,
+        'VeryLongStorageAccountNameThatExceedsLimit'
+      );
 
       // Should be truncated to 24 characters
       expect(storage.storageAccountName.length).toBeLessThanOrEqual(24);

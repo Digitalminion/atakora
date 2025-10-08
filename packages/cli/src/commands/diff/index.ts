@@ -4,8 +4,37 @@ import ora from 'ora';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ResourceManagementClient } from '@azure/arm-resources';
-import { ConfigManager } from '../../config/config-manager';
-import { AzureAuthService } from '../../auth/azure-auth';
+import { ConfigManager, ProfileConfig } from '../../config/config-manager';
+import { authManager } from '../../auth/auth-manager';
+
+// Types
+interface StackManifest {
+  name?: string;
+  templatePath: string;
+  resourceCount?: number;
+  parameterCount?: number;
+  outputCount?: number;
+}
+
+interface ArmResource {
+  type: string;
+  name: string;
+  properties?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+interface ArmTemplate {
+  resources?: ArmResource[];
+  parameters?: Record<string, unknown>;
+  outputs?: Record<string, unknown>;
+}
+
+interface DeployedResource {
+  resourceType?: string;
+  resourceName?: string;
+  id?: string;
+  properties?: Record<string, unknown>;
+}
 
 interface ResourceChange {
   action: 'add' | 'modify' | 'delete' | 'no-change';
@@ -37,15 +66,22 @@ export function createDiffCommand(): Command {
           process.exit(1);
         }
 
-        // Authenticate
-        spinner.text = 'Authenticating with Azure...';
-        const authService = new AzureAuthService(profile.cloud as any);
-        const authResult = await authService.login();
+        // Authenticate (using cached credential if available)
+        const cloudEnvironment =
+          (profile.cloud as 'AzureCloud' | 'AzureUSGovernment') || 'AzureCloud';
+        const authService = authManager.getAuthService(cloudEnvironment);
 
-        if (!authResult.success) {
-          spinner.fail(chalk.red('Authentication failed'));
-          console.error(chalk.red(authResult.error || 'Unknown error'));
-          process.exit(1);
+        if (!authManager.isAuthenticated(cloudEnvironment)) {
+          spinner.text = 'Authenticating with Azure...';
+          const authResult = await authService.login();
+
+          if (!authResult.success) {
+            spinner.fail(chalk.red('Authentication failed'));
+            console.error(chalk.red(authResult.error || 'Unknown error'));
+            process.exit(1);
+          }
+        } else {
+          spinner.text = 'Using cached credentials...';
         }
 
         // Load cloud assembly
@@ -66,9 +102,7 @@ export function createDiffCommand(): Command {
         const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
 
         // Determine which stacks to diff
-        const stacksToDiff = stackName
-          ? [stackName]
-          : Object.keys(manifest.stacks);
+        const stacksToDiff = stackName ? [stackName] : Object.keys(manifest.stacks);
 
         if (stackName && !manifest.stacks[stackName]) {
           spinner.fail(chalk.red(`Stack '${stackName}' not found in cloud assembly`));
@@ -87,9 +121,7 @@ export function createDiffCommand(): Command {
         }
       } catch (error) {
         spinner.fail(chalk.red('Diff failed'));
-        console.error(
-          chalk.red(error instanceof Error ? error.message : 'Unknown error')
-        );
+        console.error(chalk.red(error instanceof Error ? error.message : 'Unknown error'));
         process.exit(1);
       }
     });
@@ -101,7 +133,7 @@ async function diffStack(
   client: ResourceManagementClient,
   assemblyPath: string,
   stackName: string,
-  stackManifest: any
+  stackManifest: StackManifest
 ): Promise<void> {
   console.log(chalk.bold(`\nStack: ${stackName}`));
   console.log(chalk.gray('─'.repeat(70)));
@@ -109,11 +141,10 @@ async function diffStack(
   try {
     // Load local template
     const templatePath = path.join(assemblyPath, stackManifest.templatePath);
-    const localTemplate = JSON.parse(fs.readFileSync(templatePath, 'utf-8'));
+    const localTemplate = JSON.parse(fs.readFileSync(templatePath, 'utf-8')) as ArmTemplate;
 
     // Try to find existing deployment
-    const deploymentName = `${stackName}-*`;
-    let deployedResources: any[] = [];
+    let deployedResources: DeployedResource[] = [];
 
     try {
       // List recent deployments for this stack
@@ -137,11 +168,12 @@ async function diffStack(
         }
       }
     } catch (error) {
+      console.error(error);
       // No previous deployment found, all resources will be new
     }
 
     // Compute changes
-    const changes = computeChanges(localTemplate.resources, deployedResources);
+    const changes = computeChanges(localTemplate.resources || [], deployedResources);
 
     // Display changes
     displayChanges(changes);
@@ -149,13 +181,20 @@ async function diffStack(
     // Display summary
     displaySummary(changes);
   } catch (error) {
-    console.error(chalk.red(`Error diffing stack '${stackName}': ${error instanceof Error ? error.message : 'Unknown error'}`));
+    console.error(
+      chalk.red(
+        `Error diffing stack '${stackName}': ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
+    );
   }
 }
 
-function computeChanges(localResources: any[], deployedResources: any[]): ResourceChange[] {
+function computeChanges(
+  localResources: ArmResource[],
+  deployedResources: DeployedResource[]
+): ResourceChange[] {
   const changes: ResourceChange[] = [];
-  const deployedMap = new Map<string, any>();
+  const deployedMap = new Map<string, DeployedResource>();
 
   // Build map of deployed resources
   for (const resource of deployedResources) {
@@ -178,7 +217,8 @@ function computeChanges(localResources: any[], deployedResources: any[]): Resour
     } else {
       // Resource exists - check for modifications
       // Simple comparison (in practice, would need more sophisticated diffing)
-      const hasChanges = JSON.stringify(localResource.properties) !== JSON.stringify(deployed.properties);
+      const hasChanges =
+        JSON.stringify(localResource.properties) !== JSON.stringify(deployed.properties);
 
       changes.push({
         action: hasChanges ? 'modify' : 'no-change',
@@ -192,7 +232,7 @@ function computeChanges(localResources: any[], deployedResources: any[]): Resour
   }
 
   // Remaining deployed resources will be deleted
-  for (const [key, resource] of deployedMap.entries()) {
+  for (const [key] of deployedMap.entries()) {
     const [type, name] = key.split('/');
     changes.push({
       action: 'delete',
@@ -205,9 +245,9 @@ function computeChanges(localResources: any[], deployedResources: any[]): Resour
 }
 
 function displayChanges(changes: ResourceChange[]): void {
-  const adds = changes.filter(c => c.action === 'add');
-  const modifies = changes.filter(c => c.action === 'modify');
-  const deletes = changes.filter(c => c.action === 'delete');
+  const adds = changes.filter((c) => c.action === 'add');
+  const modifies = changes.filter((c) => c.action === 'modify');
+  const deletes = changes.filter((c) => c.action === 'delete');
 
   if (adds.length > 0) {
     console.log(chalk.green.bold('\nResources to add:'));
@@ -235,16 +275,16 @@ function displayChanges(changes: ResourceChange[]): void {
     }
   }
 
-  const noChanges = changes.filter(c => c.action === 'no-change');
+  const noChanges = changes.filter((c) => c.action === 'no-change');
   if (noChanges.length > 0) {
     console.log(chalk.gray(`\n${noChanges.length} resource(s) unchanged`));
   }
 }
 
 function displaySummary(changes: ResourceChange[]): void {
-  const adds = changes.filter(c => c.action === 'add').length;
-  const modifies = changes.filter(c => c.action === 'modify').length;
-  const deletes = changes.filter(c => c.action === 'delete').length;
+  const adds = changes.filter((c) => c.action === 'add').length;
+  const modifies = changes.filter((c) => c.action === 'modify').length;
+  const deletes = changes.filter((c) => c.action === 'delete').length;
 
   console.log(chalk.bold('\nPlan Summary:'));
   console.log(chalk.green(`  ${adds} to add`));

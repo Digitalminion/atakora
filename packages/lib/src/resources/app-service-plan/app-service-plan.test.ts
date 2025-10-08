@@ -295,11 +295,7 @@ describe('resources/app-service-plan/AppServicePlan', () => {
     });
 
     it('should support all Basic tier SKUs', () => {
-      const skus = [
-        AppServicePlanSkuName.B1,
-        AppServicePlanSkuName.B2,
-        AppServicePlanSkuName.B3,
-      ];
+      const skus = [AppServicePlanSkuName.B1, AppServicePlanSkuName.B2, AppServicePlanSkuName.B3];
 
       skus.forEach((sku, index) => {
         const plan = new AppServicePlan(resourceGroup, `BasicPlan${index}`, { sku });
@@ -308,11 +304,7 @@ describe('resources/app-service-plan/AppServicePlan', () => {
     });
 
     it('should support all Standard tier SKUs', () => {
-      const skus = [
-        AppServicePlanSkuName.S1,
-        AppServicePlanSkuName.S2,
-        AppServicePlanSkuName.S3,
-      ];
+      const skus = [AppServicePlanSkuName.S1, AppServicePlanSkuName.S2, AppServicePlanSkuName.S3];
 
       skus.forEach((sku, index) => {
         const plan = new AppServicePlan(resourceGroup, `StandardPlan${index}`, { sku });

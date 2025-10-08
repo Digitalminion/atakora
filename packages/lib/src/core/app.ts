@@ -118,7 +118,7 @@ export class App extends Construct {
    */
   constructor(props?: AppProps) {
     // App is the root construct with no parent
-    super(undefined as any, '');
+    super(undefined as unknown as Construct, '');
 
     this.outdir = props?.outdir ?? 'arm.out';
 
@@ -225,11 +225,15 @@ export class App extends Construct {
       const configManagerPath = '../../../cli/src/config/config-manager';
 
       // Try to load ConfigManager, but don't fail if CLI is not available
-      let ConfigManager: any;
+      let ConfigManager: { new (): { getProfile(name: string): unknown } } | undefined;
       try {
         ConfigManager = require(configManagerPath).ConfigManager;
       } catch {
         // CLI not available, silently skip user config
+        return undefined;
+      }
+
+      if (!ConfigManager) {
         return undefined;
       }
 
@@ -241,12 +245,21 @@ export class App extends Construct {
         return undefined;
       }
 
+      // Type guard for profile
+      const profileData = profile as {
+        tenantId?: string;
+        subscriptionId?: string;
+        subscriptionName?: string;
+        cloud?: string;
+        location?: string;
+      };
+
       return {
-        tenantId: profile.tenantId,
-        subscriptionId: profile.subscriptionId,
-        subscriptionName: profile.subscriptionName,
-        cloud: profile.cloud,
-        defaultLocation: profile.location,
+        tenantId: profileData.tenantId || '',
+        subscriptionId: profileData.subscriptionId || '',
+        subscriptionName: profileData.subscriptionName,
+        cloud: profileData.cloud,
+        defaultLocation: profileData.location,
       };
     } catch (error) {
       console.warn(

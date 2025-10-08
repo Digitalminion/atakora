@@ -105,14 +105,14 @@ describe('naming/validation', () => {
       it('should validate name length minimum', () => {
         const result = validateResourceName('a', 'vnet'); // min is 2, so 1 char should fail
         expect(result.isValid).toBe(false);
-        expect(result.errors.some(e => e.includes('at least'))).toBe(true);
+        expect(result.errors.some((e) => e.includes('at least'))).toBe(true);
       });
 
       it('should validate name length maximum', () => {
         const longName = 'a'.repeat(100);
         const result = validateResourceName(longName, 'vnet'); // max is 64
         expect(result.isValid).toBe(false);
-        expect(result.errors.some(e => e.includes('not exceed'))).toBe(true);
+        expect(result.errors.some((e) => e.includes('not exceed'))).toBe(true);
       });
 
       it('should accept valid names', () => {
@@ -126,13 +126,13 @@ describe('naming/validation', () => {
       it('should reject uppercase letters', () => {
         const result = validateResourceName('MyStorage123', 'storage');
         expect(result.isValid).toBe(false);
-        expect(result.errors.some(e => e.includes('lowercase'))).toBe(true);
+        expect(result.errors.some((e) => e.includes('lowercase'))).toBe(true);
       });
 
       it('should reject hyphens', () => {
         const result = validateResourceName('my-storage-123', 'storage');
         expect(result.isValid).toBe(false);
-        expect(result.errors.some(e => e.includes('lowercase letters and numbers'))).toBe(true);
+        expect(result.errors.some((e) => e.includes('lowercase letters and numbers'))).toBe(true);
       });
 
       it('should reject special characters', () => {
@@ -143,7 +143,7 @@ describe('naming/validation', () => {
       it('should accept valid storage names', () => {
         const result = validateResourceName('mystorage123', 'storage');
         expect(result.isValid).toBe(true);
-        expect(result.warnings.some(w => w.includes('globally unique'))).toBe(true);
+        expect(result.warnings.some((w) => w.includes('globally unique'))).toBe(true);
       });
 
       it('should reject names that are too short', () => {
@@ -161,25 +161,25 @@ describe('naming/validation', () => {
       it('should reject names not starting with letter', () => {
         const result = validateResourceName('1-my-vault', 'keyvault');
         expect(result.isValid).toBe(false);
-        expect(result.errors.some(e => e.includes('start with a letter'))).toBe(true);
+        expect(result.errors.some((e) => e.includes('start with a letter'))).toBe(true);
       });
 
       it('should reject names not ending with alphanumeric', () => {
         const result = validateResourceName('my-vault-', 'keyvault');
         expect(result.isValid).toBe(false);
-        expect(result.errors.some(e => e.includes('end with'))).toBe(true);
+        expect(result.errors.some((e) => e.includes('end with'))).toBe(true);
       });
 
       it('should reject consecutive hyphens', () => {
         const result = validateResourceName('my--vault', 'keyvault');
         expect(result.isValid).toBe(false);
-        expect(result.errors.some(e => e.includes('consecutive hyphens'))).toBe(true);
+        expect(result.errors.some((e) => e.includes('consecutive hyphens'))).toBe(true);
       });
 
       it('should accept valid key vault names', () => {
         const result = validateResourceName('my-vault-01', 'keyvault');
         expect(result.isValid).toBe(true);
-        expect(result.warnings.some(w => w.includes('globally unique'))).toBe(true);
+        expect(result.warnings.some((w) => w.includes('globally unique'))).toBe(true);
       });
 
       it('should reject names that are too short', () => {
@@ -197,12 +197,12 @@ describe('naming/validation', () => {
       it('should reject names ending with period', () => {
         const result = validateResourceName('my-rg.', 'rg');
         expect(result.isValid).toBe(false);
-        expect(result.errors.some(e => e.includes('cannot end with a period'))).toBe(true);
+        expect(result.errors.some((e) => e.includes('cannot end with a period'))).toBe(true);
       });
 
       it('should warn about names starting with special chars', () => {
         const result = validateResourceName('_my-rg', 'rg');
-        expect(result.warnings.some(w => w.includes('alphanumeric'))).toBe(true);
+        expect(result.warnings.some((w) => w.includes('alphanumeric'))).toBe(true);
       });
 
       it('should accept valid resource group names', () => {
@@ -231,37 +231,37 @@ describe('naming/validation', () => {
     it('should reject missing resourceType', () => {
       const result = validateGenerationParams({ ...validParams, resourceType: '' });
       expect(result.isValid).toBe(false);
-      expect(result.errors.some(e => e.includes('resourceType'))).toBe(true);
+      expect(result.errors.some((e) => e.includes('resourceType'))).toBe(true);
     });
 
     it('should reject missing organization', () => {
       const result = validateGenerationParams({ ...validParams, organization: '' });
       expect(result.isValid).toBe(false);
-      expect(result.errors.some(e => e.includes('organization'))).toBe(true);
+      expect(result.errors.some((e) => e.includes('organization'))).toBe(true);
     });
 
     it('should reject missing project', () => {
       const result = validateGenerationParams({ ...validParams, project: '' });
       expect(result.isValid).toBe(false);
-      expect(result.errors.some(e => e.includes('project'))).toBe(true);
+      expect(result.errors.some((e) => e.includes('project'))).toBe(true);
     });
 
     it('should reject missing environment', () => {
       const result = validateGenerationParams({ ...validParams, environment: '' });
       expect(result.isValid).toBe(false);
-      expect(result.errors.some(e => e.includes('environment'))).toBe(true);
+      expect(result.errors.some((e) => e.includes('environment'))).toBe(true);
     });
 
     it('should reject missing geography', () => {
       const result = validateGenerationParams({ ...validParams, geography: '' });
       expect(result.isValid).toBe(false);
-      expect(result.errors.some(e => e.includes('geography'))).toBe(true);
+      expect(result.errors.some((e) => e.includes('geography'))).toBe(true);
     });
 
     it('should reject missing instance', () => {
       const result = validateGenerationParams({ ...validParams, instance: '' });
       expect(result.isValid).toBe(false);
-      expect(result.errors.some(e => e.includes('instance'))).toBe(true);
+      expect(result.errors.some((e) => e.includes('instance'))).toBe(true);
     });
 
     it('should reject whitespace-only values', () => {

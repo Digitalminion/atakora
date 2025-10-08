@@ -40,7 +40,7 @@ describe('synthesis/validate/SchemaValidator', () => {
 
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
-      expect(result.errors.some(e => e.message.toLowerCase().includes('schema'))).toBe(true);
+      expect(result.errors.some((e) => e.message.toLowerCase().includes('schema'))).toBe(true);
     });
 
     it('should detect missing required contentVersion', () => {
@@ -66,7 +66,7 @@ describe('synthesis/validate/SchemaValidator', () => {
 
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
-      expect(result.errors.some(e => e.message.toLowerCase().includes('resource'))).toBe(true);
+      expect(result.errors.some((e) => e.message.toLowerCase().includes('resource'))).toBe(true);
     });
 
     it('should detect invalid $schema format', () => {
@@ -79,7 +79,7 @@ describe('synthesis/validate/SchemaValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.message.includes('format'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('format'))).toBe(true);
     });
 
     it('should detect invalid contentVersion format', () => {
@@ -91,7 +91,7 @@ describe('synthesis/validate/SchemaValidator', () => {
 
       const result = validator.validate(template, 'TestStack');
 
-      expect(result.warnings.some(w => w.message.includes('Content version'))).toBe(true);
+      expect(result.warnings.some((w) => w.message.includes('Content version'))).toBe(true);
     });
 
     it('should validate resource with all required fields', () => {
@@ -133,7 +133,7 @@ describe('synthesis/validate/SchemaValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.message.includes('Duplicate resource name'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('Duplicate resource name'))).toBe(true);
     });
 
     it('should warn about empty resources array', () => {
@@ -145,7 +145,7 @@ describe('synthesis/validate/SchemaValidator', () => {
 
       const result = validator.validate(template, 'TestStack');
 
-      expect(result.warnings.some(w => w.message.includes('no resources'))).toBe(true);
+      expect(result.warnings.some((w) => w.message.includes('no resources'))).toBe(true);
     });
 
     it('should warn about HTTP schema', () => {
@@ -157,7 +157,7 @@ describe('synthesis/validate/SchemaValidator', () => {
 
       const result = validator.validate(template, 'TestStack');
 
-      expect(result.warnings.some(w => w.message.includes('HTTPS'))).toBe(true);
+      expect(result.warnings.some((w) => w.message.includes('HTTPS'))).toBe(true);
     });
 
     it('should validate parameters section', () => {
@@ -290,7 +290,8 @@ describe('synthesis/validate/SchemaValidator', () => {
         outputs: {
           storageAccountId: {
             type: 'string',
-            value: '[resourceId("Microsoft.Storage/storageAccounts", variables("storageAccountName"))]',
+            value:
+              '[resourceId("Microsoft.Storage/storageAccounts", variables("storageAccountName"))]',
           },
         },
       };

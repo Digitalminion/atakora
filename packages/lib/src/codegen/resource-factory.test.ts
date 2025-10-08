@@ -76,9 +76,7 @@ describe('ResourceFactory', () => {
       expect(code).toContain(
         "public readonly resourceType: string = 'Microsoft.Storage/storageAccounts';"
       );
-      expect(code).toContain(
-        "public readonly apiVersion: string = '2023-01-01';"
-      );
+      expect(code).toContain("public readonly apiVersion: string = '2023-01-01';");
     });
 
     it('should generate properties with correct types', () => {
@@ -93,7 +91,9 @@ describe('ResourceFactory', () => {
     it('should generate constructor with property assignments', () => {
       const code = factory.generateResource(mockResource, mockIR);
 
-      expect(code).toContain('constructor(scope: Construct, id: string, props: ArmStorageAccountsProps)');
+      expect(code).toContain(
+        'constructor(scope: Construct, id: string, props: ArmStorageAccountsProps)'
+      );
       expect(code).toContain('this.validateProps(props);');
       expect(code).toContain('this.name = props.name;');
       expect(code).toContain('this.location = props.location;');
@@ -103,7 +103,7 @@ describe('ResourceFactory', () => {
       const code = factory.generateResource(mockResource, mockIR);
 
       // Required validation
-      expect(code).toContain("if (!props.name)");
+      expect(code).toContain('if (!props.name)');
       expect(code).toContain("throw new Error('name is required')");
 
       // Length validation

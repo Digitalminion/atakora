@@ -1,7 +1,11 @@
 import { InteractiveBrowserCredential, TokenCredential } from '@azure/identity';
 import { SubscriptionClient } from '@azure/arm-subscriptions';
 
-export type CloudEnvironment = 'AzureCloud' | 'AzureUSGovernment' | 'AzureChinaCloud' | 'AzureGermanCloud';
+export type CloudEnvironment =
+  | 'AzureCloud'
+  | 'AzureUSGovernment'
+  | 'AzureChinaCloud'
+  | 'AzureGermanCloud';
 
 export interface CloudConfig {
   authorityHost: string;
@@ -67,13 +71,17 @@ export class AzureAuthService {
    */
   async login(): Promise<AuthResult> {
     try {
-      // Create interactive browser credential with cloud-specific authority
-      this.credential = new InteractiveBrowserCredential({
-        redirectUri: 'http://localhost:8080',
-        authorityHost: this.cloudConfig.authorityHost,
-      });
+      // Only create a new credential if we don't have one already
+      // This allows the Azure SDK to reuse cached tokens
+      if (!this.credential) {
+        this.credential = new InteractiveBrowserCredential({
+          redirectUri: 'http://localhost:8080',
+          authorityHost: this.cloudConfig.authorityHost,
+        });
+      }
 
       // Test the credential by getting a token with cloud-specific endpoint
+      // This will use cached token if available, or prompt for login if needed
       const tokenResponse = await this.credential.getToken(
         `${this.cloudConfig.managementEndpoint}/.default`
       );

@@ -10,12 +10,7 @@ import { Environment } from '../../core/context/environment';
 import { Instance } from '../../core/context/instance';
 import { ResourceGroup } from '../resource-group/resource-group';
 import { AutoscaleSetting } from './autoscale-setting';
-import {
-  MetricOperator,
-  TimeAggregationType,
-  ScaleDirection,
-  ScaleType,
-} from './types';
+import { MetricOperator, TimeAggregationType, ScaleDirection, ScaleType } from './types';
 
 describe('resources/autoscale-setting/AutoscaleSetting', () => {
   let app: App;
@@ -50,14 +45,16 @@ describe('resources/autoscale-setting/AutoscaleSetting', () => {
   describe('constructor', () => {
     it('should create autoscale setting with simplified interface', () => {
       const autoscale = new AutoscaleSetting(resourceGroup, 'AppPlanAutoscale', {
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
         minInstances: 1,
         maxInstances: 10,
         defaultInstances: 2,
         rules: [
           {
             metricTrigger: {
-              metricResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+              metricResourceId:
+                '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
               metricName: 'CpuPercentage',
               timeGrain: 'PT1M',
               statistic: TimeAggregationType.AVERAGE,
@@ -83,7 +80,8 @@ describe('resources/autoscale-setting/AutoscaleSetting', () => {
     it('should create autoscale setting with custom name', () => {
       const autoscale = new AutoscaleSetting(resourceGroup, 'AppPlanAutoscale', {
         name: 'autoscale-custom',
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
         minInstances: 1,
         maxInstances: 5,
       });
@@ -93,7 +91,8 @@ describe('resources/autoscale-setting/AutoscaleSetting', () => {
 
     it('should merge tags with parent', () => {
       const autoscale = new AutoscaleSetting(resourceGroup, 'AppPlanAutoscale', {
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
         minInstances: 1,
         maxInstances: 5,
         tags: { purpose: 'scaling' },
@@ -107,7 +106,8 @@ describe('resources/autoscale-setting/AutoscaleSetting', () => {
 
     it('should create autoscale setting with advanced profiles', () => {
       const autoscale = new AutoscaleSetting(resourceGroup, 'AppPlanAutoscale', {
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
         profiles: [
           {
             name: 'Business Hours',
@@ -151,7 +151,8 @@ describe('resources/autoscale-setting/AutoscaleSetting', () => {
 
     it('should use default values when not specified', () => {
       const autoscale = new AutoscaleSetting(resourceGroup, 'AppPlanAutoscale', {
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
       });
 
       expect(autoscale.name).toBeDefined();
@@ -161,7 +162,8 @@ describe('resources/autoscale-setting/AutoscaleSetting', () => {
     it('should throw error if not created under ResourceGroup', () => {
       expect(() => {
         new AutoscaleSetting(stack, 'Autoscale', {
-          targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+          targetResourceId:
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
           minInstances: 1,
           maxInstances: 5,
         });

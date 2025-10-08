@@ -45,11 +45,7 @@ export { PrivateDnsZone } from './private-dns-zone';
 export { VirtualNetworkLink } from './virtual-network-link';
 
 // Type definitions
-export type {
-  ArmPrivateDnsZoneProps,
-  PrivateDnsZoneProps,
-  IPrivateDnsZone,
-} from './types';
+export type { ArmPrivateDnsZoneProps, PrivateDnsZoneProps, IPrivateDnsZone } from './types';
 
 export type {
   ArmVirtualNetworkLinkProps,

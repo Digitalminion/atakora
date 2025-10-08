@@ -48,8 +48,8 @@ describe('synthesis/validate/LimitValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.message.includes('Resource count'))).toBe(true);
-      expect(result.errors.some(e => e.message.includes('800'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('Resource count'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('800'))).toBe(true);
     });
 
     it('should warn when approaching resource limit', () => {
@@ -71,8 +71,8 @@ describe('synthesis/validate/LimitValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(true);
-      expect(result.warnings.some(w => w.message.includes('Resource count'))).toBe(true);
-      expect(result.warnings.some(w => w.message.includes('81%'))).toBe(true);
+      expect(result.warnings.some((w) => w.message.includes('Resource count'))).toBe(true);
+      expect(result.warnings.some((w) => w.message.includes('81%'))).toBe(true);
     });
 
     it('should detect too many parameters', () => {
@@ -91,8 +91,8 @@ describe('synthesis/validate/LimitValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.message.includes('Parameter count'))).toBe(true);
-      expect(result.errors.some(e => e.message.includes('256'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('Parameter count'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('256'))).toBe(true);
     });
 
     it('should warn when approaching parameter limit', () => {
@@ -111,7 +111,7 @@ describe('synthesis/validate/LimitValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(true);
-      expect(result.warnings.some(w => w.message.includes('Parameter count'))).toBe(true);
+      expect(result.warnings.some((w) => w.message.includes('Parameter count'))).toBe(true);
     });
 
     it('should detect too many outputs', () => {
@@ -130,8 +130,8 @@ describe('synthesis/validate/LimitValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.message.includes('Output count'))).toBe(true);
-      expect(result.errors.some(e => e.message.includes('64'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('Output count'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('64'))).toBe(true);
     });
 
     it('should warn when approaching output limit', () => {
@@ -150,7 +150,7 @@ describe('synthesis/validate/LimitValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(true);
-      expect(result.warnings.some(w => w.message.includes('Output count'))).toBe(true);
+      expect(result.warnings.some((w) => w.message.includes('Output count'))).toBe(true);
     });
 
     it('should detect too many variables', () => {
@@ -169,8 +169,8 @@ describe('synthesis/validate/LimitValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.message.includes('Variable count'))).toBe(true);
-      expect(result.errors.some(e => e.message.includes('256'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('Variable count'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('256'))).toBe(true);
     });
 
     it('should warn when approaching variable limit', () => {
@@ -189,7 +189,7 @@ describe('synthesis/validate/LimitValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(true);
-      expect(result.warnings.some(w => w.message.includes('Variable count'))).toBe(true);
+      expect(result.warnings.some((w) => w.message.includes('Variable count'))).toBe(true);
     });
 
     it('should detect template size exceeding limit', () => {
@@ -216,8 +216,8 @@ describe('synthesis/validate/LimitValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.message.includes('Template size'))).toBe(true);
-      expect(result.errors.some(e => e.message.includes('MB'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('Template size'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('MB'))).toBe(true);
     });
 
     it('should warn when approaching template size limit', () => {
@@ -243,7 +243,7 @@ describe('synthesis/validate/LimitValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       // Should have size warning
-      expect(result.warnings.some(w => w.message.includes('Template size'))).toBe(true);
+      expect(result.warnings.some((w) => w.message.includes('Template size'))).toBe(true);
     });
 
     it('should format bytes correctly', () => {

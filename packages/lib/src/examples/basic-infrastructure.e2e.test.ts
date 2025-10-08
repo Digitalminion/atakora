@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { createBasicInfrastructure, createColorAIInfrastructure, createMultiRegionInfrastructure } from './basic-infrastructure.example';
+import {
+  createBasicInfrastructure,
+  createColorAIInfrastructure,
+  createMultiRegionInfrastructure,
+} from './basic-infrastructure.example';
 
 describe('E2E: basic-infrastructure example', () => {
   describe('createBasicInfrastructure()', () => {
@@ -24,7 +28,7 @@ describe('E2E: basic-infrastructure example', () => {
       const foundation = app.allStacks[0];
 
       const children = foundation.node.children;
-      const resourceGroups = children.filter(c => c.constructor.name === 'ResourceGroup');
+      const resourceGroups = children.filter((c) => c.constructor.name === 'ResourceGroup');
 
       expect(resourceGroups.length).toBe(2);
     });
@@ -43,7 +47,7 @@ describe('E2E: basic-infrastructure example', () => {
       }
       collectChildren(foundation);
 
-      const vnets = allChildren.filter(c => c.constructor.name === 'VirtualNetwork');
+      const vnets = allChildren.filter((c) => c.constructor.name === 'VirtualNetwork');
       expect(vnets.length).toBe(1);
     });
 
@@ -60,7 +64,7 @@ describe('E2E: basic-infrastructure example', () => {
       }
       collectChildren(foundation);
 
-      const vnet = allChildren.find(c => c.constructor.name === 'VirtualNetwork');
+      const vnet = allChildren.find((c) => c.constructor.name === 'VirtualNetwork');
       expect(vnet).toBeDefined();
       expect(vnet.addressSpace).toBeDefined();
       expect(vnet.addressSpace.addressPrefixes).toContain('10.0.0.0/16');
@@ -71,7 +75,7 @@ describe('E2E: basic-infrastructure example', () => {
       const foundation = app.allStacks[0];
 
       const children = foundation.node.children;
-      const networkRG = children.find(c => c.node.id === 'NetworkRG');
+      const networkRG = children.find((c) => c.node.id === 'NetworkRG');
 
       expect(networkRG).toBeDefined();
       expect((networkRG as any).resourceGroupName).toMatch(/^rg-dp-colorai-/);
@@ -84,7 +88,7 @@ describe('E2E: basic-infrastructure example', () => {
       const foundation = app.allStacks[0];
 
       const children = foundation.node.children;
-      const networkRG = children.find(c => c.node.id === 'NetworkRG');
+      const networkRG = children.find((c) => c.node.id === 'NetworkRG');
 
       expect(networkRG).toBeDefined();
       expect((networkRG as any).tags).toBeDefined();
@@ -99,7 +103,7 @@ describe('E2E: basic-infrastructure example', () => {
       const foundation = app.allStacks[0];
 
       const children = foundation.node.children;
-      const resourceGroups = children.filter(c => c.constructor.name === 'ResourceGroup');
+      const resourceGroups = children.filter((c) => c.constructor.name === 'ResourceGroup');
 
       expect(resourceGroups.length).toBe(5);
     });
@@ -109,8 +113,8 @@ describe('E2E: basic-infrastructure example', () => {
       const foundation = app.allStacks[0];
 
       const children = foundation.node.children;
-      const foundationRG = children.find(c => c.node.id === 'FoundationRG');
-      const connectivityRG = children.find(c => c.node.id === 'ConnectivityRG');
+      const foundationRG = children.find((c) => c.node.id === 'FoundationRG');
+      const connectivityRG = children.find((c) => c.node.id === 'ConnectivityRG');
 
       expect(foundationRG).toBeDefined();
       expect(connectivityRG).toBeDefined();
@@ -131,7 +135,7 @@ describe('E2E: basic-infrastructure example', () => {
       }
       collectChildren(foundation);
 
-      const vnet = allChildren.find(c => c.constructor.name === 'VirtualNetwork');
+      const vnet = allChildren.find((c) => c.constructor.name === 'VirtualNetwork');
       expect(vnet).toBeDefined();
       expect(vnet.addressSpace.addressPrefixes).toContain('10.0.0.0/16');
     });
@@ -142,15 +146,15 @@ describe('E2E: basic-infrastructure example', () => {
       const app = createMultiRegionInfrastructure();
 
       expect(app.allStacks).toHaveLength(2);
-      expect(app.allStacks.map(s => s.node.id)).toContain('EastStack');
-      expect(app.allStacks.map(s => s.node.id)).toContain('WestStack');
+      expect(app.allStacks.map((s) => s.node.id)).toContain('EastStack');
+      expect(app.allStacks.map((s) => s.node.id)).toContain('WestStack');
     });
 
     it('should create resources in both regions', () => {
       const app = createMultiRegionInfrastructure();
 
-      const eastStack = app.allStacks.find(s => s.node.id === 'EastStack');
-      const westStack = app.allStacks.find(s => s.node.id === 'WestStack');
+      const eastStack = app.allStacks.find((s) => s.node.id === 'EastStack');
+      const westStack = app.allStacks.find((s) => s.node.id === 'WestStack');
 
       expect(eastStack).toBeDefined();
       expect(westStack).toBeDefined();
@@ -162,8 +166,8 @@ describe('E2E: basic-infrastructure example', () => {
     it('should use different address spaces per region', () => {
       const app = createMultiRegionInfrastructure();
 
-      const eastStack = app.allStacks.find(s => s.node.id === 'EastStack');
-      const westStack = app.allStacks.find(s => s.node.id === 'WestStack');
+      const eastStack = app.allStacks.find((s) => s.node.id === 'EastStack');
+      const westStack = app.allStacks.find((s) => s.node.id === 'WestStack');
 
       function findVNet(stack: any): any {
         const allChildren: any[] = [];
@@ -174,7 +178,7 @@ describe('E2E: basic-infrastructure example', () => {
           }
         }
         collectChildren(stack);
-        return allChildren.find(c => c.constructor.name === 'VirtualNetwork');
+        return allChildren.find((c) => c.constructor.name === 'VirtualNetwork');
       }
 
       const eastVNet = findVNet(eastStack);

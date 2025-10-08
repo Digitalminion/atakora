@@ -11,7 +11,11 @@ class TestResource extends Resource {
   readonly resourceId: string;
   readonly name: string;
 
-  constructor(scope: Construct, id: string, props: ResourceProps & { resourceType: string; name: string }) {
+  constructor(
+    scope: Construct,
+    id: string,
+    props: ResourceProps & { resourceType: string; name: string }
+  ) {
     super(scope, id, props);
     this.resourceType = props.resourceType;
     this.name = props.name;
@@ -280,11 +284,7 @@ describe('synthesis/transform/DependencyResolver', () => {
         },
       ];
 
-      const resolved = resolver.resolve(armResources, [
-        resource1,
-        resource2,
-        resource3,
-      ]);
+      const resolved = resolver.resolve(armResources, [resource1, resource2, resource3]);
 
       expect(resolved[2].dependsOn).toHaveLength(2);
     });
@@ -350,11 +350,7 @@ describe('synthesis/transform/DependencyResolver', () => {
         },
       ];
 
-      const resolved = resolver.resolve(armResources, [
-        resource1,
-        resource2,
-        resource3,
-      ]);
+      const resolved = resolver.resolve(armResources, [resource1, resource2, resource3]);
 
       expect(resolved[2].dependsOn).toHaveLength(2);
     });

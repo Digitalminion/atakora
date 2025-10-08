@@ -8,11 +8,7 @@ import { Project } from '../../core/context/project';
 import { Environment } from '../../core/context/environment';
 import { Instance } from '../../core/context/instance';
 import { ArmAppServicePlan } from './arm-app-service-plan';
-import {
-  AppServicePlanSkuName,
-  AppServicePlanSkuTier,
-  AppServicePlanKind,
-} from './types';
+import { AppServicePlanSkuName, AppServicePlanSkuTier, AppServicePlanKind } from './types';
 import type { ArmAppServicePlanProps } from './types';
 
 describe('resources/app-service-plan/ArmAppServicePlan', () => {

@@ -1,11 +1,7 @@
 import { Construct } from '../../core/construct';
 import { Resource } from '../../core/resource';
 import { DeploymentScope } from '../../core/azure/scopes';
-import type {
-  ArmAppServicePlanProps,
-  AppServicePlanSku,
-  AppServicePlanKind,
-} from './types';
+import type { ArmAppServicePlanProps, AppServicePlanSku, AppServicePlanKind } from './types';
 
 /**
  * L1 construct for Azure App Service Plan.

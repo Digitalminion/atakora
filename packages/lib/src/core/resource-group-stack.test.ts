@@ -43,7 +43,7 @@ describe('core/ResourceGroupStack', () => {
     it('should create resource group stack', () => {
       const rgStack = new ResourceGroupStack(subscriptionStack, 'DataStack', {
         resourceGroup: {
-          resourceGroupName: 'rg-digital-products-colorai-data-nonprod-eus-01',
+          resourceGroupName: 'rg-digital-products-colorai-data-nonprod-eus-00',
           location: 'eastus',
         },
       });

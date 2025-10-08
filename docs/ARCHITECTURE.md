@@ -286,6 +286,7 @@ Developer-friendly abstractions with sensible defaults.
 **Properties**: Simplified, high-level API
 **Use Case**: Standard infrastructure patterns
 **Features**:
+
 - Auto-naming based on context
 - Sensible defaults
 - Validation
@@ -295,7 +296,7 @@ Developer-friendly abstractions with sensible defaults.
 new ResourceGroup(stack, 'MyRG', {
   tags: { purpose: 'networking' },
 });
-// Name auto-generated: "rg-dp-colorai-myrg-nonprod-eus-01"
+// Name auto-generated: "rg-dp-colorai-myrg-nonprod-eus-00"
 ```
 
 ### L3 Constructs (Pattern-Based)
@@ -324,7 +325,7 @@ See [NAMING_CONVENTIONS.md](./NAMING_CONVENTIONS.md) for detailed information.
 {prefix}-{org}-{project}-{resource_id}-{environment}-{geography}-{instance}
 ```
 
-Example: `rg-dp-colorai-networkrg-nonprod-eus-01`
+Example: `rg-dp-colorai-networkrg-nonprod-eus-00`
 
 ## Synthesis Pipeline
 

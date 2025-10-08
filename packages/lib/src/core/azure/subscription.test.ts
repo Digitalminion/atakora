@@ -117,21 +117,21 @@ describe('azure/Subscription', () => {
 
   describe('validateSubscriptionId()', () => {
     it('should accept valid lowercase GUID', () => {
-      expect(
-        Subscription.validateSubscriptionId('12345678-1234-1234-1234-123456789abc')
-      ).toBe(true);
+      expect(Subscription.validateSubscriptionId('12345678-1234-1234-1234-123456789abc')).toBe(
+        true
+      );
     });
 
     it('should accept valid uppercase GUID', () => {
-      expect(
-        Subscription.validateSubscriptionId('12345678-1234-1234-1234-123456789ABC')
-      ).toBe(true);
+      expect(Subscription.validateSubscriptionId('12345678-1234-1234-1234-123456789ABC')).toBe(
+        true
+      );
     });
 
     it('should accept valid mixed case GUID', () => {
-      expect(
-        Subscription.validateSubscriptionId('12345678-AbCd-1234-1234-123456789abc')
-      ).toBe(true);
+      expect(Subscription.validateSubscriptionId('12345678-AbCd-1234-1234-123456789abc')).toBe(
+        true
+      );
     });
 
     it('should reject empty string', () => {
@@ -139,33 +139,27 @@ describe('azure/Subscription', () => {
     });
 
     it('should reject invalid format - missing hyphens', () => {
-      expect(
-        Subscription.validateSubscriptionId('12345678123412341234123456789abc')
-      ).toBe(false);
+      expect(Subscription.validateSubscriptionId('12345678123412341234123456789abc')).toBe(false);
     });
 
     it('should reject invalid format - wrong segment lengths', () => {
-      expect(
-        Subscription.validateSubscriptionId('1234-1234-1234-1234-123456789abc')
-      ).toBe(false);
+      expect(Subscription.validateSubscriptionId('1234-1234-1234-1234-123456789abc')).toBe(false);
     });
 
     it('should reject invalid format - invalid characters', () => {
-      expect(
-        Subscription.validateSubscriptionId('12345678-1234-1234-1234-12345678ZZZZ')
-      ).toBe(false);
-    });
-
-    it('should reject invalid format - too short', () => {
-      expect(Subscription.validateSubscriptionId('12345678-1234-1234-1234')).toBe(
+      expect(Subscription.validateSubscriptionId('12345678-1234-1234-1234-12345678ZZZZ')).toBe(
         false
       );
     });
 
+    it('should reject invalid format - too short', () => {
+      expect(Subscription.validateSubscriptionId('12345678-1234-1234-1234')).toBe(false);
+    });
+
     it('should reject invalid format - too long', () => {
-      expect(
-        Subscription.validateSubscriptionId('12345678-1234-1234-1234-123456789abcdef')
-      ).toBe(false);
+      expect(Subscription.validateSubscriptionId('12345678-1234-1234-1234-123456789abcdef')).toBe(
+        false
+      );
     });
   });
 

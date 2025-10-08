@@ -172,8 +172,8 @@ export class Subnet extends Construct implements ISubnet {
 
     throw new Error(
       'Subnet must be created within a Stack hierarchy. ' +
-      `Ensure the construct tree contains a SubscriptionStack or ResourceGroupStack.\n` +
-      `Walked path: ${path.join(' <- ')}`
+        `Ensure the construct tree contains a SubscriptionStack or ResourceGroupStack.\n` +
+        `Walked path: ${path.join(' <- ')}`
     );
   }
 
@@ -187,7 +187,7 @@ export class Subnet extends Construct implements ISubnet {
     return (
       construct &&
       (typeof (construct as any).resourceGroupName === 'string' ||
-       typeof (construct as any).subscriptionId === 'string')
+        typeof (construct as any).subscriptionId === 'string')
     );
   }
 
@@ -212,7 +212,7 @@ export class Subnet extends Construct implements ISubnet {
 
     throw new Error(
       'Subnet must be created within or under a VirtualNetwork. ' +
-      'Ensure the parent scope is a VirtualNetwork or has one in its hierarchy.'
+        'Ensure the parent scope is a VirtualNetwork or has one in its hierarchy.'
     );
   }
 
@@ -223,10 +223,7 @@ export class Subnet extends Construct implements ISubnet {
    * @returns True if construct has VirtualNetwork properties
    */
   private isVirtualNetwork(construct: any): construct is IVirtualNetwork {
-    return (
-      construct &&
-      typeof construct.virtualNetworkName === 'string'
-    );
+    return construct && typeof construct.virtualNetworkName === 'string';
   }
 
   /**

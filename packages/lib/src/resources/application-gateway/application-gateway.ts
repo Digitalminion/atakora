@@ -1,6 +1,7 @@
 import { Construct } from '../../core/construct';
 import type { IResourceGroup } from '../resource-group/types';
 import { ArmApplicationGateway } from './arm-application-gateway';
+import { constructIdToPurpose as utilConstructIdToPurpose } from '../../naming/construct-id-utils';
 import type {
   ApplicationGatewayProps,
   IApplicationGateway,
@@ -81,10 +82,7 @@ import {
  * );
  * ```
  */
-export class ApplicationGateway
-  extends Construct
-  implements IApplicationGateway
-{
+export class ApplicationGateway extends Construct implements IApplicationGateway {
   /**
    * Import an existing Application Gateway by resource ID.
    *
@@ -113,10 +111,7 @@ export class ApplicationGateway
     const resourceGroupName = parts[parts.indexOf('resourceGroups') + 1];
 
     // Create a reference object that implements IApplicationGateway
-    class ApplicationGatewayRef
-      extends Construct
-      implements IApplicationGateway
-    {
+    class ApplicationGatewayRef extends Construct implements IApplicationGateway {
       public readonly gatewayName: string;
       public readonly location: string;
       public readonly resourceGroupName: string;
@@ -262,11 +257,62 @@ export class ApplicationGateway
       httpListeners: config.httpListeners,
       requestRoutingRules: config.requestRoutingRules,
       firewallPolicy: this.wafPolicyId
-        ? { id: this.wafPolicyId }
+        ? { id: this.buildWafPolicyReference(this.wafPolicyId) }
         : undefined,
       enableHttp2: this.enableHttp2,
       tags: this.tags,
     });
+  }
+
+  /**
+   * Builds a WAF policy reference for ARM templates.
+   * Converts a resource ID path to a resourceId() expression.
+   *
+   * @param wafPolicyId - Full resource ID of the WAF policy
+   * @returns ARM resourceId() expression
+   */
+  private buildWafPolicyReference(wafPolicyId: string): string {
+    // Extract policy name from resource ID
+    const parts = wafPolicyId.split('/');
+    const policyName = parts[parts.length - 1];
+
+    // Generate ARM resourceId() expression
+    return `[resourceId('Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies', '${policyName}')]`;
+  }
+
+  /**
+   * Builds a subnet reference for ARM templates.
+   * Converts a subnet ID path to a resourceId() expression.
+   *
+   * @param subnetId - Full resource ID of the subnet
+   * @returns ARM resourceId() expression
+   */
+  private buildSubnetReference(subnetId: string): string {
+    // Extract vnet name and subnet name from resource ID
+    // Format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/virtualNetworks/{vnet}/subnets/{subnet}
+    const parts = subnetId.split('/');
+    const subnetName = parts[parts.length - 1];
+    const vnetName = parts[parts.length - 3];
+
+    // Generate ARM resourceId() expression
+    return `[resourceId('Microsoft.Network/virtualNetworks/subnets', '${vnetName}', '${subnetName}')]`;
+  }
+
+  /**
+   * Builds a public IP address reference for ARM templates.
+   * Converts a public IP ID path to a resourceId() expression.
+   *
+   * @param publicIpId - Full resource ID of the public IP
+   * @returns ARM resourceId() expression
+   */
+  private buildPublicIPReference(publicIpId: string): string {
+    // Extract public IP name from resource ID
+    // Format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/publicIPAddresses/{pipName}
+    const parts = publicIpId.split('/');
+    const pipName = parts[parts.length - 1];
+
+    // Generate ARM resourceId() expression
+    return `[resourceId('Microsoft.Network/publicIPAddresses', '${pipName}')]`;
   }
 
   /**
@@ -330,10 +376,7 @@ export class ApplicationGateway
    * @param props - Application gateway properties
    * @returns Resolved gateway name
    */
-  private resolveGatewayName(
-    id: string,
-    props: ApplicationGatewayProps
-  ): string {
+  private resolveGatewayName(id: string, props: ApplicationGatewayProps): string {
     // If name provided explicitly, use it
     if (props.gatewayName) {
       return props.gatewayName;
@@ -379,8 +422,13 @@ export class ApplicationGateway
    * @param id - Construct ID
    * @returns Purpose string for naming
    */
-  private constructIdToPurpose(id: string): string {
-    return id.toLowerCase();
+  private constructIdToPurpose(id: string): string | undefined {
+    return utilConstructIdToPurpose(id, 'appgateway', [
+      'applicationgateway',
+      'appgw',
+      'agw',
+      'gateway',
+    ]);
   }
 
   /**
@@ -402,7 +450,7 @@ export class ApplicationGateway
       {
         name: 'gateway-ip-config',
         subnet: {
-          id: this.subnetId,
+          id: this.buildSubnetReference(this.subnetId),
         },
       },
     ];
@@ -414,7 +462,7 @@ export class ApplicationGateway
       frontendIPConfigurations.push({
         name: 'frontend-ip-public',
         publicIPAddress: {
-          id: this.publicIpAddressId,
+          id: this.buildPublicIPReference(this.publicIpAddressId),
         },
       });
     } else {
@@ -422,7 +470,7 @@ export class ApplicationGateway
       frontendIPConfigurations.push({
         name: 'frontend-ip-private',
         subnet: {
-          id: this.subnetId,
+          id: this.buildSubnetReference(this.subnetId),
         },
         privateIPAllocationMethod: 'Dynamic',
       });
@@ -460,9 +508,7 @@ export class ApplicationGateway
     ];
 
     // HTTP Listeners
-    const frontendIpName = this.publicIpAddressId
-      ? 'frontend-ip-public'
-      : 'frontend-ip-private';
+    const frontendIpName = this.publicIpAddressId ? 'frontend-ip-public' : 'frontend-ip-private';
 
     const httpListeners: HttpListener[] = [
       {
@@ -547,11 +593,7 @@ export class ApplicationGateway
    * appgw.addListener('api-listener', 8080, ApplicationGatewayProtocol.Http);
    * ```
    */
-  public addListener(
-    name: string,
-    port: number,
-    protocol: ApplicationGatewayProtocol
-  ): void {
+  public addListener(name: string, port: number, protocol: ApplicationGatewayProtocol): void {
     throw new Error(
       'addListener() is not yet implemented. ' +
         'Configure listeners via the L1 construct. ' +
@@ -575,11 +617,7 @@ export class ApplicationGateway
    * appgw.addRoutingRule('api-rule', 'api-listener', 'api-backend');
    * ```
    */
-  public addRoutingRule(
-    name: string,
-    listenerName: string,
-    backendPoolName: string
-  ): void {
+  public addRoutingRule(name: string, listenerName: string, backendPoolName: string): void {
     throw new Error(
       'addRoutingRule() is not yet implemented. ' +
         'Configure routing rules via the L1 construct. ' +

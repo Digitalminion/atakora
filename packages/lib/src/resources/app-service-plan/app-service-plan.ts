@@ -1,6 +1,7 @@
 import { Construct } from '../../core/construct';
 import type { IResourceGroup } from '../resource-group/types';
 import { ArmAppServicePlan } from './arm-app-service-plan';
+import { constructIdToPurpose as utilConstructIdToPurpose } from '../../naming/construct-id-utils';
 import type {
   AppServicePlanProps,
   IAppServicePlan,
@@ -193,11 +194,7 @@ export class AppServicePlan extends Construct implements IAppServicePlan {
    * );
    * ```
    */
-  public static fromPlanId(
-    scope: Construct,
-    id: string,
-    planId: string
-  ): IAppServicePlan {
+  public static fromPlanId(scope: Construct, id: string, planId: string): IAppServicePlan {
     // Extract plan name from resource ID
     const planNameMatch = planId.match(/\/serverfarms\/([^/]+)$/);
     if (!planNameMatch) {
@@ -295,7 +292,7 @@ export class AppServicePlan extends Construct implements IAppServicePlan {
     const subscriptionStack = this.getSubscriptionStack();
     if (subscriptionStack) {
       const purpose = this.constructIdToPurpose(id);
-      const rawName = subscriptionStack.generateResourceName('asp', purpose);
+      const rawName = subscriptionStack.generateResourceName('aspsrvpl', purpose);
 
       // Ensure name doesn't exceed 40 characters
       return rawName.substring(0, 40);
@@ -335,8 +332,8 @@ export class AppServicePlan extends Construct implements IAppServicePlan {
    * @param id - Construct ID
    * @returns Purpose string for naming
    */
-  private constructIdToPurpose(id: string): string {
-    return id.toLowerCase();
+  private constructIdToPurpose(id: string): string | undefined {
+    return utilConstructIdToPurpose(id, 'appserviceplan', ['asp', 'aspsrvpl', 'plan']);
   }
 
   /**
@@ -368,10 +365,7 @@ export class AppServicePlan extends Construct implements IAppServicePlan {
    * @param explicitReserved - Explicitly provided reserved value
    * @returns Resolved reserved flag
    */
-  private resolveReservedFlag(
-    kind: AppServicePlanKind,
-    explicitReserved?: boolean
-  ): boolean {
+  private resolveReservedFlag(kind: AppServicePlanKind, explicitReserved?: boolean): boolean {
     // If explicitly provided, use that
     if (explicitReserved !== undefined) {
       return explicitReserved;

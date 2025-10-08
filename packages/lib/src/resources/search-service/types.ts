@@ -75,7 +75,7 @@ export interface NetworkRuleSet {
  * @example
  * ```typescript
  * const props: ArmSearchServiceProps = {
- *   serviceName: 'srch-colorai-data-nonprod-eus-01',
+ *   serviceName: 'srch-colorai-data-nonprod-eus-00',
  *   location: 'eastus',
  *   sku: { name: SearchServiceSku.BASIC },
  *   properties: {
@@ -183,7 +183,7 @@ export interface SearchServiceProps {
    * @remarks
    * If not provided, will be auto-generated using the stack's naming context.
    * - Format: `srch-{org}-{project}-{purpose}-{env}-{geo}-{instance}`
-   * - Example: `srch-dp-colorai-data-nonprod-eus-01`
+   * - Example: `srch-dp-colorai-data-nonprod-eus-00`
    *
    * The `purpose` is derived from the construct ID.
    */

@@ -9,10 +9,7 @@ import { createDiffCommand } from './commands/diff';
 export function cli() {
   const program = new Command();
 
-  program
-    .name('atakora')
-    .description('Azure ARM Infrastructure as Code CLI')
-    .version('1.0.0');
+  program.name('atakora').description('Azure ARM Infrastructure as Code CLI').version('1.0.0');
 
   // Add commands
   program.addCommand(createConfigCommand());

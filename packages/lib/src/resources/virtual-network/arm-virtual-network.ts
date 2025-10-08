@@ -75,8 +75,7 @@ export class ArmVirtualNetwork extends Resource {
   /**
    * Deployment scope for virtual networks.
    */
-  public readonly scope: DeploymentScope.ResourceGroup =
-    DeploymentScope.ResourceGroup;
+  public readonly scope: DeploymentScope.ResourceGroup = DeploymentScope.ResourceGroup;
 
   /**
    * Name of the virtual network.
@@ -117,7 +116,46 @@ export class ArmVirtualNetwork extends Resource {
   public readonly resourceId: string;
 
   /**
-   * Subnets defined inline.
+   * Subnets defined inline within the VNet resource.
+   *
+   * @remarks
+   * **IMPORTANT**: Inline subnets prevent "AnotherOperationInProgress" errors.
+   *
+   * When subnets are defined inline (as part of the VNet's properties.subnets array),
+   * Azure creates them atomically with the VNet in a single operation. This is the
+   * recommended approach for most scenarios.
+   *
+   * **Inline Subnets (Recommended)**:
+   * - All subnets created in one atomic VNet operation
+   * - No concurrent modification conflicts
+   * - Faster deployment (single operation)
+   * - Defined in properties.subnets[] of the VNet ARM template
+   *
+   * **Separate Subnet Resources (Not Recommended)**:
+   * - Each subnet is a separate Microsoft.Network/virtualNetworks/subnets resource
+   * - Multiple concurrent updates to the VNet
+   * - Risk of "AnotherOperationInProgress" errors
+   * - Slower deployment (N+1 operations for N subnets)
+   *
+   * @example
+   * ```typescript
+   * const vnet = new ArmVirtualNetwork(scope, 'VNet', {
+   *   virtualNetworkName: 'my-vnet',
+   *   location: 'eastus',
+   *   addressSpace: { addressPrefixes: ['10.0.0.0/16'] },
+   *   subnets: [
+   *     {
+   *       name: 'subnet-1',
+   *       addressPrefix: '10.0.1.0/24',
+   *       networkSecurityGroup: { id: nsgId }
+   *     },
+   *     {
+   *       name: 'subnet-2',
+   *       addressPrefix: '10.0.2.0/24'
+   *     }
+   *   ]
+   * });
+   * ```
    */
   public readonly subnets?: any[];
 
@@ -147,11 +185,7 @@ export class ArmVirtualNetwork extends Resource {
    * @throws {Error} If location is empty
    * @throws {Error} If addressSpace is empty or invalid
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props: ArmVirtualNetworkProps
-  ) {
+  constructor(scope: Construct, id: string, props: ArmVirtualNetworkProps) {
     super(scope, id);
 
     // Validate required properties
@@ -207,9 +241,7 @@ export class ArmVirtualNetwork extends Resource {
     // Validate CIDR notation for each address prefix
     props.addressSpace.addressPrefixes.forEach((prefix) => {
       if (!this.isValidCIDR(prefix)) {
-        throw new Error(
-          `Invalid CIDR notation: ${prefix}. Must be in format: x.x.x.x/y`
-        );
+        throw new Error(`Invalid CIDR notation: ${prefix}. Must be in format: x.x.x.x/y`);
       }
     });
 
@@ -221,9 +253,7 @@ export class ArmVirtualNetwork extends Resource {
         }
 
         if (!subnet.addressPrefix || !this.isValidCIDR(subnet.addressPrefix)) {
-          throw new Error(
-            `Invalid subnet address prefix: ${subnet.addressPrefix}`
-          );
+          throw new Error(`Invalid subnet address prefix: ${subnet.addressPrefix}`);
         }
       });
     }
@@ -246,7 +276,32 @@ export class ArmVirtualNetwork extends Resource {
    *
    * @remarks
    * Called during synthesis to produce the ARM template JSON.
-   * This will be implemented by Grace's synthesis pipeline.
+   *
+   * **Inline Subnets**: If subnets are defined, they will be included in the
+   * `properties.subnets` array of the VNet resource. This causes Azure to create
+   * all subnets atomically with the VNet in a single deployment operation,
+   * preventing "AnotherOperationInProgress" errors.
+   *
+   * **Generated Template Structure**:
+   * ```json
+   * {
+   *   "type": "Microsoft.Network/virtualNetworks",
+   *   "name": "vnet-name",
+   *   "properties": {
+   *     "addressSpace": { "addressPrefixes": ["10.0.0.0/16"] },
+   *     "subnets": [
+   *       {
+   *         "name": "subnet-1",
+   *         "addressPrefix": "10.0.1.0/24",
+   *         "networkSecurityGroup": { "id": "[resourceId(...)]" }
+   *       }
+   *     ]
+   *   },
+   *   "dependsOn": [
+   *     "[resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-1')]"
+   *   ]
+   * }
+   * ```
    *
    * @returns ARM template resource object
    */
@@ -262,9 +317,36 @@ export class ArmVirtualNetwork extends Resource {
       },
     };
 
-    // Add optional properties
+    // Add inline subnets to properties.subnets array
+    // This enables atomic creation with the VNet (no separate subnet resources)
+    // Transform InlineSubnetProps to ARM subnet format: { name, properties: { addressPrefix, ... } }
     if (this.subnets && this.subnets.length > 0) {
-      template.properties.subnets = this.subnets;
+      template.properties.subnets = this.subnets.map((subnet: any) => {
+        const { name, delegations, ...subnetProperties } = subnet;
+
+        // Transform delegations to ARM format: { name, properties: { serviceName } }
+        let transformedDelegations;
+        if (delegations && Array.isArray(delegations)) {
+          transformedDelegations = delegations.map((delegation: any) => {
+            const { name: delegationName, serviceName, ...delegationProps } = delegation;
+            return {
+              name: delegationName,
+              properties: {
+                serviceName,
+                ...delegationProps,
+              },
+            };
+          });
+        }
+
+        return {
+          name,
+          properties: {
+            ...subnetProperties,
+            ...(transformedDelegations && { delegations: transformedDelegations }),
+          },
+        };
+      });
     }
 
     if (this.dhcpOptions) {

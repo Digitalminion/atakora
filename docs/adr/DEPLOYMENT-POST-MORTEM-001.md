@@ -16,12 +16,14 @@ The ARM template generation phase has been successfully completed, producing val
 ## 1. What Happened
 
 ### Template Generation Phase (SUCCESSFUL)
+
 - **Foundation Stack**: Generated successfully with 36 resources
 - **ColorAI Stack**: Generated successfully with 1 resource
 - **Manifest**: Properly created with stack metadata
 - **JSON Validation**: Both templates pass JSON syntax validation
 
 ### Deployment Phase (NOT YET EXECUTED)
+
 - Deployment to Azure dev environment is pending
 - Awaiting Azure subscription setup and credentials (Task #1211552373103884)
 - CLI deployment command implementation in progress (Task #1211552210893760)
@@ -33,6 +35,7 @@ The ARM template generation phase has been successfully completed, producing val
 ### 2.1 Structure Review
 
 #### Foundation.json (36 resources)
+
 - **Networking**: VNet, Subnets, NSGs, Application Gateway
 - **Private Endpoints**: 5 endpoints for various services
 - **Core Services**: Log Analytics, Key Vault, Storage, Cosmos DB
@@ -40,10 +43,13 @@ The ARM template generation phase has been successfully completed, producing val
 - **AI Services**: Azure OpenAI, Cognitive Search
 
 #### ColorAI.json (1 resource)
+
 - Single resource deployment (details to be confirmed)
 
 ### 2.2 Cross-Resource References
+
 Analysis of `resourceId()` usage shows proper implementation:
+
 - Private Endpoints correctly reference their target resources
 - Application Gateway components properly cross-reference
 - Subnet and VNet dependencies are correctly established
@@ -51,6 +57,7 @@ Analysis of `resourceId()` usage shows proper implementation:
 ### 2.3 Identified Issues
 
 #### Minor Issues (Non-Blocking)
+
 1. **Test Failures**: One unit test failing in azure-auth.test.ts
    - Issue: `tenantId` not being passed correctly in InteractiveBrowserCredential
    - Impact: Does not affect template generation
@@ -61,6 +68,7 @@ Analysis of `resourceId()` usage shows proper implementation:
    - Recommendation: Add validation script using Azure ARM What-If API
 
 #### Potential Deployment Risks
+
 1. **No Parameters**: Both templates have 0 parameters
    - Risk: No flexibility for environment-specific values
    - Mitigation: May be intentional for initial deployment
@@ -78,6 +86,7 @@ Analysis of `resourceId()` usage shows proper implementation:
 ## 3. Root Cause Analysis
 
 ### Why No Deployment Yet?
+
 1. **Sequential Dependencies**:
    - Azure subscription setup must complete first
    - CLI deployment command needs to be implemented
@@ -94,6 +103,7 @@ Analysis of `resourceId()` usage shows proper implementation:
 ### 4.1 Immediate Actions (Before Deployment)
 
 1. **Add ARM Template Validation**
+
    ```json
    "scripts": {
      "validate": "azure-arm validate --template arm.out/Foundation.json"
@@ -145,6 +155,7 @@ Analysis of `resourceId()` usage shows proper implementation:
 Based on this analysis, the following tasks should be created:
 
 ### High Priority
+
 1. **Add ARM Template Validation Script**
    - Implement validation command in CLI
    - Use Azure ARM What-If API
@@ -157,6 +168,7 @@ Based on this analysis, the following tasks should be created:
    - Agent: Felix
 
 ### Medium Priority
+
 3. **Fix Azure Auth Test**
    - Correct tenantId passing in tests
    - Agent: Charlie
@@ -167,6 +179,7 @@ Based on this analysis, the following tasks should be created:
    - Agent: Becky
 
 ### Low Priority
+
 5. **Add Output Values to Templates**
    - Resource IDs for cross-stack references
    - Connection strings (secure outputs)
@@ -177,12 +190,14 @@ Based on this analysis, the following tasks should be created:
 ## 6. Success Criteria Validation
 
 ### What's Working Well
+
 - Template generation is functional
 - JSON syntax is valid
 - Cross-resource references are properly implemented
 - Manifest generation provides good metadata
 
 ### What Needs Attention
+
 - Deployment execution pending
 - Parameter strategy needed
 - Output values missing
@@ -193,15 +208,18 @@ Based on this analysis, the following tasks should be created:
 ## 7. ADR Updates Needed
 
 ### ADR-003 (Deployment Orchestration)
+
 - Add pre-flight validation phase
 - Define What-If analysis integration
 - Specify rollback procedures
 
 ### ADR-004 (Cross-Resource References)
+
 - Pattern is working as designed
 - No updates needed at this time
 
 ### New: ADR-005 (Template Parameterization)
+
 - To be created
 - Define parameter patterns
 - Environment-specific overrides
@@ -211,6 +229,7 @@ Based on this analysis, the following tasks should be created:
 ## Conclusion
 
 The template generation phase has been successful, producing valid ARM templates ready for deployment. The identified issues are minor and non-blocking. The main pending items are:
+
 1. Azure subscription setup
 2. CLI deployment command implementation
 3. Addition of template parameters for flexibility
@@ -218,6 +237,7 @@ The template generation phase has been successful, producing valid ARM templates
 Once these prerequisites are complete, the deployment should proceed smoothly. The architecture is sound, and the cross-resource reference pattern (ADR-004) is working as designed.
 
 **Next Steps**:
+
 1. Wait for Azure subscription setup completion
 2. Monitor Grace's deployment execution
 3. Be ready to document any deployment-time issues
@@ -225,4 +245,4 @@ Once these prerequisites are complete, the deployment should proceed smoothly. T
 
 ---
 
-*End of Post-Mortem Report*
+_End of Post-Mortem Report_

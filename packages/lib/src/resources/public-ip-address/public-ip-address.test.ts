@@ -386,7 +386,8 @@ describe('resources/public-ip-address/PublicIpAddress', () => {
     });
 
     it('should throw error for invalid resource ID', () => {
-      const invalidId = '/subscriptions/12345/resourceGroups/rg-network/providers/Microsoft.Network/virtualNetworks/vnet-001';
+      const invalidId =
+        '/subscriptions/12345/resourceGroups/rg-network/providers/Microsoft.Network/virtualNetworks/vnet-001';
 
       expect(() => {
         PublicIpAddress.fromPublicIpId(invalidId);

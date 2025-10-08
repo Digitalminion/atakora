@@ -66,8 +66,4 @@ export type {
 } from './types';
 
 // Enums
-export {
-  SecurityRuleProtocol,
-  SecurityRuleAccess,
-  SecurityRuleDirection,
-} from './types';
+export { SecurityRuleProtocol, SecurityRuleAccess, SecurityRuleDirection } from './types';

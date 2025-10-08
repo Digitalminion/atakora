@@ -49,10 +49,13 @@ describe('resources/application-insights/ArmApplicationInsights', () => {
         location: 'eastus',
         kind: 'web',
         applicationType: ApplicationType.WEB,
-        workspaceResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/log-test',
+        workspaceResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/log-test',
       });
 
-      expect(appInsights.workspaceResourceId).toBe('/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/log-test');
+      expect(appInsights.workspaceResourceId).toBe(
+        '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/log-test'
+      );
     });
 
     it('should create Application Insights with retention days', () => {
@@ -344,12 +347,15 @@ describe('resources/application-insights/ArmApplicationInsights', () => {
         location: 'eastus',
         kind: 'web',
         applicationType: ApplicationType.WEB,
-        workspaceResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/log-test',
+        workspaceResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/log-test',
       });
 
       const template: any = appInsights.toArmTemplate();
 
-      expect(template.properties.WorkspaceResourceId).toBe('/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/log-test');
+      expect(template.properties.WorkspaceResourceId).toBe(
+        '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/log-test'
+      );
     });
 
     it('should generate ARM template with flow type and request source', () => {

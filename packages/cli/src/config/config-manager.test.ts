@@ -131,11 +131,9 @@ describe('ConfigManager', () => {
 
       configManager.saveProfile(profile);
 
-      expect(fs.writeFileSync).toHaveBeenCalledWith(
-        mockConfigPath,
-        expect.any(String),
-        { mode: 0o600 }
-      );
+      expect(fs.writeFileSync).toHaveBeenCalledWith(mockConfigPath, expect.any(String), {
+        mode: 0o600,
+      });
     });
   });
 

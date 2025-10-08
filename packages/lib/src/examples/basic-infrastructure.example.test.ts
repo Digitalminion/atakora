@@ -31,9 +31,7 @@ describe('examples/basic-infrastructure', () => {
 
       // Navigate construct tree to find VNet
       const stack = app.allStacks[0];
-      const networkRG = stack.node.children.find(
-        (child: any) => child.node.id === 'NetworkRG'
-      );
+      const networkRG = stack.node.children.find((child: any) => child.node.id === 'NetworkRG');
 
       expect(networkRG).toBeDefined();
 
@@ -210,9 +208,7 @@ describe('examples/basic-infrastructure', () => {
       const stack = app.allStacks[0];
 
       // Navigate to VNet through the tree
-      const networkRG = stack.node.children.find(
-        (child: any) => child.node.id === 'NetworkRG'
-      );
+      const networkRG = stack.node.children.find((child: any) => child.node.id === 'NetworkRG');
 
       const vnet = networkRG?.node.children.find(
         (child: any) => child.constructor.name === 'VirtualNetwork'
@@ -231,13 +227,9 @@ describe('examples/basic-infrastructure', () => {
       const stack1 = app1.allStacks[0];
       const stack2 = app2.allStacks[0];
 
-      const rg1 = stack1.node.children.find(
-        (child: any) => child.node.id === 'NetworkRG'
-      ) as any;
+      const rg1 = stack1.node.children.find((child: any) => child.node.id === 'NetworkRG') as any;
 
-      const rg2 = stack2.node.children.find(
-        (child: any) => child.node.id === 'NetworkRG'
-      ) as any;
+      const rg2 = stack2.node.children.find((child: any) => child.node.id === 'NetworkRG') as any;
 
       // Same inputs should produce same names
       expect(rg1.resourceGroupName).toBe(rg2.resourceGroupName);
@@ -252,9 +244,7 @@ describe('examples/basic-infrastructure', () => {
         (child: any) => child.constructor.name === 'ResourceGroup'
       );
 
-      const networkRG = stack.node.children.find(
-        (child: any) => child.node.id === 'NetworkRG'
-      );
+      const networkRG = stack.node.children.find((child: any) => child.node.id === 'NetworkRG');
 
       const hasVirtualNetwork = networkRG?.node.children.some(
         (child: any) => child.constructor.name === 'VirtualNetwork'

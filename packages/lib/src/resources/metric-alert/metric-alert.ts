@@ -1,11 +1,7 @@
 import { Construct } from '../../core/construct';
 import type { IResourceGroup } from '../resource-group/types';
 import { ArmMetricAlert } from './arm-metric-alert';
-import type {
-  MetricAlertProps,
-  IMetricAlert,
-  MetricAlertCriterion,
-} from './types';
+import type { MetricAlertProps, IMetricAlert, MetricAlertCriterion } from './types';
 import { CriterionType } from './types';
 
 /**
@@ -93,11 +89,7 @@ export class MetricAlert extends Construct implements IMetricAlert {
   /**
    * Creates a new MetricAlert construct.
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props: MetricAlertProps
-  ) {
+  constructor(scope: Construct, id: string, props: MetricAlertProps) {
     super(scope, id);
 
     // Get parent resource group
@@ -160,7 +152,12 @@ export class MetricAlert extends Construct implements IMetricAlert {
     }
 
     // Build simple criteria from metricName/operator/threshold
-    if (props.metricName && props.operator !== undefined && props.threshold !== undefined && props.timeAggregation) {
+    if (
+      props.metricName &&
+      props.operator !== undefined &&
+      props.threshold !== undefined &&
+      props.timeAggregation
+    ) {
       const criterion: MetricAlertCriterion = {
         criterionType: CriterionType.STATIC_THRESHOLD,
         name: props.metricName,
@@ -176,7 +173,9 @@ export class MetricAlert extends Construct implements IMetricAlert {
       };
     }
 
-    throw new Error('Either criteria or (metricName + operator + threshold + timeAggregation) must be provided');
+    throw new Error(
+      'Either criteria or (metricName + operator + threshold + timeAggregation) must be provided'
+    );
   }
 
   /**
@@ -194,7 +193,7 @@ export class MetricAlert extends Construct implements IMetricAlert {
 
     throw new Error(
       'MetricAlert must be created within or under a ResourceGroup. ' +
-      'Ensure the parent scope is a ResourceGroup or has one in its hierarchy.'
+        'Ensure the parent scope is a ResourceGroup or has one in its hierarchy.'
     );
   }
 
@@ -223,10 +222,7 @@ export class MetricAlert extends Construct implements IMetricAlert {
   /**
    * Resolves the alert name from props or auto-generates it.
    */
-  private resolveAlertName(
-    id: string,
-    props?: MetricAlertProps
-  ): string {
+  private resolveAlertName(id: string, props?: MetricAlertProps): string {
     if (props?.name) {
       return props.name;
     }

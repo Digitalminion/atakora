@@ -1,11 +1,7 @@
 import { Construct } from '../../core/construct';
 import type { IResourceGroup } from '../resource-group/types';
 import { ArmAutoscaleSetting } from './arm-autoscale-setting';
-import type {
-  AutoscaleSettingProps,
-  IAutoscaleSetting,
-  AutoscaleProfile,
-} from './types';
+import type { AutoscaleSettingProps, IAutoscaleSetting, AutoscaleProfile } from './types';
 
 /**
  * L2 construct for Azure Autoscale Setting.
@@ -52,11 +48,7 @@ export class AutoscaleSetting extends Construct implements IAutoscaleSetting {
   public readonly resourceId: string;
   public readonly tags: Record<string, string>;
 
-  constructor(
-    scope: Construct,
-    id: string,
-    props: AutoscaleSettingProps
-  ) {
+  constructor(scope: Construct, id: string, props: AutoscaleSettingProps) {
     super(scope, id);
 
     this.parentResourceGroup = this.getParentResourceGroup(scope);
@@ -115,9 +107,7 @@ export class AutoscaleSetting extends Construct implements IAutoscaleSetting {
       current = current.node.scope;
     }
 
-    throw new Error(
-      'AutoscaleSetting must be created within or under a ResourceGroup.'
-    );
+    throw new Error('AutoscaleSetting must be created within or under a ResourceGroup.');
   }
 
   private isResourceGroup(construct: any): construct is IResourceGroup {
@@ -136,10 +126,7 @@ export class AutoscaleSetting extends Construct implements IAutoscaleSetting {
     return {};
   }
 
-  private resolveSettingName(
-    id: string,
-    props?: AutoscaleSettingProps
-  ): string {
+  private resolveSettingName(id: string, props?: AutoscaleSettingProps): string {
     if (props?.name) {
       return props.name;
     }

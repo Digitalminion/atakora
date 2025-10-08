@@ -62,9 +62,7 @@ describe('resources/action-group/ActionGroup', () => {
       const actionGroup = new ActionGroup(resourceGroup, 'Alerts', {
         actionGroupName: 'ag-custom',
         groupShortName: 'custom',
-        emailReceivers: [
-          { name: 'admin', emailAddress: 'admin@example.com' },
-        ],
+        emailReceivers: [{ name: 'admin', emailAddress: 'admin@example.com' }],
       });
 
       expect(actionGroup.actionGroupName).toBe('ag-custom');
@@ -73,9 +71,7 @@ describe('resources/action-group/ActionGroup', () => {
     it('should merge tags with parent', () => {
       const actionGroup = new ActionGroup(resourceGroup, 'Alerts', {
         groupShortName: 'alerts',
-        emailReceivers: [
-          { name: 'admin', emailAddress: 'admin@example.com' },
-        ],
+        emailReceivers: [{ name: 'admin', emailAddress: 'admin@example.com' }],
         tags: { purpose: 'monitoring' },
       });
 
@@ -91,9 +87,7 @@ describe('resources/action-group/ActionGroup', () => {
         emailReceivers: [
           { name: 'ops-team', emailAddress: 'ops@example.com', useCommonAlertSchema: true },
         ],
-        smsReceivers: [
-          { name: 'on-call', countryCode: '1', phoneNumber: '5551234567' },
-        ],
+        smsReceivers: [{ name: 'on-call', countryCode: '1', phoneNumber: '5551234567' }],
         webhookReceivers: [
           { name: 'slack', serviceUri: 'https://hooks.slack.com/test', useCommonAlertSchema: true },
         ],
@@ -106,9 +100,7 @@ describe('resources/action-group/ActionGroup', () => {
       expect(() => {
         new ActionGroup(stack, 'Alerts', {
           groupShortName: 'alerts',
-          emailReceivers: [
-            { name: 'admin', emailAddress: 'admin@example.com' },
-          ],
+          emailReceivers: [{ name: 'admin', emailAddress: 'admin@example.com' }],
         });
       }).toThrow(/must be created within or under a ResourceGroup/);
     });
@@ -123,7 +115,9 @@ describe('resources/action-group/ActionGroup', () => {
       );
 
       expect(actionGroup.actionGroupName).toBe('ag-existing');
-      expect(actionGroup.actionGroupId).toBe('/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Insights/actionGroups/ag-existing');
+      expect(actionGroup.actionGroupId).toBe(
+        '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Insights/actionGroups/ag-existing'
+      );
     });
   });
 });

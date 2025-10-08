@@ -44,7 +44,7 @@ describe('resources/waf-policy/WafPolicy', () => {
     it('should create WAF policy with auto-generated name', () => {
       const wafPolicy = new WafPolicy(resourceGroup, 'MainWaf');
 
-      expect(wafPolicy.policyName).toBe('waf-dp-colorai-mainwaf-nonprod-eus-01');
+      expect(wafPolicy.policyName).toBe('waf-dp-colorai-mainwaf-nonprod-eus-00');
       expect(wafPolicy.location).toBe('eastus');
     });
 
@@ -346,9 +346,7 @@ describe('resources/waf-policy/WafPolicy', () => {
         ],
       });
 
-      expect(wafPolicy.managedRuleSets[0].ruleSetType).toBe(
-        'Microsoft_BotManagerRuleSet'
-      );
+      expect(wafPolicy.managedRuleSets[0].ruleSetType).toBe('Microsoft_BotManagerRuleSet');
     });
 
     it('should support multiple rule sets', () => {

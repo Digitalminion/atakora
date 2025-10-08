@@ -282,7 +282,7 @@ describe('resources/openai-service/OpenAIService', () => {
 
     it('should extract account name from complex resource ID', () => {
       const accountId =
-        '/subscriptions/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/resourceGroups/rg-colorai-data-nonprod-eus-01/providers/Microsoft.CognitiveServices/accounts/oai-colorai-prod-001';
+        '/subscriptions/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/resourceGroups/rg-colorai-data-nonprod-eus-00/providers/Microsoft.CognitiveServices/accounts/oai-colorai-prod-001';
 
       const openai = OpenAIService.fromAccountId(stack, 'Imported', accountId);
 
@@ -334,10 +334,7 @@ describe('resources/openai-service/OpenAIService', () => {
       const openai = new OpenAIService(resourceGroup, 'Network', {
         networkAcls: {
           defaultAction: NetworkRuleAction.DENY,
-          ipRules: [
-            { value: '1.2.3.4' },
-            { value: '5.6.7.0/24' },
-          ],
+          ipRules: [{ value: '1.2.3.4' }, { value: '5.6.7.0/24' }],
         },
       });
 

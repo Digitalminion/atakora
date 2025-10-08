@@ -80,7 +80,9 @@ export class Geography extends NamingComponent {
    * });
    * ```
    */
-  constructor(options: string | (NamingComponentOptions & { abbreviation?: string; displayName?: string })) {
+  constructor(
+    options: string | (NamingComponentOptions & { abbreviation?: string; displayName?: string })
+  ) {
     super(options);
 
     // Set the Azure location (normalized to lowercase, no spaces)
@@ -91,10 +93,12 @@ export class Geography extends NamingComponent {
       this.abbreviation = Geography.ABBREVIATIONS[options.toLowerCase()] ?? this.resourceName;
       this.displayName = Geography.DISPLAY_NAMES[options.toLowerCase()] ?? this.title;
     } else {
-      this.abbreviation = options.abbreviation ??
+      this.abbreviation =
+        options.abbreviation ??
         Geography.ABBREVIATIONS[options.value.toLowerCase()] ??
         this.resourceName;
-      this.displayName = (options as any).displayName ??
+      this.displayName =
+        (options as { displayName?: string }).displayName ??
         Geography.DISPLAY_NAMES[options.value.toLowerCase()] ??
         this.title;
     }

@@ -35,7 +35,37 @@ export interface DhcpOptions {
  * Subnet configuration for inline subnet definition.
  *
  * @remarks
- * Used when defining subnets inline within the virtual network resource.
+ * **RECOMMENDED APPROACH**: Use inline subnets to prevent deployment conflicts.
+ *
+ * Inline subnets are defined within the VNet's `properties.subnets` array in the
+ * ARM template. This causes Azure to create all subnets atomically as part of the
+ * VNet creation operation, preventing "AnotherOperationInProgress" errors that
+ * occur when deploying subnets as separate resources.
+ *
+ * **Benefits of Inline Subnets**:
+ * - Single atomic VNet creation (no concurrent updates)
+ * - No "AnotherOperationInProgress" errors
+ * - Faster deployment (one operation instead of N+1)
+ * - Simpler dependency management
+ *
+ * **When to Use Separate Subnet Resources**:
+ * - When you need to add subnets to an existing VNet
+ * - When subnets need to be managed independently (rare)
+ * - When using external VNet management tools
+ *
+ * @example
+ * ```typescript
+ * const inlineSubnet: InlineSubnetProps = {
+ *   name: 'app-subnet',
+ *   addressPrefix: '10.0.1.0/24',
+ *   networkSecurityGroup: {
+ *     id: nsg.networkSecurityGroupId
+ *   },
+ *   serviceEndpoints: [
+ *     { service: 'Microsoft.Storage' }
+ *   ]
+ * };
+ * ```
  */
 export interface InlineSubnetProps {
   /**

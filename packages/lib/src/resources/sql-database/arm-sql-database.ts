@@ -151,9 +151,7 @@ export class ArmSqlDatabase extends Resource {
     }
 
     if (props.databaseName.length < 1 || props.databaseName.length > 128) {
-      throw new Error(
-        `Database name must be 1-128 characters (got ${props.databaseName.length})`
-      );
+      throw new Error(`Database name must be 1-128 characters (got ${props.databaseName.length})`);
     }
 
     // Validate database name doesn't end with period or hyphen
@@ -193,9 +191,7 @@ export class ArmSqlDatabase extends Resource {
       apiVersion: this.apiVersion,
       name: `${this.serverName}/${this.databaseName}`,
       location: this.location,
-      dependsOn: [
-        `[resourceId('Microsoft.Sql/servers', '${this.serverName}')]`,
-      ],
+      dependsOn: [`[resourceId('Microsoft.Sql/servers', '${this.serverName}')]`],
     };
 
     // Add SKU if provided

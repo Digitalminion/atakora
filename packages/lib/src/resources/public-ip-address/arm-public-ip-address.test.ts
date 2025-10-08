@@ -8,11 +8,7 @@ import { Project } from '../../core/context/project';
 import { Environment } from '../../core/context/environment';
 import { Instance } from '../../core/context/instance';
 import { ArmPublicIpAddress } from './arm-public-ip-address';
-import {
-  PublicIPAddressSku,
-  PublicIPAllocationMethod,
-  IpVersion,
-} from './types';
+import { PublicIPAddressSku, PublicIPAllocationMethod, IpVersion } from './types';
 import type { ArmPublicIpAddressProps } from './types';
 
 describe('resources/public-ip-address/ArmPublicIpAddress', () => {

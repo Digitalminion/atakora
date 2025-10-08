@@ -19,11 +19,7 @@ export type {
 } from './types';
 
 // Enums
-export {
-  SqlServerVersion,
-  DatabaseSkuTier,
-  PublicNetworkAccess,
-} from './types';
+export { SqlServerVersion, DatabaseSkuTier, PublicNetworkAccess } from './types';
 
 // L1 constructs
 export { ArmSqlServer } from './arm-sql-server';

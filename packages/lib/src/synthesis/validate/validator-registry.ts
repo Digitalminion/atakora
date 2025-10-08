@@ -130,11 +130,7 @@ export abstract class BaseValidator implements Validator {
   /**
    * Create an info message
    */
-  protected createInfo(
-    message: string,
-    path?: string,
-    code?: string
-  ): ValidationError {
+  protected createInfo(message: string, path?: string, code?: string): ValidationError {
     return {
       severity: ValidationSeverity.INFO,
       message,

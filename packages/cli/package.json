@@ -4,7 +4,7 @@
   "description": "CLI tool",
   "main": "./dist/index.js",
   "bin": {
-    "azure-arm": "./dist/cli.js"
+    "atakora": "./dist/cli.js"
   },
   "scripts": {
     "build": "tsc",

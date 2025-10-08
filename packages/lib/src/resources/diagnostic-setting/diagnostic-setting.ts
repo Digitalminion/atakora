@@ -43,11 +43,7 @@ export class DiagnosticSetting extends Construct implements IDiagnosticSetting {
   public readonly name: string;
   public readonly resourceId: string;
 
-  constructor(
-    scope: Construct,
-    id: string,
-    props: DiagnosticSettingProps
-  ) {
+  constructor(scope: Construct, id: string, props: DiagnosticSettingProps) {
     super(scope, id);
 
     this.name = props.name ?? 'diagnostics';

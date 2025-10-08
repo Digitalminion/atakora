@@ -153,11 +153,7 @@ export class ArmActionGroup extends Resource {
    * @throws {Error} If groupShortName exceeds 12 characters
    * @throws {Error} If location is empty
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props: ArmActionGroupProps
-  ) {
+  constructor(scope: Construct, id: string, props: ArmActionGroupProps) {
     super(scope, id);
 
     // Validate required properties

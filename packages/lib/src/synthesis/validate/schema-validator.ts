@@ -237,11 +237,7 @@ export class SchemaValidator extends BaseValidator {
     // Check for empty resources array
     if (template.resources && template.resources.length === 0) {
       warnings.push(
-        this.createWarning(
-          'Template contains no resources',
-          stackName,
-          'EMPTY_TEMPLATE'
-        )
+        this.createWarning('Template contains no resources', stackName, 'EMPTY_TEMPLATE')
       );
     }
 

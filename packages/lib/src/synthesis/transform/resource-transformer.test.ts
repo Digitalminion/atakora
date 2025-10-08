@@ -11,7 +11,11 @@ class TestResource extends Resource {
   readonly resourceId: string;
   readonly name: string;
 
-  constructor(scope: Construct, id: string, props: ResourceProps & { resourceType: string; name: string }) {
+  constructor(
+    scope: Construct,
+    id: string,
+    props: ResourceProps & { resourceType: string; name: string }
+  ) {
     super(scope, id, props);
     this.resourceType = props.resourceType;
     this.name = props.name;
@@ -257,10 +261,7 @@ describe('synthesis/transform/ResourceTransformer', () => {
       });
 
       (resource as any).properties = {
-        items: [
-          { value: 'defined', undef: undefined },
-          { value: 'defined2' },
-        ],
+        items: [{ value: 'defined', undef: undefined }, { value: 'defined2' }],
       };
 
       const armResource = transformer.transform(resource);
@@ -342,9 +343,7 @@ describe('synthesis/transform/ResourceTransformer', () => {
 
       const resourceId = ResourceTransformer.generateResourceId(armResource);
 
-      expect(resourceId).toBe(
-        "[resourceId('Microsoft.Network/virtualNetworks', 'vnet-001')]"
-      );
+      expect(resourceId).toBe("[resourceId('Microsoft.Network/virtualNetworks', 'vnet-001')]");
     });
   });
 

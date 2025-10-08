@@ -12,7 +12,8 @@ describe('VirtualNetworkLink', () => {
 
   const mockVirtualNetwork: IVirtualNetwork = {
     vnetName: 'test-vnet',
-    vnetId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
+    vnetId:
+      '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
     location: 'eastus',
     addressSpace: ['10.0.0.0/16'],
   };
@@ -21,7 +22,8 @@ describe('VirtualNetworkLink', () => {
     it('should create link with string virtual network ID', () => {
       const link = new VirtualNetworkLink(mockScope, 'TestLink', {
         privateDnsZoneName: 'privatelink.blob.core.windows.net',
-        virtualNetwork: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
+        virtualNetwork:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
       });
 
       expect(link.linkName).toBeDefined();
@@ -145,7 +147,8 @@ describe('VirtualNetworkLink', () => {
 
   describe('fromLinkId', () => {
     it('should import existing link by resource ID', () => {
-      const linkId = '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net/virtualNetworkLinks/my-link';
+      const linkId =
+        '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net/virtualNetworkLinks/my-link';
       const imported = VirtualNetworkLink.fromLinkId(mockScope, 'ImportedLink', linkId);
 
       expect(imported.linkId).toBe(linkId);

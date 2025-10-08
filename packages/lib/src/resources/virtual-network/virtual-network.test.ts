@@ -109,9 +109,9 @@ describe('resources/virtual-network/VirtualNetwork', () => {
       });
 
       expect(vnet.tags).toMatchObject({
-        managed_by: 'terraform',  // from stack/RG
-        project: 'colorai',       // from stack/RG
-        owner: 'network-team',    // from props
+        managed_by: 'terraform', // from stack/RG
+        project: 'colorai', // from stack/RG
+        owner: 'network-team', // from props
       });
     });
 

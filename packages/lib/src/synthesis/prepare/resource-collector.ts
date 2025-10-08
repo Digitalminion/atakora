@@ -46,10 +46,7 @@ export class ResourceCollector {
    * @param stacks - Map of stack constructs
    * @returns Map of stack name to stack info
    */
-  collect(
-    constructs: IConstruct[],
-    stacks: Map<string, IConstruct>
-  ): Map<string, StackInfo> {
+  collect(constructs: IConstruct[], stacks: Map<string, IConstruct>): Map<string, StackInfo> {
     const stackInfoMap = new Map<string, StackInfo>();
 
     // Initialize stack info for each stack
@@ -70,18 +67,14 @@ export class ResourceCollector {
         const stack = TreeTraverser.findStack(construct);
 
         if (!stack) {
-          throw new Error(
-            `Resource ${resource.node.path} is not part of any stack`
-          );
+          throw new Error(`Resource ${resource.node.path} is not part of any stack`);
         }
 
         const stackId = stack.node.path || stack.node.id;
         const stackInfo = stackInfoMap.get(stackId);
 
         if (!stackInfo) {
-          throw new Error(
-            `Stack ${stackId} not found for resource ${resource.node.path}`
-          );
+          throw new Error(`Stack ${stackId} not found for resource ${resource.node.path}`);
         }
 
         stackInfo.resources.push(resource);

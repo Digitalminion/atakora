@@ -111,11 +111,7 @@ export class ArmNetworkSecurityGroup extends Resource {
    * @throws {Error} If location is empty
    * @throws {Error} If security rule validation fails
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props: ArmNetworkSecurityGroupProps
-  ) {
+  constructor(scope: Construct, id: string, props: ArmNetworkSecurityGroupProps) {
     super(scope, id);
 
     // Validate required properties
@@ -177,9 +173,7 @@ export class ArmNetworkSecurityGroup extends Resource {
 
     // Validate description length
     if (rule.description && rule.description.length > 140) {
-      throw new Error(
-        `Security rule '${rule.name}': description cannot exceed 140 characters`
-      );
+      throw new Error(`Security rule '${rule.name}': description cannot exceed 140 characters`);
     }
 
     // Validate priority range
@@ -197,21 +191,30 @@ export class ArmNetworkSecurityGroup extends Resource {
     }
 
     // Validate that at least one destination port is specified
-    if (!rule.destinationPortRange && (!rule.destinationPortRanges || rule.destinationPortRanges.length === 0)) {
+    if (
+      !rule.destinationPortRange &&
+      (!rule.destinationPortRanges || rule.destinationPortRanges.length === 0)
+    ) {
       throw new Error(
         `Security rule '${rule.name}': either destinationPortRange or destinationPortRanges must be specified`
       );
     }
 
     // Validate that at least one source address is specified
-    if (!rule.sourceAddressPrefix && (!rule.sourceAddressPrefixes || rule.sourceAddressPrefixes.length === 0)) {
+    if (
+      !rule.sourceAddressPrefix &&
+      (!rule.sourceAddressPrefixes || rule.sourceAddressPrefixes.length === 0)
+    ) {
       throw new Error(
         `Security rule '${rule.name}': either sourceAddressPrefix or sourceAddressPrefixes must be specified`
       );
     }
 
     // Validate that at least one destination address is specified
-    if (!rule.destinationAddressPrefix && (!rule.destinationAddressPrefixes || rule.destinationAddressPrefixes.length === 0)) {
+    if (
+      !rule.destinationAddressPrefix &&
+      (!rule.destinationAddressPrefixes || rule.destinationAddressPrefixes.length === 0)
+    ) {
       throw new Error(
         `Security rule '${rule.name}': either destinationAddressPrefix or destinationAddressPrefixes must be specified`
       );
@@ -238,7 +241,7 @@ export class ArmNetworkSecurityGroup extends Resource {
     if (duplicates.length > 0) {
       throw new Error(
         `Security rules have duplicate priorities: ${duplicates.join(', ')}. ` +
-        `Each rule must have a unique priority.`
+          `Each rule must have a unique priority.`
       );
     }
   }

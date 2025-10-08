@@ -141,7 +141,11 @@ export interface DynamicThresholdCriterion {
   /**
    * Operator for threshold comparison.
    */
-  readonly operator: MetricAlertOperator.GREATER_THAN | MetricAlertOperator.LESS_THAN | MetricAlertOperator.GREATER_THAN_OR_EQUAL | MetricAlertOperator.LESS_THAN_OR_EQUAL;
+  readonly operator:
+    | MetricAlertOperator.GREATER_THAN
+    | MetricAlertOperator.LESS_THAN
+    | MetricAlertOperator.GREATER_THAN_OR_EQUAL
+    | MetricAlertOperator.LESS_THAN_OR_EQUAL;
 
   /**
    * Alert sensitivity.

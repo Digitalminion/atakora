@@ -1,7 +1,13 @@
 import { Construct } from '../../core/construct';
 import type { IResourceGroup } from '../resource-group/types';
 import { ArmVirtualNetwork } from './arm-virtual-network';
-import type { VirtualNetworkProps, IVirtualNetwork, AddressSpace, InlineSubnetProps } from './types';
+import { constructIdToPurpose as utilConstructIdToPurpose } from '../../naming/construct-id-utils';
+import type {
+  VirtualNetworkProps,
+  IVirtualNetwork,
+  AddressSpace,
+  InlineSubnetProps,
+} from './types';
 
 /**
  * L2 construct for Azure Virtual Network.
@@ -133,11 +139,7 @@ export class VirtualNetwork extends Construct implements IVirtualNetwork {
    * });
    * ```
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props: VirtualNetworkProps
-  ) {
+  constructor(scope: Construct, id: string, props: VirtualNetworkProps) {
     super(scope, id);
 
     // Get parent resource group
@@ -200,7 +202,7 @@ export class VirtualNetwork extends Construct implements IVirtualNetwork {
 
     throw new Error(
       'VirtualNetwork must be created within or under a ResourceGroup. ' +
-      'Ensure the parent scope is a ResourceGroup or has one in its hierarchy.'
+        'Ensure the parent scope is a ResourceGroup or has one in its hierarchy.'
     );
   }
 
@@ -240,10 +242,7 @@ export class VirtualNetwork extends Construct implements IVirtualNetwork {
    * @param props - Virtual network properties
    * @returns Resolved virtual network name
    */
-  private resolveVirtualNetworkName(
-    id: string,
-    props: VirtualNetworkProps
-  ): string {
+  private resolveVirtualNetworkName(id: string, props: VirtualNetworkProps): string {
     // If name provided explicitly, use it
     if (props.virtualNetworkName) {
       return props.virtualNetworkName;
@@ -254,6 +253,7 @@ export class VirtualNetwork extends Construct implements IVirtualNetwork {
     const subscriptionStack = this.getSubscriptionStack();
     if (subscriptionStack) {
       const purpose = this.constructIdToPurpose(id);
+      // Don't pass purpose if it's the same as the resource type to avoid duplication
       return subscriptionStack.generateResourceName('vnet', purpose);
     }
 
@@ -288,10 +288,14 @@ export class VirtualNetwork extends Construct implements IVirtualNetwork {
    * Converts construct ID to purpose identifier for naming.
    *
    * @param id - Construct ID
-   * @returns Purpose string for naming
+   * @returns Purpose string for naming, or undefined if ID matches resource type
+   *
+   * @remarks
+   * Uses the shared utility to strip stack prefixes and resource type names
+   * to avoid duplication (e.g., "VNet" shouldn't become "vnet-vnet-...")
    */
-  private constructIdToPurpose(id: string): string {
-    return id.toLowerCase();
+  private constructIdToPurpose(id: string): string | undefined {
+    return utilConstructIdToPurpose(id, 'vnet', ['virtualnetwork']);
   }
 
   /**
@@ -333,8 +337,8 @@ export class VirtualNetwork extends Construct implements IVirtualNetwork {
   public addSubnet(props: InlineSubnetProps): any {
     throw new Error(
       'addSubnet() is not yet implemented. ' +
-      'Subnets should be created as separate Subnet resources for now. ' +
-      'This helper method will be available in a future release.'
+        'Subnets should be created as separate Subnet resources for now. ' +
+        'This helper method will be available in a future release.'
     );
   }
 }

@@ -47,11 +47,7 @@ export class ArmDiagnosticSetting extends Resource {
   public readonly logAnalyticsDestinationType?: string;
   public readonly resourceId: string;
 
-  constructor(
-    scope: Construct,
-    id: string,
-    props: ArmDiagnosticSettingProps
-  ) {
+  constructor(scope: Construct, id: string, props: ArmDiagnosticSettingProps) {
     super(scope, id);
 
     this.validateProps(props);

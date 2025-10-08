@@ -16,17 +16,20 @@ describe('resources/private-endpoint/PrivateEndpoint', () => {
 
   // Mock subnet
   const mockSubnet: ISubnet = {
-    subnetId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/virtualNetworks/vnet/subnets/snet-pe',
+    subnetId:
+      '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/virtualNetworks/vnet/subnets/snet-pe',
   };
 
   // Mock storage account
   const mockStorageAccount: IPrivateLinkResource = {
-    resourceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+    resourceId:
+      '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
   };
 
   // Mock DNS zone
   const mockDnsZone: IPrivateDnsZone = {
-    zoneId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net',
+    zoneId:
+      '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net',
   };
 
   beforeEach(() => {
@@ -78,7 +81,8 @@ describe('resources/private-endpoint/PrivateEndpoint', () => {
     });
 
     it('should create private endpoint with subnet ID string', () => {
-      const subnetId = '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/virtualNetworks/vnet/subnets/snet-pe';
+      const subnetId =
+        '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/virtualNetworks/vnet/subnets/snet-pe';
 
       const endpoint = new PrivateEndpoint(stack, 'StorageEndpoint', {
         subnet: subnetId,
@@ -90,7 +94,8 @@ describe('resources/private-endpoint/PrivateEndpoint', () => {
     });
 
     it('should create private endpoint with resource ID string', () => {
-      const resourceId = '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg';
+      const resourceId =
+        '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg';
 
       const endpoint = new PrivateEndpoint(stack, 'StorageEndpoint', {
         subnet: mockSubnet,
@@ -125,7 +130,8 @@ describe('resources/private-endpoint/PrivateEndpoint', () => {
     it('should create private endpoint with request message', () => {
       const endpoint = new PrivateEndpoint(stack, 'KeyVaultEndpoint', {
         subnet: mockSubnet,
-        privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/mykv',
+        privateLinkServiceId:
+          '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/mykv',
         groupIds: ['vault'],
         requestMessage: 'Please approve this connection',
       });
@@ -156,7 +162,8 @@ describe('resources/private-endpoint/PrivateEndpoint', () => {
     });
 
     it('should create private endpoint with DNS zone ID string', () => {
-      const dnsZoneId = '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net';
+      const dnsZoneId =
+        '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net';
 
       const endpoint = new PrivateEndpoint(stack, 'StorageEndpoint', {
         subnet: mockSubnet,
@@ -261,7 +268,8 @@ describe('resources/private-endpoint/PrivateEndpoint', () => {
 
   describe('fromEndpointId', () => {
     it('should create private endpoint from endpoint ID', () => {
-      const endpointId = '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateEndpoints/pe-storage-01';
+      const endpointId =
+        '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateEndpoints/pe-storage-01';
 
       const endpoint = PrivateEndpoint.fromEndpointId(stack, 'ImportedEndpoint', endpointId);
 
@@ -270,7 +278,8 @@ describe('resources/private-endpoint/PrivateEndpoint', () => {
     });
 
     it('should extract name from resource ID', () => {
-      const endpointId = '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateEndpoints/my-endpoint';
+      const endpointId =
+        '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateEndpoints/my-endpoint';
 
       const endpoint = PrivateEndpoint.fromEndpointId(stack, 'ImportedEndpoint', endpointId);
 
@@ -297,7 +306,8 @@ describe('resources/private-endpoint/PrivateEndpoint', () => {
         groupIds: ['blob'],
       });
 
-      const dnsZoneId = '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net';
+      const dnsZoneId =
+        '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net';
 
       // This should not throw
       endpoint.addDnsZoneGroup(dnsZoneId);
@@ -394,7 +404,8 @@ describe('resources/private-endpoint/PrivateEndpoint', () => {
     });
 
     it('should create endpoint for Key Vault', () => {
-      const keyVaultId = '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/mykv';
+      const keyVaultId =
+        '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/mykv';
 
       const endpoint = new PrivateEndpoint(stack, 'KeyVaultEndpoint', {
         subnet: mockSubnet,
@@ -406,7 +417,8 @@ describe('resources/private-endpoint/PrivateEndpoint', () => {
     });
 
     it('should create endpoint for Cosmos DB SQL', () => {
-      const cosmosDbId = '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/mycosmosdb';
+      const cosmosDbId =
+        '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.DocumentDB/databaseAccounts/mycosmosdb';
 
       const endpoint = new PrivateEndpoint(stack, 'CosmosDbEndpoint', {
         subnet: mockSubnet,
@@ -418,7 +430,8 @@ describe('resources/private-endpoint/PrivateEndpoint', () => {
     });
 
     it('should create endpoint for SQL Server', () => {
-      const sqlServerId = '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Sql/servers/mysqlserver';
+      const sqlServerId =
+        '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Sql/servers/mysqlserver';
 
       const endpoint = new PrivateEndpoint(stack, 'SqlServerEndpoint', {
         subnet: mockSubnet,

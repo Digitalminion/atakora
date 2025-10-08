@@ -47,7 +47,8 @@ export class ArmWafPolicy extends Resource {
   /**
    * ARM resource type.
    */
-  public readonly resourceType: string = 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies';
+  public readonly resourceType: string =
+    'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies';
 
   /**
    * API version for the resource.
@@ -57,8 +58,7 @@ export class ArmWafPolicy extends Resource {
   /**
    * Deployment scope for WAF policies.
    */
-  public readonly scope: DeploymentScope.ResourceGroup =
-    DeploymentScope.ResourceGroup;
+  public readonly scope: DeploymentScope.ResourceGroup = DeploymentScope.ResourceGroup;
 
   /**
    * Name of the WAF policy.
@@ -119,11 +119,7 @@ export class ArmWafPolicy extends Resource {
    * @throws {Error} If location is empty
    * @throws {Error} If validation fails
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props: ArmWafPolicyProps
-  ) {
+  constructor(scope: Construct, id: string, props: ArmWafPolicyProps) {
     super(scope, id);
 
     // Validate required properties
@@ -183,9 +179,7 @@ export class ArmWafPolicy extends Resource {
         props.policySettings.maxRequestBodySizeInKb < 1 ||
         props.policySettings.maxRequestBodySizeInKb > 128
       ) {
-        throw new Error(
-          'maxRequestBodySizeInKb must be between 1 and 128'
-        );
+        throw new Error('maxRequestBodySizeInKb must be between 1 and 128');
       }
     }
 
@@ -195,9 +189,7 @@ export class ArmWafPolicy extends Resource {
         props.policySettings.fileUploadLimitInMb < 1 ||
         props.policySettings.fileUploadLimitInMb > 750
       ) {
-        throw new Error(
-          'fileUploadLimitInMb must be between 1 and 750'
-        );
+        throw new Error('fileUploadLimitInMb must be between 1 and 750');
       }
     }
 
@@ -206,25 +198,18 @@ export class ArmWafPolicy extends Resource {
       throw new Error('Managed rules must be specified');
     }
 
-    if (
-      !props.managedRules.managedRuleSets ||
-      props.managedRules.managedRuleSets.length === 0
-    ) {
+    if (!props.managedRules.managedRuleSets || props.managedRules.managedRuleSets.length === 0) {
       throw new Error('At least one managed rule set must be specified');
     }
 
     // Validate managed rule sets
     props.managedRules.managedRuleSets.forEach((ruleSet, index) => {
       if (!ruleSet.ruleSetType) {
-        throw new Error(
-          `Managed rule set at index ${index} must have a ruleSetType`
-        );
+        throw new Error(`Managed rule set at index ${index} must have a ruleSetType`);
       }
 
       if (!ruleSet.ruleSetVersion) {
-        throw new Error(
-          `Managed rule set at index ${index} must have a ruleSetVersion`
-        );
+        throw new Error(`Managed rule set at index ${index} must have a ruleSetVersion`);
       }
     });
 
@@ -236,9 +221,7 @@ export class ArmWafPolicy extends Resource {
         }
 
         if (!rule.priority || rule.priority < 1 || rule.priority > 100) {
-          throw new Error(
-            `Custom rule '${rule.name}' priority must be between 1 and 100`
-          );
+          throw new Error(`Custom rule '${rule.name}' priority must be between 1 and 100`);
         }
 
         if (!rule.ruleType) {
@@ -246,9 +229,7 @@ export class ArmWafPolicy extends Resource {
         }
 
         if (!rule.matchConditions || rule.matchConditions.length === 0) {
-          throw new Error(
-            `Custom rule '${rule.name}' must have at least one match condition`
-          );
+          throw new Error(`Custom rule '${rule.name}' must have at least one match condition`);
         }
 
         if (!rule.action) {
@@ -257,10 +238,7 @@ export class ArmWafPolicy extends Resource {
 
         // Validate match conditions
         rule.matchConditions.forEach((condition, condIndex) => {
-          if (
-            !condition.matchVariables ||
-            condition.matchVariables.length === 0
-          ) {
+          if (!condition.matchVariables || condition.matchVariables.length === 0) {
             throw new Error(
               `Custom rule '${rule.name}' match condition at index ${condIndex} must have at least one match variable`
             );
@@ -345,8 +323,7 @@ export class ArmWafPolicy extends Resource {
 
     // Add optional policy settings
     if (this.policySettings.requestBodyCheck !== undefined) {
-      template.properties.policySettings.requestBodyCheck =
-        this.policySettings.requestBodyCheck;
+      template.properties.policySettings.requestBodyCheck = this.policySettings.requestBodyCheck;
     }
 
     if (this.policySettings.maxRequestBodySizeInKb !== undefined) {
@@ -361,23 +338,27 @@ export class ArmWafPolicy extends Resource {
 
     // Add exclusions if present
     if (this.managedRules.exclusions && this.managedRules.exclusions.length > 0) {
-      template.properties.managedRules.exclusions = this.managedRules.exclusions.map((exclusion) => {
-        const mappedExclusion: any = {
-          matchVariable: exclusion.matchVariable,
-          selectorMatchOperator: exclusion.selectorMatchOperator,
-          selector: exclusion.selector,
-        };
+      template.properties.managedRules.exclusions = this.managedRules.exclusions.map(
+        (exclusion) => {
+          const mappedExclusion: any = {
+            matchVariable: exclusion.matchVariable,
+            selectorMatchOperator: exclusion.selectorMatchOperator,
+            selector: exclusion.selector,
+          };
 
-        if (exclusion.exclusionManagedRuleSets && exclusion.exclusionManagedRuleSets.length > 0) {
-          mappedExclusion.exclusionManagedRuleSets = exclusion.exclusionManagedRuleSets.map((ruleSet) => ({
-            ruleSetType: ruleSet.ruleSetType,
-            ruleSetVersion: ruleSet.ruleSetVersion,
-            ruleGroupOverrides: ruleSet.ruleGroupOverrides,
-          }));
+          if (exclusion.exclusionManagedRuleSets && exclusion.exclusionManagedRuleSets.length > 0) {
+            mappedExclusion.exclusionManagedRuleSets = exclusion.exclusionManagedRuleSets.map(
+              (ruleSet) => ({
+                ruleSetType: ruleSet.ruleSetType,
+                ruleSetVersion: ruleSet.ruleSetVersion,
+                ruleGroupOverrides: ruleSet.ruleGroupOverrides,
+              })
+            );
+          }
+
+          return mappedExclusion;
         }
-
-        return mappedExclusion;
-      });
+      );
     }
 
     // Add custom rules if present

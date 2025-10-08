@@ -7,8 +7,9 @@ import type { Environment } from './context/environment';
 import type { Instance } from './context/instance';
 import type { Geography } from './azure/geography';
 import { DeploymentScope } from './azure/scopes';
-import { ResourceNameGenerator, type NamingConventionConfig } from '../naming';
+import { ResourceNameGenerator, NamingService, type NamingConventionConfig } from '../naming';
 import { ResourceGroupStack } from './resource-group-stack';
+import type { IResourceGroup } from '../resources/resource-group/types';
 
 /**
  * Props for SubscriptionStack.
@@ -77,7 +78,7 @@ export interface SubscriptionStackProps {
  *
  * // Generate resource names
  * const rgName = foundation.generateResourceName('rg', 'data');
- * // Result: "rg-digital-products-colorai-data-nonprod-eus-01"
+ * // Result: "rg-digital-products-colorai-data-nonprod-eus-00"
  * ```
  */
 export class SubscriptionStack extends Construct {
@@ -120,6 +121,12 @@ export class SubscriptionStack extends Construct {
   private readonly nameGenerator: ResourceNameGenerator;
 
   /**
+   * Naming service for unique hash generation.
+   * Provides a synthesis-wide unique hash that all resources can use.
+   */
+  public readonly namingService: NamingService;
+
+  /**
    * Nested ResourceGroupStacks.
    */
   private readonly resourceGroupStacks: Map<string, any> = new Map();
@@ -144,6 +151,9 @@ export class SubscriptionStack extends Construct {
     this.environment = props.environment;
     this.instance = props.instance;
 
+    // Initialize naming service with unique hash for this synthesis
+    this.namingService = new NamingService();
+
     // Initialize name generator with custom conventions if provided
     this.nameGenerator = new ResourceNameGenerator(props.namingConventions);
 
@@ -166,7 +176,7 @@ export class SubscriptionStack extends Construct {
    * @example
    * ```typescript
    * const rgName = stack.generateResourceName('rg', 'data');
-   * // Result: "rg-digital-products-colorai-data-nonprod-eus-01"
+   * // Result: "rg-digital-products-colorai-data-nonprod-eus-00"
    * ```
    */
   public generateResourceName(resourceType: string, purpose?: string): string {
@@ -192,7 +202,7 @@ export class SubscriptionStack extends Construct {
    * @remarks
    * This will be fully implemented when ResourceGroup construct is available in Phase 2.
    */
-  public addResourceGroupStack(id: string, resourceGroup: any): any {
+  public addResourceGroupStack(id: string, resourceGroup: IResourceGroup): ResourceGroupStack {
     const rgStack = new ResourceGroupStack(this, id, { resourceGroup });
     this.resourceGroupStacks.set(id, rgStack);
     return rgStack;

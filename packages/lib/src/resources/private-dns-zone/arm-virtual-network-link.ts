@@ -136,7 +136,7 @@ export class ArmVirtualNetworkLink extends Resource implements IVirtualNetworkLi
     if (!linkNamePattern.test(props.linkName)) {
       throw new Error(
         `Virtual network link name must match pattern: ^[a-zA-Z0-9][-a-zA-Z0-9]{0,78}[a-zA-Z0-9]$. ` +
-        `Got: '${props.linkName}'`
+          `Got: '${props.linkName}'`
       );
     }
 
@@ -149,7 +149,7 @@ export class ArmVirtualNetworkLink extends Resource implements IVirtualNetworkLi
     if (props.location.toLowerCase() !== 'global') {
       throw new Error(
         `Virtual network link location must be 'global', got '${props.location}'. ` +
-        `Virtual network links are global resources and do not support regional deployment.`
+          `Virtual network links are global resources and do not support regional deployment.`
       );
     }
 
@@ -162,7 +162,7 @@ export class ArmVirtualNetworkLink extends Resource implements IVirtualNetworkLi
     if (!props.virtualNetworkId.includes('/virtualNetworks/')) {
       throw new Error(
         `Virtual network ID must be a valid resource ID containing '/virtualNetworks/'. ` +
-        `Got: '${props.virtualNetworkId}'`
+          `Got: '${props.virtualNetworkId}'`
       );
     }
   }

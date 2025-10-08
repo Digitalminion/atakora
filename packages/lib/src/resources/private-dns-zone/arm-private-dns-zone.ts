@@ -114,7 +114,7 @@ export class ArmPrivateDnsZone extends Resource {
     if (props.location.toLowerCase() !== 'global') {
       throw new Error(
         `Private DNS zone location must be 'global', got '${props.location}'. ` +
-        `Private DNS zones are global resources and do not support regional deployment.`
+          `Private DNS zones are global resources and do not support regional deployment.`
       );
     }
   }

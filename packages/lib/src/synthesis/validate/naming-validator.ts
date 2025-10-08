@@ -152,6 +152,55 @@ export class NamingValidator extends BaseValidator {
     errors: any[],
     warnings: any[]
   ): void {
+    // Check if this is a child resource (contains /)
+    const isChildResource = name.includes('/');
+
+    if (isChildResource) {
+      // Child resources use parent/child format - validate each part separately
+      const parts = name.split('/');
+
+      // Validate parent name doesn't exceed reasonable length
+      if (parts[0].length > 64) {
+        warnings.push(
+          this.createWarning(
+            `Parent resource name '${parts[0]}' in '${name}' exceeds recommended maximum length of 64 characters`,
+            `resources/${name}`,
+            'NAME_TOO_LONG',
+            'Consider shortening the parent resource name'
+          )
+        );
+      }
+
+      // Validate child name doesn't exceed reasonable length
+      if (parts[1] && parts[1].length > 64) {
+        warnings.push(
+          this.createWarning(
+            `Child resource name '${parts[1]}' in '${name}' exceeds recommended maximum length of 64 characters`,
+            `resources/${name}`,
+            'NAME_TOO_LONG',
+            'Consider shortening the child resource name'
+          )
+        );
+      }
+
+      // Validate each part for special characters (excluding the / separator)
+      for (let i = 0; i < parts.length; i++) {
+        if (!/^[a-zA-Z0-9._-]+$/.test(parts[i])) {
+          warnings.push(
+            this.createWarning(
+              `Resource name part '${parts[i]}' contains special characters that may not be allowed for type ${resourceType}`,
+              `resources/${name}`,
+              'NAME_SPECIAL_CHARS'
+            )
+          );
+        }
+      }
+
+      return;
+    }
+
+    // Standard resource validation (not a child resource)
+
     // Generic maximum length - only warn for long names
     if (name.length > 64) {
       warnings.push(
@@ -167,11 +216,7 @@ export class NamingValidator extends BaseValidator {
     // Check for empty name
     if (name.length === 0) {
       errors.push(
-        this.createError(
-          'Resource name cannot be empty',
-          `resources/${name}`,
-          'NAME_EMPTY'
-        )
+        this.createError('Resource name cannot be empty', `resources/${name}`, 'NAME_EMPTY')
       );
     }
 

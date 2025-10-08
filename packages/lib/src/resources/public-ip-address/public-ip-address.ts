@@ -1,6 +1,7 @@
 import { Construct } from '../../core/construct';
 import type { IResourceGroup } from '../resource-group/types';
 import { ArmPublicIpAddress } from './arm-public-ip-address';
+import { constructIdToPurpose as utilConstructIdToPurpose } from '../../naming/construct-id-utils';
 import type {
   PublicIpAddressProps,
   IPublicIpAddress,
@@ -277,10 +278,7 @@ export class PublicIpAddress extends Construct implements IPublicIpAddress {
    * - pip-{org}-{project}-{purpose}-{env}-{geo}-{instance}
    * - Example: pip-dp-colorai-app-np-eus-01
    */
-  private resolvePublicIpAddressName(
-    id: string,
-    props?: PublicIpAddressProps
-  ): string {
+  private resolvePublicIpAddressName(id: string, props?: PublicIpAddressProps): string {
     // If name provided explicitly, use it
     if (props?.publicIpAddressName) {
       return props.publicIpAddressName;
@@ -326,7 +324,7 @@ export class PublicIpAddress extends Construct implements IPublicIpAddress {
    * @param id - Construct ID
    * @returns Purpose string for naming
    */
-  private constructIdToPurpose(id: string): string {
-    return id.toLowerCase();
+  private constructIdToPurpose(id: string): string | undefined {
+    return utilConstructIdToPurpose(id, 'publicip', ['pip', 'publicipaddress']);
   }
 }

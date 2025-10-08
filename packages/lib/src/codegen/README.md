@@ -5,6 +5,7 @@ This directory contains tools for generating TypeScript types and L1 constructs 
 ## Overview
 
 The codegen tools automate the creation of:
+
 - **TypeScript type definitions** from ARM JSON schemas
 - **L1 construct implementations** (low-level ARM resource wrappers)
 - **Validation logic** based on schema constraints
@@ -44,6 +45,7 @@ npm run codegen:resource ../azure-resource-manager-schemas-main/schemas/2024-07-
 **Output**: L1 construct class in `packages/lib/src/resources/<resource-name>/`
 
 **Features**:
+
 - Auto-generates constructor parameter mapping
 - Creates property assignments with proper types
 - Generates ARM resource type and apiVersion constants
@@ -74,6 +76,7 @@ npm run codegen:sync ../azure-resource-manager-schemas-main/schemas Microsoft.St
 ```
 
 **What it does**:
+
 1. Scans for ARM schema files
 2. Generates TypeScript types for each schema
 3. Generates validation code
@@ -139,11 +142,13 @@ generated/
 ### Adding Support for a New Resource
 
 1. **Find the schema**:
+
    ```bash
    npm run codegen:resource ../azure-resource-manager-schemas-main/schemas/2024-07-01/Microsoft.Compute.json
    ```
 
 2. **Generate the L1 construct**:
+
    ```bash
    npm run codegen:resource ../azure-resource-manager-schemas-main/schemas/2024-07-01/Microsoft.Compute.json 0
    ```
@@ -161,16 +166,19 @@ generated/
 Schemas are automatically updated daily. For manual updates:
 
 1. **Clone latest schemas**:
+
    ```bash
    git clone https://github.com/Azure/azure-resource-manager-schemas.git ../azure-resource-manager-schemas-main
    ```
 
 2. **Run schema sync**:
+
    ```bash
    npm run codegen:sync
    ```
 
 3. **Review changes**:
+
    ```bash
    git diff packages/lib/src/generated/
    ```
@@ -186,8 +194,8 @@ The schema parser (`schema-parser.ts`) converts ARM JSON schemas into an interme
 
 ```typescript
 interface SchemaIR {
-  provider: string;           // e.g., "Microsoft.Storage"
-  apiVersion: string;         // e.g., "2023-01-01"
+  provider: string; // e.g., "Microsoft.Storage"
+  apiVersion: string; // e.g., "2023-01-01"
   resources: ResourceDefinition[];
   definitions: Map<string, TypeDefinition>;
   metadata: SchemaMetadata;
@@ -270,11 +278,11 @@ export const storageAccountSchema = {
       type: 'string',
       minLength: 3,
       maxLength: 24,
-      pattern: '^[a-z0-9]+$'
+      pattern: '^[a-z0-9]+$',
     },
     // ... more properties
   },
-  required: ['name', 'location', 'sku']
+  required: ['name', 'location', 'sku'],
 };
 
 export function validateStorageAccount(data: unknown): boolean {

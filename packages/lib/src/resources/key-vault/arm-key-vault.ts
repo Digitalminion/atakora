@@ -1,12 +1,7 @@
 import { Construct } from '../../core/construct';
 import { Resource } from '../../core/resource';
 import { DeploymentScope } from '../../core/azure/scopes';
-import type {
-  ArmKeyVaultProps,
-  KeyVaultSku,
-  PublicNetworkAccess,
-  NetworkRuleSet,
-} from './types';
+import type { ArmKeyVaultProps, KeyVaultSku, PublicNetworkAccess, NetworkRuleSet } from './types';
 
 /**
  * L1 construct for Azure Key Vault.
@@ -191,16 +186,12 @@ export class ArmKeyVault extends Resource {
 
     // Cannot start or end with hyphen
     if (props.vaultName.startsWith('-') || props.vaultName.endsWith('-')) {
-      throw new Error(
-        `Key Vault name '${props.vaultName}' cannot start or end with a hyphen`
-      );
+      throw new Error(`Key Vault name '${props.vaultName}' cannot start or end with a hyphen`);
     }
 
     // Cannot have consecutive hyphens
     if (props.vaultName.includes('--')) {
-      throw new Error(
-        `Key Vault name '${props.vaultName}' cannot contain consecutive hyphens`
-      );
+      throw new Error(`Key Vault name '${props.vaultName}' cannot contain consecutive hyphens`);
     }
 
     // Validate location
@@ -213,11 +204,10 @@ export class ArmKeyVault extends Resource {
       throw new Error('Tenant ID cannot be empty');
     }
 
-    const tenantIdPattern = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+    const tenantIdPattern =
+      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
     if (!tenantIdPattern.test(props.tenantId)) {
-      throw new Error(
-        `Tenant ID '${props.tenantId}' must be a valid UUID`
-      );
+      throw new Error(`Tenant ID '${props.tenantId}' must be a valid UUID`);
     }
 
     // Validate SKU

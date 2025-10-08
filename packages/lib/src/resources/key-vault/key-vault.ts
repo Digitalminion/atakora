@@ -144,12 +144,10 @@ export class KeyVault extends Construct implements IKeyVault {
       ...props?.tags,
     };
 
-    // Determine purge protection based on environment (prod only by default)
-    const isProd = this.isProdEnvironment();
+    // Purge protection should always be enabled to comply with Azure Policy
+    // Azure Policy "Key vaults should have deletion protection enabled" requires this
     const enablePurgeProtection =
-      props?.enablePurgeProtection !== undefined
-        ? props.enablePurgeProtection
-        : isProd;
+      props?.enablePurgeProtection !== undefined ? props.enablePurgeProtection : true;
 
     // Create underlying L1 resource
     this.armKeyVault = new ArmKeyVault(scope, `${id}-Resource`, {
@@ -166,8 +164,7 @@ export class KeyVault extends Construct implements IKeyVault {
         // Purge protection (prod only by default)
         enablePurgeProtection,
         // Public network access disabled
-        publicNetworkAccess:
-          props?.publicNetworkAccess ?? ('disabled' as PublicNetworkAccess),
+        publicNetworkAccess: props?.publicNetworkAccess ?? ('disabled' as PublicNetworkAccess),
         // Network ACLs if provided
         networkAcls: props?.networkAcls,
       },
@@ -244,6 +241,11 @@ export class KeyVault extends Construct implements IKeyVault {
    * - 3-24 characters
    * - Alphanumeric and hyphens
    * - Globally unique across Azure
+   *
+   * New naming convention for global uniqueness:
+   * - Format: kv-<project>-<instance>-<8-char-hash>
+   * - Hash is generated from full resource name to ensure uniqueness
+   * - Example: kv-colorai-03-a1b2c3d4
    */
   private resolveVaultName(id: string, props?: KeyVaultProps): string {
     // If name provided explicitly, use it
@@ -255,15 +257,21 @@ export class KeyVault extends Construct implements IKeyVault {
     const subscriptionStack = this.getSubscriptionStack();
     if (subscriptionStack) {
       const purpose = this.constructIdToPurpose(id);
-      // Use 'kv' prefix for Key Vault
-      let generatedName = subscriptionStack.generateResourceName('kv', purpose);
 
-      // Key Vault names can have hyphens, but truncate to 24 chars
-      generatedName = generatedName.substring(0, 24);
+      // New format: kv-<project>-<instance>-<8-char-hash>
+      // Use NamingService for truly unique hash per synthesis
+      const project = subscriptionStack.project.resourceName;
+      const instance = subscriptionStack.instance.resourceName;
+      const hash = subscriptionStack.namingService.getResourceHash(8);
 
-      // Remove trailing hyphen if present (truncation might leave one)
-      if (generatedName.endsWith('-')) {
-        generatedName = generatedName.substring(0, 23);
+      const generatedName = `kv-${project}-${instance}-${hash}`;
+
+      // Ensure it fits within 24 characters
+      if (generatedName.length > 24) {
+        // Truncate project name if needed
+        const maxProjectLen = 24 - 13; // 24 - (3 + 1 + 2 + 1 + 1 + 8 + 1) = 11
+        const truncatedProject = project.substring(0, maxProjectLen);
+        return `kv-${truncatedProject}-${instance}-${hash}`.substring(0, 24);
       }
 
       return generatedName;

@@ -55,10 +55,7 @@ export class SchemaParser {
     );
 
     // Parse shared definitions
-    const definitions = this.parseDefinitions(
-      schemaJson.definitions || {},
-      schemaJson
-    );
+    const definitions = this.parseDefinitions(schemaJson.definitions || {}, schemaJson);
 
     return {
       provider: metadata.provider,
@@ -137,11 +134,7 @@ export class SchemaParser {
    * @param schema - Full schema
    * @returns Resource definition
    */
-  private parseResourceDefinition(
-    name: string,
-    def: any,
-    schema: any
-  ): ResourceDefinition {
+  private parseResourceDefinition(name: string, def: any, schema: any): ResourceDefinition {
     // Extract ARM type from def.properties.type.enum[0]
     const armType = def.properties?.type?.enum?.[0] || name;
 
@@ -174,10 +167,7 @@ export class SchemaParser {
    * @param schema - Full schema
    * @returns Array of property definitions
    */
-  private parseProperties(
-    props: Record<string, any>,
-    schema: any
-  ): PropertyDefinition[] {
+  private parseProperties(props: Record<string, any>, schema: any): PropertyDefinition[] {
     const properties: PropertyDefinition[] = [];
 
     for (const [name, propDef] of Object.entries(props)) {
@@ -201,11 +191,7 @@ export class SchemaParser {
    * @param schema - Full schema
    * @returns Property definition
    */
-  private parseProperty(
-    name: string,
-    propDef: any,
-    schema: any
-  ): PropertyDefinition {
+  private parseProperty(name: string, propDef: any, schema: any): PropertyDefinition {
     // Resolve type
     const type = this.parseType(propDef, schema);
 
@@ -325,9 +311,7 @@ export class SchemaParser {
 
     // If one option is expression, just use the other type
     // (expressions are ARM template runtime values)
-    const nonExprTypes = unionTypes.filter(
-      (t) => !t.tsType.includes('expression')
-    );
+    const nonExprTypes = unionTypes.filter((t) => !t.tsType.includes('expression'));
 
     if (nonExprTypes.length === 1) {
       return nonExprTypes[0];
@@ -386,9 +370,7 @@ export class SchemaParser {
     }
 
     // Parse properties
-    const properties = typeDef.properties
-      ? this.parseProperties(typeDef.properties, schema)
-      : [];
+    const properties = typeDef.properties ? this.parseProperties(typeDef.properties, schema) : [];
 
     return {
       kind: 'object',
@@ -422,9 +404,7 @@ export class SchemaParser {
    * @param propDef - Property definition
    * @returns Constraints object if any constraints exist
    */
-  private extractConstraints(
-    propDef: any
-  ): PropertyConstraints | undefined {
+  private extractConstraints(propDef: any): PropertyConstraints | undefined {
     // Build constraints object without readonly restriction
     const constraints: {
       minLength?: number;
@@ -474,10 +454,7 @@ export class SchemaParser {
    * @param schema - Full schema
    * @returns Map of definition name to type
    */
-  private parseDefinitions(
-    defs: Record<string, any>,
-    schema: any
-  ): Map<string, TypeDefinition> {
+  private parseDefinitions(defs: Record<string, any>, schema: any): Map<string, TypeDefinition> {
     const definitions = new Map<string, TypeDefinition>();
 
     for (const [name, def] of Object.entries(defs)) {

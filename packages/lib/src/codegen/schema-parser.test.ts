@@ -174,7 +174,8 @@ describe('SchemaParser', () => {
 
       // Should be either a reference or a union containing references
       const isRefOrUnion =
-        propertiesProp && (propertiesProp.type.kind === 'reference' || propertiesProp.type.kind === 'union');
+        propertiesProp &&
+        (propertiesProp.type.kind === 'reference' || propertiesProp.type.kind === 'union');
 
       expect(hasDefinitions).toBe(true);
       expect(isRefOrUnion).toBe(true);

@@ -57,14 +57,14 @@ export function createBasicInfrastructure(): App {
   });
 
   // Create resource groups with auto-generated names
-  // Name will be: "rg-dp-colorai-networkrg-nonprod-eus-01"
+  // Name will be: "rg-dp-colorai-networkrg-nonprod-eus-00"
   const networkRG = new ResourceGroup(foundation, 'NetworkRG', {
     tags: {
       purpose: 'networking',
     },
   });
 
-  // Name will be: "rg-dp-colorai-applicationrg-nonprod-eus-01"
+  // Name will be: "rg-dp-colorai-applicationrg-nonprod-eus-00"
   const appRG = new ResourceGroup(foundation, 'ApplicationRG', {
     tags: {
       purpose: 'applications',
@@ -72,7 +72,7 @@ export function createBasicInfrastructure(): App {
   });
 
   // Create virtual network in network resource group
-  // Name will be: "vnet-dp-colorai-mainvnet-nonprod-eus-01"
+  // Name will be: "vnet-dp-colorai-mainvnet-nonprod-eus-00"
   const vnet = new VirtualNetwork(networkRG, 'MainVNet', {
     addressSpace: '10.0.0.0/16',
     dnsServers: ['10.0.0.4', '10.0.0.5'],
@@ -211,10 +211,14 @@ export function createMultiRegionInfrastructure(): App {
   console.log('Multi-Region Infrastructure created:');
   console.log(`  East US:`);
   console.log(`    - RG: ${eastNetworkRG.resourceGroupName}`);
-  console.log(`    - VNet: ${eastVNet.virtualNetworkName} (${eastVNet.addressSpace.addressPrefixes[0]})`);
+  console.log(
+    `    - VNet: ${eastVNet.virtualNetworkName} (${eastVNet.addressSpace.addressPrefixes[0]})`
+  );
   console.log(`  West US:`);
   console.log(`    - RG: ${westNetworkRG.resourceGroupName}`);
-  console.log(`    - VNet: ${westVNet.virtualNetworkName} (${westVNet.addressSpace.addressPrefixes[0]})`);
+  console.log(
+    `    - VNet: ${westVNet.virtualNetworkName} (${westVNet.addressSpace.addressPrefixes[0]})`
+  );
 
   return app;
 }

@@ -206,9 +206,7 @@ export function createSystemAssignedIdentity(): ManagedServiceIdentity {
  * });
  * ```
  */
-export function createUserAssignedIdentity(
-  identityIds: string[]
-): ManagedServiceIdentity {
+export function createUserAssignedIdentity(identityIds: string[]): ManagedServiceIdentity {
   const userAssignedIdentities: Record<string, UserAssignedIdentityValue> = {};
 
   for (const id of identityIds) {
@@ -237,9 +235,7 @@ export function createUserAssignedIdentity(
  * });
  * ```
  */
-export function createSystemAndUserAssignedIdentity(
-  identityIds: string[]
-): ManagedServiceIdentity {
+export function createSystemAndUserAssignedIdentity(identityIds: string[]): ManagedServiceIdentity {
   const userAssignedIdentities: Record<string, UserAssignedIdentityValue> = {};
 
   for (const id of identityIds) {
@@ -273,9 +269,7 @@ export function validateManagedIdentity(identity?: ManagedServiceIdentity): void
       type === ManagedIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED) &&
     (!userAssignedIdentities || Object.keys(userAssignedIdentities).length === 0)
   ) {
-    throw new Error(
-      `User-assigned identities must be provided when identity type is '${type}'`
-    );
+    throw new Error(`User-assigned identities must be provided when identity type is '${type}'`);
   }
 
   // Validate that user-assigned identities are NOT provided when type is SystemAssigned or None
@@ -295,7 +289,7 @@ export function validateManagedIdentity(identity?: ManagedServiceIdentity): void
       if (!identityId.includes('/providers/Microsoft.ManagedIdentity/userAssignedIdentities/')) {
         throw new Error(
           `Invalid user-assigned identity resource ID: ${identityId}. ` +
-          `Expected format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{name}`
+            `Expected format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{name}`
         );
       }
     }

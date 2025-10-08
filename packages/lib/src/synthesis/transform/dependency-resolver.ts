@@ -82,14 +82,17 @@ export class DependencyResolver {
   /**
    * Detect dependencies by analyzing resource properties
    */
-  private detectDependencies(
-    resource: ArmResource,
-    allResources: ArmResource[]
-  ): Set<string> {
+  private detectDependencies(resource: ArmResource, allResources: ArmResource[]): Set<string> {
     const dependencies = new Set<string>();
 
     // Check for resource ID references in properties
     const propertiesStr = JSON.stringify(resource.properties || {});
+
+    // Check if there are any separate subnet resources in the template
+    // If not, we're using inline subnets and should depend on VNets instead
+    const hasSeparateSubnets = allResources.some(
+      (r) => r.type === 'Microsoft.Network/virtualNetworks/subnets'
+    );
 
     for (const otherResource of allResources) {
       if (otherResource === resource) continue;
@@ -112,8 +115,49 @@ export class DependencyResolver {
         }
       }
 
-      // Check for subnet dependencies (VMs depend on subnets)
+      // CRITICAL: Check for Subnet dependencies on NSGs
+      // Subnets that reference NSGs must be created AFTER the NSG exists
+      // This prevents "AnotherOperationInProgress" errors during deployment
       if (
+        resource.type === 'Microsoft.Network/virtualNetworks/subnets' &&
+        otherResource.type === 'Microsoft.Network/networkSecurityGroups'
+      ) {
+        // Check if subnet properties reference this NSG
+        if (resource.properties && typeof resource.properties === 'object') {
+          const props = resource.properties as Record<string, unknown>;
+          const nsg = props.networkSecurityGroup as { id?: string } | undefined;
+          if (nsg?.id) {
+            // Extract NSG name from the resourceId expression or full path
+            const nsgIdStr = String(nsg.id);
+            const otherResourceName = otherResource.name;
+
+            // Check if the NSG ID references this particular NSG
+            // Handle both ARM expressions like [resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-name')]
+            // and direct name references
+            if (nsgIdStr.includes(otherResourceName)) {
+              dependencies.add(otherId);
+            }
+          }
+        }
+      }
+
+      // CRITICAL: Handle inline subnet references
+      // When subnets are inline (no separate subnet resources), resources that reference
+      // subnets should depend on the VNet instead, not the non-existent subnet resource
+      if (!hasSeparateSubnets && propertiesStr.includes('virtualNetworks/subnets')) {
+        // Resource references a subnet - check if we should depend on the VNet
+        if (otherResource.type === 'Microsoft.Network/virtualNetworks') {
+          // Check if the subnet reference is for this VNet
+          if (propertiesStr.includes(otherResource.name)) {
+            dependencies.add(otherId);
+          }
+        }
+      }
+
+      // Check for subnet dependencies (VMs depend on subnets)
+      // Only if separate subnet resources exist
+      if (
+        hasSeparateSubnets &&
         resource.type === 'Microsoft.Compute/virtualMachines' &&
         otherResource.type === 'Microsoft.Network/virtualNetworks/subnets'
       ) {
@@ -248,9 +292,7 @@ export class DependencyResolver {
         // Cycle detected
         const cycleStart = path.indexOf(depId);
         const cycle = [...path.slice(cycleStart), depId];
-        throw new Error(
-          `Circular dependency detected: ${cycle.join(' → ')}`
-        );
+        throw new Error(`Circular dependency detected: ${cycle.join(' → ')}`);
       }
     }
 
@@ -259,29 +301,58 @@ export class DependencyResolver {
 
   /**
    * Add dependsOn fields to resources
+   *
+   * @remarks
+   * Filters out invalid subnet resource dependencies when using inline subnets.
+   * When subnets are defined inline within VNets, separate subnet resources don't exist,
+   * so dependencies on them must be removed.
    */
   private addDependsOn(resources: ArmResource[]): ArmResource[] {
+    // Check if there are any separate subnet resources in the template
+    const hasSeparateSubnets = resources.some(
+      (r) => r.type === 'Microsoft.Network/virtualNetworks/subnets'
+    );
+
     return resources.map((resource) => {
       const resourceId = this.getResourceIdentifier(resource);
       const node = this.nodes.get(resourceId);
 
-      if (!node || node.dependencies.size === 0) {
+      // Convert auto-detected dependency IDs to resourceId expressions
+      const autoDependsOn = node
+        ? Array.from(node.dependencies).map((depId) => {
+            const depNode = this.nodes.get(depId);
+            if (!depNode) return depId;
+
+            return this.generateResourceIdExpression(depNode.resource);
+          })
+        : [];
+
+      // Get any explicit dependsOn from resource template
+      const explicitDependsOn = resource.dependsOn || [];
+
+      // Merge explicit and auto-detected dependencies
+      // Use a Set to deduplicate
+      let allDependsOn = Array.from(new Set([...explicitDependsOn, ...autoDependsOn]));
+
+      // CRITICAL: Remove subnet resource dependencies when using inline subnets
+      // If no separate subnet resources exist, filter out any dependencies on subnet resources
+      if (!hasSeparateSubnets) {
+        allDependsOn = allDependsOn.filter((dep) => {
+          // Remove dependencies that reference Microsoft.Network/virtualNetworks/subnets
+          const depStr = String(dep);
+          return !depStr.includes("'Microsoft.Network/virtualNetworks/subnets'");
+        });
+      }
+
+      if (allDependsOn.length === 0) {
         // Remove any existing dependsOn from resource template
         const { dependsOn, ...resourceWithoutDependsOn } = resource;
         return resourceWithoutDependsOn;
       }
 
-      // Convert dependency IDs to resourceId expressions
-      const dependsOn = Array.from(node.dependencies).map((depId) => {
-        const depNode = this.nodes.get(depId);
-        if (!depNode) return depId;
-
-        return this.generateResourceIdExpression(depNode.resource);
-      });
-
       return {
         ...resource,
-        dependsOn,
+        dependsOn: allDependsOn,
       };
     });
   }
@@ -303,7 +374,7 @@ export class DependencyResolver {
     }
 
     // Child resource: [resourceId('type', 'parent-name', 'child-name', ...)]
-    const nameArgs = nameParts.map(part => `'${part}'`).join(', ');
+    const nameArgs = nameParts.map((part) => `'${part}'`).join(', ');
     return `[resourceId('${resource.type}', ${nameArgs})]`;
   }
 

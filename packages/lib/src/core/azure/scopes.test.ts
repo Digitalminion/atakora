@@ -94,11 +94,15 @@ describe('azure/scopes', () => {
 
     describe('ManagementGroup scope', () => {
       it('should contain other ManagementGroups (nested)', () => {
-        expect(canContain(DeploymentScope.ManagementGroup, DeploymentScope.ManagementGroup)).toBe(true);
+        expect(canContain(DeploymentScope.ManagementGroup, DeploymentScope.ManagementGroup)).toBe(
+          true
+        );
       });
 
       it('should contain Subscription', () => {
-        expect(canContain(DeploymentScope.ManagementGroup, DeploymentScope.Subscription)).toBe(true);
+        expect(canContain(DeploymentScope.ManagementGroup, DeploymentScope.Subscription)).toBe(
+          true
+        );
       });
 
       it('should not contain Tenant', () => {
@@ -106,7 +110,9 @@ describe('azure/scopes', () => {
       });
 
       it('should not contain ResourceGroup directly', () => {
-        expect(canContain(DeploymentScope.ManagementGroup, DeploymentScope.ResourceGroup)).toBe(false);
+        expect(canContain(DeploymentScope.ManagementGroup, DeploymentScope.ResourceGroup)).toBe(
+          false
+        );
       });
     });
 
@@ -120,7 +126,9 @@ describe('azure/scopes', () => {
       });
 
       it('should not contain ManagementGroup', () => {
-        expect(canContain(DeploymentScope.Subscription, DeploymentScope.ManagementGroup)).toBe(false);
+        expect(canContain(DeploymentScope.Subscription, DeploymentScope.ManagementGroup)).toBe(
+          false
+        );
       });
 
       it('should not contain itself', () => {
@@ -131,9 +139,13 @@ describe('azure/scopes', () => {
     describe('ResourceGroup scope', () => {
       it('should not contain any other scope', () => {
         expect(canContain(DeploymentScope.ResourceGroup, DeploymentScope.Tenant)).toBe(false);
-        expect(canContain(DeploymentScope.ResourceGroup, DeploymentScope.ManagementGroup)).toBe(false);
+        expect(canContain(DeploymentScope.ResourceGroup, DeploymentScope.ManagementGroup)).toBe(
+          false
+        );
         expect(canContain(DeploymentScope.ResourceGroup, DeploymentScope.Subscription)).toBe(false);
-        expect(canContain(DeploymentScope.ResourceGroup, DeploymentScope.ResourceGroup)).toBe(false);
+        expect(canContain(DeploymentScope.ResourceGroup, DeploymentScope.ResourceGroup)).toBe(
+          false
+        );
       });
     });
   });

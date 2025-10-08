@@ -51,7 +51,7 @@
  * });
  *
  * const rgName = foundation.generateResourceName('rg', 'data');
- * // Result: "rg-digital-products-colorai-data-nonprod-eus-01"
+ * // Result: "rg-digital-products-colorai-data-nonprod-eus-00"
  * ```
  */
 

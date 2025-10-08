@@ -28,6 +28,7 @@ Successfully generated TypeScript types from the official Azure ARM schema for C
 
 **Location**: Line 682 in generated types
 **Type Definition**:
+
 ```typescript
 readonly databaseAccountOfferType?: 'Standard' | any;
 ```
@@ -39,6 +40,7 @@ readonly databaseAccountOfferType?: 'Standard' | any;
 
 **Location**: Line 738 in generated types
 **Type Definition**:
+
 ```typescript
 readonly locations?: Location[] | any;
 ```
@@ -47,6 +49,7 @@ readonly locations?: Location[] | any;
 **Current Implementation**: Already correctly implemented in `ArmCosmosDbAccountProps` (line 217 in types.ts) as required field
 
 **Supporting Type - Location Interface** (Line 984):
+
 ```typescript
 export interface Location {
   readonly failoverPriority?: number | any;
@@ -59,6 +62,7 @@ export interface Location {
 
 **Location**: Line 666 in generated types
 **Type Definition**:
+
 ```typescript
 readonly consistencyPolicy?: ConsistencyPolicy | any;
 ```
@@ -67,9 +71,16 @@ readonly consistencyPolicy?: ConsistencyPolicy | any;
 **Current Implementation**: Already correctly implemented in `ArmCosmosDbAccountProps` (line 209 in types.ts) as optional field
 
 **Supporting Type - ConsistencyPolicy Interface** (Line 486):
+
 ```typescript
 export interface ConsistencyPolicy {
-  readonly defaultConsistencyLevel?: 'Eventual' | 'Session' | 'BoundedStaleness' | 'Strong' | 'ConsistentPrefix' | any;
+  readonly defaultConsistencyLevel?:
+    | 'Eventual'
+    | 'Session'
+    | 'BoundedStaleness'
+    | 'Strong'
+    | 'ConsistentPrefix'
+    | any;
   readonly maxIntervalInSeconds?: number | any;
   readonly maxStalenessPrefix?: number | any;
 }
@@ -82,11 +93,13 @@ export interface ConsistencyPolicy {
 The schema provides a comprehensive interface `DatabaseAccountCreateUpdateProps` with **36 properties** including:
 
 **Core Properties**:
+
 - ✅ `databaseAccountOfferType`: Database account offer type (required in practice)
 - ✅ `locations`: Array of geo-replication locations (required in practice)
 - ✅ `consistencyPolicy`: Consistency configuration
 
 **Optional Properties** (All properly captured):
+
 - `analyticalStorageConfiguration`: Analytical storage settings
 - `apiProperties`: API-specific properties (MongoDB version, etc.)
 - `backupPolicy`: Backup configuration
@@ -109,6 +122,7 @@ The schema provides a comprehensive interface `DatabaseAccountCreateUpdateProps`
 **Validation**: ✅ COMPLIANT
 
 The L1 construct correctly implements all required properties:
+
 1. ✅ Requires `databaseAccountOfferType` (line 99, 204)
 2. ✅ Requires `locations` array (line 217)
 3. ✅ Validates locations array is non-empty (line 175-177)
@@ -122,6 +136,7 @@ The L1 construct correctly implements all required properties:
 **Validation**: ✅ COMPLIANT
 
 The L2 construct provides sensible defaults and delegates to L1:
+
 1. ✅ Sets `databaseAccountOfferType: 'Standard'` (line 117)
 2. ✅ Builds `locations` array from primary + additional locations (line 98)
 3. ✅ Sets default `consistencyPolicy` with Session level (line 104, 118-120)
@@ -130,13 +145,13 @@ The L2 construct provides sensible defaults and delegates to L1:
 
 ### Current Custom Types vs. Schema-Generated Types
 
-| Property | Custom Type | Schema Type | Alignment |
-|----------|-------------|-------------|-----------|
-| `databaseAccountOfferType` | `DatabaseAccountOfferType` enum | `'Standard'` literal | ✅ Compatible |
-| `locations` | `Location[]` interface | `Location[]` interface | ✅ Aligned |
-| `consistencyPolicy` | `ConsistencyPolicy` interface | `ConsistencyPolicy` interface | ✅ Aligned |
-| `capabilities` | `Capability[]` interface | `Capability[]` interface | ✅ Aligned |
-| `kind` | `CosmosDbKind` enum | Not in schema props | ⚠️ Top-level property |
+| Property                   | Custom Type                     | Schema Type                   | Alignment             |
+| -------------------------- | ------------------------------- | ----------------------------- | --------------------- |
+| `databaseAccountOfferType` | `DatabaseAccountOfferType` enum | `'Standard'` literal          | ✅ Compatible         |
+| `locations`                | `Location[]` interface          | `Location[]` interface        | ✅ Aligned            |
+| `consistencyPolicy`        | `ConsistencyPolicy` interface   | `ConsistencyPolicy` interface | ✅ Aligned            |
+| `capabilities`             | `Capability[]` interface        | `Capability[]` interface      | ✅ Aligned            |
+| `kind`                     | `CosmosDbKind` enum             | Not in schema props           | ⚠️ Top-level property |
 
 ### Notes on Type Differences
 
@@ -157,6 +172,7 @@ The current Cosmos DB construct implementation is **schema-compliant** and corre
 1. **Consider Schema Type Import**: For advanced scenarios, developers could optionally import `DatabaseAccountCreateUpdateProps` from the generated types for access to all 36 properties.
 
 2. **Type Alias for Compatibility**: Create a type alias linking custom types to schema types:
+
    ```typescript
    import type { DatabaseAccountCreateUpdateProps } from '../../generated/types/Microsoft.DocumentDB';
    // Ensures ongoing alignment
@@ -167,14 +183,17 @@ The current Cosmos DB construct implementation is **schema-compliant** and corre
 ## Bug Resolution Verification
 
 ### Original Bug Report
+
 > "The Cosmos DB account resource at line 265 in merged-template.json is missing critical required properties including databaseAccountOfferType, locations array, and other essential configuration."
 
 ### Verification
+
 - ✅ **databaseAccountOfferType**: Required in `ArmCosmosDbAccountProps`, validated in constructor, included in ARM template output
 - ✅ **locations**: Required in `ArmCosmosDbAccountProps`, validated as non-empty array, included in ARM template output
 - ✅ **consistencyPolicy**: Supported with default value in L2 construct
 
 ### Root Cause
+
 The bug was likely in synthesis/template generation, not in type definitions. The types have always been correct. Devon's fix to the construct implementation (subtask 1211551702950292 - completed) resolved the issue.
 
 ## Conclusion

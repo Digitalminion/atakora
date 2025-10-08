@@ -115,16 +115,19 @@ cd atakora
 ARM schemas are organized by resource provider and API version.
 
 **Schema Location**:
+
 ```
 azure-resource-manager-schemas-main/schemas/{api-version}/{provider}.json
 ```
 
 **Example**:
+
 ```
 azure-resource-manager-schemas-main/schemas/2023-11-01/Microsoft.Compute.json
 ```
 
 **Find Available Resources**:
+
 ```bash
 cd packages/lib
 npm run build
@@ -132,6 +135,7 @@ npm run codegen:resource ../../azure-resource-manager-schemas-main/schemas/2023-
 ```
 
 **Output**:
+
 ```
 Available resources in schema:
 [0] Microsoft.Compute/virtualMachines
@@ -145,11 +149,13 @@ Available resources in schema:
 Use the code generation tool to create the L1 construct.
 
 **Command**:
+
 ```bash
 npm run codegen:resource <schema-path> <resource-index> [output-dir]
 ```
 
 **Example**:
+
 ```bash
 # Generate Virtual Machine construct
 npm run codegen:resource \
@@ -159,12 +165,14 @@ npm run codegen:resource \
 ```
 
 **Generated Files**:
+
 ```
 src/resources/virtual-machine/
 └── arm-virtual-machine.ts    # L1 construct implementation
 ```
 
 **What's Generated**:
+
 - L1 construct class extending `Resource`
 - Properties interface matching ARM schema
 - Constructor with property validation
@@ -178,6 +186,7 @@ Create a `types.ts` file for enums, complex types, and type exports.
 **File**: `packages/lib/src/resources/virtual-machine/types.ts`
 
 **Example**:
+
 ```typescript
 /**
  * Virtual Machine SKU sizes.
@@ -257,6 +266,7 @@ export interface VirtualMachineProps {
 ```
 
 **Best Practices**:
+
 - Use enums for fixed value sets
 - Provide JSDoc comments for all types
 - Include default values in documentation
@@ -270,7 +280,8 @@ Create the developer-friendly L2 construct with sensible defaults and auto-namin
 **File**: `packages/lib/src/resources/virtual-machine/virtual-machine.ts`
 
 **Template**:
-```typescript
+
+````typescript
 import { Construct } from '../../core/construct';
 import { Resource } from '../../core/resource';
 import { ArmVirtualMachine } from './arm-virtual-machine';
@@ -439,9 +450,10 @@ export class VirtualMachine extends Resource {
     return undefined;
   }
 }
-```
+````
 
 **Key Features**:
+
 - Extends `Resource` base class
 - Uses auto-naming from context
 - Applies sensible defaults
@@ -837,6 +849,7 @@ A straightforward resource with minimal configuration.
 **Time**: 2-3 hours
 
 **Files**:
+
 - `arm-network-security-group.ts` (generated)
 - `types.ts`
 - `network-security-group.ts`
@@ -851,6 +864,7 @@ Resource with special naming constraints and multiple configuration options.
 **Time**: 4-6 hours
 
 **Files**:
+
 - `arm-storage-account.ts` (generated)
 - `types.ts`
 - `storage-account.ts`
@@ -858,6 +872,7 @@ Resource with special naming constraints and multiple configuration options.
 - Tests
 
 **Special Considerations**:
+
 - Name constraints (no hyphens, 3-24 chars, lowercase)
 - Multiple SKU options
 - Optional features (encryption, networking)
@@ -870,6 +885,7 @@ Resource with many nested properties and complex configuration.
 **Time**: 1-2 days
 
 **Files**:
+
 - `arm-aks-cluster.ts` (generated)
 - `types.ts`
 - `aks-cluster.ts`
@@ -878,6 +894,7 @@ Resource with many nested properties and complex configuration.
 - Tests
 
 **Special Considerations**:
+
 - Multiple child resources (node pools)
 - Complex networking configuration
 - Identity and RBAC integration
@@ -896,6 +913,7 @@ Resource with many nested properties and complex configuration.
 **Problem**: `npm run codegen:resource` fails
 
 **Solution**:
+
 1. Ensure the schema file is valid JSON
 2. Check that the resource index is correct
 3. Verify TypeScript compilation works
@@ -906,6 +924,7 @@ Resource with many nested properties and complex configuration.
 **Problem**: Tests fail after implementation
 
 **Solution**:
+
 1. Check that context is properly mocked in tests
 2. Ensure all required properties are provided
 3. Verify naming convention is applied
@@ -916,6 +935,7 @@ Resource with many nested properties and complex configuration.
 **Problem**: TypeScript compilation errors
 
 **Solution**:
+
 1. Ensure all imports are correct
 2. Check that types match ARM schema
 3. Verify exports in `index.ts`
@@ -926,6 +946,7 @@ Resource with many nested properties and complex configuration.
 **Problem**: Code coverage below 80%
 
 **Solution**:
+
 1. Add tests for untested code paths
 2. Test error cases and validation
 3. Test optional parameters and defaults

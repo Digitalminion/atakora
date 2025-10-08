@@ -40,8 +40,4 @@ export { ArmResourceGroup } from './arm-resource-group';
 export { ResourceGroup } from './resource-group';
 
 // Type definitions
-export type {
-  ArmResourceGroupProps,
-  ResourceGroupProps,
-  IResourceGroup,
-} from './types';
+export type { ArmResourceGroupProps, ResourceGroupProps, IResourceGroup } from './types';

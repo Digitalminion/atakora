@@ -189,37 +189,33 @@ export class MonitoringStack extends Construct {
     });
 
     // Alert: App Service Response Time
-    this.appServiceResponseTimeAlert = new MetricAlert(
-      this,
-      'AppResponseTimeAlert',
-      {
-        scopes: [props.appService.siteId],
-        description: 'Alert when App Service average response time exceeds 2 seconds',
-        severity: 2,
-        enabled: true,
-        evaluationFrequency: 'PT5M',
-        windowSize: 'PT15M',
-        criteria: [
-          {
-            criterionType: CriterionType.STATIC_THRESHOLD,
-            name: 'ResponseTime',
-            metricName: 'AverageResponseTime',
-            operator: MetricAlertOperator.GREATER_THAN,
-            threshold: 2000, // milliseconds
-            timeAggregation: TimeAggregation.AVERAGE,
-          },
-        ],
-        actions: [
-          {
-            actionGroupId: this.actionGroup.actionGroupId,
-          },
-        ],
-        tags: {
-          ...props.tags,
-          alert_type: 'performance',
+    this.appServiceResponseTimeAlert = new MetricAlert(this, 'AppResponseTimeAlert', {
+      scopes: [props.appService.siteId],
+      description: 'Alert when App Service average response time exceeds 2 seconds',
+      severity: 2,
+      enabled: true,
+      evaluationFrequency: 'PT5M',
+      windowSize: 'PT15M',
+      criteria: [
+        {
+          criterionType: CriterionType.STATIC_THRESHOLD,
+          name: 'ResponseTime',
+          metricName: 'AverageResponseTime',
+          operator: MetricAlertOperator.GREATER_THAN,
+          threshold: 2000, // milliseconds
+          timeAggregation: TimeAggregation.AVERAGE,
         },
-      }
-    );
+      ],
+      actions: [
+        {
+          actionGroupId: this.actionGroup.actionGroupId,
+        },
+      ],
+      tags: {
+        ...props.tags,
+        alert_type: 'performance',
+      },
+    });
 
     // API Management alerts (if provided)
     if (props.apiManagement) {

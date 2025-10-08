@@ -37,8 +37,7 @@ export interface AccessPolicyEntry {
 /**
  * Action definition.
  */
-export interface Action {
-}
+export interface Action {}
 
 /**
  * IPRule definition.
@@ -87,7 +86,16 @@ export interface KeyProps {
   /**
    * Array of JsonWebKeyOperation
    */
-  readonly keyOps?: 'encrypt' | 'decrypt' | 'sign' | 'verify' | 'wrapKey' | 'unwrapKey' | 'import' | 'release'[] | any;
+  readonly keyOps?:
+    | 'encrypt'
+    | 'decrypt'
+    | 'sign'
+    | 'verify'
+    | 'wrapKey'
+    | 'unwrapKey'
+    | 'import'
+    | 'release'[]
+    | any;
   /**
    * The key size in bits. For example: 2048, 3072, or 4096 for RSA. Default for RSA and RSA-HSM keys is 2048. Exception made for bring your own key (BYOK), key exchange keys default to 4096.
    */
@@ -147,8 +155,7 @@ export interface LifetimeAction {
 /**
  * ManagedHsmAction definition.
  */
-export interface ManagedHsmAction {
-}
+export interface ManagedHsmAction {}
 
 /**
  * ManagedHsmKeyAttributes definition.
@@ -187,7 +194,16 @@ export interface ManagedHsmKeyProps {
   /**
    * Array of JsonWebKeyOperation
    */
-  readonly keyOps?: 'encrypt' | 'decrypt' | 'sign' | 'verify' | 'wrapKey' | 'unwrapKey' | 'import' | 'release'[] | any;
+  readonly keyOps?:
+    | 'encrypt'
+    | 'decrypt'
+    | 'sign'
+    | 'verify'
+    | 'wrapKey'
+    | 'unwrapKey'
+    | 'import'
+    | 'release'[]
+    | any;
   /**
    * The key size in bits. For example: 2048, 3072, or 4096 for RSA. Default for RSA and RSA-HSM keys is 2048. Exception made for bring your own key (BYOK), key exchange keys default to 4096.
    */
@@ -377,8 +393,7 @@ export interface MhsmNetworkRuleSet {
 /**
  * MhsmPrivateEndpoint definition.
  */
-export interface MhsmPrivateEndpoint {
-}
+export interface MhsmPrivateEndpoint {}
 
 /**
  * MhsmPrivateEndpointConnectionProps definition.
@@ -395,7 +410,14 @@ export interface MhsmPrivateEndpointConnectionProps {
   /**
    * Provisioning state of the private endpoint connection.
    */
-  readonly provisioningState?: 'Succeeded' | 'Creating' | 'Updating' | 'Deleting' | 'Failed' | 'Disconnected' | any;
+  readonly provisioningState?:
+    | 'Succeeded'
+    | 'Creating'
+    | 'Updating'
+    | 'Deleting'
+    | 'Failed'
+    | 'Disconnected'
+    | any;
 }
 
 /**
@@ -465,26 +487,91 @@ export interface Permissions {
   /**
    * Permissions to certificates
    */
-  readonly certificates?: 'all' | 'get' | 'list' | 'delete' | 'create' | 'import' | 'update' | 'managecontacts' | 'getissuers' | 'listissuers' | 'setissuers' | 'deleteissuers' | 'manageissuers' | 'recover' | 'purge' | 'backup' | 'restore'[] | any;
+  readonly certificates?:
+    | 'all'
+    | 'get'
+    | 'list'
+    | 'delete'
+    | 'create'
+    | 'import'
+    | 'update'
+    | 'managecontacts'
+    | 'getissuers'
+    | 'listissuers'
+    | 'setissuers'
+    | 'deleteissuers'
+    | 'manageissuers'
+    | 'recover'
+    | 'purge'
+    | 'backup'
+    | 'restore'[]
+    | any;
   /**
    * Permissions to keys
    */
-  readonly keys?: 'all' | 'encrypt' | 'decrypt' | 'wrapKey' | 'unwrapKey' | 'sign' | 'verify' | 'get' | 'list' | 'create' | 'update' | 'import' | 'delete' | 'backup' | 'restore' | 'recover' | 'purge' | 'release' | 'rotate' | 'getrotationpolicy' | 'setrotationpolicy'[] | any;
+  readonly keys?:
+    | 'all'
+    | 'encrypt'
+    | 'decrypt'
+    | 'wrapKey'
+    | 'unwrapKey'
+    | 'sign'
+    | 'verify'
+    | 'get'
+    | 'list'
+    | 'create'
+    | 'update'
+    | 'import'
+    | 'delete'
+    | 'backup'
+    | 'restore'
+    | 'recover'
+    | 'purge'
+    | 'release'
+    | 'rotate'
+    | 'getrotationpolicy'
+    | 'setrotationpolicy'[]
+    | any;
   /**
    * Permissions to secrets
    */
-  readonly secrets?: 'all' | 'get' | 'list' | 'set' | 'delete' | 'backup' | 'restore' | 'recover' | 'purge'[] | any;
+  readonly secrets?:
+    | 'all'
+    | 'get'
+    | 'list'
+    | 'set'
+    | 'delete'
+    | 'backup'
+    | 'restore'
+    | 'recover'
+    | 'purge'[]
+    | any;
   /**
    * Permissions to storage accounts
    */
-  readonly storage?: 'all' | 'get' | 'list' | 'delete' | 'set' | 'update' | 'regeneratekey' | 'recover' | 'purge' | 'backup' | 'restore' | 'setsas' | 'listsas' | 'getsas' | 'deletesas'[] | any;
+  readonly storage?:
+    | 'all'
+    | 'get'
+    | 'list'
+    | 'delete'
+    | 'set'
+    | 'update'
+    | 'regeneratekey'
+    | 'recover'
+    | 'purge'
+    | 'backup'
+    | 'restore'
+    | 'setsas'
+    | 'listsas'
+    | 'getsas'
+    | 'deletesas'[]
+    | any;
 }
 
 /**
  * PrivateEndpoint definition.
  */
-export interface PrivateEndpoint {
-}
+export interface PrivateEndpoint {}
 
 /**
  * PrivateEndpointConnectionProps definition.
@@ -501,7 +588,14 @@ export interface PrivateEndpointConnectionProps {
   /**
    * Provisioning state of the private endpoint connection.
    */
-  readonly provisioningState?: 'Succeeded' | 'Creating' | 'Updating' | 'Deleting' | 'Failed' | 'Disconnected' | any;
+  readonly provisioningState?:
+    | 'Succeeded'
+    | 'Creating'
+    | 'Updating'
+    | 'Deleting'
+    | 'Failed'
+    | 'Disconnected'
+    | any;
 }
 
 /**
@@ -603,8 +697,7 @@ export interface Trigger {
 /**
  * UserAssignedIdentity definition.
  */
-export interface UserAssignedIdentity {
-}
+export interface UserAssignedIdentity {}
 
 /**
  * VaultAccessPolicyProps definition.
@@ -811,7 +904,7 @@ export interface vaults_secrets_childResource {
    */
   readonly properties?: any;
   /**
-   * The tags that will be assigned to the secret. 
+   * The tags that will be assigned to the secret.
    */
   readonly tags?: Record<string, string> | any;
 }
@@ -1047,7 +1140,7 @@ export interface ArmVaultsSecretsProps {
    */
   readonly properties: any;
   /**
-   * The tags that will be assigned to the secret. 
+   * The tags that will be assigned to the secret.
    */
   readonly tags?: Record<string, string> | any;
 }

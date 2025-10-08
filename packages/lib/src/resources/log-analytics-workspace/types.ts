@@ -168,7 +168,7 @@ export interface LogAnalyticsWorkspaceProps {
    * @remarks
    * If not provided, will be auto-generated using the stack's naming context:
    * - Format: `log-{org}-{project}-{purpose}-{env}-{geo}-{instance}`
-   * - Example: `log-digital-products-colorai-main-nonprod-eus-01`
+   * - Example: `log-digital-products-colorai-main-nonprod-eus-00`
    *
    * The `purpose` is derived from the construct ID.
    */

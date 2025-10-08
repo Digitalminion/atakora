@@ -1089,12 +1089,12 @@ Never hardcode environment-specific values:
 ```typescript
 // Bad
 const rg = new ResourceGroup(stack, 'RG', {
-  location: 'eastus',  // Hardcoded
+  location: 'eastus', // Hardcoded
 });
 
 // Good
 const rg = new ResourceGroup(stack, 'RG', {
-  location: config.region,  // From environment config
+  location: config.region, // From environment config
 });
 ```
 

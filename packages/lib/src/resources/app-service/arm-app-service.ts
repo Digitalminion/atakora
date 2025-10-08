@@ -1,11 +1,7 @@
 import { Construct } from '../../core/construct';
 import { Resource } from '../../core/resource';
 import { DeploymentScope } from '../../core/azure/scopes';
-import type {
-  ArmAppServiceProps,
-  ManagedServiceIdentity,
-  SiteConfig,
-} from './types';
+import type { ArmAppServiceProps, ManagedServiceIdentity, SiteConfig } from './types';
 
 /**
  * L1 construct for Azure App Service (Web App).
@@ -193,9 +189,7 @@ export class ArmAppService extends Resource {
     }
 
     if (props.siteName.length < 2 || props.siteName.length > 60) {
-      throw new Error(
-        `App Service name must be 2-60 characters (got ${props.siteName.length})`
-      );
+      throw new Error(`App Service name must be 2-60 characters (got ${props.siteName.length})`);
     }
 
     // Validate name pattern: must start and end with alphanumeric, can contain hyphens
@@ -219,6 +213,24 @@ export class ArmAppService extends Resource {
   }
 
   /**
+   * Builds a subnet reference for ARM templates.
+   * Converts a subnet resource ID to a resourceId() expression.
+   *
+   * @param subnetId - Full resource ID of the subnet
+   * @returns ARM resourceId() expression
+   */
+  private buildSubnetReference(subnetId: string): string {
+    // Extract subnet and VNet name from resource ID
+    // Format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/virtualNetworks/{vnet}/subnets/{subnet}
+    const parts = subnetId.split('/');
+    const subnetName = parts[parts.length - 1];
+    const vnetName = parts[parts.length - 3];
+
+    // Generate ARM resourceId() expression
+    return `[resourceId('Microsoft.Network/virtualNetworks/subnets', '${vnetName}', '${subnetName}')]`;
+  }
+
+  /**
    * Generates ARM template representation of this resource.
    *
    * @remarks
@@ -239,7 +251,10 @@ export class ArmAppService extends Resource {
 
     // Add VNet integration
     if (this.virtualNetworkSubnetId) {
-      properties.virtualNetworkSubnetId = this.virtualNetworkSubnetId;
+      // Convert subnet ID to proper ARM resourceId() expression if needed
+      properties.virtualNetworkSubnetId = this.virtualNetworkSubnetId.startsWith('[')
+        ? this.virtualNetworkSubnetId
+        : this.buildSubnetReference(this.virtualNetworkSubnetId);
     }
 
     // Add httpsOnly

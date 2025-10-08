@@ -30,7 +30,12 @@ export function setProfileCommand(): Command {
         }
 
         // Validate cloud environment
-        const validClouds = ['AzureCloud', 'AzureUSGovernment', 'AzureChinaCloud', 'AzureGermanCloud'];
+        const validClouds = [
+          'AzureCloud',
+          'AzureUSGovernment',
+          'AzureChinaCloud',
+          'AzureGermanCloud',
+        ];
         if (!validClouds.includes(options.cloud)) {
           console.error(
             chalk.red(`Invalid cloud environment. Must be one of: ${validClouds.join(', ')}`)
@@ -42,7 +47,9 @@ export function setProfileCommand(): Command {
         const profileNameRegex = /^[a-zA-Z0-9_-]+$/;
         if (!profileNameRegex.test(options.name)) {
           console.error(
-            chalk.red('Invalid profile name. Use only alphanumeric characters, hyphens, and underscores.')
+            chalk.red(
+              'Invalid profile name. Use only alphanumeric characters, hyphens, and underscores.'
+            )
           );
           process.exit(1);
         }

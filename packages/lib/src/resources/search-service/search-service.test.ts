@@ -142,10 +142,7 @@ describe('resources/search-service/SearchService', () => {
     it('should create search service with network rule set', () => {
       const search = new SearchService(resourceGroup, 'DataSearch', {
         networkRuleSet: {
-          ipRules: [
-            { value: '1.2.3.4' },
-            { value: '5.6.7.8/24' },
-          ],
+          ipRules: [{ value: '1.2.3.4' }, { value: '5.6.7.8/24' }],
         },
       });
 

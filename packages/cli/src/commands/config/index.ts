@@ -8,8 +8,7 @@ import { setProfileCommand } from './set-profile';
 import { validateCommand } from './validate';
 
 export function createConfigCommand(): Command {
-  const config = new Command('config')
-    .description('Manage Azure ARM CLI configuration');
+  const config = new Command('config').description('Manage Azure ARM CLI configuration');
 
   // Add subcommands
   config.addCommand(loginCommand());

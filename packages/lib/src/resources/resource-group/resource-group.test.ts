@@ -75,9 +75,9 @@ describe('resources/resource-group/ResourceGroup', () => {
       });
 
       expect(rg.tags).toEqual({
-        managed_by: 'terraform',  // from stack
-        project: 'colorai',       // from stack
-        owner: 'platform-team',   // from props
+        managed_by: 'terraform', // from stack
+        project: 'colorai', // from stack
+        owner: 'platform-team', // from props
       });
     });
 

@@ -203,7 +203,7 @@ export interface PrivateEndpointProps {
    * @remarks
    * If not provided, will be auto-generated using the parent's naming context:
    * - Format: `pe-{org}-{project}-{purpose}-{env}-{geo}-{instance}`
-   * - Example: `pe-digital-products-colorai-storage-nonprod-eus-01`
+   * - Example: `pe-digital-products-colorai-storage-nonprod-eus-00`
    *
    * The `purpose` is derived from the construct ID.
    */

@@ -1,5 +1,6 @@
 import { Construct } from '../../core/construct';
 import { ArmPrivateEndpoint } from './arm-private-endpoint';
+import { getServiceAbbreviation } from '../../naming/construct-id-utils';
 import type {
   PrivateEndpointProps,
   IPrivateEndpoint,
@@ -89,11 +90,7 @@ export class PrivateEndpoint extends Construct implements IPrivateEndpoint {
    * );
    * ```
    */
-  public static fromEndpointId(
-    scope: Construct,
-    id: string,
-    endpointId: string
-  ): IPrivateEndpoint {
+  public static fromEndpointId(scope: Construct, id: string, endpointId: string): IPrivateEndpoint {
     class Import extends Construct implements IPrivateEndpoint {
       public readonly privateEndpointId = endpointId;
       public readonly privateEndpointName: string;
@@ -241,7 +238,7 @@ export class PrivateEndpoint extends Construct implements IPrivateEndpoint {
     // For now, we'll store it as metadata or handle it during synthesis
     console.warn(
       'addDnsZoneGroup: DNS zone group configuration should be provided during construction. ' +
-      `Zone ID: ${zoneId}, Group: ${groupName}, Config: ${configName}`
+        `Zone ID: ${zoneId}, Group: ${groupName}, Config: ${configName}`
     );
   }
 
@@ -297,8 +294,7 @@ export class PrivateEndpoint extends Construct implements IPrivateEndpoint {
   private isResourceGroup(construct: any): construct is IResourceGroup {
     return (
       construct &&
-      (typeof construct.resourceGroupName === 'string' ||
-       typeof construct.location === 'string')
+      (typeof construct.resourceGroupName === 'string' || typeof construct.location === 'string')
     );
   }
 
@@ -354,9 +350,46 @@ export class PrivateEndpoint extends Construct implements IPrivateEndpoint {
    *
    * @param id - Construct ID
    * @returns Purpose string for naming
+   *
+   * @remarks
+   * For private endpoints, we extract the service type from the ID
+   * and use the service abbreviation as the purpose.
+   * Example: "DataCosmosPrivateEndpoint" -> "cosdb"
    */
-  private constructIdToPurpose(id: string): string {
-    return id.toLowerCase();
+  private constructIdToPurpose(id: string): string | undefined {
+    const lower = id.toLowerCase();
+
+    // Remove common suffixes
+    const withoutSuffix = lower
+      .replace(/privateendpoint$/, '')
+      .replace(/endpoint$/, '')
+      .replace(/pe$/, '');
+
+    // Remove stack prefixes
+    const STACK_PREFIXES = [
+      'data',
+      'application',
+      'connectivity',
+      'networking',
+      'monitoring',
+      'platform',
+      'foundation',
+    ];
+    let serviceIdentifier = withoutSuffix;
+    for (const prefix of STACK_PREFIXES) {
+      if (serviceIdentifier.startsWith(prefix)) {
+        serviceIdentifier = serviceIdentifier.slice(prefix.length);
+        break;
+      }
+    }
+
+    // If nothing meaningful left, return undefined
+    if (!serviceIdentifier || serviceIdentifier.length === 0) {
+      return undefined;
+    }
+
+    // Get the service abbreviation
+    return getServiceAbbreviation(serviceIdentifier);
   }
 
   /**
@@ -375,9 +408,7 @@ export class PrivateEndpoint extends Construct implements IPrivateEndpoint {
    * @param privateLinkServiceId - Resource reference or ID string
    * @returns Resource ID
    */
-  private resolvePrivateLinkServiceId(
-    privateLinkServiceId: IPrivateLinkResource | string
-  ): string {
+  private resolvePrivateLinkServiceId(privateLinkServiceId: IPrivateLinkResource | string): string {
     return typeof privateLinkServiceId === 'string'
       ? privateLinkServiceId
       : privateLinkServiceId.resourceId;
@@ -394,9 +425,10 @@ export class PrivateEndpoint extends Construct implements IPrivateEndpoint {
       return undefined;
     }
 
-    const zoneId = typeof props.privateDnsZoneId === 'string'
-      ? props.privateDnsZoneId
-      : props.privateDnsZoneId.zoneId;
+    const zoneId =
+      typeof props.privateDnsZoneId === 'string'
+        ? props.privateDnsZoneId
+        : props.privateDnsZoneId.zoneId;
 
     const groupName = props.dnsZoneGroupName || 'default';
 

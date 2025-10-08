@@ -35,7 +35,9 @@ export interface ValidationResult {
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateApplicationGatewayWebApplicationFirewallPolicies(props: any): ValidationResult {
+export function validateApplicationGatewayWebApplicationFirewallPolicies(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -44,7 +46,7 @@ export function validateApplicationGatewayWebApplicationFirewallPolicies(props: 
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -54,7 +56,7 @@ export function validateApplicationGatewayWebApplicationFirewallPolicies(props: 
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
@@ -66,7 +68,7 @@ export function validateApplicationGatewayWebApplicationFirewallPolicies(props: 
           path: 'name',
           message: 'Property "name" must be at most 128 characters',
           code: 'STRING_TOO_LONG',
-          fix: 'Shorten the value of "name" to 128 characters or less'
+          fix: 'Shorten the value of "name" to 128 characters or less',
         });
       }
     }
@@ -74,7 +76,7 @@ export function validateApplicationGatewayWebApplicationFirewallPolicies(props: 
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -93,7 +95,7 @@ export function validateExpressRoutePorts(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -103,13 +105,13 @@ export function validateExpressRoutePorts(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -128,7 +130,7 @@ export function validateIpAllocations(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -138,13 +140,13 @@ export function validateIpAllocations(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -163,7 +165,7 @@ export function validateApplicationGateways(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -173,13 +175,13 @@ export function validateApplicationGateways(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -189,7 +191,9 @@ export function validateApplicationGateways(props: any): ValidationResult {
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateApplicationGatewaysPrivateEndpointConnections(props: any): ValidationResult {
+export function validateApplicationGatewaysPrivateEndpointConnections(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -198,7 +202,7 @@ export function validateApplicationGatewaysPrivateEndpointConnections(props: any
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -208,13 +212,13 @@ export function validateApplicationGatewaysPrivateEndpointConnections(props: any
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -233,7 +237,7 @@ export function validateApplicationSecurityGroups(props: any): ValidationResult 
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -243,13 +247,13 @@ export function validateApplicationSecurityGroups(props: any): ValidationResult 
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -268,7 +272,7 @@ export function validateAzureFirewalls(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -278,7 +282,7 @@ export function validateAzureFirewalls(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
@@ -290,7 +294,7 @@ export function validateAzureFirewalls(props: any): ValidationResult {
           path: 'name',
           message: 'Property "name" must be at least 1 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
       if (props.name.length > 56) {
@@ -298,7 +302,7 @@ export function validateAzureFirewalls(props: any): ValidationResult {
           path: 'name',
           message: 'Property "name" must be at most 56 characters',
           code: 'STRING_TOO_LONG',
-          fix: 'Shorten the value of "name" to 56 characters or less'
+          fix: 'Shorten the value of "name" to 56 characters or less',
         });
       }
     }
@@ -306,7 +310,7 @@ export function validateAzureFirewalls(props: any): ValidationResult {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -325,7 +329,7 @@ export function validateBastionHosts(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -335,13 +339,13 @@ export function validateBastionHosts(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -360,7 +364,7 @@ export function validateConnections(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -370,13 +374,13 @@ export function validateConnections(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -395,7 +399,7 @@ export function validateCustomIpPrefixes(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -405,13 +409,13 @@ export function validateCustomIpPrefixes(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -430,7 +434,7 @@ export function validateDdosCustomPolicies(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -440,13 +444,13 @@ export function validateDdosCustomPolicies(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -465,7 +469,7 @@ export function validateDdosProtectionPlans(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -475,13 +479,13 @@ export function validateDdosProtectionPlans(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -500,7 +504,7 @@ export function validateDscpConfigurations(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -510,13 +514,13 @@ export function validateDscpConfigurations(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -535,7 +539,7 @@ export function validateExpressRouteCircuits(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -545,13 +549,13 @@ export function validateExpressRouteCircuits(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -570,7 +574,7 @@ export function validateExpressRouteCircuitsAuthorizations(props: any): Validati
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -580,13 +584,13 @@ export function validateExpressRouteCircuitsAuthorizations(props: any): Validati
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -605,7 +609,7 @@ export function validateExpressRouteCircuitsPeerings(props: any): ValidationResu
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -615,13 +619,13 @@ export function validateExpressRouteCircuitsPeerings(props: any): ValidationResu
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -640,7 +644,7 @@ export function validateExpressRouteCircuitsPeeringsConnections(props: any): Val
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -650,13 +654,13 @@ export function validateExpressRouteCircuitsPeeringsConnections(props: any): Val
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -675,7 +679,7 @@ export function validateExpressRouteCrossConnections(props: any): ValidationResu
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -685,13 +689,13 @@ export function validateExpressRouteCrossConnections(props: any): ValidationResu
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -710,7 +714,7 @@ export function validateExpressRouteCrossConnectionsPeerings(props: any): Valida
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -720,13 +724,13 @@ export function validateExpressRouteCrossConnectionsPeerings(props: any): Valida
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -745,7 +749,7 @@ export function validateExpressRouteGateways(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -755,13 +759,13 @@ export function validateExpressRouteGateways(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -780,7 +784,7 @@ export function validateExpressRouteGatewaysExpressRouteConnections(props: any):
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -790,13 +794,13 @@ export function validateExpressRouteGatewaysExpressRouteConnections(props: any):
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -815,7 +819,7 @@ export function validateExpressRoutePortsAuthorizations(props: any): ValidationR
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -825,13 +829,13 @@ export function validateExpressRoutePortsAuthorizations(props: any): ValidationR
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -850,7 +854,7 @@ export function validateFirewallPolicies(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -860,13 +864,13 @@ export function validateFirewallPolicies(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -885,7 +889,7 @@ export function validateFirewallPoliciesFirewallPolicyDrafts(props: any): Valida
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -895,13 +899,13 @@ export function validateFirewallPoliciesFirewallPolicyDrafts(props: any): Valida
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -920,7 +924,7 @@ export function validateFirewallPoliciesRuleCollectionGroups(props: any): Valida
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -930,13 +934,13 @@ export function validateFirewallPoliciesRuleCollectionGroups(props: any): Valida
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -946,7 +950,9 @@ export function validateFirewallPoliciesRuleCollectionGroups(props: any): Valida
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateFirewallPoliciesRuleCollectionGroupsRuleCollectionGroupDrafts(props: any): ValidationResult {
+export function validateFirewallPoliciesRuleCollectionGroupsRuleCollectionGroupDrafts(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -955,7 +961,7 @@ export function validateFirewallPoliciesRuleCollectionGroupsRuleCollectionGroupD
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -965,13 +971,13 @@ export function validateFirewallPoliciesRuleCollectionGroupsRuleCollectionGroupD
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -990,7 +996,7 @@ export function validateFirewallPoliciesSignatureOverrides(props: any): Validati
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1000,13 +1006,13 @@ export function validateFirewallPoliciesSignatureOverrides(props: any): Validati
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1025,7 +1031,7 @@ export function validateIpGroups(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1035,13 +1041,13 @@ export function validateIpGroups(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1060,7 +1066,7 @@ export function validateLoadBalancers(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1070,13 +1076,13 @@ export function validateLoadBalancers(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1095,7 +1101,7 @@ export function validateLoadBalancersBackendAddressPools(props: any): Validation
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1105,13 +1111,13 @@ export function validateLoadBalancersBackendAddressPools(props: any): Validation
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1130,7 +1136,7 @@ export function validateLoadBalancersInboundNatRules(props: any): ValidationResu
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1140,13 +1146,13 @@ export function validateLoadBalancersInboundNatRules(props: any): ValidationResu
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1165,7 +1171,7 @@ export function validateLocalNetworkGateways(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1175,7 +1181,7 @@ export function validateLocalNetworkGateways(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
@@ -1187,7 +1193,7 @@ export function validateLocalNetworkGateways(props: any): ValidationResult {
           path: 'name',
           message: 'Property "name" must be at least 1 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
     }
@@ -1195,7 +1201,7 @@ export function validateLocalNetworkGateways(props: any): ValidationResult {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1214,7 +1220,7 @@ export function validateNatGateways(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1224,13 +1230,13 @@ export function validateNatGateways(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1249,7 +1255,7 @@ export function validateNetworkInterfaces(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1259,13 +1265,13 @@ export function validateNetworkInterfaces(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1284,7 +1290,7 @@ export function validateNetworkInterfacesTapConfigurations(props: any): Validati
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1294,13 +1300,13 @@ export function validateNetworkInterfacesTapConfigurations(props: any): Validati
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1319,7 +1325,7 @@ export function validateNetworkManagers(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1329,13 +1335,13 @@ export function validateNetworkManagers(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1354,7 +1360,7 @@ export function validateNetworkManagersConnectivityConfigurations(props: any): V
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1364,13 +1370,13 @@ export function validateNetworkManagersConnectivityConfigurations(props: any): V
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1389,7 +1395,7 @@ export function validateNetworkManagersIpamPools(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1399,13 +1405,13 @@ export function validateNetworkManagersIpamPools(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1424,7 +1430,7 @@ export function validateNetworkManagersIpamPoolsStaticCidrs(props: any): Validat
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1434,13 +1440,13 @@ export function validateNetworkManagersIpamPoolsStaticCidrs(props: any): Validat
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1459,7 +1465,7 @@ export function validateNetworkManagersNetworkGroups(props: any): ValidationResu
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1469,13 +1475,13 @@ export function validateNetworkManagersNetworkGroups(props: any): ValidationResu
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1494,7 +1500,7 @@ export function validateNetworkManagersNetworkGroupsStaticMembers(props: any): V
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1504,13 +1510,13 @@ export function validateNetworkManagersNetworkGroupsStaticMembers(props: any): V
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1529,7 +1535,7 @@ export function validateNetworkManagersScopeConnections(props: any): ValidationR
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1539,13 +1545,13 @@ export function validateNetworkManagersScopeConnections(props: any): ValidationR
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1564,7 +1570,7 @@ export function validateNetworkManagersSecurityAdminConfigurations(props: any): 
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1574,13 +1580,13 @@ export function validateNetworkManagersSecurityAdminConfigurations(props: any): 
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1590,7 +1596,9 @@ export function validateNetworkManagersSecurityAdminConfigurations(props: any): 
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateNetworkManagersSecurityAdminConfigurationsRuleCollections(props: any): ValidationResult {
+export function validateNetworkManagersSecurityAdminConfigurationsRuleCollections(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -1599,7 +1607,7 @@ export function validateNetworkManagersSecurityAdminConfigurationsRuleCollection
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1609,13 +1617,13 @@ export function validateNetworkManagersSecurityAdminConfigurationsRuleCollection
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1625,7 +1633,9 @@ export function validateNetworkManagersSecurityAdminConfigurationsRuleCollection
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateNetworkManagersSecurityAdminConfigurationsRuleCollectionsRules(props: any): ValidationResult {
+export function validateNetworkManagersSecurityAdminConfigurationsRuleCollectionsRules(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -1634,13 +1644,13 @@ export function validateNetworkManagersSecurityAdminConfigurationsRuleCollection
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1659,7 +1669,7 @@ export function validateNetworkManagersSecurityUserConfigurations(props: any): V
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1669,13 +1679,13 @@ export function validateNetworkManagersSecurityUserConfigurations(props: any): V
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1685,7 +1695,9 @@ export function validateNetworkManagersSecurityUserConfigurations(props: any): V
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateNetworkManagersSecurityUserConfigurationsRuleCollections(props: any): ValidationResult {
+export function validateNetworkManagersSecurityUserConfigurationsRuleCollections(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -1694,7 +1706,7 @@ export function validateNetworkManagersSecurityUserConfigurationsRuleCollections
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1704,13 +1716,13 @@ export function validateNetworkManagersSecurityUserConfigurationsRuleCollections
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1720,7 +1732,9 @@ export function validateNetworkManagersSecurityUserConfigurationsRuleCollections
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateNetworkManagersSecurityUserConfigurationsRuleCollectionsRules(props: any): ValidationResult {
+export function validateNetworkManagersSecurityUserConfigurationsRuleCollectionsRules(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -1729,7 +1743,7 @@ export function validateNetworkManagersSecurityUserConfigurationsRuleCollections
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1739,13 +1753,13 @@ export function validateNetworkManagersSecurityUserConfigurationsRuleCollections
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1764,7 +1778,7 @@ export function validateNetworkManagersVerifierWorkspaces(props: any): Validatio
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1774,13 +1788,13 @@ export function validateNetworkManagersVerifierWorkspaces(props: any): Validatio
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1790,7 +1804,9 @@ export function validateNetworkManagersVerifierWorkspaces(props: any): Validatio
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateNetworkManagersVerifierWorkspacesReachabilityAnalysisIntents(props: any): ValidationResult {
+export function validateNetworkManagersVerifierWorkspacesReachabilityAnalysisIntents(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -1799,7 +1815,7 @@ export function validateNetworkManagersVerifierWorkspacesReachabilityAnalysisInt
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1809,13 +1825,13 @@ export function validateNetworkManagersVerifierWorkspacesReachabilityAnalysisInt
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1825,7 +1841,9 @@ export function validateNetworkManagersVerifierWorkspacesReachabilityAnalysisInt
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateNetworkManagersVerifierWorkspacesReachabilityAnalysisRuns(props: any): ValidationResult {
+export function validateNetworkManagersVerifierWorkspacesReachabilityAnalysisRuns(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -1834,7 +1852,7 @@ export function validateNetworkManagersVerifierWorkspacesReachabilityAnalysisRun
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1844,13 +1862,13 @@ export function validateNetworkManagersVerifierWorkspacesReachabilityAnalysisRun
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1869,7 +1887,7 @@ export function validateNetworkProfiles(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1879,13 +1897,13 @@ export function validateNetworkProfiles(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1904,7 +1922,7 @@ export function validateNetworkSecurityGroups(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1914,13 +1932,13 @@ export function validateNetworkSecurityGroups(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1939,7 +1957,7 @@ export function validateNetworkSecurityGroupsSecurityRules(props: any): Validati
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1949,13 +1967,13 @@ export function validateNetworkSecurityGroupsSecurityRules(props: any): Validati
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1974,7 +1992,7 @@ export function validateNetworkSecurityPerimeters(props: any): ValidationResult 
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1984,13 +2002,13 @@ export function validateNetworkSecurityPerimeters(props: any): ValidationResult 
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2009,7 +2027,7 @@ export function validateNetworkSecurityPerimetersLinks(props: any): ValidationRe
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2019,13 +2037,13 @@ export function validateNetworkSecurityPerimetersLinks(props: any): ValidationRe
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2035,7 +2053,9 @@ export function validateNetworkSecurityPerimetersLinks(props: any): ValidationRe
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateNetworkSecurityPerimetersLoggingConfigurations(props: any): ValidationResult {
+export function validateNetworkSecurityPerimetersLoggingConfigurations(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -2044,7 +2064,7 @@ export function validateNetworkSecurityPerimetersLoggingConfigurations(props: an
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2054,13 +2074,13 @@ export function validateNetworkSecurityPerimetersLoggingConfigurations(props: an
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2079,7 +2099,7 @@ export function validateNetworkSecurityPerimetersProfiles(props: any): Validatio
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2089,13 +2109,13 @@ export function validateNetworkSecurityPerimetersProfiles(props: any): Validatio
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2114,7 +2134,7 @@ export function validateNetworkSecurityPerimetersProfilesAccessRules(props: any)
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2124,13 +2144,13 @@ export function validateNetworkSecurityPerimetersProfilesAccessRules(props: any)
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2140,7 +2160,9 @@ export function validateNetworkSecurityPerimetersProfilesAccessRules(props: any)
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateNetworkSecurityPerimetersResourceAssociations(props: any): ValidationResult {
+export function validateNetworkSecurityPerimetersResourceAssociations(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -2149,7 +2171,7 @@ export function validateNetworkSecurityPerimetersResourceAssociations(props: any
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2159,13 +2181,13 @@ export function validateNetworkSecurityPerimetersResourceAssociations(props: any
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2184,7 +2206,7 @@ export function validateNetworkVirtualAppliances(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2194,13 +2216,13 @@ export function validateNetworkVirtualAppliances(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2219,7 +2241,7 @@ export function validateNetworkVirtualAppliancesInboundSecurityRules(props: any)
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2229,13 +2251,13 @@ export function validateNetworkVirtualAppliancesInboundSecurityRules(props: any)
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2245,7 +2267,9 @@ export function validateNetworkVirtualAppliancesInboundSecurityRules(props: any)
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateNetworkVirtualAppliancesNetworkVirtualApplianceConnections(props: any): ValidationResult {
+export function validateNetworkVirtualAppliancesNetworkVirtualApplianceConnections(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -2254,7 +2278,7 @@ export function validateNetworkVirtualAppliancesNetworkVirtualApplianceConnectio
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2264,13 +2288,13 @@ export function validateNetworkVirtualAppliancesNetworkVirtualApplianceConnectio
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2280,7 +2304,9 @@ export function validateNetworkVirtualAppliancesNetworkVirtualApplianceConnectio
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateNetworkVirtualAppliancesVirtualApplianceSites(props: any): ValidationResult {
+export function validateNetworkVirtualAppliancesVirtualApplianceSites(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -2289,7 +2315,7 @@ export function validateNetworkVirtualAppliancesVirtualApplianceSites(props: any
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2299,13 +2325,13 @@ export function validateNetworkVirtualAppliancesVirtualApplianceSites(props: any
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2324,7 +2350,7 @@ export function validateNetworkWatchers(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2334,13 +2360,13 @@ export function validateNetworkWatchers(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2359,7 +2385,7 @@ export function validateNetworkWatchersConnectionMonitors(props: any): Validatio
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2369,13 +2395,13 @@ export function validateNetworkWatchersConnectionMonitors(props: any): Validatio
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2394,7 +2420,7 @@ export function validateNetworkWatchersFlowLogs(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2404,13 +2430,13 @@ export function validateNetworkWatchersFlowLogs(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2429,7 +2455,7 @@ export function validateNetworkWatchersPacketCaptures(props: any): ValidationRes
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2439,13 +2465,13 @@ export function validateNetworkWatchersPacketCaptures(props: any): ValidationRes
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2464,7 +2490,7 @@ export function validateP2svpnGateways(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2474,13 +2500,13 @@ export function validateP2svpnGateways(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2499,7 +2525,7 @@ export function validatePrivateEndpoints(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2509,13 +2535,13 @@ export function validatePrivateEndpoints(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2534,7 +2560,7 @@ export function validatePrivateEndpointsPrivateDnsZoneGroups(props: any): Valida
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2544,13 +2570,13 @@ export function validatePrivateEndpointsPrivateDnsZoneGroups(props: any): Valida
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2569,7 +2595,7 @@ export function validatePrivateLinkServices(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2579,13 +2605,13 @@ export function validatePrivateLinkServices(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2595,7 +2621,9 @@ export function validatePrivateLinkServices(props: any): ValidationResult {
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validatePrivateLinkServicesPrivateEndpointConnections(props: any): ValidationResult {
+export function validatePrivateLinkServicesPrivateEndpointConnections(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -2604,7 +2632,7 @@ export function validatePrivateLinkServicesPrivateEndpointConnections(props: any
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2614,13 +2642,13 @@ export function validatePrivateLinkServicesPrivateEndpointConnections(props: any
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2639,7 +2667,7 @@ export function validatePublicIPAddresses(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2649,13 +2677,13 @@ export function validatePublicIPAddresses(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2674,7 +2702,7 @@ export function validatePublicIPPrefixes(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2684,13 +2712,13 @@ export function validatePublicIPPrefixes(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2709,7 +2737,7 @@ export function validateRouteFilters(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2719,13 +2747,13 @@ export function validateRouteFilters(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2744,7 +2772,7 @@ export function validateRouteFiltersRouteFilterRules(props: any): ValidationResu
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2754,13 +2782,13 @@ export function validateRouteFiltersRouteFilterRules(props: any): ValidationResu
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2779,7 +2807,7 @@ export function validateRouteTables(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2789,13 +2817,13 @@ export function validateRouteTables(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2814,7 +2842,7 @@ export function validateRouteTablesRoutes(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2824,13 +2852,13 @@ export function validateRouteTablesRoutes(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2849,7 +2877,7 @@ export function validateSecurityPartnerProviders(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2859,13 +2887,13 @@ export function validateSecurityPartnerProviders(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2884,7 +2912,7 @@ export function validateServiceEndpointPolicies(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2894,13 +2922,13 @@ export function validateServiceEndpointPolicies(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2910,7 +2938,9 @@ export function validateServiceEndpointPolicies(props: any): ValidationResult {
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateServiceEndpointPoliciesServiceEndpointPolicyDefinitions(props: any): ValidationResult {
+export function validateServiceEndpointPoliciesServiceEndpointPolicyDefinitions(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -2919,7 +2949,7 @@ export function validateServiceEndpointPoliciesServiceEndpointPolicyDefinitions(
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2929,13 +2959,13 @@ export function validateServiceEndpointPoliciesServiceEndpointPolicyDefinitions(
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2954,7 +2984,7 @@ export function validateVirtualHubs(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2964,13 +2994,13 @@ export function validateVirtualHubs(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2989,7 +3019,7 @@ export function validateVirtualHubsBgpConnections(props: any): ValidationResult 
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2999,13 +3029,13 @@ export function validateVirtualHubsBgpConnections(props: any): ValidationResult 
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3024,7 +3054,7 @@ export function validateVirtualHubsHubRouteTables(props: any): ValidationResult 
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3034,13 +3064,13 @@ export function validateVirtualHubsHubRouteTables(props: any): ValidationResult 
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3059,7 +3089,7 @@ export function validateVirtualHubsHubVirtualNetworkConnections(props: any): Val
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3069,13 +3099,13 @@ export function validateVirtualHubsHubVirtualNetworkConnections(props: any): Val
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3094,7 +3124,7 @@ export function validateVirtualHubsIpConfigurations(props: any): ValidationResul
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3104,13 +3134,13 @@ export function validateVirtualHubsIpConfigurations(props: any): ValidationResul
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3129,7 +3159,7 @@ export function validateVirtualHubsRouteMaps(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3139,13 +3169,13 @@ export function validateVirtualHubsRouteMaps(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3164,7 +3194,7 @@ export function validateVirtualHubsRouteTables(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3174,13 +3204,13 @@ export function validateVirtualHubsRouteTables(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3199,7 +3229,7 @@ export function validateVirtualHubsRoutingIntent(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3209,13 +3239,13 @@ export function validateVirtualHubsRoutingIntent(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3234,7 +3264,7 @@ export function validateVirtualNetworkGateways(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3244,13 +3274,13 @@ export function validateVirtualNetworkGateways(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3269,7 +3299,7 @@ export function validateVirtualNetworkGatewaysNatRules(props: any): ValidationRe
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3279,13 +3309,13 @@ export function validateVirtualNetworkGatewaysNatRules(props: any): ValidationRe
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3304,7 +3334,7 @@ export function validateVirtualNetworkTaps(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3314,13 +3344,13 @@ export function validateVirtualNetworkTaps(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3339,7 +3369,7 @@ export function validateVirtualNetworks(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3349,13 +3379,13 @@ export function validateVirtualNetworks(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3374,7 +3404,7 @@ export function validateVirtualNetworksSubnets(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3384,13 +3414,13 @@ export function validateVirtualNetworksSubnets(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3409,7 +3439,7 @@ export function validateVirtualNetworksVirtualNetworkPeerings(props: any): Valid
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3419,13 +3449,13 @@ export function validateVirtualNetworksVirtualNetworkPeerings(props: any): Valid
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3444,7 +3474,7 @@ export function validateVirtualRouters(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3454,13 +3484,13 @@ export function validateVirtualRouters(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3479,7 +3509,7 @@ export function validateVirtualRoutersPeerings(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3489,13 +3519,13 @@ export function validateVirtualRoutersPeerings(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3514,7 +3544,7 @@ export function validateVirtualWans(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3524,13 +3554,13 @@ export function validateVirtualWans(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3549,7 +3579,7 @@ export function validateVpnGateways(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3559,13 +3589,13 @@ export function validateVpnGateways(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3584,7 +3614,7 @@ export function validateVpnGatewaysNatRules(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3594,13 +3624,13 @@ export function validateVpnGatewaysNatRules(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3619,7 +3649,7 @@ export function validateVpnGatewaysVpnConnections(props: any): ValidationResult 
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3629,13 +3659,13 @@ export function validateVpnGatewaysVpnConnections(props: any): ValidationResult 
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3645,7 +3675,9 @@ export function validateVpnGatewaysVpnConnections(props: any): ValidationResult 
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateVpnGatewaysVpnConnectionsVpnLinkConnectionsSharedKeys(props: any): ValidationResult {
+export function validateVpnGatewaysVpnConnectionsVpnLinkConnectionsSharedKeys(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -3654,7 +3686,7 @@ export function validateVpnGatewaysVpnConnectionsVpnLinkConnectionsSharedKeys(pr
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3664,13 +3696,13 @@ export function validateVpnGatewaysVpnConnectionsVpnLinkConnectionsSharedKeys(pr
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3689,7 +3721,7 @@ export function validateVpnServerConfigurations(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3699,13 +3731,13 @@ export function validateVpnServerConfigurations(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3715,7 +3747,9 @@ export function validateVpnServerConfigurations(props: any): ValidationResult {
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateVpnServerConfigurationsConfigurationPolicyGroups(props: any): ValidationResult {
+export function validateVpnServerConfigurationsConfigurationPolicyGroups(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -3724,7 +3758,7 @@ export function validateVpnServerConfigurationsConfigurationPolicyGroups(props: 
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3734,13 +3768,13 @@ export function validateVpnServerConfigurationsConfigurationPolicyGroups(props: 
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -3759,7 +3793,7 @@ export function validateVpnSites(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -3769,12 +3803,12 @@ export function validateVpnSites(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }

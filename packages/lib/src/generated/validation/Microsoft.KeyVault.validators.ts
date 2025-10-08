@@ -44,7 +44,7 @@ export function validateManagedHSMs(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -54,13 +54,13 @@ export function validateManagedHSMs(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -79,7 +79,7 @@ export function validateManagedHSMsKeys(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -89,13 +89,13 @@ export function validateManagedHSMsKeys(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -114,7 +114,7 @@ export function validateManagedHSMsPrivateEndpointConnections(props: any): Valid
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -124,13 +124,13 @@ export function validateManagedHSMsPrivateEndpointConnections(props: any): Valid
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -149,7 +149,7 @@ export function validateVaults(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -159,13 +159,13 @@ export function validateVaults(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -184,7 +184,7 @@ export function validateVaultsAccessPolicies(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -194,13 +194,13 @@ export function validateVaultsAccessPolicies(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -219,7 +219,7 @@ export function validateVaultsKeys(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -229,13 +229,13 @@ export function validateVaultsKeys(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -254,7 +254,7 @@ export function validateVaultsPrivateEndpointConnections(props: any): Validation
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -264,13 +264,13 @@ export function validateVaultsPrivateEndpointConnections(props: any): Validation
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -289,7 +289,7 @@ export function validateVaultsSecrets(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -299,12 +299,12 @@ export function validateVaultsSecrets(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }

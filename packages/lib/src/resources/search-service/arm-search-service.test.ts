@@ -8,11 +8,7 @@ import { Project } from '../../core/context/project';
 import { Environment } from '../../core/context/environment';
 import { Instance } from '../../core/context/instance';
 import { ArmSearchService } from './arm-search-service';
-import {
-  SearchServiceSku,
-  HostingMode,
-  PublicNetworkAccess,
-} from './types';
+import { SearchServiceSku, HostingMode, PublicNetworkAccess } from './types';
 import type { ArmSearchServiceProps } from './types';
 
 describe('resources/search-service/ArmSearchService', () => {
@@ -117,10 +113,7 @@ describe('resources/search-service/ArmSearchService', () => {
         sku: { name: SearchServiceSku.BASIC },
         properties: {
           networkRuleSet: {
-            ipRules: [
-              { value: '1.2.3.4' },
-              { value: '5.6.7.8/24' },
-            ],
+            ipRules: [{ value: '1.2.3.4' }, { value: '5.6.7.8/24' }],
           },
         },
       });
@@ -499,10 +492,7 @@ describe('resources/search-service/ArmSearchService', () => {
         sku: { name: SearchServiceSku.BASIC },
         properties: {
           networkRuleSet: {
-            ipRules: [
-              { value: '10.0.0.1' },
-              { value: '10.0.0.2/24' },
-            ],
+            ipRules: [{ value: '10.0.0.1' }, { value: '10.0.0.2/24' }],
           },
         },
       });

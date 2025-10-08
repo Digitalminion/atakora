@@ -223,33 +223,46 @@ export class StorageAccount extends Construct implements IStorageAccount {
    * - 3-24 characters
    * - Lowercase alphanumeric only (NO HYPHENS)
    * - Globally unique across Azure
+   *
+   * New naming convention for global uniqueness:
+   * - Format: sto<project><instance><8-char-hash>
+   * - Hash is generated from full resource name to ensure uniqueness
+   * - Example: stocolorai0312ab34cd
    */
-  private resolveStorageAccountName(
-    id: string,
-    props?: StorageAccountProps
-  ): string {
+  private resolveStorageAccountName(id: string, props?: StorageAccountProps): string {
     // If name provided explicitly, use it
     if (props?.storageAccountName) {
       return props.storageAccountName;
     }
 
     // Auto-generate name using parent's naming context
-    // Storage accounts need special handling: no hyphens, max 24 chars
     const subscriptionStack = this.getSubscriptionStack();
     if (subscriptionStack) {
       const purpose = this.constructIdToPurpose(id);
-      // Use special 'st' prefix for storage (instead of 'stg')
-      const rawName = subscriptionStack.generateResourceName('st', purpose);
 
-      // Storage accounts don't allow hyphens - remove them and truncate to 24 chars
-      const cleanedName = rawName.replace(/-/g, '').toLowerCase();
+      // New format: sto<project><instance><hash>
+      // Storage accounts don't allow hyphens, so no separators
+      // Use NamingService for truly unique hash per synthesis
+      const project = subscriptionStack.project.resourceName;
+      const instance = subscriptionStack.instance.resourceName;
+      const hash = subscriptionStack.namingService.getResourceHash(8);
 
-      // Truncate to 24 characters
-      return cleanedName.substring(0, 24);
+      const generatedName = `sto${project}${instance}${hash}`.toLowerCase();
+
+      // Ensure it fits within 24 characters
+      if (generatedName.length > 24) {
+        // Truncate project name if needed
+        const maxProjectLen = 24 - 11; // 24 - (3 + 8) = 13 chars for project+instance
+        const truncatedProject = project.substring(0, maxProjectLen);
+        const truncatedInstance = instance.substring(0, Math.min(2, 24 - 3 - maxProjectLen - 8));
+        return `sto${truncatedProject}${truncatedInstance}${hash}`.toLowerCase().substring(0, 24);
+      }
+
+      return generatedName;
     }
 
     // Fallback: construct a basic name from ID (no hyphens)
-    const fallbackName = `st${id.toLowerCase()}`.replace(/-/g, '');
+    const fallbackName = `sto${id.toLowerCase()}`.replace(/-/g, '');
     return fallbackName.substring(0, 24);
   }
 

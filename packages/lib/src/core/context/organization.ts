@@ -73,9 +73,7 @@ export class Organization extends NamingComponent {
     }
 
     if (this.resourceName.startsWith('-') || this.resourceName.endsWith('-')) {
-      throw new Error(
-        `Organization resource name cannot start or end with a hyphen`
-      );
+      throw new Error(`Organization resource name cannot start or end with a hyphen`);
     }
   }
 

@@ -303,7 +303,9 @@ export class ArmApiManagement extends Resource {
     // Basic email validation
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(props.publisherEmail)) {
-      throw new Error(`Publisher email must be a valid email address (got: ${props.publisherEmail})`);
+      throw new Error(
+        `Publisher email must be a valid email address (got: ${props.publisherEmail})`
+      );
     }
 
     // Validate VNet configuration if provided

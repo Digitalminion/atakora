@@ -4,12 +4,7 @@
  * @packageDocumentation
  */
 
-import type {
-  SchemaIR,
-  ResourceDefinition,
-  PropertyDefinition,
-  TypeDefinition,
-} from './types';
+import type { SchemaIR, ResourceDefinition, PropertyDefinition, TypeDefinition } from './types';
 
 /**
  * Generates complete L1 construct class implementation from ARM schema.
@@ -107,9 +102,7 @@ export class ResourceFactory {
     lines.push(` * L1 construct for ${resource.armType}.`);
     lines.push(' *');
     lines.push(' * @remarks');
-    lines.push(
-      ` * Direct mapping to ${resource.armType} ARM resource.`
-    );
+    lines.push(` * Direct mapping to ${resource.armType} ARM resource.`);
     lines.push(
       ' * Provides 1:1 correspondence with ARM template properties with no defaults or transformations.'
     );
@@ -124,18 +117,12 @@ export class ResourceFactory {
       lines.push(' *');
     }
 
-    lines.push(
-      ` * This is a low-level construct for maximum control. For intent-based API with`
-    );
-    lines.push(
-      ` * auto-naming and defaults, use the L2 construct instead.`
-    );
+    lines.push(` * This is a low-level construct for maximum control. For intent-based API with`);
+    lines.push(` * auto-naming and defaults, use the L2 construct instead.`);
     lines.push(' *');
     lines.push(' * @example');
     lines.push(' * ```typescript');
-    lines.push(
-      ` * const resource = new ${className}(scope, 'Resource', {`
-    );
+    lines.push(` * const resource = new ${className}(scope, 'Resource', {`);
     lines.push(' *   // props here');
     lines.push(' * });');
     lines.push(' * ```');
@@ -147,10 +134,7 @@ export class ResourceFactory {
   /**
    * Generate class constants.
    */
-  private generateConstants(
-    resource: ResourceDefinition,
-    ir: SchemaIR
-  ): string {
+  private generateConstants(resource: ResourceDefinition, ir: SchemaIR): string {
     const lines: string[] = [];
 
     // Determine deployment scope from ARM type
@@ -159,9 +143,7 @@ export class ResourceFactory {
     lines.push('  /**');
     lines.push('   * ARM resource type.');
     lines.push('   */');
-    lines.push(
-      `  public readonly resourceType: string = '${resource.armType}';`
-    );
+    lines.push(`  public readonly resourceType: string = '${resource.armType}';`);
     lines.push('');
     lines.push('  /**');
     lines.push('   * API version for the resource.');
@@ -171,9 +153,7 @@ export class ResourceFactory {
     lines.push('  /**');
     lines.push('   * Deployment scope for this resource.');
     lines.push('   */');
-    lines.push(
-      `  public readonly scope: DeploymentScope.${scope} = DeploymentScope.${scope};`
-    );
+    lines.push(`  public readonly scope: DeploymentScope.${scope} = DeploymentScope.${scope};`);
 
     return lines.join('\n');
   }
@@ -202,10 +182,7 @@ export class ResourceFactory {
         lines.push('   *');
         lines.push('   * @remarks');
 
-        if (
-          prop.constraints.minLength !== undefined ||
-          prop.constraints.maxLength !== undefined
-        ) {
+        if (prop.constraints.minLength !== undefined || prop.constraints.maxLength !== undefined) {
           const min = prop.constraints.minLength ?? 0;
           const max = prop.constraints.maxLength ?? 'unlimited';
           lines.push(`   * Length: ${min}-${max} characters`);
@@ -219,9 +196,7 @@ export class ResourceFactory {
       lines.push('   */');
 
       const optional = prop.required ? '' : '?';
-      lines.push(
-        `  public readonly ${prop.name}${optional}: ${prop.type.tsType};`
-      );
+      lines.push(`  public readonly ${prop.name}${optional}: ${prop.type.tsType};`);
       lines.push('');
     }
 
@@ -237,10 +212,7 @@ export class ResourceFactory {
   /**
    * Generate constructor.
    */
-  private generateConstructor(
-    resource: ResourceDefinition,
-    className: string
-  ): string {
+  private generateConstructor(resource: ResourceDefinition, className: string): string {
     const lines: string[] = [];
     const propsName = `Arm${this.toPascalCase(resource.name)}Props`;
 
@@ -248,14 +220,10 @@ export class ResourceFactory {
     lines.push(`   * Creates a new ${className} construct.`);
     lines.push('   *');
     lines.push('   * @param scope - Parent construct');
-    lines.push(
-      '   * @param id - Unique identifier for this construct within the parent scope'
-    );
+    lines.push('   * @param id - Unique identifier for this construct within the parent scope');
     lines.push('   * @param props - Resource properties');
     lines.push('   */');
-    lines.push(
-      `  constructor(scope: Construct, id: string, props: ${propsName}) {`
-    );
+    lines.push(`  constructor(scope: Construct, id: string, props: ${propsName}) {`);
     lines.push('    super(scope, id);');
     lines.push('');
     lines.push('    // Validate properties');
@@ -273,9 +241,7 @@ export class ResourceFactory {
         // Access nested properties
         if (prop.type.properties) {
           for (const nestedProp of prop.type.properties) {
-            lines.push(
-              `    this.${nestedProp.name} = props.properties?.${nestedProp.name};`
-            );
+            lines.push(`    this.${nestedProp.name} = props.properties?.${nestedProp.name};`);
           }
         }
       } else {
@@ -292,8 +258,9 @@ export class ResourceFactory {
     lines.push('    // Construct resource ID');
 
     // Extract resource name property (usually first required property or 'name')
-    const nameProp = resource.properties.find(p => p.name === 'name') ||
-                     resource.properties.find(p => p.required);
+    const nameProp =
+      resource.properties.find((p) => p.name === 'name') ||
+      resource.properties.find((p) => p.required);
     const nameValue = nameProp ? `this.${nameProp.name}` : 'this.name';
 
     lines.push(
@@ -318,9 +285,7 @@ export class ResourceFactory {
     lines.push('   * @param props - Properties to validate');
     lines.push('   * @throws {Error} If validation fails');
     lines.push('   */');
-    lines.push(
-      `  private validateProps(props: ${propsName}): void {`
-    );
+    lines.push(`  private validateProps(props: ${propsName}): void {`);
 
     // Generate validations for each property with constraints
     for (const prop of resource.properties) {
@@ -331,9 +296,7 @@ export class ResourceFactory {
       // Required validation
       if (prop.required) {
         lines.push(`    if (!props.${prop.name}) {`);
-        lines.push(
-          `      throw new Error('${prop.name} is required');`
-        );
+        lines.push(`      throw new Error('${prop.name} is required');`);
         lines.push('    }');
         lines.push('');
       }
@@ -347,9 +310,7 @@ export class ResourceFactory {
           lines.push(`    if (props.${prop.name}) {`);
 
           if (constraints.minLength !== undefined) {
-            lines.push(
-              `      if (props.${prop.name}.length < ${constraints.minLength}) {`
-            );
+            lines.push(`      if (props.${prop.name}.length < ${constraints.minLength}) {`);
             lines.push(
               `        throw new Error('${prop.name} must be at least ${constraints.minLength} characters');`
             );
@@ -357,9 +318,7 @@ export class ResourceFactory {
           }
 
           if (constraints.maxLength !== undefined) {
-            lines.push(
-              `      if (props.${prop.name}.length > ${constraints.maxLength}) {`
-            );
+            lines.push(`      if (props.${prop.name}.length > ${constraints.maxLength}) {`);
             lines.push(
               `        throw new Error('${prop.name} must be at most ${constraints.maxLength} characters');`
             );
@@ -389,9 +348,7 @@ export class ResourceFactory {
           lines.push(`    if (props.${prop.name} !== undefined) {`);
 
           if (constraints.minimum !== undefined) {
-            lines.push(
-              `      if (props.${prop.name} < ${constraints.minimum}) {`
-            );
+            lines.push(`      if (props.${prop.name} < ${constraints.minimum}) {`);
             lines.push(
               `        throw new Error('${prop.name} must be at least ${constraints.minimum}');`
             );
@@ -399,9 +356,7 @@ export class ResourceFactory {
           }
 
           if (constraints.maximum !== undefined) {
-            lines.push(
-              `      if (props.${prop.name} > ${constraints.maximum}) {`
-            );
+            lines.push(`      if (props.${prop.name} > ${constraints.maximum}) {`);
             lines.push(
               `        throw new Error('${prop.name} must be at most ${constraints.maximum}');`
             );
@@ -462,27 +417,23 @@ export class ResourceFactory {
     lines.push('      apiVersion: this.apiVersion,');
 
     // Extract name property
-    const nameProp = resource.properties.find(p => p.name === 'name');
+    const nameProp = resource.properties.find((p) => p.name === 'name');
     if (nameProp) {
       lines.push(`      name: this.name,`);
     }
 
     // Check for location property
-    const locationProp = resource.properties.find(p => p.name === 'location');
+    const locationProp = resource.properties.find((p) => p.name === 'location');
     if (locationProp) {
       lines.push(`      location: this.location,`);
     }
 
-    lines.push(
-      '      properties: Object.keys(properties).length > 0 ? properties : undefined,'
-    );
+    lines.push('      properties: Object.keys(properties).length > 0 ? properties : undefined,');
 
     // Check for tags
-    const tagsProp = resource.properties.find(p => p.name === 'tags');
+    const tagsProp = resource.properties.find((p) => p.name === 'tags');
     if (tagsProp) {
-      lines.push(
-        '      tags: Object.keys(this.tags).length > 0 ? this.tags : undefined,'
-      );
+      lines.push('      tags: Object.keys(this.tags).length > 0 ? this.tags : undefined,');
     }
 
     lines.push('    };');

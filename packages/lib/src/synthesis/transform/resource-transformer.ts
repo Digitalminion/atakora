@@ -149,9 +149,7 @@ export class ResourceTransformer {
 
       if (Array.isArray(value)) {
         cleaned[key] = value.map((item) =>
-          typeof item === 'object' && item !== null
-            ? this.cleanUndefined(item)
-            : item
+          typeof item === 'object' && item !== null ? this.cleanUndefined(item) : item
         );
         continue;
       }
@@ -211,10 +209,7 @@ export class ResourceTransformer {
         );
 
         // Replace {resourceGroupName} with ARM expression
-        replacedValue = replacedValue.replace(
-          /\{resourceGroupName\}/g,
-          '[resourceGroup().name]'
-        );
+        replacedValue = replacedValue.replace(/\{resourceGroupName\}/g, '[resourceGroup().name]');
 
         // Special case: Replace placeholder tenantId with ARM expression
         // This is specifically for Key Vault and similar resources
@@ -228,8 +223,8 @@ export class ResourceTransformer {
           typeof item === 'object' && item !== null
             ? this.replaceTokens(item)
             : typeof item === 'string'
-            ? this.replaceStringTokens(item)
-            : item
+              ? this.replaceStringTokens(item)
+              : item
         );
       } else if (typeof value === 'object' && value !== null) {
         result[key] = this.replaceTokens(value);
@@ -256,16 +251,10 @@ export class ResourceTransformer {
     let result = str;
 
     // Replace {subscriptionId} with ARM expression
-    result = result.replace(
-      /\{subscriptionId\}/g,
-      '[subscription().subscriptionId]'
-    );
+    result = result.replace(/\{subscriptionId\}/g, '[subscription().subscriptionId]');
 
     // Replace {resourceGroupName} with ARM expression
-    result = result.replace(
-      /\{resourceGroupName\}/g,
-      '[resourceGroup().name]'
-    );
+    result = result.replace(/\{resourceGroupName\}/g, '[resourceGroup().name]');
 
     return result;
   }

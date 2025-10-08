@@ -1,6 +1,7 @@
 import { Construct } from '../../core/construct';
 import type { IResourceGroup } from '../resource-group/types';
 import { ArmWafPolicy } from './arm-waf-policy';
+import { constructIdToPurpose as utilConstructIdToPurpose } from '../../naming/construct-id-utils';
 import type {
   WafPolicyProps,
   IWafPolicy,
@@ -380,7 +381,7 @@ export class WafPolicy extends Construct implements IWafPolicy {
    * @param id - Construct ID
    * @returns Purpose string for naming
    */
-  private constructIdToPurpose(id: string): string {
-    return id.toLowerCase();
+  private constructIdToPurpose(id: string): string | undefined {
+    return utilConstructIdToPurpose(id, 'waf', ['wafpolicy', 'policy']);
   }
 }

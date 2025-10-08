@@ -8,12 +8,7 @@ import { Project } from '../../core/context/project';
 import { Environment } from '../../core/context/environment';
 import { Instance } from '../../core/context/instance';
 import { ArmAutoscaleSetting } from './arm-autoscale-setting';
-import {
-  MetricOperator,
-  TimeAggregationType,
-  ScaleDirection,
-  ScaleType,
-} from './types';
+import { MetricOperator, TimeAggregationType, ScaleDirection, ScaleType } from './types';
 
 describe('resources/autoscale-setting/ArmAutoscaleSetting', () => {
   let app: App;
@@ -36,7 +31,8 @@ describe('resources/autoscale-setting/ArmAutoscaleSetting', () => {
       const autoscale = new ArmAutoscaleSetting(stack, 'Autoscale', {
         name: 'autoscale-appplan',
         location: 'eastus',
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
         profiles: [
           {
             name: 'Default',
@@ -49,7 +45,8 @@ describe('resources/autoscale-setting/ArmAutoscaleSetting', () => {
               {
                 metricTrigger: {
                   metricName: 'CpuPercentage',
-                  metricResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+                  metricResourceId:
+                    '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
                   timeGrain: 'PT1M',
                   statistic: TimeAggregationType.AVERAGE,
                   timeWindow: 'PT10M',
@@ -79,7 +76,8 @@ describe('resources/autoscale-setting/ArmAutoscaleSetting', () => {
       const autoscale = new ArmAutoscaleSetting(stack, 'Autoscale', {
         name: 'autoscale-appplan',
         location: 'eastus',
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
         profiles: [
           {
             name: 'Business Hours',
@@ -108,7 +106,8 @@ describe('resources/autoscale-setting/ArmAutoscaleSetting', () => {
       const autoscale = new ArmAutoscaleSetting(stack, 'Autoscale', {
         name: 'autoscale-appplan',
         location: 'eastus',
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
         profiles: [
           {
             name: 'Default',
@@ -134,7 +133,8 @@ describe('resources/autoscale-setting/ArmAutoscaleSetting', () => {
       const autoscale = new ArmAutoscaleSetting(stack, 'Autoscale', {
         name: 'autoscale-appplan',
         location: 'eastus',
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
         profiles: [
           {
             name: 'Default',
@@ -150,7 +150,8 @@ describe('resources/autoscale-setting/ArmAutoscaleSetting', () => {
       const autoscale = new ArmAutoscaleSetting(stack, 'Autoscale', {
         name: 'autoscale-appplan',
         location: 'eastus',
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
         profiles: [
           {
             name: 'Default',
@@ -166,7 +167,8 @@ describe('resources/autoscale-setting/ArmAutoscaleSetting', () => {
       const autoscale = new ArmAutoscaleSetting(stack, 'Autoscale', {
         name: 'autoscale-appplan',
         location: 'eastus',
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
         enabled: false,
         profiles: [
           {
@@ -186,7 +188,8 @@ describe('resources/autoscale-setting/ArmAutoscaleSetting', () => {
         new ArmAutoscaleSetting(stack, 'Autoscale', {
           name: '',
           location: 'eastus',
-          targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+          targetResourceId:
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
           profiles: [
             {
               name: 'Default',
@@ -202,7 +205,8 @@ describe('resources/autoscale-setting/ArmAutoscaleSetting', () => {
         new ArmAutoscaleSetting(stack, 'Autoscale', {
           name: 'autoscale-appplan',
           location: '',
-          targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+          targetResourceId:
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
           profiles: [
             {
               name: 'Default',
@@ -234,7 +238,8 @@ describe('resources/autoscale-setting/ArmAutoscaleSetting', () => {
         new ArmAutoscaleSetting(stack, 'Autoscale', {
           name: 'autoscale-appplan',
           location: 'eastus',
-          targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+          targetResourceId:
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
           profiles: [],
         });
       }).toThrow(/At least one profile must be provided/);
@@ -246,7 +251,8 @@ describe('resources/autoscale-setting/ArmAutoscaleSetting', () => {
       const autoscale = new ArmAutoscaleSetting(stack, 'Autoscale', {
         name: 'autoscale-appplan',
         location: 'eastus',
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test',
         profiles: [
           {
             name: 'Default',
@@ -266,7 +272,9 @@ describe('resources/autoscale-setting/ArmAutoscaleSetting', () => {
       expect(template.name).toBe('autoscale-appplan');
       expect(template.location).toBe('eastus');
       expect(template.properties.enabled).toBe(true);
-      expect(template.properties.targetResourceUri).toBe('/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test');
+      expect(template.properties.targetResourceUri).toBe(
+        '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/serverFarms/plan-test'
+      );
       expect(template.properties.profiles).toHaveLength(1);
     });
   });

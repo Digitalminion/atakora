@@ -15,7 +15,8 @@ describe('ArmVirtualNetworkLink', () => {
         privateDnsZoneName: 'privatelink.blob.core.windows.net',
         linkName: 'test-link',
         location: 'global',
-        virtualNetworkId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
+        virtualNetworkId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
       });
 
       expect(link.privateDnsZoneName).toBe('privatelink.blob.core.windows.net');
@@ -35,7 +36,8 @@ describe('ArmVirtualNetworkLink', () => {
         privateDnsZoneName: 'privatelink.blob.core.windows.net',
         linkName: 'test-link',
         location: 'global',
-        virtualNetworkId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
+        virtualNetworkId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
         registrationEnabled: true,
       });
 
@@ -47,7 +49,8 @@ describe('ArmVirtualNetworkLink', () => {
         privateDnsZoneName: 'privatelink.blob.core.windows.net',
         linkName: 'my-link',
         location: 'global',
-        virtualNetworkId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
+        virtualNetworkId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
       });
 
       expect(link.resourceId).toBe(
@@ -62,7 +65,8 @@ describe('ArmVirtualNetworkLink', () => {
         privateDnsZoneName: 'privatelink.blob.core.windows.net',
         linkName: 'test-link',
         location: 'global',
-        virtualNetworkId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
+        virtualNetworkId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
         tags,
       });
 
@@ -77,7 +81,8 @@ describe('ArmVirtualNetworkLink', () => {
           privateDnsZoneName: '',
           linkName: 'test-link',
           location: 'global',
-          virtualNetworkId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
+          virtualNetworkId:
+            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
         });
       }).toThrow('Private DNS zone name cannot be empty');
     });
@@ -88,7 +93,8 @@ describe('ArmVirtualNetworkLink', () => {
           privateDnsZoneName: 'privatelink.blob.core.windows.net',
           linkName: '',
           location: 'global',
-          virtualNetworkId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
+          virtualNetworkId:
+            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
         });
       }).toThrow('Virtual network link name cannot be empty');
     });
@@ -99,7 +105,8 @@ describe('ArmVirtualNetworkLink', () => {
           privateDnsZoneName: 'privatelink.blob.core.windows.net',
           linkName: '-invalid-name',
           location: 'global',
-          virtualNetworkId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
+          virtualNetworkId:
+            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
         });
       }).toThrow('Virtual network link name must match pattern');
     });
@@ -110,7 +117,8 @@ describe('ArmVirtualNetworkLink', () => {
           privateDnsZoneName: 'privatelink.blob.core.windows.net',
           linkName: 'test-link',
           location: 'eastus',
-          virtualNetworkId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
+          virtualNetworkId:
+            '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
         });
       }).toThrow("Virtual network link location must be 'global'");
     });
@@ -144,7 +152,8 @@ describe('ArmVirtualNetworkLink', () => {
         privateDnsZoneName: 'privatelink.blob.core.windows.net',
         linkName: 'test-link',
         location: 'global',
-        virtualNetworkId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
+        virtualNetworkId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
         registrationEnabled: false,
         tags: { Environment: 'Test' },
       });
@@ -171,7 +180,8 @@ describe('ArmVirtualNetworkLink', () => {
         privateDnsZoneName: 'privatelink.blob.core.windows.net',
         linkName: 'test-link',
         location: 'global',
-        virtualNetworkId: '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
+        virtualNetworkId:
+          '/subscriptions/sub1/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/vnet1',
       });
 
       const template = link.toArmTemplate();

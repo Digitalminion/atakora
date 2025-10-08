@@ -70,9 +70,7 @@ export class FileWriter {
    * Write JSON file with proper formatting
    */
   private writeJsonFile(filePath: string, data: any, prettyPrint: boolean): void {
-    const json = prettyPrint
-      ? JSON.stringify(data, null, 2)
-      : JSON.stringify(data);
+    const json = prettyPrint ? JSON.stringify(data, null, 2) : JSON.stringify(data);
 
     fs.writeFileSync(filePath, json, { mode: 0o644, encoding: 'utf-8' });
   }

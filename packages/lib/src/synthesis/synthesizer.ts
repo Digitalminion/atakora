@@ -79,10 +79,7 @@ export class Synthesizer {
 
     // Collect resources by stack
     const collector = new ResourceCollector();
-    const stackInfoMap = collector.collect(
-      traversalResult.constructs,
-      traversalResult.stacks
-    );
+    const stackInfoMap = collector.collect(traversalResult.constructs, traversalResult.stacks);
 
     // Validate resource organization
     collector.validateResources(stackInfoMap);
@@ -105,10 +102,7 @@ export class Synthesizer {
       const armResources = transformer.transformAll(stackInfo.resources);
 
       // Resolve dependencies
-      const resourcesWithDeps = dependencyResolver.resolve(
-        armResources,
-        stackInfo.resources
-      );
+      const resourcesWithDeps = dependencyResolver.resolve(armResources, stackInfo.resources);
 
       // Sort resources topologically
       const sortedResources = dependencyResolver.topologicalSort(resourcesWithDeps);
@@ -176,10 +170,7 @@ export class Synthesizer {
   /**
    * Phase 4: Assembly - Write templates to disk
    */
-  private assemble(
-    templates: Map<string, ArmTemplate>,
-    options: SynthesisOptions
-  ): CloudAssembly {
+  private assemble(templates: Map<string, ArmTemplate>, options: SynthesisOptions): CloudAssembly {
     const writer = new FileWriter();
     const assembly = writer.write(options.outdir, templates, options.prettyPrint);
 

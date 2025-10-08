@@ -192,8 +192,8 @@ export class ArmPrivateEndpoint extends Resource {
     if (!namePattern.test(props.privateEndpointName)) {
       throw new Error(
         `Invalid private endpoint name: ${props.privateEndpointName}. ` +
-        `Must start with alphanumeric, end with alphanumeric or underscore, ` +
-        `and contain only alphanumerics, underscores, periods, and hyphens.`
+          `Must start with alphanumeric, end with alphanumeric or underscore, ` +
+          `and contain only alphanumerics, underscores, periods, and hyphens.`
       );
     }
 
@@ -237,8 +237,10 @@ export class ArmPrivateEndpoint extends Resource {
         throw new Error('Private DNS zone group must have a name');
       }
 
-      if (!props.privateDnsZoneGroup.privateDnsZoneConfigs ||
-          props.privateDnsZoneGroup.privateDnsZoneConfigs.length === 0) {
+      if (
+        !props.privateDnsZoneGroup.privateDnsZoneConfigs ||
+        props.privateDnsZoneGroup.privateDnsZoneConfigs.length === 0
+      ) {
         throw new Error('Private DNS zone group must have at least one configuration');
       }
 
@@ -248,12 +250,77 @@ export class ArmPrivateEndpoint extends Resource {
         }
 
         if (!config.privateDnsZoneId || config.privateDnsZoneId.trim() === '') {
-          throw new Error(
-            `Private DNS zone config '${config.name}' must have a privateDnsZoneId`
-          );
+          throw new Error(`Private DNS zone config '${config.name}' must have a privateDnsZoneId`);
         }
       });
     }
+  }
+
+  /**
+   * Builds a subnet reference for ARM templates.
+   * Converts a subnet resource ID to a resourceId() expression.
+   *
+   * @param subnetId - Full resource ID of the subnet
+   * @returns ARM resourceId() expression
+   */
+  private buildSubnetReference(subnetId: string): string {
+    // Extract subnet and VNet name from resource ID
+    // Format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/virtualNetworks/{vnet}/subnets/{subnet}
+    const parts = subnetId.split('/');
+    const subnetName = parts[parts.length - 1];
+    const vnetName = parts[parts.length - 3];
+
+    // Generate ARM resourceId() expression
+    return `[resourceId('Microsoft.Network/virtualNetworks/subnets', '${vnetName}', '${subnetName}')]`;
+  }
+
+  /**
+   * Builds a private DNS zone reference for ARM templates.
+   * Converts a DNS zone resource ID to a resourceId() expression.
+   *
+   * @param dnsZoneId - Full resource ID of the private DNS zone
+   * @returns ARM resourceId() expression
+   */
+  private buildPrivateDnsZoneReference(dnsZoneId: string): string {
+    // Extract DNS zone name from resource ID
+    // Format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/privateDnsZones/{zoneName}
+    const parts = dnsZoneId.split('/');
+    const zoneName = parts[parts.length - 1];
+
+    // Generate ARM resourceId() expression
+    return `[resourceId('Microsoft.Network/privateDnsZones', '${zoneName}')]`;
+  }
+
+  /**
+   * Builds a generic resource reference for ARM templates.
+   * Converts a resource ID to a resourceId() expression by extracting the resource type and name.
+   *
+   * @param resourceId - Full resource ID
+   * @returns ARM resourceId() expression
+   */
+  private buildResourceReference(resourceId: string): string {
+    // Extract resource type and name from resource ID
+    // Format: /subscriptions/{sub}/resourceGroups/{rg}/providers/{provider}/{type}/{name}
+    const parts = resourceId.split('/');
+
+    // Find the providers index
+    const providersIndex = parts.indexOf('providers');
+    if (providersIndex === -1 || providersIndex + 2 >= parts.length) {
+      // If we can't parse it, return as-is (shouldn't happen with valid IDs)
+      return resourceId;
+    }
+
+    // Get provider namespace and remaining path
+    const provider = parts[providersIndex + 1];
+    const resourceTypeParts = parts.slice(providersIndex + 2);
+
+    // Build resource type (e.g., "Microsoft.Storage/storageAccounts" or "Microsoft.KeyVault/vaults")
+    // Resource types can be nested like "Microsoft.Network/virtualNetworks/subnets"
+    const resourceType = `${provider}/${resourceTypeParts[resourceTypeParts.length - 2]}`;
+    const resourceName = resourceTypeParts[resourceTypeParts.length - 1];
+
+    // Generate ARM resourceId() expression
+    return `[resourceId('${resourceType}', '${resourceName}')]`;
   }
 
   /**
@@ -267,12 +334,18 @@ export class ArmPrivateEndpoint extends Resource {
   public toArmTemplate(): object {
     const properties: any = {
       subnet: {
-        id: this.subnet.id,
+        // Convert subnet ID to proper ARM expression
+        id: this.subnet.id.startsWith('[')
+          ? this.subnet.id
+          : this.buildSubnetReference(this.subnet.id),
       },
-      privateLinkServiceConnections: this.privateLinkServiceConnections.map(connection => ({
+      privateLinkServiceConnections: this.privateLinkServiceConnections.map((connection) => ({
         name: connection.name,
         properties: {
-          privateLinkServiceId: connection.privateLinkServiceId,
+          // Convert private link service ID to proper ARM expression
+          privateLinkServiceId: connection.privateLinkServiceId.startsWith('[')
+            ? connection.privateLinkServiceId
+            : this.buildResourceReference(connection.privateLinkServiceId),
           groupIds: connection.groupIds,
           ...(connection.requestMessage ? { requestMessage: connection.requestMessage } : {}),
         },
@@ -287,18 +360,21 @@ export class ArmPrivateEndpoint extends Resource {
     // Build dependsOn array for explicit dependencies
     const dependsOn: string[] = [];
 
-    // Add subnet dependency
-    dependsOn.push(this.subnet.id);
+    // Add subnet dependency - convert to resourceId() expression
+    const subnetResourceId = this.buildSubnetReference(this.subnet.id);
+    dependsOn.push(subnetResourceId);
 
     // Add dependencies for all target resources (private link services)
-    this.privateLinkServiceConnections.forEach(connection => {
-      dependsOn.push(connection.privateLinkServiceId);
+    this.privateLinkServiceConnections.forEach((connection) => {
+      const resourceId = this.buildResourceReference(connection.privateLinkServiceId);
+      dependsOn.push(resourceId);
     });
 
     // Add private DNS zone dependencies if using DNS zone group
     if (this.privateDnsZoneGroup) {
-      this.privateDnsZoneGroup.privateDnsZoneConfigs.forEach(config => {
-        dependsOn.push(config.privateDnsZoneId);
+      this.privateDnsZoneGroup.privateDnsZoneConfigs.forEach((config) => {
+        const dnsZoneResourceId = this.buildPrivateDnsZoneReference(config.privateDnsZoneId);
+        dependsOn.push(dnsZoneResourceId);
       });
     }
 
@@ -306,20 +382,21 @@ export class ArmPrivateEndpoint extends Resource {
     const resources: any[] = [];
     if (this.privateDnsZoneGroup) {
       resources.push({
-        type: 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups',
+        type: 'privateDnsZoneGroups', // Just the child type when nested
         apiVersion: '2023-11-01',
-        name: `${this.privateEndpointName}/${this.privateDnsZoneGroup.name}`,
+        name: this.privateDnsZoneGroup.name, // Just the child name when nested
         properties: {
-          privateDnsZoneConfigs: this.privateDnsZoneGroup.privateDnsZoneConfigs.map(config => ({
+          privateDnsZoneConfigs: this.privateDnsZoneGroup.privateDnsZoneConfigs.map((config) => ({
             name: config.name,
             properties: {
-              privateDnsZoneId: config.privateDnsZoneId,
+              // Convert DNS zone ID to proper ARM expression
+              privateDnsZoneId: config.privateDnsZoneId.startsWith('[')
+                ? config.privateDnsZoneId
+                : this.buildPrivateDnsZoneReference(config.privateDnsZoneId),
             },
           })),
         },
-        dependsOn: [
-          `[resourceId('Microsoft.Network/privateEndpoints', '${this.privateEndpointName}')]`,
-        ],
+        dependsOn: [this.privateEndpointName],
       });
     }
 

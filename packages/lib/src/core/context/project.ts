@@ -78,9 +78,7 @@ export class Project extends NamingComponent {
     }
 
     if (this.resourceName.startsWith('-') || this.resourceName.endsWith('-')) {
-      throw new Error(
-        `Project resource name cannot start or end with a hyphen`
-      );
+      throw new Error(`Project resource name cannot start or end with a hyphen`);
     }
   }
 }

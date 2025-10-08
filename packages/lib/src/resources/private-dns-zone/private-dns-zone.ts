@@ -126,7 +126,7 @@ export class PrivateDnsZone extends Construct implements IPrivateDnsZone {
     if (props.location && props.location !== 'global') {
       throw new Error(
         `Private DNS zone location must be 'global', got '${props.location}'. ` +
-        `Private DNS zones are global resources.`
+          `Private DNS zones are global resources.`
       );
     }
     this.location = 'global';
@@ -179,18 +179,14 @@ export class PrivateDnsZone extends Construct implements IPrivateDnsZone {
       const linkName = this.generateLinkName(vnetId, index);
 
       // Create the L1 virtual network link
-      const link = new ArmVirtualNetworkLink(
-        scope,
-        `${id}-VNetLink-${index}`,
-        {
-          privateDnsZoneName: this.zoneName,
-          linkName: linkName,
-          location: 'global',
-          virtualNetworkId: vnetId,
-          registrationEnabled: props.registrationEnabled ?? false,
-          tags: this.tags,
-        }
-      );
+      const link = new ArmVirtualNetworkLink(scope, `${id}-VNetLink-${index}`, {
+        privateDnsZoneName: this.zoneName,
+        linkName: linkName,
+        location: 'global',
+        virtualNetworkId: vnetId,
+        registrationEnabled: props.registrationEnabled ?? false,
+        tags: this.tags,
+      });
 
       this.vnetLinks.push(link);
     });

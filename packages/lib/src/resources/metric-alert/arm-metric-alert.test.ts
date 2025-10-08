@@ -35,7 +35,9 @@ describe('resources/metric-alert/ArmMetricAlert', () => {
         description: 'Alert when CPU exceeds 80%',
         severity: 2,
         enabled: true,
-        scopes: ['/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test'],
+        scopes: [
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        ],
         evaluationFrequency: 'PT1M',
         windowSize: 'PT5M',
         criteria: {
@@ -66,7 +68,9 @@ describe('resources/metric-alert/ArmMetricAlert', () => {
         location: 'Global',
         severity: 2,
         enabled: true,
-        scopes: ['/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test'],
+        scopes: [
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        ],
         evaluationFrequency: 'PT1M',
         windowSize: 'PT5M',
         criteria: {
@@ -84,7 +88,8 @@ describe('resources/metric-alert/ArmMetricAlert', () => {
         },
         actions: [
           {
-            actionGroupId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Insights/actionGroups/ag-test',
+            actionGroupId:
+              '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Insights/actionGroups/ag-test',
             webHookProperties: {},
           },
         ],
@@ -99,7 +104,9 @@ describe('resources/metric-alert/ArmMetricAlert', () => {
         location: 'Global',
         severity: 2,
         enabled: true,
-        scopes: ['/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test'],
+        scopes: [
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        ],
         evaluationFrequency: 'PT1M',
         windowSize: 'PT5M',
         criteria: {
@@ -117,7 +124,9 @@ describe('resources/metric-alert/ArmMetricAlert', () => {
         location: 'Global',
         severity: 2,
         enabled: true,
-        scopes: ['/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test'],
+        scopes: [
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        ],
         evaluationFrequency: 'PT1M',
         windowSize: 'PT5M',
         criteria: {
@@ -135,7 +144,9 @@ describe('resources/metric-alert/ArmMetricAlert', () => {
         location: 'Global',
         severity: 2,
         enabled: true,
-        scopes: ['/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test'],
+        scopes: [
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        ],
         evaluationFrequency: 'PT1M',
         windowSize: 'PT5M',
         criteria: {
@@ -157,7 +168,9 @@ describe('resources/metric-alert/ArmMetricAlert', () => {
           location: 'Global',
           severity: 2,
           enabled: true,
-          scopes: ['/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test'],
+          scopes: [
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+          ],
           evaluationFrequency: 'PT1M',
           windowSize: 'PT5M',
           criteria: {
@@ -175,7 +188,9 @@ describe('resources/metric-alert/ArmMetricAlert', () => {
           location: 'Global',
           severity: 5,
           enabled: true,
-          scopes: ['/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test'],
+          scopes: [
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+          ],
           evaluationFrequency: 'PT1M',
           windowSize: 'PT5M',
           criteria: {
@@ -213,7 +228,9 @@ describe('resources/metric-alert/ArmMetricAlert', () => {
         description: 'CPU alert',
         severity: 2,
         enabled: true,
-        scopes: ['/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test'],
+        scopes: [
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        ],
         evaluationFrequency: 'PT1M',
         windowSize: 'PT5M',
         criteria: {

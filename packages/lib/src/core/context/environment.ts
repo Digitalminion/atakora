@@ -53,7 +53,8 @@ export class Environment extends NamingComponent {
     if (typeof options === 'string') {
       this.abbreviation = Environment.ABBREVIATIONS[options.toLowerCase()] ?? this.resourceName;
     } else {
-      this.abbreviation = options.abbreviation ??
+      this.abbreviation =
+        options.abbreviation ??
         Environment.ABBREVIATIONS[options.value.toLowerCase()] ??
         this.resourceName;
     }

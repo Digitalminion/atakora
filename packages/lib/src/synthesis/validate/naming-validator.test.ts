@@ -45,7 +45,7 @@ describe('synthesis/validate/NamingValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.message.includes('exceeds maximum length'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('exceeds maximum length'))).toBe(true);
     });
 
     it('should detect storage account name too short', () => {
@@ -64,7 +64,9 @@ describe('synthesis/validate/NamingValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.message.includes('shorter than minimum length'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('shorter than minimum length'))).toBe(
+        true
+      );
     });
 
     it('should detect invalid characters in storage account name', () => {
@@ -83,7 +85,7 @@ describe('synthesis/validate/NamingValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.message.includes('invalid characters'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('invalid characters'))).toBe(true);
     });
 
     it('should validate key vault names', () => {
@@ -120,7 +122,7 @@ describe('synthesis/validate/NamingValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.message.includes('invalid characters'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('invalid characters'))).toBe(true);
     });
 
     it('should validate resource group names', () => {
@@ -192,7 +194,9 @@ describe('synthesis/validate/NamingValidator', () => {
 
       const result = validator.validate(template, 'TestStack');
 
-      expect(result.warnings.some(w => w.message.includes('starts or ends with a hyphen'))).toBe(true);
+      expect(result.warnings.some((w) => w.message.includes('starts or ends with a hyphen'))).toBe(
+        true
+      );
     });
 
     it('should warn about names ending with hyphen', () => {
@@ -210,7 +214,9 @@ describe('synthesis/validate/NamingValidator', () => {
 
       const result = validator.validate(template, 'TestStack');
 
-      expect(result.warnings.some(w => w.message.includes('starts or ends with a hyphen'))).toBe(true);
+      expect(result.warnings.some((w) => w.message.includes('starts or ends with a hyphen'))).toBe(
+        true
+      );
     });
 
     it('should warn about consecutive underscores', () => {
@@ -228,7 +234,7 @@ describe('synthesis/validate/NamingValidator', () => {
 
       const result = validator.validate(template, 'TestStack');
 
-      expect(result.warnings.some(w => w.message.includes('consecutive underscores'))).toBe(true);
+      expect(result.warnings.some((w) => w.message.includes('consecutive underscores'))).toBe(true);
     });
 
     it('should warn about consecutive hyphens', () => {
@@ -246,7 +252,7 @@ describe('synthesis/validate/NamingValidator', () => {
 
       const result = validator.validate(template, 'TestStack');
 
-      expect(result.warnings.some(w => w.message.includes('consecutive hyphens'))).toBe(true);
+      expect(result.warnings.some((w) => w.message.includes('consecutive hyphens'))).toBe(true);
     });
 
     it('should apply generic validation for unknown resource types', () => {
@@ -283,7 +289,7 @@ describe('synthesis/validate/NamingValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.message.includes('exceeds'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('exceeds'))).toBe(true);
     });
 
     it('should detect empty resource name', () => {
@@ -302,7 +308,7 @@ describe('synthesis/validate/NamingValidator', () => {
       const result = validator.validate(template, 'TestStack');
 
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.message.includes('empty'))).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('empty'))).toBe(true);
     });
 
     it('should warn about special characters in generic names', () => {
@@ -320,7 +326,7 @@ describe('synthesis/validate/NamingValidator', () => {
 
       const result = validator.validate(template, 'TestStack');
 
-      expect(result.warnings.some(w => w.message.includes('special characters'))).toBe(true);
+      expect(result.warnings.some((w) => w.message.includes('special characters'))).toBe(true);
     });
 
     it('should validate multiple resources', () => {

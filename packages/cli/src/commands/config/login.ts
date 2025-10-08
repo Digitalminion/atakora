@@ -1,17 +1,21 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
-import { AzureAuthService } from '../../auth/azure-auth';
+import { authManager } from '../../auth/auth-manager';
 
 export function loginCommand(): Command {
   const login = new Command('login')
     .description('Authenticate with Azure using interactive browser login')
-    .option('--cloud <cloud>', 'Azure cloud environment (AzureCloud, AzureUSGovernment, AzureChinaCloud, AzureGermanCloud)', 'AzureCloud')
+    .option(
+      '--cloud <cloud>',
+      'Azure cloud environment (AzureCloud, AzureUSGovernment, AzureChinaCloud, AzureGermanCloud)',
+      'AzureCloud'
+    )
     .action(async (options) => {
       const spinner = ora('Opening browser for authentication...').start();
 
       try {
-        const authService = new AzureAuthService(options.cloud);
+        const authService = authManager.getAuthService(options.cloud);
         const result = await authService.login();
 
         if (result.success) {
@@ -37,9 +41,7 @@ export function loginCommand(): Command {
         }
       } catch (error) {
         spinner.fail(chalk.red('Authentication failed'));
-        console.error(
-          chalk.red(error instanceof Error ? error.message : 'Unknown error')
-        );
+        console.error(chalk.red(error instanceof Error ? error.message : 'Unknown error'));
         process.exit(1);
       }
     });

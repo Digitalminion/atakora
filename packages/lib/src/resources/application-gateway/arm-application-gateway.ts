@@ -97,8 +97,7 @@ export class ArmApplicationGateway extends Resource {
   /**
    * Deployment scope for application gateways.
    */
-  public readonly scope: DeploymentScope.ResourceGroup =
-    DeploymentScope.ResourceGroup;
+  public readonly scope: DeploymentScope.ResourceGroup = DeploymentScope.ResourceGroup;
 
   /**
    * Name of the application gateway.
@@ -214,11 +213,7 @@ export class ArmApplicationGateway extends Resource {
    * @throws {Error} If location is empty
    * @throws {Error} If required collections are empty
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props: ArmApplicationGatewayProps
-  ) {
+  constructor(scope: Construct, id: string, props: ArmApplicationGatewayProps) {
     super(scope, id);
 
     // Validate required properties
@@ -241,8 +236,7 @@ export class ArmApplicationGateway extends Resource {
     this.probes = props.probes;
     this.sslCertificates = props.sslCertificates;
     this.redirectConfigurations = props.redirectConfigurations;
-    this.webApplicationFirewallConfiguration =
-      props.webApplicationFirewallConfiguration;
+    this.webApplicationFirewallConfiguration = props.webApplicationFirewallConfiguration;
     this.firewallPolicy = props.firewallPolicy;
     this.enableHttp2 = props.enableHttp2;
 
@@ -263,9 +257,7 @@ export class ArmApplicationGateway extends Resource {
     }
 
     if (props.gatewayName.length > 80) {
-      throw new Error(
-        'Application gateway name must be 80 characters or less'
-      );
+      throw new Error('Application gateway name must be 80 characters or less');
     }
 
     // Validate location
@@ -288,52 +280,31 @@ export class ArmApplicationGateway extends Resource {
     }
 
     // Validate required collections
-    if (
-      !props.gatewayIPConfigurations ||
-      props.gatewayIPConfigurations.length === 0
-    ) {
-      throw new Error(
-        'At least one gateway IP configuration must be specified'
-      );
+    if (!props.gatewayIPConfigurations || props.gatewayIPConfigurations.length === 0) {
+      throw new Error('At least one gateway IP configuration must be specified');
     }
 
-    if (
-      !props.frontendIPConfigurations ||
-      props.frontendIPConfigurations.length === 0
-    ) {
-      throw new Error(
-        'At least one frontend IP configuration must be specified'
-      );
+    if (!props.frontendIPConfigurations || props.frontendIPConfigurations.length === 0) {
+      throw new Error('At least one frontend IP configuration must be specified');
     }
 
     if (!props.frontendPorts || props.frontendPorts.length === 0) {
       throw new Error('At least one frontend port must be specified');
     }
 
-    if (
-      !props.backendAddressPools ||
-      props.backendAddressPools.length === 0
-    ) {
+    if (!props.backendAddressPools || props.backendAddressPools.length === 0) {
       throw new Error('At least one backend address pool must be specified');
     }
 
-    if (
-      !props.backendHttpSettingsCollection ||
-      props.backendHttpSettingsCollection.length === 0
-    ) {
-      throw new Error(
-        'At least one backend HTTP settings must be specified'
-      );
+    if (!props.backendHttpSettingsCollection || props.backendHttpSettingsCollection.length === 0) {
+      throw new Error('At least one backend HTTP settings must be specified');
     }
 
     if (!props.httpListeners || props.httpListeners.length === 0) {
       throw new Error('At least one HTTP listener must be specified');
     }
 
-    if (
-      !props.requestRoutingRules ||
-      props.requestRoutingRules.length === 0
-    ) {
+    if (!props.requestRoutingRules || props.requestRoutingRules.length === 0) {
       throw new Error('At least one request routing rule must be specified');
     }
 
@@ -366,9 +337,7 @@ export class ArmApplicationGateway extends Resource {
       }
 
       if (!rule.priority || rule.priority < 1 || rule.priority > 20000) {
-        throw new Error(
-          'Request routing rule priority must be between 1 and 20000'
-        );
+        throw new Error('Request routing rule priority must be between 1 and 20000');
       }
 
       if (!rule.httpListener || !rule.httpListener.id) {
@@ -376,8 +345,7 @@ export class ArmApplicationGateway extends Resource {
       }
 
       // Must have either backend pool + settings, redirect, or URL path map
-      const hasBackend =
-        rule.backendAddressPool && rule.backendHttpSettings;
+      const hasBackend = rule.backendAddressPool && rule.backendHttpSettings;
       const hasRedirect = rule.redirectConfiguration;
       const hasPathMap = rule.urlPathMap;
 
@@ -410,44 +378,39 @@ export class ArmApplicationGateway extends Resource {
           tier: this.sku.tier,
           capacity: this.sku.capacity,
         },
-        gatewayIPConfigurations: this.gatewayIPConfigurations.map(
-          (config) => ({
-            name: config.name,
-            properties: {
-              subnet: {
-                id: config.subnet.id,
-              },
+        gatewayIPConfigurations: this.gatewayIPConfigurations.map((config) => ({
+          name: config.name,
+          properties: {
+            subnet: {
+              id: config.subnet.id,
             },
-          })
-        ),
-        frontendIPConfigurations: this.frontendIPConfigurations.map(
-          (config) => {
-            const properties: any = {};
+          },
+        })),
+        frontendIPConfigurations: this.frontendIPConfigurations.map((config) => {
+          const properties: any = {};
 
-            if (config.publicIPAddress) {
-              properties.publicIPAddress = {
-                id: config.publicIPAddress.id,
-              };
-            }
-
-            if (config.privateIPAddress) {
-              properties.privateIPAddress = config.privateIPAddress;
-              properties.privateIPAllocationMethod =
-                config.privateIPAllocationMethod || 'Dynamic';
-            }
-
-            if (config.subnet) {
-              properties.subnet = {
-                id: config.subnet.id,
-              };
-            }
-
-            return {
-              name: config.name,
-              properties,
+          if (config.publicIPAddress) {
+            properties.publicIPAddress = {
+              id: config.publicIPAddress.id,
             };
           }
-        ),
+
+          if (config.privateIPAddress) {
+            properties.privateIPAddress = config.privateIPAddress;
+            properties.privateIPAllocationMethod = config.privateIPAllocationMethod || 'Dynamic';
+          }
+
+          if (config.subnet) {
+            properties.subnet = {
+              id: config.subnet.id,
+            };
+          }
+
+          return {
+            name: config.name,
+            properties,
+          };
+        }),
         frontendPorts: this.frontendPorts.map((port) => ({
           name: port.name,
           properties: {
@@ -460,33 +423,31 @@ export class ArmApplicationGateway extends Resource {
             backendAddresses: pool.backendAddresses || [],
           },
         })),
-        backendHttpSettingsCollection:
-          this.backendHttpSettingsCollection.map((settings) => {
-            const properties: any = {
-              port: settings.port,
-              protocol: settings.protocol,
-              cookieBasedAffinity: settings.cookieBasedAffinity,
-              requestTimeout: settings.requestTimeout,
-            };
+        backendHttpSettingsCollection: this.backendHttpSettingsCollection.map((settings) => {
+          const properties: any = {
+            port: settings.port,
+            protocol: settings.protocol,
+            cookieBasedAffinity: settings.cookieBasedAffinity,
+            requestTimeout: settings.requestTimeout,
+          };
 
-            if (settings.probe) {
-              properties.probe = settings.probe;
-            }
+          if (settings.probe) {
+            properties.probe = settings.probe;
+          }
 
-            if (settings.pickHostNameFromBackendAddress !== undefined) {
-              properties.pickHostNameFromBackendAddress =
-                settings.pickHostNameFromBackendAddress;
-            }
+          if (settings.pickHostNameFromBackendAddress !== undefined) {
+            properties.pickHostNameFromBackendAddress = settings.pickHostNameFromBackendAddress;
+          }
 
-            if (settings.hostName) {
-              properties.hostName = settings.hostName;
-            }
+          if (settings.hostName) {
+            properties.hostName = settings.hostName;
+          }
 
-            return {
-              name: settings.name,
-              properties,
-            };
-          }),
+          return {
+            name: settings.name,
+            properties,
+          };
+        }),
         httpListeners: this.httpListeners.map((listener) => {
           const properties: any = {
             frontendIPConfiguration: listener.frontendIPConfiguration,
@@ -499,8 +460,7 @@ export class ArmApplicationGateway extends Resource {
           }
 
           if (listener.requireServerNameIndication !== undefined) {
-            properties.requireServerNameIndication =
-              listener.requireServerNameIndication;
+            properties.requireServerNameIndication = listener.requireServerNameIndication;
           }
 
           if (listener.sslCertificate) {
@@ -579,61 +539,55 @@ export class ArmApplicationGateway extends Resource {
     }
 
     if (this.sslCertificates && this.sslCertificates.length > 0) {
-      template.properties.sslCertificates = this.sslCertificates.map(
-        (cert) => {
-          const properties: any = {};
+      template.properties.sslCertificates = this.sslCertificates.map((cert) => {
+        const properties: any = {};
 
-          if (cert.keyVaultSecretId) {
-            properties.keyVaultSecretId = cert.keyVaultSecretId;
-          }
-
-          if (cert.data) {
-            properties.data = cert.data;
-          }
-
-          if (cert.password) {
-            properties.password = cert.password;
-          }
-
-          return {
-            name: cert.name,
-            properties,
-          };
+        if (cert.keyVaultSecretId) {
+          properties.keyVaultSecretId = cert.keyVaultSecretId;
         }
-      );
+
+        if (cert.data) {
+          properties.data = cert.data;
+        }
+
+        if (cert.password) {
+          properties.password = cert.password;
+        }
+
+        return {
+          name: cert.name,
+          properties,
+        };
+      });
     }
 
-    if (
-      this.redirectConfigurations &&
-      this.redirectConfigurations.length > 0
-    ) {
-      template.properties.redirectConfigurations =
-        this.redirectConfigurations.map((redirect) => {
-          const properties: any = {
-            redirectType: redirect.redirectType,
-          };
+    if (this.redirectConfigurations && this.redirectConfigurations.length > 0) {
+      template.properties.redirectConfigurations = this.redirectConfigurations.map((redirect) => {
+        const properties: any = {
+          redirectType: redirect.redirectType,
+        };
 
-          if (redirect.targetListener) {
-            properties.targetListener = redirect.targetListener;
-          }
+        if (redirect.targetListener) {
+          properties.targetListener = redirect.targetListener;
+        }
 
-          if (redirect.targetUrl) {
-            properties.targetUrl = redirect.targetUrl;
-          }
+        if (redirect.targetUrl) {
+          properties.targetUrl = redirect.targetUrl;
+        }
 
-          if (redirect.includePath !== undefined) {
-            properties.includePath = redirect.includePath;
-          }
+        if (redirect.includePath !== undefined) {
+          properties.includePath = redirect.includePath;
+        }
 
-          if (redirect.includeQueryString !== undefined) {
-            properties.includeQueryString = redirect.includeQueryString;
-          }
+        if (redirect.includeQueryString !== undefined) {
+          properties.includeQueryString = redirect.includeQueryString;
+        }
 
-          return {
-            name: redirect.name,
-            properties,
-          };
-        });
+        return {
+          name: redirect.name,
+          properties,
+        };
+      });
     }
 
     if (this.webApplicationFirewallConfiguration) {
@@ -649,6 +603,42 @@ export class ArmApplicationGateway extends Resource {
 
     if (this.enableHttp2 !== undefined) {
       template.properties.enableHttp2 = this.enableHttp2;
+    }
+
+    // Build dependsOn array for explicit dependencies
+    const dependsOn: string[] = [];
+    const uniqueDeps = new Set<string>();
+
+    // Add subnet dependencies from gateway IP configurations
+    // Subnets in gatewayIPConfigurations have their IDs transformed to resourceId() expressions
+    // by the L2 construct before being passed to the L1
+    for (const config of this.gatewayIPConfigurations) {
+      if (config.subnet?.id) {
+        uniqueDeps.add(config.subnet.id);
+      }
+    }
+
+    // Add subnet dependencies from frontend IP configurations
+    for (const config of this.frontendIPConfigurations) {
+      if (config.subnet?.id) {
+        uniqueDeps.add(config.subnet.id);
+      }
+      if (config.publicIPAddress?.id) {
+        uniqueDeps.add(config.publicIPAddress.id);
+      }
+    }
+
+    // Add WAF policy dependency
+    if (this.firewallPolicy?.id) {
+      uniqueDeps.add(this.firewallPolicy.id);
+    }
+
+    // Convert set to array
+    dependsOn.push(...Array.from(uniqueDeps));
+
+    // Only include dependsOn if there are dependencies
+    if (dependsOn.length > 0) {
+      template.dependsOn = dependsOn;
     }
 
     return template;

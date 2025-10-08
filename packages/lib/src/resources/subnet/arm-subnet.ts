@@ -173,6 +173,23 @@ export class ArmSubnet extends Resource {
   }
 
   /**
+   * Builds an NSG reference for ARM templates.
+   * Converts an NSG resource ID to a resourceId() expression.
+   *
+   * @param nsgId - Full resource ID of the Network Security Group
+   * @returns ARM resourceId() expression
+   */
+  private buildNsgReference(nsgId: string): string {
+    // Extract NSG name from resource ID
+    // Format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/networkSecurityGroups/{nsgName}
+    const parts = nsgId.split('/');
+    const nsgName = parts[parts.length - 1];
+
+    // Generate ARM resourceId() expression
+    return `[resourceId('Microsoft.Network/networkSecurityGroups', '${nsgName}')]`;
+  }
+
+  /**
    * Validates subnet properties against ARM constraints.
    *
    * @param props - Properties to validate
@@ -200,9 +217,7 @@ export class ArmSubnet extends Resource {
     } else {
       // Using addressPrefix
       if (!props.addressPrefix || props.addressPrefix.trim() === '') {
-        throw new Error(
-          'Either addressPrefix or addressPrefixes must be provided'
-        );
+        throw new Error('Either addressPrefix or addressPrefixes must be provided');
       }
 
       // Basic CIDR validation
@@ -210,16 +225,14 @@ export class ArmSubnet extends Resource {
       if (!cidrPattern.test(props.addressPrefix)) {
         throw new Error(
           `Invalid CIDR notation for addressPrefix: ${props.addressPrefix}. ` +
-          `Expected format: xxx.xxx.xxx.xxx/xx (e.g., 10.0.1.0/24)`
+            `Expected format: xxx.xxx.xxx.xxx/xx (e.g., 10.0.1.0/24)`
         );
       }
     }
 
     // Validate sharingScope requirements
     if (props.sharingScope && props.defaultOutboundAccess !== false) {
-      throw new Error(
-        'sharingScope can only be set when defaultOutboundAccess is set to false'
-      );
+      throw new Error('sharingScope can only be set when defaultOutboundAccess is set to false');
     }
   }
 
@@ -247,13 +260,15 @@ export class ArmSubnet extends Resource {
 
     // Optional properties
     if (this.networkSecurityGroup) {
+      // Convert NSG ID to ARM resourceId() expression for properties
+      const nsgResourceId = this.buildNsgReference(this.networkSecurityGroup.id);
       properties.networkSecurityGroup = {
-        id: this.networkSecurityGroup.id,
+        id: nsgResourceId,
       };
     }
 
     if (this.serviceEndpoints && this.serviceEndpoints.length > 0) {
-      properties.serviceEndpoints = this.serviceEndpoints.map(endpoint => ({
+      properties.serviceEndpoints = this.serviceEndpoints.map((endpoint) => ({
         service: endpoint.service,
         ...(endpoint.locations && endpoint.locations.length > 0
           ? { locations: endpoint.locations }
@@ -262,7 +277,7 @@ export class ArmSubnet extends Resource {
     }
 
     if (this.delegations && this.delegations.length > 0) {
-      properties.delegations = this.delegations.map(delegation => ({
+      properties.delegations = this.delegations.map((delegation) => ({
         name: delegation.name,
         properties: {
           serviceName: delegation.serviceName,
@@ -291,7 +306,9 @@ export class ArmSubnet extends Resource {
 
     // Add NSG dependency if referenced
     if (this.networkSecurityGroup) {
-      dependsOn.push(this.networkSecurityGroup.id);
+      // Convert NSG ID to ARM resourceId() expression
+      const nsgResourceId = this.buildNsgReference(this.networkSecurityGroup.id);
+      dependsOn.push(nsgResourceId);
     }
 
     const template: any = {

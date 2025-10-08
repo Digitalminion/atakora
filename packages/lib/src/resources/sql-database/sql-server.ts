@@ -1,12 +1,7 @@
 import { Construct } from '../../core/construct';
 import type { IResourceGroup } from '../resource-group/types';
 import { ArmSqlServer } from './arm-sql-server';
-import type {
-  SqlServerProps,
-  ISqlServer,
-  SqlServerVersion,
-  PublicNetworkAccess,
-} from './types';
+import type { SqlServerProps, ISqlServer, SqlServerVersion, PublicNetworkAccess } from './types';
 
 /**
  * L2 construct for Azure SQL Server.

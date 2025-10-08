@@ -1,7 +1,13 @@
 import { Construct } from '../../core/construct';
 import { Resource } from '../../core/resource';
 import { DeploymentScope } from '../../core/azure/scopes';
-import type { ArmApplicationInsightsProps, ApplicationType, FlowType, PublicNetworkAccess, IngestionMode } from './types';
+import type {
+  ArmApplicationInsightsProps,
+  ApplicationType,
+  FlowType,
+  PublicNetworkAccess,
+  IngestionMode,
+} from './types';
 
 /**
  * L1 construct for Azure Application Insights.
@@ -23,7 +29,7 @@ import type { ArmApplicationInsightsProps, ApplicationType, FlowType, PublicNetw
  * import { ArmApplicationInsights, ApplicationType } from '@atakora/lib';
  *
  * const appInsights = new ArmApplicationInsights(resourceGroup, 'AppInsights', {
- *   name: 'appi-colorai-nonprod-eus-01',
+ *   name: 'appi-colorai-nonprod-eus-00',
  *   location: 'eastus',
  *   kind: 'web',
  *   applicationType: ApplicationType.WEB,
@@ -162,11 +168,7 @@ export class ArmApplicationInsights extends Resource {
    * @throws {Error} If location is empty
    * @throws {Error} If required properties are missing
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props: ArmApplicationInsightsProps
-  ) {
+  constructor(scope: Construct, id: string, props: ArmApplicationInsightsProps) {
     super(scope, id);
 
     // Validate required properties

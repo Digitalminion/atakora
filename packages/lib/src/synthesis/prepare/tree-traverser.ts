@@ -63,9 +63,7 @@ export class TreeTraverser {
 
     // Detect circular references
     if (this.visited.has(nodeId)) {
-      throw new Error(
-        `Circular reference detected in construct tree at: ${nodeId}`
-      );
+      throw new Error(`Circular reference detected in construct tree at: ${nodeId}`);
     }
 
     // Validate node
@@ -81,7 +79,10 @@ export class TreeTraverser {
 
     // Check if this is a stack (has metadata indicating stack scope)
     const metadata = node.node.metadata;
-    if (metadata && metadata.some((m) => m.type === 'aws:cdk:stack' || m.type === 'azure:arm:stack')) {
+    if (
+      metadata &&
+      metadata.some((m) => m.type === 'aws:cdk:stack' || m.type === 'azure:arm:stack')
+    ) {
       stacks.set(nodeId, node);
     }
 
@@ -102,7 +103,10 @@ export class TreeTraverser {
 
     while (current) {
       const metadata = current.node.metadata;
-      if (metadata && metadata.some((m) => m.type === 'aws:cdk:stack' || m.type === 'azure:arm:stack')) {
+      if (
+        metadata &&
+        metadata.some((m) => m.type === 'aws:cdk:stack' || m.type === 'azure:arm:stack')
+      ) {
         return current;
       }
 

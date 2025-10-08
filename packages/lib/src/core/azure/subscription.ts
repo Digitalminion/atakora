@@ -90,8 +90,7 @@ export class Subscription {
     this.abbreviation = props.abbreviation ?? this.generateAbbreviation();
 
     // Auto-generate resource name if not provided
-    this.resourceName =
-      props.resourceName ?? this.generateResourceName(props.displayName);
+    this.resourceName = props.resourceName ?? this.generateResourceName(props.displayName);
   }
 
   /**
@@ -122,8 +121,7 @@ export class Subscription {
    * ```
    */
   public static validateSubscriptionId(id: string): boolean {
-    const guidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const guidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     return guidRegex.test(id);
   }
 

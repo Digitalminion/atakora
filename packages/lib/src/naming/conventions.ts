@@ -26,15 +26,15 @@ export const DEFAULT_PATTERNS: ResourceTypePatterns = {
   dnsZoneLink: 'dns-link',
 
   // Compute Services
-  appService: 'app',
-  appServicePlan: 'asp',
-  appGateway: 'agw',
+  appService: 'appsrv',
+  appServicePlan: 'aspsrvpl',
+  appGateway: 'appgw',
   wafPolicy: 'waf',
 
   // Data Services
-  storage: 'st',
+  storage: 'sto',
   keyvault: 'kv',
-  cosmos: 'cosmos',
+  cosmos: 'cosdb',
   search: 'srch',
 
   // AI Services
@@ -44,7 +44,7 @@ export const DEFAULT_PATTERNS: ResourceTypePatterns = {
   apim: 'apim',
 
   // Monitoring Services
-  logAnalytics: 'law',
+  logAnalytics: 'log',
   applicationInsights: 'ai',
   actionGroup: 'ag',
   dashboard: 'dash',
@@ -125,9 +125,7 @@ export const DEFAULT_CONVENTIONS: NamingConventions = {
  * // - maxLength: 60 (from defaults)
  * ```
  */
-export function mergeConventions(
-  config?: NamingConventionConfig
-): NamingConventions {
+export function mergeConventions(config?: NamingConventionConfig): NamingConventions {
   if (!config) {
     return DEFAULT_CONVENTIONS;
   }
@@ -199,7 +197,5 @@ export function isSpecialCaseResource(resourceType: string): boolean {
 export function getSpecialCaseRules(
   resourceType: string
 ): { removeHyphens?: boolean; forceLowercase?: boolean } | undefined {
-  return SPECIAL_CASE_RESOURCES[
-    resourceType as keyof typeof SPECIAL_CASE_RESOURCES
-  ];
+  return SPECIAL_CASE_RESOURCES[resourceType as keyof typeof SPECIAL_CASE_RESOURCES];
 }

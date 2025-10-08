@@ -115,9 +115,7 @@ export function generateScopedName(
   // Validate parameters for scope
   const validation = validateScopedParams(params);
   if (!validation.isValid) {
-    throw new Error(
-      `Invalid scoped naming parameters: ${validation.errors.join(', ')}`
-    );
+    throw new Error(`Invalid scoped naming parameters: ${validation.errors.join(', ')}`);
   }
 
   // Get resource pattern
@@ -180,8 +178,7 @@ export function generateScopedName(
   }
 
   // Apply length limits
-  const maxLength =
-    conv.maxLengths[params.resourceType] ?? conv.maxLength;
+  const maxLength = conv.maxLengths[params.resourceType] ?? conv.maxLength;
   if (name.length > maxLength) {
     name = name.substring(0, maxLength);
   }
@@ -208,9 +205,7 @@ export function generateScopedName(
  * // result.errors === ['Missing required parameter: environment', ...]
  * ```
  */
-export function validateScopedParams(
-  params: ScopedResourceNameParams
-): ValidationResult {
+export function validateScopedParams(params: ScopedResourceNameParams): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 

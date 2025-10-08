@@ -46,7 +46,8 @@ describe('resources/application-insights/ApplicationInsights', () => {
     // Mock workspace
     workspace = {
       workspaceName: 'log-test-001',
-      workspaceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/log-test-001',
+      workspaceId:
+        '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/log-test-001',
     };
   });
 
@@ -121,7 +122,9 @@ describe('resources/application-insights/ApplicationInsights', () => {
       );
 
       expect(appInsights.name).toBe('appi-existing');
-      expect(appInsights.resourceId).toBe('/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Insights/components/appi-existing');
+      expect(appInsights.resourceId).toBe(
+        '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Insights/components/appi-existing'
+      );
     });
   });
 });

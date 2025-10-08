@@ -270,12 +270,7 @@ describe('resources/log-analytics-workspace/ArmLogAnalyticsWorkspace', () => {
     });
 
     it('should accept valid workspace names', () => {
-      const validNames = [
-        'log-analytics-001',
-        'LogAnalytics123',
-        'log123',
-        'my-log-workspace-01',
-      ];
+      const validNames = ['log-analytics-001', 'LogAnalytics123', 'log123', 'my-log-workspace-01'];
 
       validNames.forEach((name) => {
         const workspace = new ArmLogAnalyticsWorkspace(stack, `WS-${name}`, {

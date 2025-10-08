@@ -28,9 +28,11 @@ describe('resources/diagnostic-setting/DiagnosticSetting', () => {
   describe('constructor', () => {
     it('should create diagnostic setting with all logs enabled', () => {
       const diagnostic = new DiagnosticSetting(stack, 'Diagnostic', {
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
         workspace: {
-          workspaceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/law-test',
+          workspaceId:
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/law-test',
         },
         logCategories: 'all',
         enableAllMetrics: true,
@@ -42,9 +44,11 @@ describe('resources/diagnostic-setting/DiagnosticSetting', () => {
 
     it('should create diagnostic setting with specific log categories', () => {
       const diagnostic = new DiagnosticSetting(stack, 'Diagnostic', {
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
         workspace: {
-          workspaceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/law-test',
+          workspaceId:
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/law-test',
         },
         logCategories: ['AppServiceHTTPLogs', 'AppServiceConsoleLogs'],
         enableAllMetrics: true,
@@ -56,9 +60,11 @@ describe('resources/diagnostic-setting/DiagnosticSetting', () => {
     it('should create diagnostic setting with custom name', () => {
       const diagnostic = new DiagnosticSetting(stack, 'Diagnostic', {
         name: 'send-to-workspace',
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
         workspace: {
-          workspaceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/law-test',
+          workspaceId:
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/law-test',
         },
         logCategories: 'all',
       });
@@ -68,9 +74,11 @@ describe('resources/diagnostic-setting/DiagnosticSetting', () => {
 
     it('should create diagnostic setting with retention policy', () => {
       const diagnostic = new DiagnosticSetting(stack, 'Diagnostic', {
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
         workspace: {
-          workspaceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/law-test',
+          workspaceId:
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/law-test',
         },
         logCategories: 'all',
         enableAllMetrics: true,
@@ -82,9 +90,11 @@ describe('resources/diagnostic-setting/DiagnosticSetting', () => {
 
     it('should create diagnostic setting with storage account destination', () => {
       const diagnostic = new DiagnosticSetting(stack, 'Diagnostic', {
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
         storageAccount: {
-          storageAccountId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/st-test',
+          storageAccountId:
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Storage/storageAccounts/st-test',
         },
         logCategories: 'all',
       });
@@ -94,9 +104,11 @@ describe('resources/diagnostic-setting/DiagnosticSetting', () => {
 
     it('should create diagnostic setting with Event Hub destination', () => {
       const diagnostic = new DiagnosticSetting(stack, 'Diagnostic', {
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
         eventHub: {
-          authorizationRuleId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.EventHub/namespaces/eh-ns/authorizationRules/RootManageSharedAccessKey',
+          authorizationRuleId:
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.EventHub/namespaces/eh-ns/authorizationRules/RootManageSharedAccessKey',
           name: 'diagnostics',
         },
         logCategories: 'all',
@@ -107,9 +119,11 @@ describe('resources/diagnostic-setting/DiagnosticSetting', () => {
 
     it('should create diagnostic setting with advanced log settings', () => {
       const diagnostic = new DiagnosticSetting(stack, 'Diagnostic', {
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
         workspace: {
-          workspaceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/law-test',
+          workspaceId:
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/law-test',
         },
         logs: [
           {
@@ -130,9 +144,11 @@ describe('resources/diagnostic-setting/DiagnosticSetting', () => {
 
     it('should create diagnostic setting with advanced metric settings', () => {
       const diagnostic = new DiagnosticSetting(stack, 'Diagnostic', {
-        targetResourceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        targetResourceId:
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
         workspace: {
-          workspaceId: '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/law-test',
+          workspaceId:
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.OperationalInsights/workspaces/law-test',
         },
         logCategories: 'all',
         metrics: [
@@ -157,7 +173,9 @@ describe('resources/diagnostic-setting/DiagnosticSetting', () => {
       );
 
       expect(diagnostic.name).toBe('diagnostics');
-      expect(diagnostic.resourceId).toBe('/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test/providers/Microsoft.Insights/diagnosticSettings/diagnostics');
+      expect(diagnostic.resourceId).toBe(
+        '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test/providers/Microsoft.Insights/diagnosticSettings/diagnostics'
+      );
     });
   });
 });

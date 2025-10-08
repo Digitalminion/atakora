@@ -1,7 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { Construct } from '../../core/construct';
 import { ArmCosmosDbAccount } from './arm-cosmos-db-account';
-import { DatabaseAccountOfferType, ConsistencyLevel, CosmosDbKind, PublicNetworkAccess } from './types';
+import {
+  DatabaseAccountOfferType,
+  ConsistencyLevel,
+  CosmosDbKind,
+  PublicNetworkAccess,
+} from './types';
 
 describe('ArmCosmosDbAccount', () => {
   let mockScope: Construct;

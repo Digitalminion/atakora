@@ -319,8 +319,15 @@ describe('naming/generator', () => {
         const generator = new ResourceNameGenerator();
 
         const resourceTypes = [
-          'rg', 'vnet', 'subnet', 'nsg', 'storage',
-          'keyvault', 'cosmos', 'appService', 'appGateway'
+          'rg',
+          'vnet',
+          'subnet',
+          'nsg',
+          'storage',
+          'keyvault',
+          'cosmos',
+          'appService',
+          'appGateway',
         ];
 
         const params = {

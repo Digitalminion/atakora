@@ -53,8 +53,4 @@ export type {
 } from './types';
 
 // Enums
-export {
-  AppServicePlanSkuName,
-  AppServicePlanSkuTier,
-  AppServicePlanKind,
-} from './types';
+export { AppServicePlanSkuName, AppServicePlanSkuTier, AppServicePlanKind } from './types';

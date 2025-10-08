@@ -1,0 +1,130 @@
+{
+  "summary": "Naming convention fixes applied - all resource names now follow proper patterns without duplication",
+  "namingPatterns": {
+    "globallyUnique": {
+      "description": "Resources that must be globally unique across all of Azure",
+      "pattern": "<prefix>-<project>-<instance>-<hash>",
+      "exceptions": {
+        "storageAccount": "sto<project><instance><hash> (no hyphens allowed)"
+      }
+    },
+    "regionalUnique": {
+      "description": "Resources that must be unique within a region/subscription",
+      "pattern": "<prefix>-<org>-<project>-<purpose>-<env>-<geo>-<instance>"
+    },
+    "privateEndpoints": {
+      "description": "Private endpoints use service abbreviation as purpose",
+      "pattern": "pe-<service-abbr>-<org>-<project>-<env>-<geo>-<instance>"
+    }
+  },
+  "stacks": {
+    "data": {
+      "tag": "stack: data",
+      "resources": [
+        {
+          "type": "Storage Account",
+          "name": "stocolorai044b609962",
+          "pattern": "sto<project><instance><hash>",
+          "globallyUnique": true
+        },
+        {
+          "type": "Private Endpoint (Storage)",
+          "name": "pe-sto-digitalproducts-colorai-nonprod-eus2-04"
+        },
+        {
+          "type": "Key Vault",
+          "name": "kv-colorai-04-2df08878",
+          "pattern": "kv-<project>-<instance>-<hash>",
+          "globallyUnique": true
+        },
+        {
+          "type": "Private Endpoint (Key Vault)",
+          "name": "pe-kv-digitalproducts-colorai-nonprod-eus2-04"
+        },
+        {
+          "type": "Cosmos DB",
+          "name": "cosdb-colorai-04-18bddfd3",
+          "pattern": "cosdb-<project>-<instance>-<hash>",
+          "globallyUnique": true
+        },
+        {
+          "type": "Private Endpoint (Cosmos DB)",
+          "name": "pe-cosdb-digitalproducts-colorai-nonprod-eus2-04"
+        },
+        {
+          "type": "Search Service",
+          "name": "srch-digitalproducts-colorai-nonprod-eus2-04"
+        },
+        {
+          "type": "Private Endpoint (Search)",
+          "name": "pe-srch-digitalproducts-colorai-nonprod-eus2-04"
+        },
+        {
+          "type": "OpenAI Service",
+          "name": "oai-colorai-04-4e516db5",
+          "pattern": "oai-<project>-<instance>-<hash>",
+          "globallyUnique": true
+        },
+        {
+          "type": "Private Endpoint (OpenAI)",
+          "name": "pe-oai-digitalproducts-colorai-nonprod-eus2-04"
+        }
+      ]
+    },
+    "application": {
+      "tag": "stack: application",
+      "resources": [
+        {
+          "type": "App Service Plan",
+          "name": "aspsrvpl-digitalproducts-colorai-nonprod"
+        },
+        {
+          "type": "App Service",
+          "name": "appsrv-colorai-04-5501f810",
+          "pattern": "appsrv-<project>-<instance>-<hash>",
+          "globallyUnique": true
+        }
+      ]
+    },
+    "connectivity": {
+      "tag": "stack: connectivity",
+      "resources": [
+        {
+          "type": "Public IP Address",
+          "name": "pip-digitalproducts-colorai-nonprod-eus2-04"
+        },
+        {
+          "type": "WAF Policy",
+          "name": "waf-digitalproducts-colorai-nonprod-eus2-04"
+        },
+        {
+          "type": "Application Gateway",
+          "name": "appgw-digitalproducts-colorai-nonprod-eus2-04"
+        }
+      ]
+    },
+    "networking": {
+      "resources": [
+        {
+          "type": "Virtual Network",
+          "name": "vnet-digitalproducts-colorai-nonprod-eus2-04"
+        },
+        {
+          "type": "Log Analytics Workspace",
+          "name": "log-digitalproducts-colorai-nonprod-eus2-04"
+        }
+      ]
+    }
+  },
+  "fixesApplied": [
+    "Removed duplicate stack prefixes (data, connectivity, application)",
+    "Removed duplicate resource type names (vnet-vnet, srch-datasearch)",
+    "Updated App Service Plan abbreviation: asp → aspsrvpl",
+    "Updated App Service abbreviation: app → appsrv",
+    "Updated Log Analytics abbreviation: law → log",
+    "Private endpoints now use service abbreviations (pe-cosdb, pe-sto, etc.)",
+    "Added stack tags to all resources in data, application, and connectivity stacks",
+    "Centralized abbreviations in conventions.ts",
+    "Created shared construct-id-utils.ts for consistent naming logic"
+  ]
+}

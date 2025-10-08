@@ -330,7 +330,7 @@ export interface ClientEncryptionPolicy {
    */
   readonly includedPaths?: ClientEncryptionIncludedPath[] | any;
   /**
-   * Version of the client encryption policy definition. Supported versions are 1 and 2. Version 2 supports id and partition key path encryption. 
+   * Version of the client encryption policy definition. Supported versions are 1 and 2. Version 2 supports id and partition key path encryption.
    */
   readonly policyFormatVersion?: number | any;
 }
@@ -412,7 +412,14 @@ export interface ClusterResourceProps {
   /**
    * The status of the resource at the time the operation was called.
    */
-  readonly provisioningState?: 'Creating' | 'Updating' | 'Deleting' | 'Succeeded' | 'Failed' | 'Canceled' | any;
+  readonly provisioningState?:
+    | 'Creating'
+    | 'Updating'
+    | 'Deleting'
+    | 'Succeeded'
+    | 'Failed'
+    | 'Canceled'
+    | any;
   /**
    * Should automatic repairs run on this cluster? If omitted, this is true, and should stay true unless you are running a hybrid cluster where you are already doing your own repairs.
    */
@@ -436,8 +443,7 @@ export interface Column {
 /**
  * Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties definition.
  */
-export interface Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties {
-}
+export interface Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties {}
 
 /**
  * CompositePath definition.
@@ -492,7 +498,13 @@ export interface ConsistencyPolicy {
   /**
    * The default consistency level and configuration settings of the Cosmos DB account.
    */
-  readonly defaultConsistencyLevel?: 'Eventual' | 'Session' | 'BoundedStaleness' | 'Strong' | 'ConsistentPrefix' | any;
+  readonly defaultConsistencyLevel?:
+    | 'Eventual'
+    | 'Session'
+    | 'BoundedStaleness'
+    | 'Strong'
+    | 'ConsistentPrefix'
+    | any;
   /**
    * When used with the Bounded Staleness consistency level, this value represents the time amount of staleness (in seconds) tolerated. Accepted range for this value is 5 - 86400. Required when defaultConsistencyPolicy is set to 'BoundedStaleness'.
    */
@@ -630,7 +642,14 @@ export interface DataCenterResourceProps {
   /**
    * The status of the resource at the time the operation was called.
    */
-  readonly provisioningState?: 'Creating' | 'Updating' | 'Deleting' | 'Succeeded' | 'Failed' | 'Canceled' | any;
+  readonly provisioningState?:
+    | 'Creating'
+    | 'Updating'
+    | 'Deleting'
+    | 'Succeeded'
+    | 'Failed'
+    | 'Canceled'
+    | any;
   /**
    * Virtual Machine SKU used for data centers. Default value is Standard_DS14_v2
    */
@@ -914,7 +933,14 @@ export interface Indexes {
   /**
    * The datatype for which the indexing behavior is applied to.
    */
-  readonly dataType?: 'String' | 'Number' | 'Point' | 'Polygon' | 'LineString' | 'MultiPolygon' | any;
+  readonly dataType?:
+    | 'String'
+    | 'Number'
+    | 'Point'
+    | 'Polygon'
+    | 'LineString'
+    | 'MultiPolygon'
+    | any;
   /**
    * Indicates the type of index.
    */
@@ -1004,8 +1030,7 @@ export interface Location {
 /**
  * ManagedCassandraManagedServiceIdentity definition.
  */
-export interface ManagedCassandraManagedServiceIdentity {
-}
+export interface ManagedCassandraManagedServiceIdentity {}
 
 /**
  * ManagedServiceIdentity definition.
@@ -1014,7 +1039,12 @@ export interface ManagedServiceIdentity {
   /**
    * The list of user identities associated with resource. The user identity dictionary key references will be ARM resource ids in the form: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
    */
-  readonly userAssignedIdentities?: Record<string, Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties> | any;
+  readonly userAssignedIdentities?:
+    | Record<
+        string,
+        Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties
+      >
+    | any;
 }
 
 /**

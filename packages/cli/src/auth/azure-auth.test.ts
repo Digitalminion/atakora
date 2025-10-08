@@ -7,10 +7,23 @@ import { SubscriptionClient } from '@azure/arm-subscriptions';
 vi.mock('@azure/identity');
 vi.mock('@azure/arm-subscriptions');
 
+interface MockCredential {
+  getToken: ReturnType<typeof vi.fn>;
+}
+
+interface MockSubscriptionClient {
+  tenants: {
+    list: ReturnType<typeof vi.fn>;
+  };
+  subscriptions: {
+    list: ReturnType<typeof vi.fn>;
+  };
+}
+
 describe('AzureAuthService', () => {
   let authService: AzureAuthService;
-  let mockCredential: any;
-  let mockSubscriptionClient: any;
+  let mockCredential: MockCredential;
+  let mockSubscriptionClient: MockSubscriptionClient;
 
   beforeEach(() => {
     authService = new AzureAuthService();
@@ -30,8 +43,12 @@ describe('AzureAuthService', () => {
       },
     };
 
-    vi.mocked(InteractiveBrowserCredential).mockImplementation(() => mockCredential);
-    vi.mocked(SubscriptionClient).mockImplementation(() => mockSubscriptionClient);
+    vi.mocked(InteractiveBrowserCredential).mockImplementation(
+      () => mockCredential as unknown as InteractiveBrowserCredential
+    );
+    vi.mocked(SubscriptionClient).mockImplementation(
+      () => mockSubscriptionClient as unknown as SubscriptionClient
+    );
   });
 
   describe('login', () => {

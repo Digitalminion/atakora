@@ -57,7 +57,7 @@ export interface ResourceGroupStackProps {
  * ```typescript
  * const dataStack = new ResourceGroupStack(foundation, 'Data', {
  *   resourceGroup: {
- *     resourceGroupName: 'rg-digital-products-colorai-data-nonprod-eus-01',
+ *     resourceGroupName: 'rg-digital-products-colorai-data-nonprod-eus-00',
  *     location: 'eastus'
  *   }
  * });
@@ -98,11 +98,7 @@ export class ResourceGroupStack extends Construct {
    * @param id - Stack identifier
    * @param props - Stack properties
    */
-  constructor(
-    parent: SubscriptionStack,
-    id: string,
-    props: ResourceGroupStackProps
-  ) {
+  constructor(parent: SubscriptionStack, id: string, props: ResourceGroupStackProps) {
     super(parent, id);
 
     this.subscriptionStack = parent;

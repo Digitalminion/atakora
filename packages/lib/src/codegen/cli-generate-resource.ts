@@ -33,9 +33,7 @@ function main() {
 
   const schemaPath = path.resolve(args[0]);
   const resourceIndex = args[1] ? parseInt(args[1], 10) : undefined;
-  const outputDir = args[2]
-    ? path.resolve(args[2])
-    : path.join(__dirname, '../resources');
+  const outputDir = args[2] ? path.resolve(args[2]) : path.join(__dirname, '../resources');
 
   console.log(`Parsing schema: ${schemaPath}`);
 
@@ -58,13 +56,17 @@ function main() {
       }
       console.log('');
     });
-    console.log('Run with resource index to generate: npm run codegen:resource <schema-path> <index>');
+    console.log(
+      'Run with resource index to generate: npm run codegen:resource <schema-path> <index>'
+    );
     process.exit(0);
   }
 
   // Validate resource index
   if (resourceIndex < 0 || resourceIndex >= ir.resources.length) {
-    console.error(`Error: Invalid resource index ${resourceIndex}. Must be 0-${ir.resources.length - 1}`);
+    console.error(
+      `Error: Invalid resource index ${resourceIndex}. Must be 0-${ir.resources.length - 1}`
+    );
     process.exit(1);
   }
 

@@ -5,11 +5,7 @@ import type {
   ValidationResult,
 } from './types';
 import { mergeConventions, getSpecialCaseRules } from './conventions';
-import {
-  validateResourceName,
-  validateGenerationParams,
-  isNameTooLong,
-} from './validation';
+import { validateResourceName, validateGenerationParams, isNameTooLong } from './validation';
 import { generateScopedName, type ScopedResourceNameParams } from './scoped-naming';
 
 /**
@@ -132,9 +128,7 @@ export class ResourceNameGenerator {
     // Validate parameters
     const validation = validateGenerationParams(params);
     if (!validation.isValid) {
-      throw new Error(
-        `Invalid name generation parameters: ${validation.errors.join(', ')}`
-      );
+      throw new Error(`Invalid name generation parameters: ${validation.errors.join(', ')}`);
     }
 
     // Get resource pattern (prefix)
@@ -216,9 +210,7 @@ export class ResourceNameGenerator {
    * ```
    */
   public getMaxLength(resourceType: string): number {
-    return (
-      this.conventions.maxLengths[resourceType] ?? this.conventions.maxLength
-    );
+    return this.conventions.maxLengths[resourceType] ?? this.conventions.maxLength;
   }
 
   /**
@@ -228,10 +220,7 @@ export class ResourceNameGenerator {
    * @param params - Name generation parameters
    * @returns Array of name components in correct order
    */
-  private buildComponents(
-    pattern: string,
-    params: ResourceNameParams
-  ): string[] {
+  private buildComponents(pattern: string, params: ResourceNameParams): string[] {
     const components: string[] = [pattern];
 
     // Add purpose if specified (comes right after resource type prefix)

@@ -1,6 +1,7 @@
 import { Construct } from '../../core/construct';
 import type { IResourceGroup } from '../resource-group/types';
 import { ArmLogAnalyticsWorkspace } from './arm-log-analytics-workspace';
+import { constructIdToPurpose as utilConstructIdToPurpose } from '../../naming/construct-id-utils';
 import type {
   LogAnalyticsWorkspaceProps,
   ILogAnalyticsWorkspace,
@@ -106,11 +107,7 @@ export class LogAnalyticsWorkspace extends Construct implements ILogAnalyticsWor
    * });
    * ```
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props?: LogAnalyticsWorkspaceProps
-  ) {
+  constructor(scope: Construct, id: string, props?: LogAnalyticsWorkspaceProps) {
     super(scope, id);
 
     // Get parent resource group
@@ -148,9 +145,8 @@ export class LogAnalyticsWorkspace extends Construct implements ILogAnalyticsWor
       location: this.location,
       sku: skuConfig,
       retentionInDays: this.retentionInDays,
-      workspaceCapping: props?.dailyQuotaGb !== undefined
-        ? { dailyQuotaGb: props.dailyQuotaGb }
-        : undefined,
+      workspaceCapping:
+        props?.dailyQuotaGb !== undefined ? { dailyQuotaGb: props.dailyQuotaGb } : undefined,
       publicNetworkAccessForIngestion: props?.publicNetworkAccessForIngestion,
       publicNetworkAccessForQuery: props?.publicNetworkAccessForQuery,
       disableLocalAuth: props?.disableLocalAuth,
@@ -182,7 +178,7 @@ export class LogAnalyticsWorkspace extends Construct implements ILogAnalyticsWor
 
     throw new Error(
       'LogAnalyticsWorkspace must be created within or under a ResourceGroup. ' +
-      'Ensure the parent scope is a ResourceGroup or has one in its hierarchy.'
+        'Ensure the parent scope is a ResourceGroup or has one in its hierarchy.'
     );
   }
 
@@ -222,10 +218,7 @@ export class LogAnalyticsWorkspace extends Construct implements ILogAnalyticsWor
    * @param props - Workspace properties
    * @returns Resolved workspace name
    */
-  private resolveWorkspaceName(
-    id: string,
-    props?: LogAnalyticsWorkspaceProps
-  ): string {
+  private resolveWorkspaceName(id: string, props?: LogAnalyticsWorkspaceProps): string {
     // If name provided explicitly, use it
     if (props?.workspaceName) {
       return props.workspaceName;
@@ -272,7 +265,7 @@ export class LogAnalyticsWorkspace extends Construct implements ILogAnalyticsWor
    * @param id - Construct ID
    * @returns Purpose string for naming
    */
-  private constructIdToPurpose(id: string): string {
-    return id.toLowerCase();
+  private constructIdToPurpose(id: string): string | undefined {
+    return utilConstructIdToPurpose(id, 'log', ['loganalytics', 'logs', 'workspace', 'law']);
   }
 }

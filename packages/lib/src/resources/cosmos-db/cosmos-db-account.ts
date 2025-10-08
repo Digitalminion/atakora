@@ -135,45 +135,81 @@ export class CosmosDbAccount extends Construct implements ICosmosDbAccount {
 
   /**
    * Generates an account name from the construct ID.
+   *
+   * @remarks
+   * Cosmos DB account names have constraints:
+   * - 3-44 characters
+   * - Lowercase letters, numbers, and hyphens
+   * - Globally unique across Azure
+   *
+   * New naming convention for global uniqueness:
+   * - Format: cosdb-<project>-<instance>-<8-char-hash>
+   * - Hash is generated from full resource name to ensure uniqueness
+   * - Example: cosdb-colorai-03-a1b2c3d4
    */
   private generateAccountName(id: string): string {
-    // Convert to lowercase and replace invalid characters with hyphens
-    let name = id.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+    // Auto-generate name using parent's naming context
+    const subscriptionStack = this.getSubscriptionStack();
+    if (subscriptionStack) {
+      const purpose = this.constructIdToPurpose(id);
 
-    // Remove consecutive hyphens
-    name = name.replace(/-+/g, '-');
+      // New format: cosdb-<project>-<instance>-<hash>
+      // Use NamingService for truly unique hash per synthesis
+      const project = subscriptionStack.project.resourceName;
+      const instance = subscriptionStack.instance.resourceName;
+      const hash = subscriptionStack.namingService.getResourceHash(8);
 
-    // Ensure it starts and ends with alphanumeric
-    name = name.replace(/^-+|-+$/g, '');
+      const generatedName = `cosdb-${project}-${instance}-${hash}`;
 
-    // Ensure it starts with alphanumeric (prepend 'cosmos-' if it doesn't)
-    if (!/^[a-z0-9]/.test(name)) {
-      name = `cosmos-${name}`;
+      // Ensure it fits within 44 characters
+      if (generatedName.length > 44) {
+        // Truncate project name if needed
+        const maxProjectLen = 44 - 17; // 44 - (6 + 1 + 2 + 1 + 1 + 8 + 1) = 27
+        const truncatedProject = project.substring(0, maxProjectLen);
+        return `cosdb-${truncatedProject}-${instance}-${hash}`.substring(0, 44);
+      }
+
+      return generatedName;
     }
 
-    // Ensure it ends with alphanumeric (remove trailing hyphens)
-    if (!/[a-z0-9]$/.test(name)) {
-      name = name.replace(/-+$/, '');
+    // Fallback: construct a basic name from ID
+    let fallbackName = `cosdb-${id.toLowerCase()}`;
+    fallbackName = fallbackName.substring(0, 44);
+
+    // Remove trailing hyphen if present
+    if (fallbackName.endsWith('-')) {
+      fallbackName = fallbackName.substring(0, 43);
     }
 
-    // If name doesn't start with a letter or is too generic, prepend 'cosmos-'
-    if (/^\d/.test(name) || name.length < 3) {
-      name = `cosmos-${name}`;
+    return fallbackName;
+  }
+
+  /**
+   * Gets the SubscriptionStack from the construct tree.
+   */
+  private getSubscriptionStack(): any {
+    let current: Construct | undefined = this.node.scope;
+
+    while (current) {
+      // Check if current is a SubscriptionStack using duck typing
+      if (
+        current &&
+        typeof (current as any).generateResourceName === 'function' &&
+        typeof (current as any).subscriptionId === 'string'
+      ) {
+        return current;
+      }
+      current = current.node.scope;
     }
 
-    // Truncate to 44 characters if needed
-    if (name.length > 44) {
-      name = name.substring(0, 44);
-      // Ensure still ends with alphanumeric after truncation
-      name = name.replace(/-+$/, '');
-    }
+    return undefined;
+  }
 
-    // Final validation - ensure minimum length of 3
-    if (name.length < 3) {
-      name = `cosmos-db-${name}`;
-    }
-
-    return name;
+  /**
+   * Converts construct ID to purpose identifier for naming.
+   */
+  private constructIdToPurpose(id: string): string {
+    return id.toLowerCase();
   }
 
   /**
@@ -193,10 +229,7 @@ export class CosmosDbAccount extends Construct implements ICosmosDbAccount {
   /**
    * Builds the locations array from primary location and additional locations.
    */
-  private buildLocations(
-    primaryLocation: string,
-    additionalLocations?: string[]
-  ): Location[] {
+  private buildLocations(primaryLocation: string, additionalLocations?: string[]): Location[] {
     const locations: Location[] = [
       {
         locationName: primaryLocation,
@@ -241,11 +274,7 @@ export class CosmosDbAccount extends Construct implements ICosmosDbAccount {
    * @param accountId - The full resource ID of the Cosmos DB account
    * @returns An ICosmosDbAccount reference
    */
-  public static fromAccountId(
-    scope: Construct,
-    id: string,
-    accountId: string
-  ): ICosmosDbAccount {
+  public static fromAccountId(scope: Construct, id: string, accountId: string): ICosmosDbAccount {
     class Import extends Construct implements ICosmosDbAccount {
       public readonly accountId = accountId;
       public readonly resourceId = accountId;
@@ -261,7 +290,7 @@ export class CosmosDbAccount extends Construct implements ICosmosDbAccount {
         if (!match) {
           throw new Error(
             `Invalid Cosmos DB account resource ID: ${accountId}. ` +
-            `Expected format: .../Microsoft.DocumentDB/databaseAccounts/{accountName}`
+              `Expected format: .../Microsoft.DocumentDB/databaseAccounts/{accountName}`
           );
         }
         this.databaseAccountName = match[1];

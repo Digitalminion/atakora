@@ -245,9 +245,7 @@ describe('resources/sql-database/ArmSqlDatabase', () => {
         apiVersion: '2021-11-01',
         name: 'sql-test-001/mydb',
         location: 'eastus',
-        dependsOn: [
-          "[resourceId('Microsoft.Sql/servers', 'sql-test-001')]",
-        ],
+        dependsOn: ["[resourceId('Microsoft.Sql/servers', 'sql-test-001')]"],
       });
     });
 
@@ -315,9 +313,7 @@ describe('resources/sql-database/ArmSqlDatabase', () => {
 
       const template = database.toArmTemplate() as any;
 
-      expect(template.dependsOn).toContain(
-        "[resourceId('Microsoft.Sql/servers', 'sql-test-005')]"
-      );
+      expect(template.dependsOn).toContain("[resourceId('Microsoft.Sql/servers', 'sql-test-005')]");
     });
 
     it('should use composite name format for child resource', () => {

@@ -5,12 +5,7 @@
  */
 
 import * as path from 'path';
-import type {
-  SchemaIR,
-  ResourceDefinition,
-  PropertyDefinition,
-  TypeDefinition,
-} from './types';
+import type { SchemaIR, ResourceDefinition, PropertyDefinition, TypeDefinition } from './types';
 
 /**
  * Generates TypeScript interface code from schema IR.
@@ -175,10 +170,7 @@ export class TypeGenerator {
    * @param ir - Schema IR (for metadata)
    * @returns Generated interface code
    */
-  private generateResourcePropsInterface(
-    resource: ResourceDefinition,
-    ir: SchemaIR
-  ): string {
+  private generateResourcePropsInterface(resource: ResourceDefinition, ir: SchemaIR): string {
     const lines: string[] = [];
     const propsName = `Arm${this.toPascalCase(resource.name)}Props`;
 
@@ -196,9 +188,7 @@ export class TypeGenerator {
     lines.push(` * **ARM Resource Type**: \`${resource.armType}\``);
     lines.push(` * **API Version**: \`${ir.apiVersion}\``);
     lines.push(` *`);
-    lines.push(
-      ` * Direct mapping to ARM resource properties with no defaults or transformations.`
-    );
+    lines.push(` * Direct mapping to ARM resource properties with no defaults or transformations.`);
     lines.push(` */`);
 
     // Interface declaration
@@ -227,10 +217,7 @@ export class TypeGenerator {
    * @param indent - Indentation string
    * @returns JSDoc comment block
    */
-  private generatePropertyDoc(
-    prop: PropertyDefinition,
-    indent: string
-  ): string {
+  private generatePropertyDoc(prop: PropertyDefinition, indent: string): string {
     const lines: string[] = [];
 
     lines.push(`${indent}/**`);
@@ -250,10 +237,7 @@ export class TypeGenerator {
       lines.push(`${indent} *`);
       lines.push(`${indent} * @remarks`);
 
-      if (
-        prop.constraints.minLength !== undefined ||
-        prop.constraints.maxLength !== undefined
-      ) {
+      if (prop.constraints.minLength !== undefined || prop.constraints.maxLength !== undefined) {
         const min = prop.constraints.minLength ?? 0;
         const max = prop.constraints.maxLength ?? 'unlimited';
         lines.push(`${indent} * Length: ${min}-${max} characters`);
@@ -263,10 +247,7 @@ export class TypeGenerator {
         lines.push(`${indent} * Pattern: \`${prop.constraints.pattern}\``);
       }
 
-      if (
-        prop.constraints.minimum !== undefined ||
-        prop.constraints.maximum !== undefined
-      ) {
+      if (prop.constraints.minimum !== undefined || prop.constraints.maximum !== undefined) {
         const min = prop.constraints.minimum ?? '-∞';
         const max = prop.constraints.maximum ?? '∞';
         lines.push(`${indent} * Range: ${min} to ${max}`);
@@ -285,10 +266,7 @@ export class TypeGenerator {
    * @param indent - Indentation string
    * @returns Property declaration line
    */
-  private generatePropertyDeclaration(
-    prop: PropertyDefinition,
-    indent: string
-  ): string {
+  private generatePropertyDeclaration(prop: PropertyDefinition, indent: string): string {
     const optional = prop.required ? '' : '?';
     return `${indent}readonly ${prop.name}${optional}: ${prop.type.tsType};`;
   }
@@ -332,10 +310,7 @@ export class TypeGenerator {
    * @param typeDef - Type definition to scan
    * @param referencedTypes - Set to collect references into
    */
-  private collectTypeReferences(
-    typeDef: TypeDefinition,
-    referencedTypes: Set<string>
-  ): void {
+  private collectTypeReferences(typeDef: TypeDefinition, referencedTypes: Set<string>): void {
     if (typeDef.kind === 'reference') {
       // Add the actual tsType which has been transformed
       referencedTypes.add(typeDef.tsType);

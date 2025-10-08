@@ -37,7 +37,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'storage-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
             groupIds: ['blob'],
           },
         ],
@@ -61,7 +62,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'storage-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
             groupIds: ['blob', 'file', 'table'],
           },
         ],
@@ -80,7 +82,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'storage-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
             groupIds: ['blob'],
           },
         ],
@@ -100,14 +103,17 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'keyvault-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/mykv',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/mykv',
             groupIds: ['vault'],
             requestMessage: 'Please approve this connection',
           },
         ],
       });
 
-      expect(endpoint.privateLinkServiceConnections[0].requestMessage).toBe('Please approve this connection');
+      expect(endpoint.privateLinkServiceConnections[0].requestMessage).toBe(
+        'Please approve this connection'
+      );
     });
 
     it('should create private endpoint with DNS zone group', () => {
@@ -120,7 +126,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'storage-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
             groupIds: ['blob'],
           },
         ],
@@ -129,7 +136,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
           privateDnsZoneConfigs: [
             {
               name: 'blob-config',
-              privateDnsZoneId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net',
+              privateDnsZoneId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net',
             },
           ],
         },
@@ -151,7 +159,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'storage-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
             groupIds: ['blob'],
           },
         ],
@@ -160,11 +169,13 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
           privateDnsZoneConfigs: [
             {
               name: 'blob-config',
-              privateDnsZoneId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net',
+              privateDnsZoneId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net',
             },
             {
               name: 'file-config',
-              privateDnsZoneId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.file.core.windows.net',
+              privateDnsZoneId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.file.core.windows.net',
             },
           ],
         },
@@ -183,7 +194,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'storage-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
             groupIds: ['blob'],
           },
         ],
@@ -209,7 +221,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'test-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test',
             groupIds: ['blob'],
           },
         ],
@@ -228,7 +241,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'test-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test',
             groupIds: ['blob'],
           },
         ],
@@ -247,7 +261,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'storage-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
             groupIds: ['blob'],
           },
         ],
@@ -267,7 +282,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'test-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test',
             groupIds: ['blob'],
           },
         ],
@@ -289,7 +305,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
           privateLinkServiceConnections: [
             {
               name: 'storage-connection',
-              privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+              privateLinkServiceId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
               groupIds: ['blob'],
             },
           ],
@@ -308,7 +325,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
           privateLinkServiceConnections: [
             {
               name: 'storage-connection',
-              privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+              privateLinkServiceId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
               groupIds: ['blob'],
             },
           ],
@@ -327,7 +345,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
           privateLinkServiceConnections: [
             {
               name: 'storage-connection',
-              privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+              privateLinkServiceId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
               groupIds: ['blob'],
             },
           ],
@@ -345,7 +364,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'storage-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
             groupIds: ['blob'],
           },
         ],
@@ -365,7 +385,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
           privateLinkServiceConnections: [
             {
               name: 'storage-connection',
-              privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+              privateLinkServiceId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
               groupIds: ['blob'],
             },
           ],
@@ -384,7 +405,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
           privateLinkServiceConnections: [
             {
               name: 'storage-connection',
-              privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+              privateLinkServiceId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
               groupIds: ['blob'],
             },
           ],
@@ -416,7 +438,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
           privateLinkServiceConnections: [
             {
               name: '',
-              privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+              privateLinkServiceId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
               groupIds: ['blob'],
             },
           ],
@@ -440,7 +463,9 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
             },
           ],
         });
-      }).toThrow("Private link service connection 'storage-connection' must have a privateLinkServiceId");
+      }).toThrow(
+        "Private link service connection 'storage-connection' must have a privateLinkServiceId"
+      );
     });
 
     it('should throw error if groupIds is empty', () => {
@@ -454,12 +479,15 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
           privateLinkServiceConnections: [
             {
               name: 'storage-connection',
-              privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+              privateLinkServiceId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
               groupIds: [],
             },
           ],
         });
-      }).toThrow("Private link service connection 'storage-connection' must have at least one groupId");
+      }).toThrow(
+        "Private link service connection 'storage-connection' must have at least one groupId"
+      );
     });
 
     it('should throw error if DNS zone group name is empty', () => {
@@ -473,7 +501,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
           privateLinkServiceConnections: [
             {
               name: 'storage-connection',
-              privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+              privateLinkServiceId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
               groupIds: ['blob'],
             },
           ],
@@ -482,7 +511,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
             privateDnsZoneConfigs: [
               {
                 name: 'blob-config',
-                privateDnsZoneId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net',
+                privateDnsZoneId:
+                  '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net',
               },
             ],
           },
@@ -501,7 +531,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
           privateLinkServiceConnections: [
             {
               name: 'storage-connection',
-              privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+              privateLinkServiceId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
               groupIds: ['blob'],
             },
           ],
@@ -524,7 +555,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
           privateLinkServiceConnections: [
             {
               name: 'storage-connection',
-              privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+              privateLinkServiceId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
               groupIds: ['blob'],
             },
           ],
@@ -533,7 +565,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
             privateDnsZoneConfigs: [
               {
                 name: '',
-                privateDnsZoneId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net',
+                privateDnsZoneId:
+                  '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net',
               },
             ],
           },
@@ -552,7 +585,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
           privateLinkServiceConnections: [
             {
               name: 'storage-connection',
-              privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+              privateLinkServiceId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
               groupIds: ['blob'],
             },
           ],
@@ -581,7 +615,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'storage-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
             groupIds: ['blob'],
           },
         ],
@@ -621,7 +656,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'storage-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
             groupIds: ['blob'],
           },
         ],
@@ -643,7 +679,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'storage-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
             groupIds: ['blob'],
           },
         ],
@@ -669,7 +706,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'storage-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/mystg',
             groupIds: ['blob'],
           },
         ],
@@ -678,7 +716,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
           privateDnsZoneConfigs: [
             {
               name: 'blob-config',
-              privateDnsZoneId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net',
+              privateDnsZoneId:
+                '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/privateDnsZones/privatelink.blob.core.windows.net',
             },
           ],
         },
@@ -702,9 +741,7 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
             },
           ],
         },
-        dependsOn: expect.arrayContaining([
-          expect.stringContaining('pe-storage-blob-01'),
-        ]),
+        dependsOn: expect.arrayContaining([expect.stringContaining('pe-storage-blob-01')]),
       });
     });
 
@@ -718,7 +755,8 @@ describe('resources/private-endpoint/ArmPrivateEndpoint', () => {
         privateLinkServiceConnections: [
           {
             name: 'keyvault-connection',
-            privateLinkServiceId: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/mykv',
+            privateLinkServiceId:
+              '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.KeyVault/vaults/mykv',
             groupIds: ['vault'],
             requestMessage: 'Please approve this connection',
           },

@@ -112,11 +112,7 @@ export class NetworkSecurityGroup extends Construct implements INetworkSecurityG
    * });
    * ```
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props?: NetworkSecurityGroupProps
-  ) {
+  constructor(scope: Construct, id: string, props?: NetworkSecurityGroupProps) {
     super(scope, id);
 
     // Get parent resource group
@@ -203,7 +199,7 @@ export class NetworkSecurityGroup extends Construct implements INetworkSecurityG
       sourceAddressPrefixes: options.sourceAddressPrefixes,
       destinationAddressPrefix: options.destinationAddressPrefix ?? '*',
       destinationAddressPrefixes: options.destinationAddressPrefixes,
-      access: options.access ?? 'Allow' as SecurityRuleAccess,
+      access: options.access ?? ('Allow' as SecurityRuleAccess),
       priority: options.priority,
       direction: 'Inbound' as SecurityRuleDirection,
     };
@@ -262,7 +258,7 @@ export class NetworkSecurityGroup extends Construct implements INetworkSecurityG
       sourceAddressPrefixes: options.sourceAddressPrefixes,
       destinationAddressPrefix: options.destinationAddressPrefix ?? '*',
       destinationAddressPrefixes: options.destinationAddressPrefixes,
-      access: options.access ?? 'Allow' as SecurityRuleAccess,
+      access: options.access ?? ('Allow' as SecurityRuleAccess),
       priority: options.priority,
       direction: 'Outbound' as SecurityRuleDirection,
     };
@@ -292,7 +288,7 @@ export class NetworkSecurityGroup extends Construct implements INetworkSecurityG
 
     throw new Error(
       'NetworkSecurityGroup must be created within or under a ResourceGroup. ' +
-      'Ensure the parent scope is a ResourceGroup or has one in its hierarchy.'
+        'Ensure the parent scope is a ResourceGroup or has one in its hierarchy.'
     );
   }
 
@@ -332,10 +328,7 @@ export class NetworkSecurityGroup extends Construct implements INetworkSecurityG
    * @param props - NSG properties
    * @returns Resolved NSG name
    */
-  private resolveNetworkSecurityGroupName(
-    id: string,
-    props?: NetworkSecurityGroupProps
-  ): string {
+  private resolveNetworkSecurityGroupName(id: string, props?: NetworkSecurityGroupProps): string {
     // If name provided explicitly, use it
     if (props?.networkSecurityGroupName) {
       return props.networkSecurityGroupName;

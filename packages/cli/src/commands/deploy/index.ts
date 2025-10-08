@@ -4,8 +4,54 @@ import ora from 'ora';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ResourceManagementClient } from '@azure/arm-resources';
-import { ConfigManager } from '../../config/config-manager';
-import { AzureAuthService } from '../../auth/azure-auth';
+import { ConfigManager, ProfileConfig } from '../../config/config-manager';
+import { authManager } from '../../auth/auth-manager';
+
+// Types for manifest
+interface StackManifest {
+  name: string;
+  templatePath: string;
+  resourceCount: number;
+  parameterCount: number;
+  outputCount: number;
+  dependencies?: string[];
+}
+
+interface CloudAssemblyManifest {
+  version: string;
+  stacks: Record<string, StackManifest>;
+  directory: string;
+}
+
+// Types for ARM template
+interface ArmResource {
+  type: string;
+  apiVersion: string;
+  name: string;
+  location?: string;
+  properties?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+interface ArmTemplate {
+  $schema?: string;
+  contentVersion: string;
+  resources?: ArmResource[];
+  parameters?: Record<string, unknown>;
+  outputs?: Record<string, unknown>;
+  [key: string]: unknown;
+}
+
+interface DeploymentProperties {
+  mode: 'Incremental' | 'Complete';
+  template: ArmTemplate;
+  parameters: Record<string, unknown>;
+}
+
+interface Deployment {
+  location?: string;
+  properties: DeploymentProperties;
+}
 
 export function createDeployCommand(): Command {
   const deploy = new Command('deploy')
@@ -32,15 +78,22 @@ export function createDeployCommand(): Command {
           process.exit(1);
         }
 
-        // Authenticate
-        spinner.text = 'Authenticating with Azure...';
-        const authService = new AzureAuthService(profile.cloud as any);
-        const authResult = await authService.login();
+        // Authenticate (using cached credential if available)
+        const cloudEnvironment =
+          (profile.cloud as 'AzureCloud' | 'AzureUSGovernment') || 'AzureCloud';
+        const authService = authManager.getAuthService(cloudEnvironment);
 
-        if (!authResult.success) {
-          spinner.fail(chalk.red('Authentication failed'));
-          console.error(chalk.red(authResult.error || 'Unknown error'));
-          process.exit(1);
+        if (!authManager.isAuthenticated(cloudEnvironment)) {
+          spinner.text = 'Authenticating with Azure...';
+          const authResult = await authService.login();
+
+          if (!authResult.success) {
+            spinner.fail(chalk.red('Authentication failed'));
+            console.error(chalk.red(authResult.error || 'Unknown error'));
+            process.exit(1);
+          }
+        } else {
+          spinner.text = 'Using cached credentials...';
         }
 
         // Load cloud assembly
@@ -58,12 +111,12 @@ export function createDeployCommand(): Command {
           process.exit(1);
         }
 
-        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+        const manifest = JSON.parse(
+          fs.readFileSync(manifestPath, 'utf-8')
+        ) as CloudAssemblyManifest;
 
         // Determine which stacks to deploy
-        const stacksToDeploy = stackName
-          ? [stackName]
-          : Object.keys(manifest.stacks);
+        const stacksToDeploy = stackName ? [stackName] : Object.keys(manifest.stacks);
 
         if (stackName && !manifest.stacks[stackName]) {
           spinner.fail(chalk.red(`Stack '${stackName}' not found in cloud assembly`));
@@ -107,17 +160,33 @@ export function createDeployCommand(): Command {
         const credential = authService.getCredential();
         const client = new ResourceManagementClient(credential, profile.subscriptionId);
 
+        // Extract resource group name from ColorAI stack (if it exists)
+        let resourceGroupName: string | undefined;
+        if (manifest.stacks['ColorAI']) {
+          const colorAIPath = path.join(assemblyPath, manifest.stacks['ColorAI'].templatePath);
+          const colorAITemplate = JSON.parse(fs.readFileSync(colorAIPath, 'utf-8')) as ArmTemplate;
+          const rgResource = colorAITemplate.resources?.find(
+            (r) => r.type === 'Microsoft.Resources/resourceGroups'
+          );
+          resourceGroupName = rgResource?.name;
+        }
+
         // Deploy each stack
         for (const stack of stacksToDeploy) {
-          await deployStack(client, assemblyPath, stack, manifest.stacks[stack], profile);
+          await deployStack(
+            client,
+            assemblyPath,
+            stack,
+            manifest.stacks[stack],
+            profile,
+            resourceGroupName
+          );
         }
 
         console.log(chalk.green.bold('\n✓ All deployments completed successfully!'));
       } catch (error) {
         spinner.fail(chalk.red('Deployment failed'));
-        console.error(
-          chalk.red(error instanceof Error ? error.message : 'Unknown error')
-        );
+        console.error(chalk.red(error instanceof Error ? error.message : 'Unknown error'));
         process.exit(1);
       }
     });
@@ -129,15 +198,26 @@ async function deployStack(
   client: ResourceManagementClient,
   assemblyPath: string,
   stackName: string,
-  stackManifest: any,
-  profile: any
+  stackManifest: StackManifest,
+  profile: ProfileConfig,
+  resourceGroupName?: string
 ): Promise<void> {
   const spinner = ora(`Deploying stack: ${stackName}...`).start();
 
   try {
     // Load template
     const templatePath = path.join(assemblyPath, stackManifest.templatePath);
-    const template = JSON.parse(fs.readFileSync(templatePath, 'utf-8'));
+    const template = JSON.parse(fs.readFileSync(templatePath, 'utf-8')) as ArmTemplate;
+
+    // Determine deployment scope from template schema
+    const isSubscriptionScope = template.$schema?.includes('subscriptionDeploymentTemplate');
+
+    // Validate resource group name for resource group scoped deployments
+    if (!isSubscriptionScope && !resourceGroupName) {
+      throw new Error(
+        `Resource group name not found. The ColorAI stack must be deployed first to create the resource group.`
+      );
+    }
 
     // Create deployment name
     const deploymentName = `${stackName}-${Date.now()}`;
@@ -145,19 +225,36 @@ async function deployStack(
     // Start deployment
     spinner.text = `Submitting deployment: ${deploymentName}...`;
 
-    const deployment = {
+    // Build deployment object - location only needed for subscription scope
+    const deployment: Deployment = {
       properties: {
-        mode: 'Incremental' as const,
+        mode: 'Incremental',
         template,
         parameters: {},
       },
     };
 
+    if (isSubscriptionScope) {
+      deployment.location = profile.location || 'eastus2';
+    }
+
     // Deploy to subscription or resource group based on scope
-    const poller = await client.deployments.beginCreateOrUpdateAtSubscriptionScope(
-      deploymentName,
-      deployment
-    );
+    let poller;
+    if (isSubscriptionScope) {
+      spinner.text = `Deploying ${stackName} at subscription scope...`;
+      poller = await client.deployments.beginCreateOrUpdateAtSubscriptionScope(
+        deploymentName,
+        deployment
+      );
+    } else {
+      // TypeScript: resourceGroupName is guaranteed to be defined here due to validation above
+      spinner.text = `Deploying ${stackName} to resource group ${resourceGroupName}...`;
+      poller = await client.deployments.beginCreateOrUpdate(
+        resourceGroupName!,
+        deploymentName,
+        deployment
+      );
+    }
 
     spinner.text = `Deploying ${stackName}... (this may take several minutes)`;
 
@@ -171,7 +268,9 @@ async function deployStack(
       // Display outputs
       if (result.properties.outputs && Object.keys(result.properties.outputs).length > 0) {
         console.log(chalk.bold('\nOutputs:'));
-        for (const [key, output] of Object.entries(result.properties.outputs as Record<string, any>)) {
+        for (const [key, output] of Object.entries(
+          result.properties.outputs as Record<string, any>
+        )) {
           console.log(`  ${chalk.cyan(key)}: ${output.value}`);
         }
       }

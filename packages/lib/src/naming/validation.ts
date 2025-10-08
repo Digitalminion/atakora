@@ -99,10 +99,7 @@ export const DEFAULT_VALIDATION_RULES: ResourceValidationRules = {
 /**
  * Map of resource types to their validation rules.
  */
-export const RESOURCE_VALIDATION_RULES: Record<
-  string,
-  ResourceValidationRules
-> = {
+export const RESOURCE_VALIDATION_RULES: Record<string, ResourceValidationRules> = {
   storage: STORAGE_ACCOUNT_RULES,
   keyvault: KEY_VAULT_RULES,
   rg: RESOURCE_GROUP_RULES,
@@ -124,9 +121,7 @@ export const RESOURCE_VALIDATION_RULES: Record<
  * console.log(rules.maxLength); // 24
  * ```
  */
-export function getValidationRules(
-  resourceType: string
-): ResourceValidationRules {
+export function getValidationRules(resourceType: string): ResourceValidationRules {
   return RESOURCE_VALIDATION_RULES[resourceType] ?? DEFAULT_VALIDATION_RULES;
 }
 
@@ -145,10 +140,7 @@ export function getValidationRules(
  * }
  * ```
  */
-export function validateResourceName(
-  name: string,
-  resourceType: string
-): ValidationResult {
+export function validateResourceName(name: string, resourceType: string): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 
@@ -177,9 +169,7 @@ export function validateResourceName(
 
   // Check pattern match
   if (rules.pattern && !rules.pattern.test(name)) {
-    errors.push(
-      `Resource name '${name}' does not match required pattern for ${resourceType}`
-    );
+    errors.push(`Resource name '${name}' does not match required pattern for ${resourceType}`);
   }
 
   // Resource-specific validations
@@ -187,7 +177,11 @@ export function validateResourceName(
     validateStorageAccountName(name, errors, warnings);
   } else if (resourceType === 'keyvault') {
     validateKeyVaultName(name, errors, warnings);
-  } else if (resourceType === 'rg' || resourceType === 'rgLandingZone' || resourceType === 'rgPlatform') {
+  } else if (
+    resourceType === 'rg' ||
+    resourceType === 'rgLandingZone' ||
+    resourceType === 'rgPlatform'
+  ) {
     validateResourceGroupName(name, errors, warnings);
   }
 
@@ -208,11 +202,7 @@ export function validateResourceName(
  * @param errors - Array to collect error messages
  * @param warnings - Array to collect warning messages
  */
-function validateStorageAccountName(
-  name: string,
-  errors: string[],
-  warnings: string[]
-): void {
+function validateStorageAccountName(name: string, errors: string[], warnings: string[]): void {
   // Check for uppercase letters
   if (name !== name.toLowerCase()) {
     errors.push('Storage account names must be lowercase');
@@ -220,16 +210,12 @@ function validateStorageAccountName(
 
   // Check for hyphens or special characters
   if (!/^[a-z0-9]+$/.test(name)) {
-    errors.push(
-      'Storage account names can only contain lowercase letters and numbers'
-    );
+    errors.push('Storage account names can only contain lowercase letters and numbers');
   }
 
   // Warn about global uniqueness requirement
   if (name.length >= 3 && name.length <= 24) {
-    warnings.push(
-      'Storage account names must be globally unique across Azure'
-    );
+    warnings.push('Storage account names must be globally unique across Azure');
   }
 }
 
@@ -240,11 +226,7 @@ function validateStorageAccountName(
  * @param errors - Array to collect error messages
  * @param warnings - Array to collect warning messages
  */
-function validateKeyVaultName(
-  name: string,
-  errors: string[],
-  warnings: string[]
-): void {
+function validateKeyVaultName(name: string, errors: string[], warnings: string[]): void {
   // Check if starts with a letter
   if (!/^[a-zA-Z]/.test(name)) {
     errors.push('Key Vault names must start with a letter');
@@ -273,11 +255,7 @@ function validateKeyVaultName(
  * @param errors - Array to collect error messages
  * @param warnings - Array to collect warning messages
  */
-function validateResourceGroupName(
-  name: string,
-  errors: string[],
-  warnings: string[]
-): void {
+function validateResourceGroupName(name: string, errors: string[], warnings: string[]): void {
   // Check if ends with period
   if (name.endsWith('.')) {
     errors.push('Resource Group names cannot end with a period');
@@ -285,9 +263,7 @@ function validateResourceGroupName(
 
   // Check for invalid characters at start/end
   if (/^[._-]/.test(name)) {
-    warnings.push(
-      'Resource Group names should start with an alphanumeric character'
-    );
+    warnings.push('Resource Group names should start with an alphanumeric character');
   }
 }
 

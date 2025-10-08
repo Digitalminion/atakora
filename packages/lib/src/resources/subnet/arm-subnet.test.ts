@@ -8,7 +8,11 @@ import { Project } from '../../core/context/project';
 import { Environment } from '../../core/context/environment';
 import { Instance } from '../../core/context/instance';
 import { ArmSubnet } from './arm-subnet';
-import { PrivateEndpointNetworkPolicies, PrivateLinkServiceNetworkPolicies, SharingScope } from './types';
+import {
+  PrivateEndpointNetworkPolicies,
+  PrivateLinkServiceNetworkPolicies,
+  SharingScope,
+} from './types';
 import type { ArmSubnetProps } from './types';
 
 describe('resources/subnet/ArmSubnet', () => {
@@ -219,12 +223,7 @@ describe('resources/subnet/ArmSubnet', () => {
     });
 
     it('should accept valid CIDR notation', () => {
-      const validCidrs = [
-        '10.0.1.0/24',
-        '192.168.0.0/16',
-        '172.16.0.0/12',
-        '10.0.0.0/8',
-      ];
+      const validCidrs = ['10.0.1.0/24', '192.168.0.0/16', '172.16.0.0/12', '10.0.0.0/8'];
 
       validCidrs.forEach((cidr) => {
         const subnet = new ArmSubnet(stack, `Subnet-${cidr.replace(/[./]/g, '-')}`, {
@@ -371,7 +370,9 @@ describe('resources/subnet/ArmSubnet', () => {
         name: 'snet-full',
         virtualNetworkName: 'vnet-test',
         addressPrefix: '10.0.1.0/24',
-        networkSecurityGroup: { id: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/networkSecurityGroups/nsg' },
+        networkSecurityGroup: {
+          id: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/networkSecurityGroups/nsg',
+        },
         serviceEndpoints: [{ service: 'Microsoft.Storage' }],
         delegations: [{ name: 'del1', serviceName: 'Microsoft.Web/serverFarms' }],
         privateEndpointNetworkPolicies: PrivateEndpointNetworkPolicies.ENABLED,
@@ -388,7 +389,9 @@ describe('resources/subnet/ArmSubnet', () => {
         name: 'vnet-test/snet-full',
         properties: {
           addressPrefix: '10.0.1.0/24',
-          networkSecurityGroup: { id: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/networkSecurityGroups/nsg' },
+          networkSecurityGroup: {
+            id: '/subscriptions/xxx/resourceGroups/rg/providers/Microsoft.Network/networkSecurityGroups/nsg',
+          },
           serviceEndpoints: [{ service: 'Microsoft.Storage' }],
           delegations: [
             {

@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import { ConfigManager } from '../../config/config-manager';
-import { AzureAuthService } from '../../auth/azure-auth';
+import { authManager } from '../../auth/auth-manager';
 
 export function validateCommand(): Command {
   const validate = new Command('validate')
@@ -44,7 +44,12 @@ export function validateCommand(): Command {
           errors.push('Invalid subscription ID format');
         }
 
-        const validClouds = ['AzureCloud', 'AzureUSGovernment', 'AzureChinaCloud', 'AzureGermanCloud'];
+        const validClouds = [
+          'AzureCloud',
+          'AzureUSGovernment',
+          'AzureChinaCloud',
+          'AzureGermanCloud',
+        ];
         if (profile.cloud && !validClouds.includes(profile.cloud)) {
           warnings.push(`Unknown cloud environment: ${profile.cloud}`);
         }
@@ -56,27 +61,35 @@ export function validateCommand(): Command {
         }
 
         // Test Azure authentication and access
-        spinner.start('Authenticating with Azure...');
-        const authService = new AzureAuthService(profile.cloud as any || 'AzureCloud');
+        const cloudEnvironment =
+          (profile.cloud as 'AzureCloud' | 'AzureUSGovernment') || 'AzureCloud';
+        const authService = authManager.getAuthService(cloudEnvironment);
 
-        try {
-          const authResult = await authService.login();
-          if (!authResult.success) {
-            errors.push(`Authentication failed: ${authResult.error}`);
+        if (!authManager.isAuthenticated(cloudEnvironment)) {
+          spinner.start('Authenticating with Azure...');
+          try {
+            const authResult = await authService.login();
+            if (!authResult.success) {
+              errors.push(`Authentication failed: ${authResult.error}`);
+              spinner.fail(chalk.red('Authentication failed'));
+            } else {
+              spinner.succeed(chalk.green('Authentication successful'));
+            }
+          } catch (error) {
+            errors.push(
+              `Authentication error: ${error instanceof Error ? error.message : 'Unknown error'}`
+            );
             spinner.fail(chalk.red('Authentication failed'));
-          } else {
-            spinner.succeed(chalk.green('Authentication successful'));
           }
-        } catch (error) {
-          errors.push(`Authentication error: ${error instanceof Error ? error.message : 'Unknown error'}`);
-          spinner.fail(chalk.red('Authentication failed'));
+        } else {
+          spinner.succeed(chalk.green('Using cached credentials'));
         }
 
         // Check tenant accessibility
         spinner.start('Checking tenant access...');
         try {
           const tenants = await authService.listTenants();
-          const tenantExists = tenants.some(t => t.tenantId === profile.tenantId);
+          const tenantExists = tenants.some((t) => t.tenantId === profile.tenantId);
 
           if (!tenantExists) {
             errors.push(`Tenant ${profile.tenantId} is not accessible`);
@@ -85,7 +98,9 @@ export function validateCommand(): Command {
             spinner.succeed(chalk.green('Tenant is accessible'));
           }
         } catch (error) {
-          errors.push(`Failed to list tenants: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          errors.push(
+            `Failed to list tenants: ${error instanceof Error ? error.message : 'Unknown error'}`
+          );
           spinner.fail(chalk.red('Failed to check tenant access'));
         }
 
@@ -93,10 +108,14 @@ export function validateCommand(): Command {
         spinner.start('Checking subscription access...');
         try {
           const subscriptions = await authService.listSubscriptions(profile.tenantId);
-          const subscription = subscriptions.find(s => s.subscriptionId === profile.subscriptionId);
+          const subscription = subscriptions.find(
+            (s) => s.subscriptionId === profile.subscriptionId
+          );
 
           if (!subscription) {
-            errors.push(`Subscription ${profile.subscriptionId} is not accessible in tenant ${profile.tenantId}`);
+            errors.push(
+              `Subscription ${profile.subscriptionId} is not accessible in tenant ${profile.tenantId}`
+            );
             spinner.fail(chalk.red('Subscription not accessible'));
           } else if (subscription.state !== 'Enabled') {
             warnings.push(`Subscription state is '${subscription.state}' (not 'Enabled')`);
@@ -105,7 +124,9 @@ export function validateCommand(): Command {
             spinner.succeed(chalk.green('Subscription is accessible and enabled'));
           }
         } catch (error) {
-          errors.push(`Failed to list subscriptions: ${error instanceof Error ? error.message : 'Unknown error'}`);
+          errors.push(
+            `Failed to list subscriptions: ${error instanceof Error ? error.message : 'Unknown error'}`
+          );
           spinner.fail(chalk.red('Failed to check subscription access'));
         }
 
@@ -113,16 +134,18 @@ export function validateCommand(): Command {
         console.log();
         if (errors.length === 0 && warnings.length === 0) {
           console.log(chalk.green.bold('✓ Validation passed'));
-          console.log(chalk.gray(`Profile '${profile.name}' is properly configured and accessible`));
+          console.log(
+            chalk.gray(`Profile '${profile.name}' is properly configured and accessible`)
+          );
         } else {
           if (errors.length > 0) {
             console.log(chalk.red.bold(`✗ Validation failed with ${errors.length} error(s):`));
-            errors.forEach(err => console.log(chalk.red(`  • ${err}`)));
+            errors.forEach((err) => console.log(chalk.red(`  • ${err}`)));
           }
 
           if (warnings.length > 0) {
             console.log(chalk.yellow.bold(`\n⚠ ${warnings.length} warning(s):`));
-            warnings.forEach(warn => console.log(chalk.yellow(`  • ${warn}`)));
+            warnings.forEach((warn) => console.log(chalk.yellow(`  • ${warn}`)));
           }
 
           console.log(
@@ -137,9 +160,7 @@ export function validateCommand(): Command {
         }
       } catch (error) {
         spinner.fail(chalk.red('Validation failed'));
-        console.error(
-          chalk.red(error instanceof Error ? error.message : 'Unknown error')
-        );
+        console.error(chalk.red(error instanceof Error ? error.message : 'Unknown error'));
         process.exit(1);
       }
     });

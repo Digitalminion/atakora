@@ -173,11 +173,7 @@ export class VirtualNetworkLink extends Construct implements IVirtualNetworkLink
    * @param linkId - The full resource ID of the virtual network link
    * @returns An IVirtualNetworkLink reference
    */
-  public static fromLinkId(
-    scope: Construct,
-    id: string,
-    linkId: string
-  ): IVirtualNetworkLink {
+  public static fromLinkId(scope: Construct, id: string, linkId: string): IVirtualNetworkLink {
     class Import extends Construct implements IVirtualNetworkLink {
       public readonly linkId = linkId;
       public readonly resourceId = linkId;
@@ -194,7 +190,7 @@ export class VirtualNetworkLink extends Construct implements IVirtualNetworkLink
         if (!match) {
           throw new Error(
             `Invalid virtual network link resource ID: ${linkId}. ` +
-            `Expected format: .../privateDnsZones/{zoneName}/virtualNetworkLinks/{linkName}`
+              `Expected format: .../privateDnsZones/{zoneName}/virtualNetworkLinks/{linkName}`
           );
         }
         this.linkName = match[1];

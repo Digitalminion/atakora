@@ -69,10 +69,7 @@ export function getSchemaForScope(scope: DeploymentScope): string {
  */
 const SCOPE_HIERARCHY: Record<DeploymentScope, DeploymentScope[]> = {
   // Tenant can contain management groups and subscriptions
-  [DeploymentScope.Tenant]: [
-    DeploymentScope.ManagementGroup,
-    DeploymentScope.Subscription,
-  ],
+  [DeploymentScope.Tenant]: [DeploymentScope.ManagementGroup, DeploymentScope.Subscription],
 
   // Management groups can contain other management groups and subscriptions
   [DeploymentScope.ManagementGroup]: [
@@ -100,10 +97,7 @@ const SCOPE_HIERARCHY: Record<DeploymentScope, DeploymentScope[]> = {
  * canContain(DeploymentScope.ResourceGroup, DeploymentScope.Subscription); // false
  * ```
  */
-export function canContain(
-  parent: DeploymentScope,
-  child: DeploymentScope
-): boolean {
+export function canContain(parent: DeploymentScope, child: DeploymentScope): boolean {
   return SCOPE_HIERARCHY[parent].includes(child);
 }
 
@@ -183,9 +177,7 @@ export const SCOPE_AVAILABLE_RESOURCES: Record<DeploymentScope, string[]> = {
  * getParentScope(DeploymentScope.Tenant);          // undefined
  * ```
  */
-export function getParentScope(
-  scope: DeploymentScope
-): DeploymentScope | undefined {
+export function getParentScope(scope: DeploymentScope): DeploymentScope | undefined {
   switch (scope) {
     case DeploymentScope.ResourceGroup:
       return DeploymentScope.Subscription;

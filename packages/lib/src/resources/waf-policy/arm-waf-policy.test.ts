@@ -643,9 +643,7 @@ describe('resources/waf-policy/ArmWafPolicy', () => {
         },
       });
 
-      expect(
-        wafPolicy.managedRules.managedRuleSets[0].ruleGroupOverrides
-      ).toHaveLength(1);
+      expect(wafPolicy.managedRules.managedRuleSets[0].ruleGroupOverrides).toHaveLength(1);
     });
   });
 

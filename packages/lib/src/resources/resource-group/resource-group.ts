@@ -96,11 +96,7 @@ export class ResourceGroup extends Construct implements IResourceGroup {
    * });
    * ```
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props?: ResourceGroupProps
-  ) {
+  constructor(scope: Construct, id: string, props?: ResourceGroupProps) {
     super(scope, id);
 
     // Validate parent is a SubscriptionStack
@@ -150,7 +146,7 @@ export class ResourceGroup extends Construct implements IResourceGroup {
 
     throw new Error(
       'ResourceGroup must be created within a SubscriptionStack. ' +
-      'Ensure the parent scope is a SubscriptionStack or has one in its hierarchy.'
+        'Ensure the parent scope is a SubscriptionStack or has one in its hierarchy.'
     );
   }
 
@@ -176,10 +172,7 @@ export class ResourceGroup extends Construct implements IResourceGroup {
    * @param props - Resource group properties
    * @returns Resolved resource group name
    */
-  private resolveResourceGroupName(
-    id: string,
-    props?: ResourceGroupProps
-  ): string {
+  private resolveResourceGroupName(id: string, props?: ResourceGroupProps): string {
     // If name provided explicitly, use it
     if (props?.resourceGroupName) {
       return props.resourceGroupName;

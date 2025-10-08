@@ -478,11 +478,7 @@ describe('resources/openai-service/ArmOpenAIService', () => {
         properties: {
           networkAcls: {
             defaultAction: NetworkRuleAction.DENY,
-            ipRules: [
-              { value: '1.2.3.4' },
-              { value: '5.6.7.8' },
-              { value: '10.0.0.0/24' },
-            ],
+            ipRules: [{ value: '1.2.3.4' }, { value: '5.6.7.8' }, { value: '10.0.0.0/24' }],
           },
         },
       });
@@ -492,11 +488,7 @@ describe('resources/openai-service/ArmOpenAIService', () => {
       expect(template.properties).toEqual({
         networkAcls: {
           defaultAction: 'Deny',
-          ipRules: [
-            { value: '1.2.3.4' },
-            { value: '5.6.7.8' },
-            { value: '10.0.0.0/24' },
-          ],
+          ipRules: [{ value: '1.2.3.4' }, { value: '5.6.7.8' }, { value: '10.0.0.0/24' }],
         },
       });
     });

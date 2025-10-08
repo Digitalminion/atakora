@@ -45,16 +45,16 @@ describe('resources/metric-alert/MetricAlert', () => {
 
     actionGroup = new ActionGroup(resourceGroup, 'Alerts', {
       groupShortName: 'alerts',
-      emailReceivers: [
-        { name: 'admin', emailAddress: 'admin@example.com' },
-      ],
+      emailReceivers: [{ name: 'admin', emailAddress: 'admin@example.com' }],
     });
   });
 
   describe('constructor', () => {
     it('should create metric alert with simplified interface', () => {
       const alert = new MetricAlert(resourceGroup, 'CpuAlert', {
-        scopes: ['/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test'],
+        scopes: [
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        ],
         metricName: 'CpuPercentage',
         operator: MetricAlertOperator.GREATER_THAN,
         threshold: 80,
@@ -72,7 +72,9 @@ describe('resources/metric-alert/MetricAlert', () => {
     it('should create metric alert with custom name', () => {
       const alert = new MetricAlert(resourceGroup, 'CpuAlert', {
         name: 'alert-custom-cpu',
-        scopes: ['/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test'],
+        scopes: [
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        ],
         metricName: 'CpuPercentage',
         operator: MetricAlertOperator.GREATER_THAN,
         threshold: 80,
@@ -86,7 +88,9 @@ describe('resources/metric-alert/MetricAlert', () => {
 
     it('should merge tags with parent', () => {
       const alert = new MetricAlert(resourceGroup, 'CpuAlert', {
-        scopes: ['/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test'],
+        scopes: [
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        ],
         metricName: 'CpuPercentage',
         operator: MetricAlertOperator.GREATER_THAN,
         threshold: 80,
@@ -104,7 +108,9 @@ describe('resources/metric-alert/MetricAlert', () => {
 
     it('should create metric alert with custom evaluation frequency and window', () => {
       const alert = new MetricAlert(resourceGroup, 'CpuAlert', {
-        scopes: ['/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test'],
+        scopes: [
+          '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+        ],
         metricName: 'CpuPercentage',
         operator: MetricAlertOperator.GREATER_THAN,
         threshold: 80,
@@ -122,7 +128,9 @@ describe('resources/metric-alert/MetricAlert', () => {
     it('should throw error if not created under ResourceGroup', () => {
       expect(() => {
         new MetricAlert(stack, 'Alert', {
-          scopes: ['/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test'],
+          scopes: [
+            '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Web/sites/app-test',
+          ],
           metricName: 'CpuPercentage',
           operator: MetricAlertOperator.GREATER_THAN,
           threshold: 80,
@@ -143,7 +151,9 @@ describe('resources/metric-alert/MetricAlert', () => {
       );
 
       expect(alert.name).toBe('alert-existing');
-      expect(alert.metricAlertId).toBe('/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Insights/metricAlerts/alert-existing');
+      expect(alert.metricAlertId).toBe(
+        '/subscriptions/12345678/resourceGroups/rg-test/providers/Microsoft.Insights/metricAlerts/alert-existing'
+      );
     });
   });
 });

@@ -41,15 +41,15 @@ The Azure ARM Priv library uses a consistent, context-aware naming convention sy
 
 ### Component Breakdown
 
-| Component     | Description                          | Example         | Required |
-| ------------- | ------------------------------------ | --------------- | -------- |
-| `prefix`      | Resource type abbreviation           | `rg`, `vnet`    | Yes      |
-| `org`         | Organization identifier              | `dp`, `fin`     | Yes      |
-| `project`     | Project name                         | `colorai`       | Yes      |
-| `resource_id` | Unique resource identifier           | `networkrg`     | Yes      |
-| `environment` | Environment type                     | `nonprod`       | Yes      |
-| `geography`   | Azure region abbreviation            | `eus`, `wus2`   | Yes      |
-| `instance`    | Instance number (multi-region)       | `01`, `02`      | Yes      |
+| Component     | Description                    | Example       | Required |
+| ------------- | ------------------------------ | ------------- | -------- |
+| `prefix`      | Resource type abbreviation     | `rg`, `vnet`  | Yes      |
+| `org`         | Organization identifier        | `dp`, `fin`   | Yes      |
+| `project`     | Project name                   | `colorai`     | Yes      |
+| `resource_id` | Unique resource identifier     | `networkrg`   | Yes      |
+| `environment` | Environment type               | `nonprod`     | Yes      |
+| `geography`   | Azure region abbreviation      | `eus`, `wus2` | Yes      |
+| `instance`    | Instance number (multi-region) | `01`, `02`    | Yes      |
 
 ### Separator
 
@@ -60,10 +60,10 @@ Can be customized per stack or globally (see [Configuration](#configuration)).
 ### Example Names
 
 ```
-rg-dp-colorai-networkrg-nonprod-eus-01        # Resource Group
-vnet-dp-colorai-mainvnet-nonprod-eus-01       # Virtual Network
+rg-dp-colorai-networkrg-nonprod-eus-00        # Resource Group
+vnet-dp-colorai-mainvnet-nonprod-eus-00       # Virtual Network
 stdpcoloraiappstoragnonprodeus01              # Storage Account (no hyphens)
-kv-dp-colorai-appkv-nonprod-eus-01            # Key Vault
+kv-dp-colorai-appkv-nonprod-eus-00            # Key Vault
 st-dp-colorai-datastorage-production-wus2-02  # Storage (production, west us 2, instance 2)
 ```
 
@@ -75,12 +75,14 @@ Identifies the organizational unit or business area.
 
 **Format**: Short abbreviation (2-4 characters)
 **Examples**:
+
 - `dp` - Digital Products
 - `fin` - Finance
 - `hr` - Human Resources
 - `it` - Information Technology
 
 **Usage**:
+
 ```typescript
 import { Organization } from '@atakora/lib';
 
@@ -93,11 +95,13 @@ The project or application name.
 
 **Format**: Lowercase, alphanumeric (no special characters)
 **Examples**:
+
 - `colorai`
 - `salesportal`
 - `inventory`
 
 **Usage**:
+
 ```typescript
 import { Project } from '@atakora/lib';
 
@@ -109,10 +113,12 @@ const project = new Project('colorai');
 Indicates the deployment environment.
 
 **Valid Values**:
+
 - `nonprod` - Non-production (dev, test, staging)
 - `production` - Production
 
 **Usage**:
+
 ```typescript
 import { Environment } from '@atakora/lib';
 
@@ -125,6 +131,7 @@ Azure region where the resource is deployed.
 
 **Format**: Azure region abbreviation
 **Common Values**:
+
 - `eus` - East US
 - `eus2` - East US 2
 - `wus` - West US
@@ -134,6 +141,7 @@ Azure region where the resource is deployed.
 - `weu` - West Europe
 
 **Usage**:
+
 ```typescript
 import { Geography } from '@atakora/lib';
 
@@ -149,6 +157,7 @@ Instance number for multi-region or multi-instance deployments.
 **Purpose**: Distinguish multiple instances in the same region or different regions
 
 **Usage**:
+
 ```typescript
 import { Instance } from '@atakora/lib';
 
@@ -162,16 +171,22 @@ The unique identifier for this specific resource within the project.
 
 **Format**: Derived from the construct ID (sanitized)
 **Rules**:
+
 - Lowercase
 - Alphanumeric + hyphens
 - Descriptive of resource purpose
 
 **Example**:
+
 ```typescript
-new ResourceGroup(stack, 'NetworkRG', { /* ... */ });
+new ResourceGroup(stack, 'NetworkRG', {
+  /* ... */
+});
 // resource_id becomes 'networkrg'
 
-new VirtualNetwork(rg, 'MainVNet', { /* ... */ });
+new VirtualNetwork(rg, 'MainVNet', {
+  /* ... */
+});
 // resource_id becomes 'mainvnet'
 ```
 
@@ -183,65 +198,65 @@ Based on [Azure Cloud Adoption Framework abbreviations](https://learn.microsoft.
 
 #### Core Infrastructure
 
-| Resource Type          | Prefix      | Example                                 |
-| ---------------------- | ----------- | --------------------------------------- |
-| Resource Group         | `rg`        | `rg-dp-colorai-networkrg-nonprod-eus-01`|
-| Landing Zone RG        | `rg-lz`     | `rg-lz-dp-platform-nonprod-eus-01`      |
-| Platform RG            | `rg-pl`     | `rg-pl-dp-shared-nonprod-eus-01`        |
-| Stack                  | `stk`       | `stk-dp-colorai-foundation-nonprod-eus-01`|
-| Virtual Network        | `vnet`      | `vnet-dp-colorai-main-nonprod-eus-01`   |
-| Subnet                 | `snet`      | `snet-dp-colorai-app-nonprod-eus-01`    |
-| Network Security Group | `nsg`       | `nsg-dp-colorai-app-nonprod-eus-01`     |
-| Public IP              | `pip`       | `pip-dp-colorai-gateway-nonprod-eus-01` |
-| Private Endpoint       | `pe`        | `pe-dp-colorai-storage-nonprod-eus-01`  |
-| Private Link Service   | `pls`       | `pls-dp-colorai-app-nonprod-eus-01`     |
-| DNS Zone Link          | `dns-link`  | `dns-link-dp-colorai-vnet-nonprod-eus-01`|
+| Resource Type          | Prefix     | Example                                    |
+| ---------------------- | ---------- | ------------------------------------------ |
+| Resource Group         | `rg`       | `rg-dp-colorai-networkrg-nonprod-eus-00`   |
+| Landing Zone RG        | `rg-lz`    | `rg-lz-dp-platform-nonprod-eus-00`         |
+| Platform RG            | `rg-pl`    | `rg-pl-dp-shared-nonprod-eus-00`           |
+| Stack                  | `stk`      | `stk-dp-colorai-foundation-nonprod-eus-00` |
+| Virtual Network        | `vnet`     | `vnet-dp-colorai-main-nonprod-eus-00`      |
+| Subnet                 | `snet`     | `snet-dp-colorai-app-nonprod-eus-00`       |
+| Network Security Group | `nsg`      | `nsg-dp-colorai-app-nonprod-eus-00`        |
+| Public IP              | `pip`      | `pip-dp-colorai-gateway-nonprod-eus-00`    |
+| Private Endpoint       | `pe`       | `pe-dp-colorai-storage-nonprod-eus-00`     |
+| Private Link Service   | `pls`      | `pls-dp-colorai-app-nonprod-eus-00`        |
+| DNS Zone Link          | `dns-link` | `dns-link-dp-colorai-vnet-nonprod-eus-00`  |
 
 #### Compute Services
 
-| Resource Type          | Prefix | Example                              |
-| ---------------------- | ------ | ------------------------------------ |
-| App Service            | `app`  | `app-dp-colorai-api-nonprod-eus-01`  |
-| App Service Plan       | `asp`  | `asp-dp-colorai-main-nonprod-eus-01` |
-| Application Gateway    | `agw`  | `agw-dp-colorai-main-nonprod-eus-01` |
-| WAF Policy             | `waf`  | `waf-dp-colorai-main-nonprod-eus-01` |
+| Resource Type       | Prefix | Example                              |
+| ------------------- | ------ | ------------------------------------ |
+| App Service         | `app`  | `app-dp-colorai-api-nonprod-eus-00`  |
+| App Service Plan    | `asp`  | `asp-dp-colorai-main-nonprod-eus-00` |
+| Application Gateway | `agw`  | `agw-dp-colorai-main-nonprod-eus-00` |
+| WAF Policy          | `waf`  | `waf-dp-colorai-main-nonprod-eus-00` |
 
 #### Data Services
 
-| Resource Type     | Prefix   | Example                                     |
-| ----------------- | -------- | ------------------------------------------- |
-| Storage Account   | `st`     | `stdpcoloraiappstoragnonprodeus01` (special)|
-| Key Vault         | `kv`     | `kv-dp-colorai-app-nonprod-eus-01`          |
-| Cosmos DB         | `cosmos` | `cosmos-dp-colorai-main-nonprod-eus-01`     |
-| Azure Search      | `srch`   | `srch-dp-colorai-main-nonprod-eus-01`       |
+| Resource Type   | Prefix   | Example                                      |
+| --------------- | -------- | -------------------------------------------- |
+| Storage Account | `st`     | `stdpcoloraiappstoragnonprodeus01` (special) |
+| Key Vault       | `kv`     | `kv-dp-colorai-app-nonprod-eus-00`           |
+| Cosmos DB       | `cosmos` | `cosmos-dp-colorai-main-nonprod-eus-00`      |
+| Azure Search    | `srch`   | `srch-dp-colorai-main-nonprod-eus-00`        |
 
 #### AI Services
 
-| Resource Type | Prefix | Example                               |
-| ------------- | ------ | ------------------------------------- |
-| OpenAI        | `oai`  | `oai-dp-colorai-main-nonprod-eus-01`  |
+| Resource Type | Prefix | Example                              |
+| ------------- | ------ | ------------------------------------ |
+| OpenAI        | `oai`  | `oai-dp-colorai-main-nonprod-eus-00` |
 
 #### API Services
 
-| Resource Type | Prefix | Example                                |
-| ------------- | ------ | -------------------------------------- |
-| API Management| `apim` | `apim-dp-colorai-main-nonprod-eus-01`  |
+| Resource Type  | Prefix | Example                               |
+| -------------- | ------ | ------------------------------------- |
+| API Management | `apim` | `apim-dp-colorai-main-nonprod-eus-00` |
 
 #### Monitoring Services
 
-| Resource Type           | Prefix  | Example                                  |
-| ----------------------- | ------- | ---------------------------------------- |
-| Log Analytics Workspace | `law`   | `law-dp-colorai-main-nonprod-eus-01`     |
-| Application Insights    | `ai`    | `ai-dp-colorai-main-nonprod-eus-01`      |
-| Action Group            | `ag`    | `ag-dp-colorai-alerts-nonprod-eus-01`    |
-| Dashboard               | `dash`  | `dash-dp-colorai-overview-nonprod-eus-01`|
-| Alert                   | `alert` | `alert-dp-colorai-cpu-nonprod-eus-01`    |
+| Resource Type           | Prefix  | Example                                   |
+| ----------------------- | ------- | ----------------------------------------- |
+| Log Analytics Workspace | `law`   | `law-dp-colorai-main-nonprod-eus-00`      |
+| Application Insights    | `ai`    | `ai-dp-colorai-main-nonprod-eus-00`       |
+| Action Group            | `ag`    | `ag-dp-colorai-alerts-nonprod-eus-00`     |
+| Dashboard               | `dash`  | `dash-dp-colorai-overview-nonprod-eus-00` |
+| Alert                   | `alert` | `alert-dp-colorai-cpu-nonprod-eus-00`     |
 
 #### External Services
 
-| Resource Type | Prefix | Example                               |
-| ------------- | ------ | ------------------------------------- |
-| Snowflake     | `sf`   | `sf-dp-colorai-main-nonprod-eus-01`   |
+| Resource Type | Prefix | Example                             |
+| ------------- | ------ | ----------------------------------- |
+| Snowflake     | `sf`   | `sf-dp-colorai-main-nonprod-eus-00` |
 
 ### Customizing Prefixes
 
@@ -257,8 +272,8 @@ const stack = new SubscriptionStack(app, 'MyStack', {
   instance: Instance.fromNumber(1),
   namingConventions: {
     patterns: {
-      storage: 'stor',      // Override 'st' with 'stor'
-      keyvault: 'vault',    // Override 'kv' with 'vault'
+      storage: 'stor', // Override 'st' with 'stor'
+      keyvault: 'vault', // Override 'kv' with 'vault'
     },
   },
 });
@@ -271,27 +286,31 @@ const stack = new SubscriptionStack(app, 'MyStack', {
 Storage accounts have unique Azure naming constraints:
 
 **Constraints**:
+
 - 3-24 characters
 - Lowercase letters and numbers only
 - No hyphens or special characters
 - Globally unique across all of Azure
 
 **Handling**:
+
 - Hyphens are automatically removed
 - Name is forced to lowercase
 - Total length is strictly enforced
 
 **Example**:
+
 ```
-Standard pattern:    st-dp-colorai-appstorage-nonprod-eus-01
+Standard pattern:    st-dp-colorai-appstorage-nonprod-eus-00
 Storage account:     stdpcoloraiappstoragnonprodeus01
 ```
 
 **Code**:
+
 ```typescript
 new StorageAccount(rg, 'AppStorage', {
   // Name automatically formatted for storage account rules
-  accountName: 'appstorage',  // Becomes 'stdpcoloraiappstoragnonprodeus01'
+  accountName: 'appstorage', // Becomes 'stdpcoloraiappstoragnonprodeus01'
 });
 ```
 
@@ -300,20 +319,23 @@ new StorageAccount(rg, 'AppStorage', {
 Key Vaults have specific naming requirements:
 
 **Constraints**:
+
 - 3-24 characters
 - Alphanumeric and hyphens only
 - Must start with a letter
 - Globally unique across all of Azure
 
 **Handling**:
+
 - Name is forced to lowercase
 - Validated to start with a letter
 - Length strictly enforced
 
 **Example**:
+
 ```typescript
 new KeyVault(rg, 'AppKeyVault', {
-  // Name: kv-dp-colorai-appkeyvault-nonprod-eus-01
+  // Name: kv-dp-colorai-appkeyvault-nonprod-eus-00
 });
 ```
 
@@ -322,14 +344,16 @@ new KeyVault(rg, 'AppKeyVault', {
 Resource groups have generous length limits (90 characters) and fewer restrictions.
 
 **Constraints**:
+
 - 1-90 characters
 - Alphanumeric, underscores, hyphens, periods, parentheses
 - Cannot end with a period
 
 **Example**:
+
 ```typescript
 new ResourceGroup(stack, 'NetworkRG', {
-  // Name: rg-dp-colorai-networkrg-nonprod-eus-01
+  // Name: rg-dp-colorai-networkrg-nonprod-eus-00
 });
 ```
 
@@ -344,14 +368,14 @@ import { DEFAULT_CONVENTIONS, mergeConventions } from '@atakora/lib/naming';
 
 // Override globally
 const customConventions = mergeConventions({
-  separator: '_',                    // Use underscore instead of hyphen
-  maxLength: 50,                     // Global max length
+  separator: '_', // Use underscore instead of hyphen
+  maxLength: 50, // Global max length
   patterns: {
     storage: 'stor',
     vnet: 'network',
   },
   maxLengths: {
-    rg: 60,                          // Override RG max length
+    rg: 60, // Override RG max length
   },
 });
 ```
@@ -383,7 +407,7 @@ For complete control, use L1 constructs with explicit names:
 
 ```typescript
 new ArmResourceGroup(stack, 'CustomRG', {
-  resourceGroupName: 'my-custom-name',  // Exact name, no auto-generation
+  resourceGroupName: 'my-custom-name', // Exact name, no auto-generation
   location: 'eastus',
 });
 ```
@@ -393,6 +417,7 @@ new ArmResourceGroup(stack, 'CustomRG', {
 ### Compile-Time Validation
 
 TypeScript ensures:
+
 - Required context properties are provided
 - Types are correct
 - Resource properties match ARM schema
@@ -409,6 +434,7 @@ The naming system validates:
 ### Validation Errors
 
 **Example Error**:
+
 ```
 Error: Resource name exceeds maximum length
   Resource Type: Microsoft.Storage/storageAccounts
@@ -437,7 +463,7 @@ const stack = new SubscriptionStack(app, 'Foundation', {
 });
 
 const rg = new ResourceGroup(stack, 'NetworkRG');
-// Generated name: rg-dp-colorai-networkrg-nonprod-eus-01
+// Generated name: rg-dp-colorai-networkrg-nonprod-eus-00
 ```
 
 ### Multi-Region Deployment
@@ -482,32 +508,32 @@ const stack = new SubscriptionStack(app, 'Infrastructure', {
   instance: Instance.fromNumber(1),
 });
 
-// Resource Group: rg-dp-colorai-networkrg-nonprod-eus-01
+// Resource Group: rg-dp-colorai-networkrg-nonprod-eus-00
 const networkRG = new ResourceGroup(stack, 'NetworkRG');
 
-// Virtual Network: vnet-dp-colorai-mainvnet-nonprod-eus-01
+// Virtual Network: vnet-dp-colorai-mainvnet-nonprod-eus-00
 const vnet = new VirtualNetwork(networkRG, 'MainVNet', {
   addressSpace: '10.0.0.0/16',
 });
 
-// Subnet: snet-dp-colorai-appsubnet-nonprod-eus-01
+// Subnet: snet-dp-colorai-appsubnet-nonprod-eus-00
 const appSubnet = new Subnet(vnet, 'AppSubnet', {
   addressPrefix: '10.0.1.0/24',
 });
 
-// NSG: nsg-dp-colorai-appnsg-nonprod-eus-01
+// NSG: nsg-dp-colorai-appnsg-nonprod-eus-00
 const appNSG = new NetworkSecurityGroup(networkRG, 'AppNSG');
 
-// Resource Group: rg-dp-colorai-datarg-nonprod-eus-01
+// Resource Group: rg-dp-colorai-datarg-nonprod-eus-00
 const dataRG = new ResourceGroup(stack, 'DataRG');
 
 // Storage Account: stdpcoloraiappstoragnonprodeus01
 const storage = new StorageAccount(dataRG, 'AppStorage');
 
-// Key Vault: kv-dp-colorai-appkv-nonprod-eus-01
+// Key Vault: kv-dp-colorai-appkv-nonprod-eus-00
 const keyVault = new KeyVault(dataRG, 'AppKV');
 
-// Cosmos DB: cosmos-dp-colorai-maindb-nonprod-eus-01
+// Cosmos DB: cosmos-dp-colorai-maindb-nonprod-eus-00
 const cosmosDB = new CosmosDB(dataRG, 'MainDB');
 ```
 
@@ -517,18 +543,18 @@ const cosmosDB = new CosmosDB(dataRG, 'MainDB');
 const stack = new SubscriptionStack(app, 'CustomStack', {
   subscription: Subscription.fromId('...'),
   geography: Geography.fromValue('eastus'),
-  organization: Organization.fromValue('fin'),      // Finance organization
+  organization: Organization.fromValue('fin'), // Finance organization
   project: new Project('reporting'),
   environment: Environment.fromValue('production'),
   instance: Instance.fromNumber(1),
   namingConventions: {
-    separator: '_',                                  // Use underscore
+    separator: '_', // Use underscore
     patterns: {
-      storage: 'stor',                               // Custom prefix
+      storage: 'stor', // Custom prefix
       keyvault: 'vault',
     },
     maxLengths: {
-      rg: 50,                                        // Custom limit
+      rg: 50, // Custom limit
     },
   },
 });
@@ -547,12 +573,14 @@ const storage = new StorageAccount(rg, 'MainStorage');
 **Problem**: Generated name exceeds Azure resource limit
 
 **Solutions**:
+
 1. Shorten the resource ID (construct ID)
 2. Use a shorter project name
 3. Use a shorter organization abbreviation
 4. Override the naming convention for that resource type
 
 **Example**:
+
 ```typescript
 // Problem: Very long construct ID
 new ResourceGroup(stack, 'VeryLongDescriptiveResourceGroupName');
@@ -569,11 +597,12 @@ new ResourceGroup(stack, 'DataRG');
 **Solution**: The library automatically sanitizes names, but ensure construct IDs use alphanumeric characters and hyphens only.
 
 **Example**:
+
 ```typescript
 // Avoid special characters in construct IDs
-new ResourceGroup(stack, 'Network-RG');  // OK
-new ResourceGroup(stack, 'Network_RG');  // OK
-new ResourceGroup(stack, 'Network@RG');  // Avoid
+new ResourceGroup(stack, 'Network-RG'); // OK
+new ResourceGroup(stack, 'Network_RG'); // OK
+new ResourceGroup(stack, 'Network@RG'); // Avoid
 ```
 
 ### Name Collision
@@ -583,10 +612,11 @@ new ResourceGroup(stack, 'Network@RG');  // Avoid
 **Solution**: Ensure unique construct IDs within the same scope.
 
 **Example**:
+
 ```typescript
 // Problem: Same ID in same scope
 const rg1 = new ResourceGroup(stack, 'NetworkRG');
-const rg2 = new ResourceGroup(stack, 'NetworkRG');  // ERROR: Duplicate ID
+const rg2 = new ResourceGroup(stack, 'NetworkRG'); // ERROR: Duplicate ID
 
 // Solution: Unique IDs
 const rg1 = new ResourceGroup(stack, 'NetworkRG');
@@ -600,9 +630,10 @@ const rg2 = new ResourceGroup(stack, 'ApplicationRG');
 **Solution**: Ensure you use `Geography.fromValue()` which automatically abbreviates.
 
 **Example**:
+
 ```typescript
 // Correct
-const geo = Geography.fromValue('eastus');  // Abbreviates to 'eus'
+const geo = Geography.fromValue('eastus'); // Abbreviates to 'eus'
 
 // If you need custom abbreviations, override the geography mapping
 ```

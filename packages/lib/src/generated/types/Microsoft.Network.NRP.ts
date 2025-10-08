@@ -239,7 +239,17 @@ export interface ApplicationGatewayCustomError {
   /**
    * Status code of the application gateway custom error.
    */
-  readonly statusCode?: 'HttpStatus400' | 'HttpStatus403' | 'HttpStatus404' | 'HttpStatus405' | 'HttpStatus408' | 'HttpStatus500' | 'HttpStatus502' | 'HttpStatus503' | 'HttpStatus504' | any;
+  readonly statusCode?:
+    | 'HttpStatus400'
+    | 'HttpStatus403'
+    | 'HttpStatus404'
+    | 'HttpStatus405'
+    | 'HttpStatus408'
+    | 'HttpStatus500'
+    | 'HttpStatus502'
+    | 'HttpStatus503'
+    | 'HttpStatus504'
+    | any;
 }
 
 /**
@@ -687,7 +697,9 @@ export interface ApplicationGateway {
   /**
    * Web application firewall configuration.
    */
-  readonly webApplicationFirewallConfiguration?: ApplicationGatewayWebApplicationFirewallConfiguration | any;
+  readonly webApplicationFirewallConfiguration?:
+    | ApplicationGatewayWebApplicationFirewallConfiguration
+    | any;
 }
 
 /**
@@ -839,7 +851,16 @@ export interface ApplicationGatewaySku {
   /**
    * Name of an application gateway SKU.
    */
-  readonly name?: 'Standard_Small' | 'Standard_Medium' | 'Standard_Large' | 'WAF_Medium' | 'WAF_Large' | 'Standard_v2' | 'WAF_v2' | 'Basic' | any;
+  readonly name?:
+    | 'Standard_Small'
+    | 'Standard_Medium'
+    | 'Standard_Large'
+    | 'WAF_Medium'
+    | 'WAF_Large'
+    | 'Standard_v2'
+    | 'WAF_v2'
+    | 'Basic'
+    | any;
   /**
    * Tier of an application gateway.
    */
@@ -871,7 +892,36 @@ export interface ApplicationGatewaySslPolicy {
   /**
    * Ssl cipher suites to be enabled in the specified order to application gateway.
    */
-  readonly cipherSuites?: 'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384' | 'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256' | 'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA' | 'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA' | 'TLS_DHE_RSA_WITH_AES_256_GCM_SHA384' | 'TLS_DHE_RSA_WITH_AES_128_GCM_SHA256' | 'TLS_DHE_RSA_WITH_AES_256_CBC_SHA' | 'TLS_DHE_RSA_WITH_AES_128_CBC_SHA' | 'TLS_RSA_WITH_AES_256_GCM_SHA384' | 'TLS_RSA_WITH_AES_128_GCM_SHA256' | 'TLS_RSA_WITH_AES_256_CBC_SHA256' | 'TLS_RSA_WITH_AES_128_CBC_SHA256' | 'TLS_RSA_WITH_AES_256_CBC_SHA' | 'TLS_RSA_WITH_AES_128_CBC_SHA' | 'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384' | 'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256' | 'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384' | 'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256' | 'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA' | 'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA' | 'TLS_DHE_DSS_WITH_AES_256_CBC_SHA256' | 'TLS_DHE_DSS_WITH_AES_128_CBC_SHA256' | 'TLS_DHE_DSS_WITH_AES_256_CBC_SHA' | 'TLS_DHE_DSS_WITH_AES_128_CBC_SHA' | 'TLS_RSA_WITH_3DES_EDE_CBC_SHA' | 'TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA' | 'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256' | 'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384'[] | any;
+  readonly cipherSuites?:
+    | 'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384'
+    | 'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256'
+    | 'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA'
+    | 'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA'
+    | 'TLS_DHE_RSA_WITH_AES_256_GCM_SHA384'
+    | 'TLS_DHE_RSA_WITH_AES_128_GCM_SHA256'
+    | 'TLS_DHE_RSA_WITH_AES_256_CBC_SHA'
+    | 'TLS_DHE_RSA_WITH_AES_128_CBC_SHA'
+    | 'TLS_RSA_WITH_AES_256_GCM_SHA384'
+    | 'TLS_RSA_WITH_AES_128_GCM_SHA256'
+    | 'TLS_RSA_WITH_AES_256_CBC_SHA256'
+    | 'TLS_RSA_WITH_AES_128_CBC_SHA256'
+    | 'TLS_RSA_WITH_AES_256_CBC_SHA'
+    | 'TLS_RSA_WITH_AES_128_CBC_SHA'
+    | 'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384'
+    | 'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256'
+    | 'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384'
+    | 'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256'
+    | 'TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA'
+    | 'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA'
+    | 'TLS_DHE_DSS_WITH_AES_256_CBC_SHA256'
+    | 'TLS_DHE_DSS_WITH_AES_128_CBC_SHA256'
+    | 'TLS_DHE_DSS_WITH_AES_256_CBC_SHA'
+    | 'TLS_DHE_DSS_WITH_AES_128_CBC_SHA'
+    | 'TLS_RSA_WITH_3DES_EDE_CBC_SHA'
+    | 'TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA'
+    | 'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256'
+    | 'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384'[]
+    | any;
   /**
    * Ssl protocols to be disabled on application gateway.
    */
@@ -883,7 +933,13 @@ export interface ApplicationGatewaySslPolicy {
   /**
    * Name of Ssl predefined policy.
    */
-  readonly policyName?: 'AppGwSslPolicy20150501' | 'AppGwSslPolicy20170401' | 'AppGwSslPolicy20170401S' | 'AppGwSslPolicy20220101' | 'AppGwSslPolicy20220101S' | any;
+  readonly policyName?:
+    | 'AppGwSslPolicy20150501'
+    | 'AppGwSslPolicy20170401'
+    | 'AppGwSslPolicy20170401S'
+    | 'AppGwSslPolicy20220101'
+    | 'AppGwSslPolicy20220101S'
+    | any;
   /**
    * Type of Ssl Policy.
    */
@@ -1163,8 +1219,7 @@ export interface AzureFirewallIPConfiguration {
 /**
  * AzureFirewallNatRCAction definition.
  */
-export interface AzureFirewallNatRCAction {
-}
+export interface AzureFirewallNatRCAction {}
 
 /**
  * AzureFirewallNatRule definition.
@@ -1375,8 +1430,7 @@ export interface AzureFirewallPublicIPAddress {
 /**
  * AzureFirewallRCAction definition.
  */
-export interface AzureFirewallRCAction {
-}
+export interface AzureFirewallRCAction {}
 
 /**
  * AzureFirewallSku definition.
@@ -1557,8 +1611,7 @@ export interface BreakOutCategoryPolicies {
 /**
  * Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties definition.
  */
-export interface Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties {
-}
+export interface Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties {}
 
 /**
  * ConnectionMonitorDestination definition.
@@ -1589,7 +1642,14 @@ export interface ConnectionMonitorEndpoint {
   /**
    * Test coverage for the endpoint.
    */
-  readonly coverageLevel?: 'Default' | 'Low' | 'BelowAverage' | 'Average' | 'AboveAverage' | 'Full' | any;
+  readonly coverageLevel?:
+    | 'Default'
+    | 'Low'
+    | 'BelowAverage'
+    | 'Average'
+    | 'AboveAverage'
+    | 'Full'
+    | any;
   /**
    * Filter field is getting deprecated and should not be used. Instead use Include/Exclude scope fields for it.
    */
@@ -1893,7 +1953,9 @@ export interface ConnectivityConfigurationProps {
   /**
    * Collection of additional settings to enhance specific topology behaviors of the connectivity configuration resource.
    */
-  readonly connectivityCapabilities?: ConnectivityConfigurationPropertiesConnectivityCapabilities | any;
+  readonly connectivityCapabilities?:
+    | ConnectivityConfigurationPropertiesConnectivityCapabilities
+    | any;
   /**
    * Connectivity topology type.
    */
@@ -2029,7 +2091,16 @@ export interface CustomIpPrefix {
   /**
    * The commissioned state of the Custom IP Prefix.
    */
-  readonly commissionedState?: 'Provisioning' | 'Provisioned' | 'Commissioning' | 'CommissionedNoInternetAdvertise' | 'Commissioned' | 'Decommissioning' | 'Deprovisioning' | 'Deprovisioned' | any;
+  readonly commissionedState?:
+    | 'Provisioning'
+    | 'Provisioned'
+    | 'Commissioning'
+    | 'CommissionedNoInternetAdvertise'
+    | 'Commissioned'
+    | 'Decommissioning'
+    | 'Deprovisioning'
+    | 'Deprovisioned'
+    | any;
   /**
    * The Parent CustomIpPrefix for IPv6 /64 CustomIpPrefix.
    */
@@ -2041,7 +2112,17 @@ export interface CustomIpPrefix {
   /**
    * The Geo for CIDR advertising. Should be an Geo code.
    */
-  readonly geo?: 'GLOBAL' | 'AFRI' | 'APAC' | 'EURO' | 'LATAM' | 'NAM' | 'ME' | 'OCEANIA' | 'AQ' | any;
+  readonly geo?:
+    | 'GLOBAL'
+    | 'AFRI'
+    | 'APAC'
+    | 'EURO'
+    | 'LATAM'
+    | 'NAM'
+    | 'ME'
+    | 'OCEANIA'
+    | 'AQ'
+    | any;
   /**
    * Whether to Advertise the range to Internet.
    */
@@ -2059,14 +2140,12 @@ export interface CustomIpPrefix {
 /**
  * DdosCustomPolicy definition.
  */
-export interface DdosCustomPolicy {
-}
+export interface DdosCustomPolicy {}
 
 /**
  * DdosProtectionPlan definition.
  */
-export interface DdosProtectionPlan {
-}
+export interface DdosProtectionPlan {}
 
 /**
  * DdosSettings definition.
@@ -2175,7 +2254,17 @@ export interface DscpConfiguration {
   /**
    * RNM supported protocol types.
    */
-  readonly protocol?: 'DoNotUse' | 'Icmp' | 'Tcp' | 'Udp' | 'Gre' | 'Esp' | 'Ah' | 'Vxlan' | 'All' | any;
+  readonly protocol?:
+    | 'DoNotUse'
+    | 'Icmp'
+    | 'Tcp'
+    | 'Udp'
+    | 'Gre'
+    | 'Esp'
+    | 'Ah'
+    | 'Vxlan'
+    | 'All'
+    | any;
   /**
    * QoS object definitions
    */
@@ -2445,7 +2534,12 @@ export interface ExpressRouteCircuit {
   /**
    * The ServiceProviderProvisioningState state of the resource.
    */
-  readonly serviceProviderProvisioningState?: 'NotProvisioned' | 'Provisioning' | 'Provisioned' | 'Deprovisioning' | any;
+  readonly serviceProviderProvisioningState?:
+    | 'NotProvisioned'
+    | 'Provisioning'
+    | 'Provisioned'
+    | 'Deprovisioning'
+    | any;
 }
 
 /**
@@ -2537,8 +2631,7 @@ export interface ExpressRouteConnection {
 /**
  * ExpressRouteConnectionId definition.
  */
-export interface ExpressRouteConnectionId {
-}
+export interface ExpressRouteConnectionId {}
 
 /**
  * ExpressRouteConnectionProps definition.
@@ -2657,7 +2750,12 @@ export interface ExpressRouteCrossConnectionProps {
   /**
    * The provisioning state of the circuit in the connectivity provider system.
    */
-  readonly serviceProviderProvisioningState?: 'NotProvisioned' | 'Provisioning' | 'Provisioned' | 'Deprovisioning' | any;
+  readonly serviceProviderProvisioningState?:
+    | 'NotProvisioned'
+    | 'Provisioning'
+    | 'Provisioned'
+    | 'Deprovisioning'
+    | any;
 }
 
 /**
@@ -2749,8 +2847,7 @@ export interface ExpressRouteLinkMacSecConfig {
 /**
  * ExpressRoutePortAuthorization definition.
  */
-export interface ExpressRoutePortAuthorization {
-}
+export interface ExpressRoutePortAuthorization {}
 
 /**
  * ExpressRoutePort definition.
@@ -2847,8 +2944,7 @@ export interface FirewallPolicyDraftProps {
 /**
  * FirewallPolicyFilterRuleCollectionAction definition.
  */
-export interface FirewallPolicyFilterRuleCollectionAction {
-}
+export interface FirewallPolicyFilterRuleCollectionAction {}
 
 /**
  * FirewallPolicyHttpHeaderToInsert definition.
@@ -2945,7 +3041,9 @@ export interface FirewallPolicyIntrusionDetectionConfiguration {
   /**
    * List of rules for traffic to bypass.
    */
-  readonly bypassTrafficSettings?: FirewallPolicyIntrusionDetectionBypassTrafficSpecifications[] | any;
+  readonly bypassTrafficSettings?:
+    | FirewallPolicyIntrusionDetectionBypassTrafficSpecifications[]
+    | any;
   /**
    * IDPS Private IP address ranges are used to identify traffic direction (i.e. inbound, outbound, etc.). By default, only ranges defined by IANA RFC 1918 are considered private IP addresses. To modify default ranges, specify your Private IP address ranges with this property
    */
@@ -3001,8 +3099,7 @@ export interface FirewallPolicyLogAnalyticsWorkspace {
 /**
  * FirewallPolicyNatRuleCollectionAction definition.
  */
-export interface FirewallPolicyNatRuleCollectionAction {
-}
+export interface FirewallPolicyNatRuleCollectionAction {}
 
 /**
  * FirewallPolicy definition.
@@ -3269,7 +3366,13 @@ export interface GroupByVariable {
   /**
    * User Session clause variable.
    */
-  readonly variableName?: 'ClientAddr' | 'GeoLocation' | 'None' | 'ClientAddrXFFHeader' | 'GeoLocationXFFHeader' | any;
+  readonly variableName?:
+    | 'ClientAddr'
+    | 'GeoLocation'
+    | 'None'
+    | 'ClientAddrXFFHeader'
+    | 'GeoLocationXFFHeader'
+    | any;
 }
 
 /**
@@ -3689,7 +3792,14 @@ export interface IpamPoolProps {
   /**
    * Provisioning states of a resource.
    */
-  readonly provisioningState?: 'Failed' | 'Succeeded' | 'Canceled' | 'Creating' | 'Updating' | 'Deleting' | any;
+  readonly provisioningState?:
+    | 'Failed'
+    | 'Succeeded'
+    | 'Canceled'
+    | 'Creating'
+    | 'Updating'
+    | 'Deleting'
+    | any;
 }
 
 /**
@@ -3699,11 +3809,28 @@ export interface IpsecPolicy {
   /**
    * The DH Group used in IKE Phase 1 for initial SA.
    */
-  readonly dhGroup?: 'None' | 'DHGroup1' | 'DHGroup2' | 'DHGroup14' | 'DHGroup2048' | 'ECP256' | 'ECP384' | 'DHGroup24' | any;
+  readonly dhGroup?:
+    | 'None'
+    | 'DHGroup1'
+    | 'DHGroup2'
+    | 'DHGroup14'
+    | 'DHGroup2048'
+    | 'ECP256'
+    | 'ECP384'
+    | 'DHGroup24'
+    | any;
   /**
    * The IKE encryption algorithm (IKE phase 2).
    */
-  readonly ikeEncryption?: 'DES' | 'DES3' | 'AES128' | 'AES192' | 'AES256' | 'GCMAES256' | 'GCMAES128' | any;
+  readonly ikeEncryption?:
+    | 'DES'
+    | 'DES3'
+    | 'AES128'
+    | 'AES192'
+    | 'AES256'
+    | 'GCMAES256'
+    | 'GCMAES128'
+    | any;
   /**
    * The IKE integrity algorithm (IKE phase 2).
    */
@@ -3711,15 +3838,42 @@ export interface IpsecPolicy {
   /**
    * The IPSec encryption algorithm (IKE phase 1).
    */
-  readonly ipsecEncryption?: 'None' | 'DES' | 'DES3' | 'AES128' | 'AES192' | 'AES256' | 'GCMAES128' | 'GCMAES192' | 'GCMAES256' | any;
+  readonly ipsecEncryption?:
+    | 'None'
+    | 'DES'
+    | 'DES3'
+    | 'AES128'
+    | 'AES192'
+    | 'AES256'
+    | 'GCMAES128'
+    | 'GCMAES192'
+    | 'GCMAES256'
+    | any;
   /**
    * The IPSec integrity algorithm (IKE phase 1).
    */
-  readonly ipsecIntegrity?: 'MD5' | 'SHA1' | 'SHA256' | 'GCMAES128' | 'GCMAES192' | 'GCMAES256' | any;
+  readonly ipsecIntegrity?:
+    | 'MD5'
+    | 'SHA1'
+    | 'SHA256'
+    | 'GCMAES128'
+    | 'GCMAES192'
+    | 'GCMAES256'
+    | any;
   /**
    * The Pfs Group used in IKE Phase 2 for new child SA.
    */
-  readonly pfsGroup?: 'None' | 'PFS1' | 'PFS2' | 'PFS2048' | 'ECP256' | 'ECP384' | 'PFS24' | 'PFS14' | 'PFSMM' | any;
+  readonly pfsGroup?:
+    | 'None'
+    | 'PFS1'
+    | 'PFS2'
+    | 'PFS2048'
+    | 'ECP256'
+    | 'ECP384'
+    | 'PFS24'
+    | 'PFS14'
+    | 'PFSMM'
+    | any;
   /**
    * The IPSec Security Association (also called Quick Mode or Phase 2 SA) payload size in KB for a site to site VPN tunnel.
    */
@@ -3947,7 +4101,12 @@ export interface ManagedServiceIdentity {
   /**
    * The list of user identities associated with resource. The user identity dictionary key references will be ARM resource ids in the form: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
    */
-  readonly userAssignedIdentities?: Record<string, Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties> | any;
+  readonly userAssignedIdentities?:
+    | Record<
+        string,
+        Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties
+      >
+    | any;
 }
 
 /**
@@ -3969,11 +4128,32 @@ export interface MatchCondition {
   /**
    * The operator to be matched.
    */
-  readonly operator?: 'IPMatch' | 'Equal' | 'Contains' | 'LessThan' | 'GreaterThan' | 'LessThanOrEqual' | 'GreaterThanOrEqual' | 'BeginsWith' | 'EndsWith' | 'Regex' | 'GeoMatch' | 'Any' | any;
+  readonly operator?:
+    | 'IPMatch'
+    | 'Equal'
+    | 'Contains'
+    | 'LessThan'
+    | 'GreaterThan'
+    | 'LessThanOrEqual'
+    | 'GreaterThanOrEqual'
+    | 'BeginsWith'
+    | 'EndsWith'
+    | 'Regex'
+    | 'GeoMatch'
+    | 'Any'
+    | any;
   /**
    * List of transforms.
    */
-  readonly transforms?: 'Uppercase' | 'Lowercase' | 'Trim' | 'UrlDecode' | 'UrlEncode' | 'RemoveNulls' | 'HtmlEntityDecode'[] | any;
+  readonly transforms?:
+    | 'Uppercase'
+    | 'Lowercase'
+    | 'Trim'
+    | 'UrlDecode'
+    | 'UrlEncode'
+    | 'RemoveNulls'
+    | 'HtmlEntityDecode'[]
+    | any;
 }
 
 /**
@@ -3987,7 +4167,16 @@ export interface MatchVariable {
   /**
    * Match Variable.
    */
-  readonly variableName?: 'RemoteAddr' | 'RequestMethod' | 'QueryString' | 'PostArgs' | 'RequestUri' | 'RequestHeaders' | 'RequestBody' | 'RequestCookies' | any;
+  readonly variableName?:
+    | 'RemoteAddr'
+    | 'RequestMethod'
+    | 'QueryString'
+    | 'PostArgs'
+    | 'RequestUri'
+    | 'RequestHeaders'
+    | 'RequestBody'
+    | 'RequestCookies'
+    | any;
 }
 
 /**
@@ -4165,7 +4354,12 @@ export interface NetworkManagerProps {
   /**
    * Scope Access.
    */
-  readonly networkManagerScopeAccesses?: 'SecurityAdmin' | 'Connectivity' | 'SecurityUser' | 'Routing'[] | any;
+  readonly networkManagerScopeAccesses?:
+    | 'SecurityAdmin'
+    | 'Connectivity'
+    | 'SecurityUser'
+    | 'Routing'[]
+    | any;
   /**
    * Scope of Network Manager.
    */
@@ -4231,8 +4425,7 @@ export interface NetworkSecurityGroup {
 /**
  * NetworkSecurityPerimeterProps definition.
  */
-export interface NetworkSecurityPerimeterProps {
-}
+export interface NetworkSecurityPerimeterProps {}
 
 /**
  * NetworkVirtualApplianceConnectionProps definition.
@@ -4331,8 +4524,7 @@ export interface NetworkVirtualAppliancePropertiesFormatNetworkProfile {
 /**
  * NetworkWatcher definition.
  */
-export interface NetworkWatcher {
-}
+export interface NetworkWatcher {}
 
 /**
  * NspAccessRuleProps definition.
@@ -4425,8 +4617,7 @@ export interface NspLoggingConfigurationProps {
 /**
  * NspProfileProps definition.
  */
-export interface NspProfileProps {
-}
+export interface NspProfileProps {}
 
 /**
  * O365BreakOutCategoryPolicies definition.
@@ -4495,7 +4686,17 @@ export interface OwaspCrsExclusionEntry {
   /**
    * The variable to be excluded.
    */
-  readonly matchVariable?: 'RequestHeaderNames' | 'RequestCookieNames' | 'RequestArgNames' | 'RequestHeaderKeys' | 'RequestHeaderValues' | 'RequestCookieKeys' | 'RequestCookieValues' | 'RequestArgKeys' | 'RequestArgValues' | any;
+  readonly matchVariable?:
+    | 'RequestHeaderNames'
+    | 'RequestCookieNames'
+    | 'RequestArgNames'
+    | 'RequestHeaderKeys'
+    | 'RequestHeaderValues'
+    | 'RequestCookieKeys'
+    | 'RequestCookieValues'
+    | 'RequestArgKeys'
+    | 'RequestArgValues'
+    | any;
   /**
    * When matchVariable is a collection, operator used to specify which elements in the collection this exclusion applies to.
    */
@@ -4503,7 +4704,13 @@ export interface OwaspCrsExclusionEntry {
   /**
    * When matchVariable is a collection, operate on the selector to specify which elements in the collection this exclusion applies to.
    */
-  readonly selectorMatchOperator?: 'Equals' | 'Contains' | 'StartsWith' | 'EndsWith' | 'EqualsAny' | any;
+  readonly selectorMatchOperator?:
+    | 'Equals'
+    | 'Contains'
+    | 'StartsWith'
+    | 'EndsWith'
+    | 'EqualsAny'
+    | any;
 }
 
 /**
@@ -4723,8 +4930,7 @@ export interface Parameter {
 /**
  * PartnerManagedResourceProps definition.
  */
-export interface PartnerManagedResourceProps {
-}
+export interface PartnerManagedResourceProps {}
 
 /**
  * PolicySettings definition.
@@ -5163,7 +5369,12 @@ export interface PublicIPAddressDnsSettings {
   /**
    * The domain name label scope. If a domain name label and a domain name label scope are specified, an A DNS record is created for the public IP in the Microsoft Azure DNS system with a hashed value includes in FQDN.
    */
-  readonly domainNameLabelScope?: 'TenantReuse' | 'SubscriptionReuse' | 'ResourceGroupReuse' | 'NoReuse' | any;
+  readonly domainNameLabelScope?:
+    | 'TenantReuse'
+    | 'SubscriptionReuse'
+    | 'ResourceGroupReuse'
+    | 'NoReuse'
+    | any;
   /**
    * The Fully Qualified Domain Name of the A DNS record associated with the public IP. This is the concatenation of the domainNameLabel and the regionalized DNS zone.
    */
@@ -5247,7 +5458,17 @@ export interface QosDefinition {
   /**
    * RNM supported protocol types.
    */
-  readonly protocol?: 'DoNotUse' | 'Icmp' | 'Tcp' | 'Udp' | 'Gre' | 'Esp' | 'Ah' | 'Vxlan' | 'All' | any;
+  readonly protocol?:
+    | 'DoNotUse'
+    | 'Icmp'
+    | 'Tcp'
+    | 'Udp'
+    | 'Gre'
+    | 'Esp'
+    | 'Ah'
+    | 'Vxlan'
+    | 'All'
+    | any;
   /**
    * Source IP ranges.
    */
@@ -5323,7 +5544,14 @@ export interface ReachabilityAnalysisIntentProps {
   /**
    * Provisioning states of a resource.
    */
-  readonly provisioningState?: 'Failed' | 'Succeeded' | 'Canceled' | 'Creating' | 'Updating' | 'Deleting' | any;
+  readonly provisioningState?:
+    | 'Failed'
+    | 'Succeeded'
+    | 'Canceled'
+    | 'Creating'
+    | 'Updating'
+    | 'Deleting'
+    | any;
   /**
    * Source resource id to verify the reachability path of.
    */
@@ -5345,7 +5573,14 @@ export interface ReachabilityAnalysisRunProps {
   /**
    * Provisioning states of a resource.
    */
-  readonly provisioningState?: 'Failed' | 'Succeeded' | 'Canceled' | 'Creating' | 'Updating' | 'Deleting' | any;
+  readonly provisioningState?:
+    | 'Failed'
+    | 'Succeeded'
+    | 'Canceled'
+    | 'Creating'
+    | 'Updating'
+    | 'Deleting'
+    | any;
 }
 
 /**
@@ -5785,7 +6020,14 @@ export interface StaticCidrProps {
   /**
    * Provisioning states of a resource.
    */
-  readonly provisioningState?: 'Failed' | 'Succeeded' | 'Canceled' | 'Creating' | 'Updating' | 'Deleting' | any;
+  readonly provisioningState?:
+    | 'Failed'
+    | 'Succeeded'
+    | 'Canceled'
+    | 'Creating'
+    | 'Updating'
+    | 'Deleting'
+    | any;
 }
 
 /**
@@ -5935,7 +6177,14 @@ export interface VerifierWorkspaceProps {
   /**
    * Provisioning states of a resource.
    */
-  readonly provisioningState?: 'Failed' | 'Succeeded' | 'Canceled' | 'Creating' | 'Updating' | 'Deleting' | any;
+  readonly provisioningState?:
+    | 'Failed'
+    | 'Succeeded'
+    | 'Canceled'
+    | 'Creating'
+    | 'Updating'
+    | 'Deleting'
+    | any;
 }
 
 /**
@@ -6405,7 +6654,17 @@ export interface VirtualNetworkGatewayMigrationStatus {
   /**
    * Represent the current migration phase of gateway.
    */
-  readonly phase?: 'None' | 'Prepare' | 'PrepareSucceeded' | 'Execute' | 'ExecuteSucceeded' | 'Commit' | 'CommitSucceeded' | 'AbortSucceeded' | 'Abort' | any;
+  readonly phase?:
+    | 'None'
+    | 'Prepare'
+    | 'PrepareSucceeded'
+    | 'Execute'
+    | 'ExecuteSucceeded'
+    | 'Commit'
+    | 'CommitSucceeded'
+    | 'AbortSucceeded'
+    | 'Abort'
+    | any;
   /**
    * Represent the current state of gateway migration.
    */
@@ -6513,11 +6772,49 @@ export interface VirtualNetworkGatewaySku {
   /**
    * Gateway SKU name.
    */
-  readonly name?: 'Basic' | 'HighPerformance' | 'Standard' | 'UltraPerformance' | 'VpnGw1' | 'VpnGw2' | 'VpnGw3' | 'VpnGw4' | 'VpnGw5' | 'VpnGw1AZ' | 'VpnGw2AZ' | 'VpnGw3AZ' | 'VpnGw4AZ' | 'VpnGw5AZ' | 'ErGw1AZ' | 'ErGw2AZ' | 'ErGw3AZ' | 'ErGwScale' | any;
+  readonly name?:
+    | 'Basic'
+    | 'HighPerformance'
+    | 'Standard'
+    | 'UltraPerformance'
+    | 'VpnGw1'
+    | 'VpnGw2'
+    | 'VpnGw3'
+    | 'VpnGw4'
+    | 'VpnGw5'
+    | 'VpnGw1AZ'
+    | 'VpnGw2AZ'
+    | 'VpnGw3AZ'
+    | 'VpnGw4AZ'
+    | 'VpnGw5AZ'
+    | 'ErGw1AZ'
+    | 'ErGw2AZ'
+    | 'ErGw3AZ'
+    | 'ErGwScale'
+    | any;
   /**
    * Gateway SKU tier.
    */
-  readonly tier?: 'Basic' | 'HighPerformance' | 'Standard' | 'UltraPerformance' | 'VpnGw1' | 'VpnGw2' | 'VpnGw3' | 'VpnGw4' | 'VpnGw5' | 'VpnGw1AZ' | 'VpnGw2AZ' | 'VpnGw3AZ' | 'VpnGw4AZ' | 'VpnGw5AZ' | 'ErGw1AZ' | 'ErGw2AZ' | 'ErGw3AZ' | 'ErGwScale' | any;
+  readonly tier?:
+    | 'Basic'
+    | 'HighPerformance'
+    | 'Standard'
+    | 'UltraPerformance'
+    | 'VpnGw1'
+    | 'VpnGw2'
+    | 'VpnGw3'
+    | 'VpnGw4'
+    | 'VpnGw5'
+    | 'VpnGw1AZ'
+    | 'VpnGw2AZ'
+    | 'VpnGw3AZ'
+    | 'VpnGw4AZ'
+    | 'VpnGw5AZ'
+    | 'ErGw1AZ'
+    | 'ErGw2AZ'
+    | 'ErGw3AZ'
+    | 'ErGwScale'
+    | any;
 }
 
 /**
@@ -7422,7 +7719,14 @@ export interface WebApplicationFirewallScrubbingRules {
   /**
    * The variable to be scrubbed from the logs.
    */
-  readonly matchVariable?: 'RequestHeaderNames' | 'RequestCookieNames' | 'RequestArgNames' | 'RequestPostArgNames' | 'RequestJSONArgNames' | 'RequestIPAddress' | any;
+  readonly matchVariable?:
+    | 'RequestHeaderNames'
+    | 'RequestCookieNames'
+    | 'RequestArgNames'
+    | 'RequestPostArgNames'
+    | 'RequestJSONArgNames'
+    | 'RequestIPAddress'
+    | any;
   /**
    * When matchVariable is a collection, operator used to specify which elements in the collection this rule applies to.
    */

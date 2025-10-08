@@ -74,22 +74,25 @@ describe('CLI Config Commands Integration', () => {
         expect(saved?.location).toBe('westus');
       });
 
-      it.skipIf(process.platform === 'win32')('should create config file with proper permissions', () => {
-        const profile = {
-          name: 'test-profile',
-          tenantId: '12345678-1234-1234-1234-123456789abc',
-          subscriptionId: '87654321-4321-4321-4321-cba987654321',
-        };
+      it.skipIf(process.platform === 'win32')(
+        'should create config file with proper permissions',
+        () => {
+          const profile = {
+            name: 'test-profile',
+            tenantId: '12345678-1234-1234-1234-123456789abc',
+            subscriptionId: '87654321-4321-4321-4321-cba987654321',
+          };
 
-        configManager.saveProfile(profile);
+          configManager.saveProfile(profile);
 
-        const configPath = path.join(testConfigDir, 'config.json');
-        expect(fs.existsSync(configPath)).toBe(true);
+          const configPath = path.join(testConfigDir, 'config.json');
+          expect(fs.existsSync(configPath)).toBe(true);
 
-        const stat = fs.statSync(configPath);
-        const mode = (stat.mode & 0o777).toString(8);
-        expect(mode).toBe('600'); // rw-------
-      });
+          const stat = fs.statSync(configPath);
+          const mode = (stat.mode & 0o777).toString(8);
+          expect(mode).toBe('600'); // rw-------
+        }
+      );
     });
 
     describe('getProfile()', () => {
@@ -159,13 +162,13 @@ describe('CLI Config Commands Integration', () => {
           },
         ];
 
-        profiles.forEach(p => configManager.saveProfile(p));
+        profiles.forEach((p) => configManager.saveProfile(p));
 
         const listed = configManager.listProfiles();
         expect(listed).toHaveLength(3);
-        expect(listed.map(p => p.name)).toContain('profile1');
-        expect(listed.map(p => p.name)).toContain('profile2');
-        expect(listed.map(p => p.name)).toContain('profile3');
+        expect(listed.map((p) => p.name)).toContain('profile1');
+        expect(listed.map((p) => p.name)).toContain('profile2');
+        expect(listed.map((p) => p.name)).toContain('profile3');
       });
     });
 
@@ -285,21 +288,24 @@ describe('CLI Config Commands Integration', () => {
         }).toThrow(/Failed to load config/);
       });
 
-      it.skipIf(process.platform === 'win32')('should create config directory if it does not exist', () => {
-        const profile = {
-          name: 'test',
-          tenantId: '12345678-1234-1234-1234-123456789abc',
-          subscriptionId: '87654321-4321-4321-4321-cba987654321',
-        };
+      it.skipIf(process.platform === 'win32')(
+        'should create config directory if it does not exist',
+        () => {
+          const profile = {
+            name: 'test',
+            tenantId: '12345678-1234-1234-1234-123456789abc',
+            subscriptionId: '87654321-4321-4321-4321-cba987654321',
+          };
 
-        configManager.saveProfile(profile);
+          configManager.saveProfile(profile);
 
-        expect(fs.existsSync(testConfigDir)).toBe(true);
+          expect(fs.existsSync(testConfigDir)).toBe(true);
 
-        const stat = fs.statSync(testConfigDir);
-        const mode = (stat.mode & 0o777).toString(8);
-        expect(mode).toBe('700'); // rwx------
-      });
+          const stat = fs.statSync(testConfigDir);
+          const mode = (stat.mode & 0o777).toString(8);
+          expect(mode).toBe('700'); // rwx------
+        }
+      );
     });
 
     describe('workflow integration', () => {

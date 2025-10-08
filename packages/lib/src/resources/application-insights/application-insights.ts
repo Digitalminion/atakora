@@ -120,11 +120,7 @@ export class ApplicationInsights extends Construct implements IApplicationInsigh
    * });
    * ```
    */
-  constructor(
-    scope: Construct,
-    id: string,
-    props: ApplicationInsightsProps
-  ) {
+  constructor(scope: Construct, id: string, props: ApplicationInsightsProps) {
     super(scope, id);
 
     // Get parent resource group
@@ -168,8 +164,10 @@ export class ApplicationInsights extends Construct implements IApplicationInsigh
       samplingPercentage: props?.samplingPercentage,
       disableIpMasking: props?.disableIpMasking,
       disableLocalAuth: props?.disableLocalAuth,
-      publicNetworkAccessForIngestion: props?.publicNetworkAccessForIngestion ?? ('Enabled' as PublicNetworkAccess),
-      publicNetworkAccessForQuery: props?.publicNetworkAccessForQuery ?? ('Enabled' as PublicNetworkAccess),
+      publicNetworkAccessForIngestion:
+        props?.publicNetworkAccessForIngestion ?? ('Enabled' as PublicNetworkAccess),
+      publicNetworkAccessForQuery:
+        props?.publicNetworkAccessForQuery ?? ('Enabled' as PublicNetworkAccess),
       tags: this.tags,
     });
 
@@ -200,7 +198,7 @@ export class ApplicationInsights extends Construct implements IApplicationInsigh
 
     throw new Error(
       'ApplicationInsights must be created within or under a ResourceGroup. ' +
-      'Ensure the parent scope is a ResourceGroup or has one in its hierarchy.'
+        'Ensure the parent scope is a ResourceGroup or has one in its hierarchy.'
     );
   }
 
@@ -240,10 +238,7 @@ export class ApplicationInsights extends Construct implements IApplicationInsigh
    * @param props - Application Insights properties
    * @returns Resolved component name
    */
-  private resolveComponentName(
-    id: string,
-    props?: ApplicationInsightsProps
-  ): string {
+  private resolveComponentName(id: string, props?: ApplicationInsightsProps): string {
     // If name provided explicitly, use it
     if (props?.name) {
       return props.name;

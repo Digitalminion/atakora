@@ -97,7 +97,12 @@ export interface AzureFilesIdentityBasedAuthentication {
   /**
    * Default share permission for users using Kerberos authentication if RBAC role is not assigned.
    */
-  readonly defaultSharePermission?: 'None' | 'StorageFileDataSmbShareReader' | 'StorageFileDataSmbShareContributor' | 'StorageFileDataSmbShareElevatedContributor' | any;
+  readonly defaultSharePermission?:
+    | 'None'
+    | 'StorageFileDataSmbShareReader'
+    | 'StorageFileDataSmbShareContributor'
+    | 'StorageFileDataSmbShareElevatedContributor'
+    | any;
   /**
    * Indicates the directory service used. Note that this enum may be extended in the future.
    */
@@ -325,7 +330,18 @@ export interface CorsRule {
   /**
    * Required if CorsRule element is present. A list of HTTP methods that are allowed to be executed by the origin.
    */
-  readonly allowedMethods?: 'DELETE' | 'GET' | 'HEAD' | 'MERGE' | 'POST' | 'OPTIONS' | 'PUT' | 'PATCH' | 'CONNECT' | 'TRACE'[] | any;
+  readonly allowedMethods?:
+    | 'DELETE'
+    | 'GET'
+    | 'HEAD'
+    | 'MERGE'
+    | 'POST'
+    | 'OPTIONS'
+    | 'PUT'
+    | 'PATCH'
+    | 'CONNECT'
+    | 'TRACE'[]
+    | any;
   /**
    * Required if CorsRule element is present. A list of origin domains that will be allowed via CORS, or "*" to allow all domains
    */
@@ -345,7 +361,7 @@ export interface CorsRule {
  */
 export interface CorsRules {
   /**
-   * The List of CORS rules. You can include up to five CorsRule elements in the request. 
+   * The List of CORS rules. You can include up to five CorsRule elements in the request.
    */
   readonly corsRules?: CorsRule[] | any;
 }
@@ -1125,8 +1141,7 @@ export interface Placement {
 /**
  * PrivateEndpoint definition.
  */
-export interface PrivateEndpoint {
-}
+export interface PrivateEndpoint {}
 
 /**
  * PrivateEndpointConnectionProps definition.
@@ -1275,7 +1290,22 @@ export interface Sku {
   /**
    * The SKU name. Required for account creation; optional for update. Note that in older versions, SKU name was called accountType.
    */
-  readonly name?: 'Standard_LRS' | 'Standard_GRS' | 'Standard_RAGRS' | 'Standard_ZRS' | 'Premium_LRS' | 'Premium_ZRS' | 'Standard_GZRS' | 'Standard_RAGZRS' | 'StandardV2_LRS' | 'StandardV2_GRS' | 'StandardV2_ZRS' | 'StandardV2_GZRS' | 'PremiumV2_LRS' | 'PremiumV2_ZRS' | any;
+  readonly name?:
+    | 'Standard_LRS'
+    | 'Standard_GRS'
+    | 'Standard_RAGRS'
+    | 'Standard_ZRS'
+    | 'Premium_LRS'
+    | 'Premium_ZRS'
+    | 'Standard_GZRS'
+    | 'Standard_RAGZRS'
+    | 'StandardV2_LRS'
+    | 'StandardV2_GRS'
+    | 'StandardV2_ZRS'
+    | 'StandardV2_GZRS'
+    | 'PremiumV2_LRS'
+    | 'PremiumV2_ZRS'
+    | any;
 }
 
 /**
@@ -1495,8 +1525,7 @@ export interface StorageTaskAssignmentReport {
 /**
  * StorageTaskReportProps definition.
  */
-export interface StorageTaskReportProps {
-}
+export interface StorageTaskReportProps {}
 
 /**
  * TableAccessPolicy definition.
@@ -1603,8 +1632,7 @@ export interface TriggerParameters {
 /**
  * UserAssignedIdentity definition.
  */
-export interface UserAssignedIdentity {
-}
+export interface UserAssignedIdentity {}
 
 /**
  * VirtualNetworkRule definition.
@@ -1621,7 +1649,13 @@ export interface VirtualNetworkRule {
   /**
    * Gets the state of virtual network rule.
    */
-  readonly state?: 'Provisioning' | 'Deprovisioning' | 'Succeeded' | 'Failed' | 'NetworkSourceDeleted' | any;
+  readonly state?:
+    | 'Provisioning'
+    | 'Deprovisioning'
+    | 'Succeeded'
+    | 'Failed'
+    | 'NetworkSourceDeleted'
+    | any;
 }
 
 /**
@@ -1886,7 +1920,13 @@ export interface ArmStorageAccountsProps {
   /**
    * Required. Indicates the type of storage account.
    */
-  readonly kind?: 'Storage' | 'StorageV2' | 'BlobStorage' | 'FileStorage' | 'BlockBlobStorage' | any;
+  readonly kind?:
+    | 'Storage'
+    | 'StorageV2'
+    | 'BlobStorage'
+    | 'FileStorage'
+    | 'BlockBlobStorage'
+    | any;
   /**
    * Required. Gets or sets the location of the resource. This will be one of the supported and registered Azure Geo Regions (e.g. West US, East US, Southeast Asia, etc.). The geo region of a resource cannot be changed once it is created, but if an identical geo region is specified on update, the request will succeed.
    */

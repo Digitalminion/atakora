@@ -288,12 +288,7 @@ describe('resources/virtual-network/ArmVirtualNetwork', () => {
     });
 
     it('should accept valid CIDR notations', () => {
-      const validCIDRs = [
-        '10.0.0.0/16',
-        '192.168.0.0/24',
-        '172.16.0.0/12',
-        '10.1.2.0/28',
-      ];
+      const validCIDRs = ['10.0.0.0/16', '192.168.0.0/24', '172.16.0.0/12', '10.1.2.0/28'];
 
       validCIDRs.forEach((cidr) => {
         const vnet = new ArmVirtualNetwork(resourceGroup, `VNet-${cidr}`, {
@@ -318,9 +313,7 @@ describe('resources/virtual-network/ArmVirtualNetwork', () => {
           addressSpace: {
             addressPrefixes: ['10.0.0.0/16'],
           },
-          subnets: [
-            { name: '', addressPrefix: '10.0.1.0/24' },
-          ],
+          subnets: [{ name: '', addressPrefix: '10.0.1.0/24' }],
         });
       }).toThrow(/Subnet name cannot be empty/);
     });
@@ -334,9 +327,7 @@ describe('resources/virtual-network/ArmVirtualNetwork', () => {
           addressSpace: {
             addressPrefixes: ['10.0.0.0/16'],
           },
-          subnets: [
-            { name: 'subnet-app', addressPrefix: 'invalid' },
-          ],
+          subnets: [{ name: 'subnet-app', addressPrefix: 'invalid' }],
         });
       }).toThrow(/Invalid subnet address prefix/);
     });
@@ -396,9 +387,7 @@ describe('resources/virtual-network/ArmVirtualNetwork', () => {
         addressSpace: {
           addressPrefixes: ['10.0.0.0/16'],
         },
-        subnets: [
-          { name: 'subnet-app', addressPrefix: '10.0.1.0/24' },
-        ],
+        subnets: [{ name: 'subnet-app', addressPrefix: '10.0.1.0/24' }],
       });
 
       const template = vnet.toArmTemplate() as any;

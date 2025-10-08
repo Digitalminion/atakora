@@ -2,23 +2,34 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
 import inquirer from 'inquirer';
-import { AzureAuthService, TenantInfo, SubscriptionInfo } from '../../auth/azure-auth';
+import { TenantInfo, SubscriptionInfo } from '../../auth/azure-auth';
+import { authManager } from '../../auth/auth-manager';
 import { ConfigManager } from '../../config/config-manager';
 
 export function selectCommand(): Command {
   const select = new Command('select')
     .description('Interactively select Azure tenant and subscription')
     .option('-p, --profile <name>', 'Profile name to save configuration to', 'default')
-    .option('--cloud <cloud>', 'Azure cloud environment (AzureCloud, AzureUSGovernment, AzureChinaCloud, AzureGermanCloud)', 'AzureCloud')
+    .option(
+      '--cloud <cloud>',
+      'Azure cloud environment (AzureCloud, AzureUSGovernment, AzureChinaCloud, AzureGermanCloud)',
+      'AzureCloud'
+    )
     .action(async (options) => {
       const spinner = ora('Authenticating with Azure...').start();
 
       try {
-        const authService = new AzureAuthService(options.cloud);
+        const authService = authManager.getAuthService(options.cloud);
         const configManager = new ConfigManager();
 
-        // Authenticate
-        const authResult = await authService.login();
+        // Authenticate (using cached credential if available)
+        let authResult;
+        if (!authManager.isAuthenticated(options.cloud)) {
+          authResult = await authService.login();
+        } else {
+          spinner.text = 'Using cached credentials...';
+          authResult = { success: true };
+        }
         if (!authResult.success) {
           spinner.fail(chalk.red('Authentication failed'));
           console.error(chalk.red(authResult.error || 'Unknown error'));
@@ -106,7 +117,9 @@ export function selectCommand(): Command {
         console.log(chalk.green('\n✓ Configuration saved successfully'));
         console.log(chalk.gray(`Profile: ${options.profile}`));
         console.log(chalk.gray(`Tenant: ${selectedTenant}`));
-        console.log(chalk.gray(`Subscription: ${subscription?.displayName} (${selectedSubscription})`));
+        console.log(
+          chalk.gray(`Subscription: ${subscription?.displayName} (${selectedSubscription})`)
+        );
         console.log(
           chalk.cyan('\nRun'),
           chalk.bold('azure-arm config show'),
@@ -114,9 +127,7 @@ export function selectCommand(): Command {
         );
       } catch (error) {
         spinner.fail(chalk.red('Configuration failed'));
-        console.error(
-          chalk.red(error instanceof Error ? error.message : 'Unknown error')
-        );
+        console.error(chalk.red(error instanceof Error ? error.message : 'Unknown error'));
         process.exit(1);
       }
     });

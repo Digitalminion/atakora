@@ -148,8 +148,10 @@ describe('E2E: Private Endpoint with Storage Account + Subnet', () => {
         instance: Instance.fromNumber(1),
       });
 
-      const subnetId = '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet';
-      const storageId = '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/teststg';
+      const subnetId =
+        '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet';
+      const storageId =
+        '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/teststg';
 
       const armPrivateEndpoint = new ArmPrivateEndpoint(stack, 'TestPE', {
         privateEndpointName: 'pe-test-01',
@@ -183,8 +185,10 @@ describe('E2E: Private Endpoint with Storage Account + Subnet', () => {
         instance: Instance.fromNumber(1),
       });
 
-      const subnetId = '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet';
-      const storageId = '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/teststg';
+      const subnetId =
+        '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet';
+      const storageId =
+        '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/teststg';
 
       const armPrivateEndpoint = new ArmPrivateEndpoint(stack, 'TestPE', {
         privateEndpointName: 'pe-test-01',
@@ -223,8 +227,10 @@ describe('E2E: Private Endpoint with Storage Account + Subnet', () => {
         instance: Instance.fromNumber(1),
       });
 
-      const subnetId = '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet';
-      const storageId = '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/teststg';
+      const subnetId =
+        '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet';
+      const storageId =
+        '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/teststg';
 
       const armPrivateEndpoint = new ArmPrivateEndpoint(stack, 'TestPE', {
         privateEndpointName: 'pe-test-01',
@@ -260,8 +266,10 @@ describe('E2E: Private Endpoint with Storage Account + Subnet', () => {
         instance: Instance.fromNumber(1),
       });
 
-      const subnetId = '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet';
-      const storageId = '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/teststg';
+      const subnetId =
+        '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet';
+      const storageId =
+        '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/teststg';
 
       const armPrivateEndpoint = new ArmPrivateEndpoint(stack, 'TestPE', {
         privateEndpointName: 'pe-test-01',
@@ -294,8 +302,10 @@ describe('E2E: Private Endpoint with Storage Account + Subnet', () => {
         instance: Instance.fromNumber(1),
       });
 
-      const subnetId = '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet';
-      const storageId = '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/teststg';
+      const subnetId =
+        '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-subnet';
+      const storageId =
+        '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/teststg';
 
       const armPrivateEndpoint = new ArmPrivateEndpoint(stack, 'TestPE', {
         privateEndpointName: 'pe-storage-blob-prod-01',

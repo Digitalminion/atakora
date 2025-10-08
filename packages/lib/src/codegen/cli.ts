@@ -24,11 +24,7 @@ function main() {
   const schemaPath = path.resolve(args[0]);
   const outputPath = args[1]
     ? path.resolve(args[1])
-    : path.join(
-        __dirname,
-        '../generated/types',
-        path.basename(schemaPath).replace('.json', '.ts')
-      );
+    : path.join(__dirname, '../generated/types', path.basename(schemaPath).replace('.json', '.ts'));
 
   console.log(`Parsing schema: ${schemaPath}`);
 

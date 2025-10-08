@@ -87,15 +87,9 @@ describe('resources/action-group/ArmActionGroup', () => {
         actionGroupName: 'ag-alerts',
         location: 'Global',
         groupShortName: 'alerts',
-        emailReceivers: [
-          { name: 'admin', emailAddress: 'admin@example.com' },
-        ],
-        smsReceivers: [
-          { name: 'on-call', countryCode: '1', phoneNumber: '5551234567' },
-        ],
-        webhookReceivers: [
-          { name: 'slack', serviceUri: 'https://hooks.slack.com/test' },
-        ],
+        emailReceivers: [{ name: 'admin', emailAddress: 'admin@example.com' }],
+        smsReceivers: [{ name: 'on-call', countryCode: '1', phoneNumber: '5551234567' }],
+        webhookReceivers: [{ name: 'slack', serviceUri: 'https://hooks.slack.com/test' }],
       });
 
       expect(actionGroup.emailReceivers).toHaveLength(1);
@@ -108,9 +102,7 @@ describe('resources/action-group/ArmActionGroup', () => {
         actionGroupName: 'ag-alerts',
         location: 'Global',
         groupShortName: 'alerts',
-        emailReceivers: [
-          { name: 'admin', emailAddress: 'admin@example.com' },
-        ],
+        emailReceivers: [{ name: 'admin', emailAddress: 'admin@example.com' }],
       });
 
       expect(actionGroup.resourceType).toBe('Microsoft.Insights/actionGroups');
@@ -121,9 +113,7 @@ describe('resources/action-group/ArmActionGroup', () => {
         actionGroupName: 'ag-alerts',
         location: 'Global',
         groupShortName: 'alerts',
-        emailReceivers: [
-          { name: 'admin', emailAddress: 'admin@example.com' },
-        ],
+        emailReceivers: [{ name: 'admin', emailAddress: 'admin@example.com' }],
       });
 
       expect(actionGroup.apiVersion).toBe('2023-01-01');
@@ -134,9 +124,7 @@ describe('resources/action-group/ArmActionGroup', () => {
         actionGroupName: 'ag-alerts',
         location: 'Global',
         groupShortName: 'alerts',
-        emailReceivers: [
-          { name: 'admin', emailAddress: 'admin@example.com' },
-        ],
+        emailReceivers: [{ name: 'admin', emailAddress: 'admin@example.com' }],
       });
 
       expect(actionGroup.resourceId).toContain('/actionGroups/ag-alerts');
@@ -149,9 +137,7 @@ describe('resources/action-group/ArmActionGroup', () => {
         location: 'Global',
         groupShortName: 'alerts',
         enabled: false,
-        emailReceivers: [
-          { name: 'admin', emailAddress: 'admin@example.com' },
-        ],
+        emailReceivers: [{ name: 'admin', emailAddress: 'admin@example.com' }],
       });
 
       expect(actionGroup.enabled).toBe(false);
@@ -165,9 +151,7 @@ describe('resources/action-group/ArmActionGroup', () => {
           actionGroupName: '',
           location: 'Global',
           groupShortName: 'alerts',
-          emailReceivers: [
-            { name: 'admin', emailAddress: 'admin@example.com' },
-          ],
+          emailReceivers: [{ name: 'admin', emailAddress: 'admin@example.com' }],
         });
       }).toThrow(/Action group name cannot be empty/);
     });
@@ -178,9 +162,7 @@ describe('resources/action-group/ArmActionGroup', () => {
           actionGroupName: 'ag-alerts',
           location: '',
           groupShortName: 'alerts',
-          emailReceivers: [
-            { name: 'admin', emailAddress: 'admin@example.com' },
-          ],
+          emailReceivers: [{ name: 'admin', emailAddress: 'admin@example.com' }],
         });
       }).toThrow(/Location cannot be empty/);
     });
@@ -191,9 +173,7 @@ describe('resources/action-group/ArmActionGroup', () => {
           actionGroupName: 'ag-alerts',
           location: 'Global',
           groupShortName: '',
-          emailReceivers: [
-            { name: 'admin', emailAddress: 'admin@example.com' },
-          ],
+          emailReceivers: [{ name: 'admin', emailAddress: 'admin@example.com' }],
         });
       }).toThrow(/Group short name cannot be empty/);
     });
@@ -204,9 +184,7 @@ describe('resources/action-group/ArmActionGroup', () => {
           actionGroupName: 'ag-alerts',
           location: 'Global',
           groupShortName: 'verylongshortname',
-          emailReceivers: [
-            { name: 'admin', emailAddress: 'admin@example.com' },
-          ],
+          emailReceivers: [{ name: 'admin', emailAddress: 'admin@example.com' }],
         });
       }).toThrow(/must be 12 characters or less/);
     });
@@ -253,12 +231,8 @@ describe('resources/action-group/ArmActionGroup', () => {
         actionGroupName: 'ag-alerts',
         location: 'Global',
         groupShortName: 'alerts',
-        emailReceivers: [
-          { name: 'admin', emailAddress: 'admin@example.com' },
-        ],
-        smsReceivers: [
-          { name: 'on-call', countryCode: '1', phoneNumber: '5551234567' },
-        ],
+        emailReceivers: [{ name: 'admin', emailAddress: 'admin@example.com' }],
+        smsReceivers: [{ name: 'on-call', countryCode: '1', phoneNumber: '5551234567' }],
       });
 
       const template: any = actionGroup.toArmTemplate();

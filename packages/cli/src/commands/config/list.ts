@@ -52,7 +52,9 @@ export function listCommand(): Command {
               : chalk.white(profile.name);
 
             console.log(`${marker}${profileName}`);
-            console.log(`  ${chalk.gray('Subscription:')} ${profile.subscriptionName || profile.subscriptionId}`);
+            console.log(
+              `  ${chalk.gray('Subscription:')} ${profile.subscriptionName || profile.subscriptionId}`
+            );
             console.log(`  ${chalk.gray('Tenant ID:')}    ${profile.tenantId}`);
             if (profile.cloud) {
               console.log(`  ${chalk.gray('Cloud:')}        ${profile.cloud}`);

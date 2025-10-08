@@ -190,7 +190,7 @@ export class ArmCosmosDbAccount extends Resource implements ICosmosDbAccount {
     });
 
     // Check for duplicate failover priorities
-    const priorities = props.locations.map(loc => loc.failoverPriority);
+    const priorities = props.locations.map((loc) => loc.failoverPriority);
     const uniquePriorities = new Set(priorities);
     if (uniquePriorities.size !== priorities.length) {
       throw new Error('Each location must have a unique failoverPriority');
