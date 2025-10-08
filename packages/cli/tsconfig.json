@@ -10,5 +10,5 @@
   },
   "references": [{ "path": "../lib" }],
   "include": ["src/**/*"],
-  "exclude": ["src/**/*.test.ts"]
+  "exclude": ["src/**/*.test.ts", "src/**/__tests__/**/*"]
 }

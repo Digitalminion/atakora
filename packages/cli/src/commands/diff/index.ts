@@ -45,9 +45,56 @@ interface ResourceChange {
 
 export function createDiffCommand(): Command {
   const diff = new Command('diff')
-    .description('Preview changes before deployment (like terraform plan)')
-    .argument('[stack]', 'Stack name to diff (diffs all stacks if not specified)')
-    .option('-a, --app <path>', 'Path to synthesized cloud assembly directory', 'arm.out')
+    .description('Preview infrastructure changes before deployment')
+    .argument('[stack]', 'Specific stack to diff (optional)')
+    .option('-a, --app <path>', 'Path to synthesized templates', 'arm.out')
+    .addHelpText(
+      'after',
+      `
+${chalk.bold('Description:')}
+  Shows what changes would be made to your Azure infrastructure if you
+  deployed now. Similar to 'terraform plan' or 'git diff'.
+
+${chalk.bold('Examples:')}
+  ${chalk.dim('# Show changes for all stacks')}
+  ${chalk.cyan('$')} atakora diff
+
+  ${chalk.dim('# Show changes for specific stack')}
+  ${chalk.cyan('$')} atakora diff Foundation
+
+  ${chalk.dim('# Diff templates from custom directory')}
+  ${chalk.cyan('$')} atakora diff --app ./custom-output
+
+${chalk.bold('What it shows:')}
+  ${chalk.green('+')} ${chalk.white('Resources to be created')}
+  ${chalk.yellow('~')} ${chalk.white('Resources to be modified')}
+  ${chalk.red('-')} ${chalk.white('Resources to be deleted')}
+  ${chalk.dim('•')} ${chalk.white('Resources with no changes')}
+
+${chalk.bold('Change Detection:')}
+  ${chalk.cyan('•')} Compares local templates with deployed resources
+  ${chalk.cyan('•')} Identifies new, modified, and removed resources
+  ${chalk.cyan('•')} Shows property-level changes for modifications
+  ${chalk.cyan('•')} Highlights configuration drift
+
+${chalk.bold('Typical Workflow:')}
+  ${chalk.cyan('1.')} Modify infrastructure code in TypeScript
+  ${chalk.cyan('2.')} Run ${chalk.white('atakora synth')} to generate templates
+  ${chalk.cyan('3.')} Run ${chalk.white('atakora diff')} to preview changes
+  ${chalk.cyan('4.')} Review changes and verify expectations
+  ${chalk.cyan('5.')} Run ${chalk.white('atakora deploy')} to apply changes
+
+${chalk.bold('Requirements:')}
+  ${chalk.cyan('•')} Azure subscription configured
+  ${chalk.cyan('•')} Synthesized templates exist
+  ${chalk.cyan('•')} Read permissions on target resource group
+  ${chalk.cyan('•')} Internet connection for Azure API
+
+${chalk.bold('Related Commands:')}
+  ${chalk.white('atakora synth')}   ${chalk.dim('Generate templates before diffing')}
+  ${chalk.white('atakora deploy')}  ${chalk.dim('Apply changes after reviewing diff')}
+`
+    )
     .action(async (stackName, options) => {
       const spinner = ora('Initializing diff...').start();
 

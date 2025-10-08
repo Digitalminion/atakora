@@ -21,8 +21,48 @@ export function createAddCommand(): Command {
   const add = new Command('add')
     .description('Add a new package to the project')
     .argument('<package-name>', 'Name of the package to add')
-    .option('--set-default', 'Set this package as the default')
-    .option('--no-prompt', 'Skip prompts and use defaults')
+    .option('--set-default', 'Set this package as the default for synthesis')
+    .option('--no-prompt', 'Skip confirmation prompts')
+    .addHelpText(
+      'after',
+      `
+${chalk.bold('Description:')}
+  Adds a new infrastructure package to your Atakora project.
+  Each package represents a logical grouping of related Azure resources.
+
+${chalk.bold('Package Structure:')}
+  ${chalk.cyan('packages/<package-name>/')}
+  ├── bin/
+  │   └── app.ts           ${chalk.dim('# Package entry point')}
+  ├── src/                 ${chalk.dim('# Source code (optional)')}
+  ├── package.json
+  └── tsconfig.json
+
+${chalk.bold('Examples:')}
+  ${chalk.dim('# Add a backend package')}
+  ${chalk.cyan('$')} atakora add backend
+
+  ${chalk.dim('# Add and set as default')}
+  ${chalk.cyan('$')} atakora add networking --set-default
+
+  ${chalk.dim('# Skip confirmation prompt')}
+  ${chalk.cyan('$')} atakora add frontend --no-prompt
+
+${chalk.bold('Common Package Patterns:')}
+  ${chalk.cyan('•')} ${chalk.white('backend')}      - Application infrastructure (App Services, Functions)
+  ${chalk.cyan('•')} ${chalk.white('frontend')}     - Static site hosting (Storage, CDN)
+  ${chalk.cyan('•')} ${chalk.white('networking')}   - Network resources (VNets, NSGs, Private DNS)
+  ${chalk.cyan('•')} ${chalk.white('data')}         - Data services (SQL, CosmosDB, Storage)
+  ${chalk.cyan('•')} ${chalk.white('monitoring')}   - Observability (Log Analytics, App Insights)
+
+${chalk.bold('What happens:')}
+  ${chalk.green('✓')} Creates package directory structure
+  ${chalk.green('✓')} Generates package.json and tsconfig.json
+  ${chalk.green('✓')} Creates sample app.ts entry point
+  ${chalk.green('✓')} Updates project manifest
+  ${chalk.green('✓')} Optionally sets as default package
+`
+    )
     .action(async (packageName: string, options) => {
       const spinner = ora();
 
@@ -68,7 +108,9 @@ export function createAddCommand(): Command {
           setAsDefault = answers.setAsDefault;
         }
 
-        console.log(chalk.bold(`\nAdding package: ${packageName}\n`));
+        console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+        console.log(chalk.bold.white(`  Adding Package: ${packageName}`));
+        console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'));
 
         // Generate package structure
         spinner.start('Creating package directory...');
@@ -89,20 +131,23 @@ export function createAddCommand(): Command {
         spinner.succeed(chalk.green('Updated manifest'));
 
         // Success message
-        console.log(chalk.green.bold('\n✓ Package added successfully!\n'));
+        console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+        console.log(chalk.green.bold('  ✓ Package added successfully!'));
+        console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'));
 
         if (setAsDefault) {
-          console.log(chalk.cyan(`Default package set to: ${chalk.bold(packageName)}`));
+          console.log(chalk.green(`   ✓ Default package: ${chalk.bold(packageName)}\n`));
         }
 
-        console.log(chalk.cyan('\nNext steps:'));
+        console.log(chalk.bold('🚀 Next Steps:\n'));
+        console.log(`  ${chalk.cyan('1.')} Define your infrastructure`);
         console.log(
-          chalk.white(
-            `  1. Define infrastructure: ${chalk.bold(`packages/${packageName}/bin/app.ts`)}`
-          )
+          `     ${chalk.dim('Edit:')} ${chalk.bold(`packages/${packageName}/bin/app.ts`)}\n`
         );
-        console.log(chalk.white(`  2. Build project: ${chalk.bold('npm run build')}`));
-        console.log(chalk.white(`  3. Synthesize templates: ${chalk.bold('npm run synth')}\n`));
+        console.log(`  ${chalk.cyan('2.')} Build the project`);
+        console.log(`     ${chalk.dim('$')} ${chalk.bold('npm run build')}\n`);
+        console.log(`  ${chalk.cyan('3.')} Generate templates`);
+        console.log(`     ${chalk.dim('$')} ${chalk.bold('npm run synth')}\n`);
       } catch (error) {
         spinner.fail(chalk.red('Failed to add package'));
 

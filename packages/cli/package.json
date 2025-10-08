@@ -1,10 +1,10 @@
 {
   "name": "@atakora/cli",
   "version": "1.0.0",
-  "description": "CLI tool",
+  "description": "Azure Infrastructure as TypeScript - Type-safe ARM template generation",
   "main": "./dist/index.js",
   "bin": {
-    "atakora": "./dist/cli.js"
+    "atakora": "./bin/atakora.js"
   },
   "scripts": {
     "build": "tsc",

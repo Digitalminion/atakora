@@ -29,10 +29,45 @@ import { PackageGenerator } from '../generators/package-generator';
 export function createInitCommand(): Command {
   const init = new Command('init')
     .description('Initialize a new Atakora project')
-    .option('--org <organization>', 'Organization name')
-    .option('--project <project>', 'Project name')
-    .option('--package <package>', 'First package name')
+    .option('--org <organization>', 'Organization name (e.g., "Digital Minion")')
+    .option('--project <project>', 'Project name (e.g., "ProductionInfra")')
+    .option('--package <package>', 'First package name (e.g., "backend")')
     .option('--non-interactive', 'Skip prompts and use defaults')
+    .addHelpText(
+      'after',
+      `
+${chalk.bold('Description:')}
+  Creates a new Atakora project with the following structure:
+
+  ${chalk.cyan('my-project/')}
+  ├── ${chalk.cyan('.atakora/')}           ${chalk.dim('# Project configuration')}
+  │   └── manifest.json    ${chalk.dim('# Package manifest')}
+  ├── ${chalk.cyan('packages/')}           ${chalk.dim('# Infrastructure packages')}
+  │   └── ${chalk.cyan('backend/')}
+  │       ├── bin/app.ts   ${chalk.dim('# Entry point')}
+  │       └── package.json
+  ├── package.json         ${chalk.dim('# Root workspace config')}
+  ├── tsconfig.json        ${chalk.dim('# TypeScript config')}
+  └── README.md
+
+${chalk.bold('Examples:')}
+  ${chalk.dim('# Interactive mode (prompts for input)')}
+  ${chalk.cyan('$')} atakora init
+
+  ${chalk.dim('# Non-interactive with defaults')}
+  ${chalk.cyan('$')} atakora init --non-interactive
+
+  ${chalk.dim('# Specify options upfront')}
+  ${chalk.cyan('$')} atakora init --org "Digital Minion" --project "MyApp" --package "backend"
+
+${chalk.bold('What happens:')}
+  ${chalk.green('✓')} Creates project manifest in .atakora/manifest.json
+  ${chalk.green('✓')} Generates first infrastructure package
+  ${chalk.green('✓')} Sets up npm workspace with package.json
+  ${chalk.green('✓')} Configures TypeScript with tsconfig.json
+  ${chalk.green('✓')} Creates .gitignore and README.md
+`
+    )
     .action(async (options) => {
       const spinner = ora();
 
@@ -94,7 +129,9 @@ export function createInitCommand(): Command {
           firstPackageName = answers.firstPackageName;
         }
 
-        console.log(chalk.bold('\nInitializing Atakora project...\n'));
+        console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+        console.log(chalk.bold.white('  Initializing Atakora Project'));
+        console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'));
 
         // Create manifest
         spinner.start('Creating manifest...');
@@ -142,16 +179,24 @@ export function createInitCommand(): Command {
         spinner.succeed(chalk.green('Created README.md'));
 
         // Success message
-        console.log(chalk.green.bold('\n✓ Project initialized successfully!\n'));
-        console.log(chalk.cyan('Next steps:'));
-        console.log(chalk.white(`  1. Install dependencies: ${chalk.bold('npm install')}`));
+        console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+        console.log(chalk.green.bold('  ✓ Project initialized successfully!'));
+        console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'));
+
+        console.log(chalk.bold('🚀 Next Steps:\n'));
+        console.log(`  ${chalk.cyan('1.')} Install dependencies`);
+        console.log(`     ${chalk.dim('$')} ${chalk.bold('npm install')}\n`);
+        console.log(`  ${chalk.cyan('2.')} Define your infrastructure`);
         console.log(
-          chalk.white(
-            `  2. Define infrastructure: ${chalk.bold(`packages/${firstPackageName}/bin/app.ts`)}`
-          )
+          `     ${chalk.dim('Edit:')} ${chalk.bold(`packages/${firstPackageName}/bin/app.ts`)}\n`
         );
-        console.log(chalk.white(`  3. Synthesize templates: ${chalk.bold('npm run synth')}`));
-        console.log(chalk.white(`  4. Deploy to Azure: ${chalk.bold('atakora deploy')}\n`));
+        console.log(`  ${chalk.cyan('3.')} Generate ARM templates`);
+        console.log(`     ${chalk.dim('$')} ${chalk.bold('npm run synth')}\n`);
+        console.log(`  ${chalk.cyan('4.')} Deploy to Azure`);
+        console.log(`     ${chalk.dim('$')} ${chalk.bold('atakora deploy')}\n`);
+        console.log(
+          chalk.dim(`💡 Tip: Run ${chalk.white('atakora --help')} to see all available commands\n`)
+        );
       } catch (error) {
         spinner.fail(chalk.red('Initialization failed'));
 

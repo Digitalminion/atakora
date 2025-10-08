@@ -67,13 +67,58 @@ interface SynthesisResult {
 export function createSynthCommand(): Command {
   const synth = new Command('synth')
     .description('Synthesize ARM templates from TypeScript constructs')
-    .option('-p, --package <name>', 'Synthesize a specific package from manifest')
-    .option('-a, --all', 'Synthesize all enabled packages from manifest')
-    .option('-o, --output <dir>', 'Output directory for synthesized templates (overrides manifest)')
-    .option('--skip-validation', 'Skip template validation')
-    .option('--validate-only', 'Validate templates without writing files')
+    .option('-p, --package <name>', 'Synthesize a specific package')
+    .option('-a, --all', 'Synthesize all enabled packages')
+    .option('-o, --output <dir>', 'Output directory (overrides manifest)')
+    .option('--skip-validation', 'Skip ARM template validation')
+    .option('--validate-only', 'Validate without writing templates')
     .option('--stack <stack>', 'Only synthesize specific stack(s)', collectStacks, [])
-    .option('--single-file', 'Merge all stacks into a single template with nested deployments')
+    .option('--single-file', 'Merge stacks into one template')
+    .addHelpText(
+      'after',
+      `
+${chalk.bold('Description:')}
+  Converts your TypeScript infrastructure code into Azure ARM templates.
+  Generates deployable JSON templates in the .atakora/arm.out/ directory.
+
+${chalk.bold('Examples:')}
+  ${chalk.dim('# Synthesize default package')}
+  ${chalk.cyan('$')} atakora synth
+
+  ${chalk.dim('# Synthesize specific package')}
+  ${chalk.cyan('$')} atakora synth --package backend
+
+  ${chalk.dim('# Synthesize all packages')}
+  ${chalk.cyan('$')} atakora synth --all
+
+  ${chalk.dim('# Synthesize only specific stacks')}
+  ${chalk.cyan('$')} atakora synth --stack Foundation --stack Networking
+
+  ${chalk.dim('# Custom output directory')}
+  ${chalk.cyan('$')} atakora synth --output ./custom-output
+
+  ${chalk.dim('# Validate without generating files')}
+  ${chalk.cyan('$')} atakora synth --validate-only
+
+${chalk.bold('Output Structure:')}
+  ${chalk.cyan('.atakora/arm.out/')}
+  └── ${chalk.cyan('<package-name>/')}
+      ├── Foundation.json       ${chalk.dim('# Subscription-level resources')}
+      ├── Networking.json       ${chalk.dim('# Resource group resources')}
+      ├── manifest.json         ${chalk.dim('# Stack metadata')}
+      └── parameters/           ${chalk.dim('# Parameter files')}
+
+${chalk.bold('Validation:')}
+  ${chalk.cyan('•')} Validates ARM template schema and syntax
+  ${chalk.cyan('•')} Checks resource name compliance with Azure naming rules
+  ${chalk.cyan('•')} Verifies resource dependencies and references
+  ${chalk.cyan('•')} Warns about template size and resource limits
+
+${chalk.bold('Related Commands:')}
+  ${chalk.white('atakora deploy')}       ${chalk.dim('Deploy synthesized templates to Azure')}
+  ${chalk.white('atakora diff')}         ${chalk.dim('Show changes before deployment')}
+`
+    )
     .action(async (options) => {
       const spinner = ora('Loading manifest...').start();
 
@@ -411,38 +456,53 @@ async function synthesizePackage(
  * Display summary for multi-package synthesis
  */
 function displayMultiPackageSummary(results: SynthesisResult[]): void {
-  console.log(chalk.bold('\n\n📦 Multi-Package Synthesis Summary'));
-  console.log(chalk.gray('═'.repeat(80)));
-
   const successful = results.filter((r) => r.success);
   const failed = results.filter((r) => !r.success);
 
-  console.log(chalk.cyan(`\nTotal packages: ${results.length}`));
-  console.log(chalk.green(`Successful: ${successful.length}`));
+  console.log(
+    chalk.cyan(
+      '\n╔═══════════════════════════════════════════════════════════════════════════════╗'
+    )
+  );
+  console.log(
+    chalk.cyan('║') +
+      chalk.bold.white('  📦 Multi-Package Synthesis Summary'.padEnd(77)) +
+      chalk.cyan('║')
+  );
+  console.log(
+    chalk.cyan(
+      '╚═══════════════════════════════════════════════════════════════════════════════╝\n'
+    )
+  );
+
+  console.log(chalk.dim(`   Total:      ${results.length} packages`));
+  console.log(chalk.green(`   Successful: ${successful.length}`));
   if (failed.length > 0) {
-    console.log(chalk.red(`Failed: ${failed.length}`));
+    console.log(chalk.red(`   Failed:     ${failed.length}`));
   }
+  console.log();
 
   if (successful.length > 0) {
-    console.log(chalk.bold('\n✓ Successful packages:'));
+    console.log(chalk.green.bold('✓ Successful:\n'));
     for (const result of successful) {
       const stackCount = Array.isArray(result.assembly.stacks)
         ? result.assembly.stacks.length
         : Object.keys(result.assembly.stacks).length;
-      console.log(chalk.green(`  • ${result.packageName}`) + chalk.gray(` (${stackCount} stacks)`));
+      console.log(
+        `   ${chalk.green('●')} ${chalk.bold(result.packageName)}  ${chalk.dim(`${stackCount} stack${stackCount !== 1 ? 's' : ''}`)}`
+      );
     }
+    console.log();
   }
 
   if (failed.length > 0) {
-    console.log(chalk.bold('\n✗ Failed packages:'));
+    console.log(chalk.red.bold('✗ Failed:\n'));
     for (const result of failed) {
-      console.log(
-        chalk.red(`  • ${result.packageName}`) + chalk.gray(` - ${result.error?.message}`)
-      );
+      console.log(`   ${chalk.red('●')} ${chalk.bold(result.packageName)}`);
+      console.log(chalk.dim(`     ${result.error?.message}`));
     }
+    console.log();
   }
-
-  console.log(chalk.gray('═'.repeat(80)));
 }
 
 /**
@@ -460,9 +520,16 @@ function displaySynthesisResults(
   options: { validateOnly?: boolean },
   packageName?: string
 ): void {
-  const header = packageName ? `📦 Synthesis Results: ${packageName}` : '📦 Synthesis Results';
-  console.log(chalk.bold(`\n${header}`));
-  console.log(chalk.gray('═'.repeat(80)));
+  const header = packageName ? `Synthesis Results: ${packageName}` : 'Synthesis Results';
+  console.log(
+    chalk.cyan(
+      '\n╔═══════════════════════════════════════════════════════════════════════════════╗'
+    )
+  );
+  console.log(chalk.cyan('║') + chalk.bold.white(`  📦 ${header}`.padEnd(77)) + chalk.cyan('║'));
+  console.log(
+    chalk.cyan('╚═══════════════════════════════════════════════════════════════════════════════╝')
+  );
 
   // Convert stacks object to array if needed
   const stacks = Array.isArray(assembly.stacks)
@@ -472,66 +539,79 @@ function displaySynthesisResults(
       : [];
 
   if (stacks.length === 0) {
-    console.log(chalk.yellow('\n⚠ No stacks found in assembly'));
+    console.log(chalk.yellow('\n⚠  No stacks found in assembly'));
     return;
   }
 
-  console.log(chalk.cyan(`\nOutput directory: ${assembly.directory}`));
-  console.log(chalk.cyan(`Stacks: ${stacks.length}\n`));
+  console.log(chalk.dim(`\n   Output: ${assembly.directory}`));
+  console.log(chalk.dim(`   Stacks: ${stacks.length}\n`));
 
   // Display each stack
   for (const stack of stacks) {
     const stackName = stack.stackName || stack.name || 'Unknown';
-    console.log(chalk.bold(`📚 ${stackName}`));
-    console.log(chalk.gray('─'.repeat(80)));
+    console.log(
+      chalk.cyan('┌─') +
+        chalk.bold.white(` ${stackName} `) +
+        chalk.cyan('─'.repeat(75 - stackName.length))
+    );
 
-    // Stack metadata
-    console.log(`  ${chalk.dim('Resources:')}    ${chalk.white(stack.resourceCount || 0)}`);
-    console.log(`  ${chalk.dim('Parameters:')}   ${chalk.white(stack.parameterCount || 0)}`);
-    console.log(`  ${chalk.dim('Outputs:')}      ${chalk.white(stack.outputCount || 0)}`);
-    console.log(`  ${chalk.dim('Template:')}     ${chalk.white(stack.templatePath)}`);
+    // Stack metadata in a clean table format
+    console.log(chalk.cyan('│'));
+    console.log(
+      chalk.cyan('│  ') +
+        chalk.dim('Resources:  ') +
+        chalk.white((stack.resourceCount || 0).toString().padEnd(8)) +
+        chalk.dim('Parameters: ') +
+        chalk.white((stack.parameterCount || 0).toString().padEnd(8)) +
+        chalk.dim('Outputs: ') +
+        chalk.white(stack.outputCount || 0)
+    );
+    console.log(chalk.cyan('│  ') + chalk.dim('Template:   ') + chalk.white(stack.templatePath));
 
     // Check for warnings
     if (stack.metadata?.templateSize && stack.metadata.templateSize > 3 * 1024 * 1024) {
-      console.log(chalk.yellow(`  ⚠ Warning: Template size approaching 4MB limit`));
+      console.log(chalk.cyan('│  ') + chalk.yellow(`⚠  Template size approaching 4MB limit`));
     }
 
     if (stack.metadata?.resourceCount && stack.metadata.resourceCount > 700) {
-      console.log(chalk.yellow(`  ⚠ Warning: Resource count approaching 800 limit`));
+      console.log(chalk.cyan('│  ') + chalk.yellow(`⚠  Resource count approaching 800 limit`));
     }
 
-    console.log('');
+    console.log(chalk.cyan('└') + chalk.cyan('─'.repeat(79)));
   }
 
   // Validation warnings/errors
   if (assembly.validation) {
     if (assembly.validation.warnings && assembly.validation.warnings.length > 0) {
-      console.log(chalk.yellow.bold('\n⚠ Warnings:'));
+      console.log(chalk.yellow.bold('\n⚠  Warnings:'));
       for (const warning of assembly.validation.warnings) {
-        console.log(chalk.yellow(`  • ${warning.path}: ${warning.message}`));
+        console.log(chalk.yellow(`   • ${warning.path}: ${warning.message}`));
       }
     }
 
     if (assembly.validation.errors && assembly.validation.errors.length > 0) {
-      console.log(chalk.red.bold('\n✗ Errors:'));
+      console.log(chalk.red.bold('\n✗  Errors:'));
       for (const error of assembly.validation.errors) {
-        console.log(chalk.red(`  • ${error.path}: ${error.message}`));
+        console.log(chalk.red(`   • ${error.path}: ${error.message}`));
         if (error.fix) {
-          console.log(chalk.gray(`    💡 ${error.fix}`));
+          console.log(chalk.gray(`     💡 ${error.fix}`));
         }
       }
     }
   }
 
-  console.log(chalk.gray('═'.repeat(80)));
-
   if (options.validateOnly) {
-    console.log(chalk.cyan('\n✓ Validation complete (templates not written)'));
+    console.log(
+      chalk.green.bold('\n✓  Validation complete') + chalk.dim(' (templates not written)')
+    );
   } else {
-    console.log(chalk.green(`\n✓ Templates written to ${assembly.directory}`));
-    console.log(chalk.cyan('\nNext steps:'));
-    console.log(chalk.white(`  • Review templates: ${chalk.bold('ls ' + assembly.directory)}`));
-    console.log(chalk.white(`  • Deploy to Azure: ${chalk.bold('atakora deploy')}`));
+    console.log(chalk.green.bold('\n✓  Templates synthesized successfully!'));
+    console.log(chalk.dim(`   ${assembly.directory}`));
+    console.log(chalk.bold('\n🚀 Next Steps:\n'));
+    console.log(
+      `   ${chalk.cyan('•')} Review templates: ${chalk.bold('ls ' + assembly.directory)}`
+    );
+    console.log(`   ${chalk.cyan('•')} Deploy to Azure:  ${chalk.bold('atakora deploy')}\n`);
   }
 }
 

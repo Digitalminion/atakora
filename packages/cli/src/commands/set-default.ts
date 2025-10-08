@@ -15,6 +15,31 @@ export function createSetDefaultCommand(): Command {
   const setDefault = new Command('set-default')
     .description('Set the default package for the project')
     .argument('<package-name>', 'Name of the package to set as default')
+    .addHelpText(
+      'after',
+      `
+${chalk.bold('Description:')}
+  Sets which package should be used by default when running commands
+  without the --package flag.
+
+${chalk.bold('Examples:')}
+  ${chalk.dim('# Set backend as the default package')}
+  ${chalk.cyan('$')} atakora set-default backend
+
+  ${chalk.dim('# After setting default, synth uses it')}
+  ${chalk.cyan('$')} atakora synth              ${chalk.dim('# Uses backend package')}
+  ${chalk.cyan('$')} atakora synth -p frontend  ${chalk.dim('# Override with specific package')}
+
+${chalk.bold('When is this useful?')}
+  ${chalk.cyan('•')} You have multiple packages and want to work primarily on one
+  ${chalk.cyan('•')} You want ${chalk.white('atakora synth')} to target a specific package
+  ${chalk.cyan('•')} You're switching focus between different infrastructure areas
+
+${chalk.bold('Related Commands:')}
+  ${chalk.white('atakora add <name> --set-default')}  ${chalk.dim('Set default when adding')}
+  ${chalk.white('atakora synth --package <name>')}    ${chalk.dim('Override default temporarily')}
+`
+    )
     .action(async (packageName: string) => {
       try {
         // Check if project is initialized

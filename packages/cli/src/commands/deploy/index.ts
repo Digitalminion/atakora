@@ -56,10 +56,59 @@ interface Deployment {
 export function createDeployCommand(): Command {
   const deploy = new Command('deploy')
     .description('Deploy ARM templates to Azure')
-    .argument('[stack]', 'Stack name to deploy (deploys all stacks if not specified)')
-    .option('-a, --app <path>', 'Path to synthesized cloud assembly directory', 'arm.out')
+    .argument('[stack]', 'Specific stack to deploy (optional)')
+    .option('-a, --app <path>', 'Path to synthesized templates', 'arm.out')
     .option('--skip-validation', 'Skip pre-deployment validation')
-    .option('--auto-approve', 'Skip deployment confirmation prompt')
+    .option('--auto-approve', 'Skip confirmation prompts')
+    .addHelpText(
+      'after',
+      `
+${chalk.bold('Description:')}
+  Deploys synthesized ARM templates to your Azure subscription.
+  Creates or updates Azure resources based on your infrastructure code.
+
+${chalk.bold('Examples:')}
+  ${chalk.dim('# Deploy all stacks')}
+  ${chalk.cyan('$')} atakora deploy
+
+  ${chalk.dim('# Deploy specific stack')}
+  ${chalk.cyan('$')} atakora deploy Foundation
+
+  ${chalk.dim('# Deploy from custom output directory')}
+  ${chalk.cyan('$')} atakora deploy --app ./custom-output
+
+  ${chalk.dim('# Skip confirmation prompt')}
+  ${chalk.cyan('$')} atakora deploy --auto-approve
+
+  ${chalk.dim('# Skip validation checks')}
+  ${chalk.cyan('$')} atakora deploy --skip-validation
+
+${chalk.bold('Deployment Process:')}
+  ${chalk.cyan('1.')} Loads synthesized templates from output directory
+  ${chalk.cyan('2.')} Authenticates with Azure (or uses cached credentials)
+  ${chalk.cyan('3.')} Validates templates and checks Azure quotas
+  ${chalk.cyan('4.')} Shows deployment plan and prompts for confirmation
+  ${chalk.cyan('5.')} Deploys resources to Azure subscription
+  ${chalk.cyan('6.')} Monitors deployment progress and shows results
+
+${chalk.bold('Requirements:')}
+  ${chalk.cyan('•')} Azure subscription configured (${chalk.white('atakora config select')})
+  ${chalk.cyan('•')} Synthesized templates exist (${chalk.white('atakora synth')})
+  ${chalk.cyan('•')} Appropriate Azure permissions for deployment
+  ${chalk.cyan('•')} Internet connection for Azure API calls
+
+${chalk.bold('Safety:')}
+  ${chalk.cyan('•')} Uses ${chalk.white('Incremental')} deployment mode by default
+  ${chalk.cyan('•')} Existing resources not in template are preserved
+  ${chalk.cyan('•')} Shows deployment plan before applying changes
+  ${chalk.cyan('•')} Validates templates before deployment
+
+${chalk.bold('Related Commands:')}
+  ${chalk.white('atakora synth')}        ${chalk.dim('Generate templates before deploying')}
+  ${chalk.white('atakora diff')}         ${chalk.dim('Preview changes before deployment')}
+  ${chalk.white('atakora config show')}  ${chalk.dim('Verify deployment target')}
+`
+    )
     .action(async (stackName, options) => {
       const spinner = ora('Initializing deployment...').start();
 
