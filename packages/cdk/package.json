@@ -1,0 +1,148 @@
+{
+  "name": "@atakora/cdk",
+  "version": "1.0.0",
+  "description": "Azure resource constructs for Atakora - organized by Microsoft.* namespaces",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./network": {
+      "types": "./dist/network/index.d.ts",
+      "import": "./dist/network/index.js",
+      "require": "./dist/network/index.js"
+    },
+    "./storage": {
+      "types": "./dist/storage/index.d.ts",
+      "import": "./dist/storage/index.js",
+      "require": "./dist/storage/index.js"
+    },
+    "./compute": {
+      "types": "./dist/compute/index.d.ts",
+      "import": "./dist/compute/index.js",
+      "require": "./dist/compute/index.js"
+    },
+    "./web": {
+      "types": "./dist/web/index.d.ts",
+      "import": "./dist/web/index.js",
+      "require": "./dist/web/index.js"
+    },
+    "./keyvault": {
+      "types": "./dist/keyvault/index.d.ts",
+      "import": "./dist/keyvault/index.js",
+      "require": "./dist/keyvault/index.js"
+    },
+    "./sql": {
+      "types": "./dist/sql/index.d.ts",
+      "import": "./dist/sql/index.js",
+      "require": "./dist/sql/index.js"
+    },
+    "./insights": {
+      "types": "./dist/insights/index.d.ts",
+      "import": "./dist/insights/index.js",
+      "require": "./dist/insights/index.js"
+    },
+    "./operationalinsights": {
+      "types": "./dist/operationalinsights/index.d.ts",
+      "import": "./dist/operationalinsights/index.js",
+      "require": "./dist/operationalinsights/index.js"
+    },
+    "./documentdb": {
+      "types": "./dist/documentdb/index.d.ts",
+      "import": "./dist/documentdb/index.js",
+      "require": "./dist/documentdb/index.js"
+    },
+    "./cognitiveservices": {
+      "types": "./dist/cognitiveservices/index.d.ts",
+      "import": "./dist/cognitiveservices/index.js",
+      "require": "./dist/cognitiveservices/index.js"
+    },
+    "./search": {
+      "types": "./dist/search/index.d.ts",
+      "import": "./dist/search/index.js",
+      "require": "./dist/search/index.js"
+    },
+    "./apimanagement": {
+      "types": "./dist/apimanagement/index.d.ts",
+      "import": "./dist/apimanagement/index.js",
+      "require": "./dist/apimanagement/index.js"
+    },
+    "./resources": {
+      "types": "./dist/resources/index.d.ts",
+      "import": "./dist/resources/index.js",
+      "require": "./dist/resources/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "network": [
+        "./dist/network/index.d.ts"
+      ],
+      "storage": [
+        "./dist/storage/index.d.ts"
+      ],
+      "compute": [
+        "./dist/compute/index.d.ts"
+      ],
+      "web": [
+        "./dist/web/index.d.ts"
+      ],
+      "keyvault": [
+        "./dist/keyvault/index.d.ts"
+      ],
+      "sql": [
+        "./dist/sql/index.d.ts"
+      ],
+      "insights": [
+        "./dist/insights/index.d.ts"
+      ],
+      "operationalinsights": [
+        "./dist/operationalinsights/index.d.ts"
+      ],
+      "documentdb": [
+        "./dist/documentdb/index.d.ts"
+      ],
+      "cognitiveservices": [
+        "./dist/cognitiveservices/index.d.ts"
+      ],
+      "search": [
+        "./dist/search/index.d.ts"
+      ],
+      "apimanagement": [
+        "./dist/apimanagement/index.d.ts"
+      ],
+      "resources": [
+        "./dist/resources/index.d.ts"
+      ]
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf ./dist && rm -rf ../../dist/cdk",
+    "bundle:analyze": "webpack-bundle-analyzer dist/stats.json",
+    "circular:check": "madge --circular --extensions ts src/"
+  },
+  "keywords": [
+    "azure",
+    "infrastructure",
+    "cdk",
+    "arm",
+    "bicep",
+    "infrastructure-as-code"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@atakora/lib": "*"
+  },
+  "devDependencies": {
+    "madge": "^8.0.0",
+    "vite-tsconfig-paths": "^5.1.4",
+    "webpack-bundle-analyzer": "^4.10.1"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=7.0.0"
+  }
+}

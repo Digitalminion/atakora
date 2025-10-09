@@ -100,3 +100,6 @@ export type {
   IIdentityResource,
   IdentityResourceProps,
 } from './identity';
+
+// Validation framework
+export * from './validation';

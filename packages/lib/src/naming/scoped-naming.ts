@@ -1,5 +1,5 @@
 import { DeploymentScope } from '../core/azure/scopes';
-import type { NamingConventions, ValidationResult } from './types';
+import type { NamingConventions, NameValidationResult } from './types';
 import { DEFAULT_CONVENTIONS, getSpecialCaseRules } from './conventions';
 
 /**
@@ -205,7 +205,7 @@ export function generateScopedName(
  * // result.errors === ['Missing required parameter: environment', ...]
  * ```
  */
-export function validateScopedParams(params: ScopedResourceNameParams): ValidationResult {
+export function validateScopedParams(params: ScopedResourceNameParams): NameValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 

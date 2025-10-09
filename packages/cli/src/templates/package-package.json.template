@@ -8,6 +8,7 @@
     "synth": "node dist/main.js"
   },
   "dependencies": {
-    "@atakora/lib": "*"
+    "@atakora/lib": "*",
+    "@atakora/cdk": "*"
   }
 }

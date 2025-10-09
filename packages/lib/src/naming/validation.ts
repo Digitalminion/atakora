@@ -1,4 +1,4 @@
-import type { ValidationResult, ResourceValidationRules } from './types';
+import type { NameValidationResult, ResourceValidationRules } from './types';
 
 /**
  * Creates a validation result object.
@@ -8,11 +8,11 @@ import type { ValidationResult, ResourceValidationRules } from './types';
  * @param warnings - Array of warning messages
  * @returns Validation result
  */
-function createValidationResult(
+function createNameValidationResult(
   isValid: boolean,
   errors: string[] = [],
   warnings: string[] = []
-): ValidationResult {
+): NameValidationResult {
   return {
     isValid,
     errors: Object.freeze(errors),
@@ -140,7 +140,7 @@ export function getValidationRules(resourceType: string): ResourceValidationRule
  * }
  * ```
  */
-export function validateResourceName(name: string, resourceType: string): ValidationResult {
+export function validateResourceName(name: string, resourceType: string): NameValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 
@@ -150,7 +150,7 @@ export function validateResourceName(name: string, resourceType: string): Valida
   // Check if name is empty
   if (!name || name.trim().length === 0) {
     errors.push('Resource name cannot be empty');
-    return createValidationResult(false, errors, warnings);
+    return createNameValidationResult(false, errors, warnings);
   }
 
   // Check minimum length
@@ -192,7 +192,7 @@ export function validateResourceName(name: string, resourceType: string): Valida
     warnings.push(...customResult.warnings);
   }
 
-  return createValidationResult(errors.length === 0, errors, warnings);
+  return createNameValidationResult(errors.length === 0, errors, warnings);
 }
 
 /**
@@ -289,7 +289,7 @@ export function validateGenerationParams(params: {
   environment?: string;
   geography?: string;
   instance?: string;
-}): ValidationResult {
+}): NameValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 
@@ -309,7 +309,7 @@ export function validateGenerationParams(params: {
     }
   }
 
-  return createValidationResult(errors.length === 0, errors, warnings);
+  return createNameValidationResult(errors.length === 0, errors, warnings);
 }
 
 /**

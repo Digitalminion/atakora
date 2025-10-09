@@ -335,7 +335,7 @@ export const armTemplateMatchers = {
         hasDependency
           ? `Expected resource not to depend on ${dependencyResourceId}`
           : `Expected resource to depend on ${dependencyResourceId}. ` +
-            `Got dependencies: ${received.dependsOn.join(', ')}`,
+            `Got dependencies: ${received.dependsOn?.join(', ') ?? 'none'}`,
     };
   },
 };

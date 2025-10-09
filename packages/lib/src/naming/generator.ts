@@ -2,7 +2,7 @@ import type {
   NamingConventions,
   NamingConventionConfig,
   ResourceNameParams,
-  ValidationResult,
+  NameValidationResult,
 } from './types';
 import { mergeConventions, getSpecialCaseRules } from './conventions';
 import { validateResourceName, validateGenerationParams, isNameTooLong } from './validation';
@@ -170,7 +170,7 @@ export class ResourceNameGenerator {
    * }
    * ```
    */
-  public validateName(name: string, resourceType: string): ValidationResult {
+  public validateName(name: string, resourceType: string): NameValidationResult {
     return validateResourceName(name, resourceType);
   }
 

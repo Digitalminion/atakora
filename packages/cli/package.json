@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "@atakora/lib": "*",
+    "@atakora/cdk": "*",
     "@azure/identity": "^4.0.0",
     "@azure/arm-subscriptions": "^5.0.0",
     "@azure/arm-resources": "^5.0.0",

@@ -217,14 +217,14 @@ export interface ResourceNameParams {
  *
  * @example
  * ```typescript
- * const result: ValidationResult = {
+ * const result: NameValidationResult = {
  *   isValid: false,
  *   errors: ['Name exceeds maximum length of 24 characters'],
  *   warnings: ['Name contains uppercase letters which will be converted to lowercase']
  * };
  * ```
  */
-export interface ValidationResult {
+export interface NameValidationResult {
   /**
    * Whether the name passes all validation rules.
    */
@@ -275,5 +275,5 @@ export interface ResourceValidationRules {
   /**
    * Custom validation function.
    */
-  readonly customValidator?: (name: string) => ValidationResult;
+  readonly customValidator?: (name: string) => NameValidationResult;
 }

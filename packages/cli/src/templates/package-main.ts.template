@@ -1,4 +1,7 @@
 import { AzureApp, SubscriptionStack } from '@atakora/lib';
+// Import Azure resources from @atakora/cdk namespaces
+// import { VirtualNetworks, NetworkSecurityGroups } from '@atakora/cdk/network';
+// import { StorageAccounts } from '@atakora/cdk/storage';
 
 const app = new AzureApp({
   organization: '{{organization}}',
@@ -12,9 +15,10 @@ const foundation = new SubscriptionStack(app, 'Foundation', {
 });
 
 // Add your infrastructure here
-// Example:
-// const rg = new ResourceGroup(foundation, 'Platform', {
-//   tags: { purpose: 'infrastructure' }
+// Example using @atakora/cdk resources:
+// const vnet = new VirtualNetworks(foundation, 'VNet', {
+//   virtualNetworkName: 'vnet-example',
+//   addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
 // });
 
 app.synth();

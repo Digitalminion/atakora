@@ -53,7 +53,7 @@ export type {
   NamingConventions,
   NamingConventionConfig,
   ResourceNameParams,
-  ValidationResult,
+  NameValidationResult,
   ResourceValidationRules,
 } from './types';
 

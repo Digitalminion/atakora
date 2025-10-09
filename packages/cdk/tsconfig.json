@@ -1,0 +1,41 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@atakora/lib": ["../lib/src/index.ts"]
+    }
+  },
+  "include": [
+    "network/**/*",
+    "storage/**/*",
+    "web/**/*",
+    "keyvault/**/*",
+    "sql/**/*",
+    "insights/**/*",
+    "operationalinsights/**/*",
+    "documentdb/**/*",
+    "cognitiveservices/**/*",
+    "search/**/*",
+    "apimanagement/**/*",
+    "compute/**/*",
+    "resources/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ],
+  "references": [
+    {
+      "path": "../lib"
+    }
+  ]
+}

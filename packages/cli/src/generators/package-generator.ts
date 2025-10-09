@@ -100,6 +100,7 @@ export class PackageGenerator {
       },
       dependencies: {
         '@atakora/lib': '*',
+        '@atakora/cdk': '*',
         constructs: '^10.4.2',
       },
       devDependencies: {
@@ -144,6 +145,9 @@ export class PackageGenerator {
    */
   private generateAppFile(packagePath: string, entryPoint: string, packageName: string): void {
     const appContent = `import { App } from '@atakora/lib';
+// Import Azure resources from @atakora/cdk namespaces
+// import { VirtualNetworks, NetworkSecurityGroups } from '@atakora/cdk/network';
+// import { StorageAccounts } from '@atakora/cdk/storage';
 
 /**
  * ${packageName} infrastructure application

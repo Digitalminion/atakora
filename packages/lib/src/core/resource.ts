@@ -1,5 +1,5 @@
 import { Construct } from './construct';
-import { ValidationResult } from './validation';
+import { ValidationResult, ValidationResultBuilder } from './validation';
 
 /**
  * Base properties for all ARM resources.
@@ -235,6 +235,10 @@ export abstract class Resource extends Construct {
    * - NSG reference format (ARM expression vs literal string)
    * - Service endpoint validity
    *
+   * **Default Implementation**:
+   * The base implementation returns a valid result (no errors). Resources should
+   * override this method to add resource-specific ARM structure validation.
+   *
    * @returns Validation result with any errors or warnings
    *
    * @example
@@ -263,7 +267,12 @@ export abstract class Resource extends Construct {
    * }
    * ```
    */
-  public abstract validateArmStructure(): ValidationResult;
+  public validateArmStructure(): ValidationResult {
+    // Default implementation: no validation errors
+    // Resources should override this method for custom validation
+    const builder = new ValidationResultBuilder();
+    return builder.build();
+  }
 
   /**
    * Transforms this resource to ARM template JSON representation.
