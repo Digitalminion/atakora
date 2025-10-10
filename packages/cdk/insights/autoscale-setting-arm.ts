@@ -58,7 +58,7 @@ export class ArmAutoscaleSettings extends Resource {
     this.resourceId = `/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/autoscaleSettings/${this.name}`;
   }
 
-  private validateProps(props: ArmAutoscaleSettingsProps): void {
+  protected validateProps(props: ArmAutoscaleSettingsProps): void {
     if (!props.name || props.name.trim() === '') {
       throw new Error('Autoscale setting name cannot be empty');
     }

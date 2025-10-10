@@ -62,7 +62,7 @@ export { NamingComponent } from './types';
 // Framework classes (construct tree)
 export { Construct, IConstruct, Node } from './construct';
 export { Resource } from './resource';
-export type { ResourceProps } from './resource';
+export type { ResourceProps, ArmResource } from './resource';
 export { App } from './app';
 export type { AppProps, UserProfile, ProjectConfig } from './app';
 export { SubscriptionStack } from './subscription-stack';

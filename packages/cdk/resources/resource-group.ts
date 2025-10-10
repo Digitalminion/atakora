@@ -1,6 +1,6 @@
 import { Construct } from '@atakora/lib';
 import { constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/lib';
-import type { SubscriptionStack } from '../../core/subscription-stack';
+import type { SubscriptionStack } from '@atakora/lib';
 import { ArmResourceGroups } from './resource-group-arm';
 import type { ResourceGroupsProps, IResourceGroup } from './resource-group-types';
 

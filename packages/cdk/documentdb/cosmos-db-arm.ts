@@ -1,8 +1,9 @@
 import { Construct, Resource } from '@atakora/lib';
 import { DeploymentScope } from '@atakora/lib';
+import type { ArmResource } from '@atakora/lib/src/core/resource';
 import type {
   ArmDatabaseAccountsProps,
-  ICosmosDbAccount,
+  IDatabaseAccount,
   DatabaseAccountOfferType,
   Location,
 } from './cosmos-db-types';
@@ -43,7 +44,7 @@ import type {
  * });
  * ```
  */
-export class ArmDatabaseAccounts extends Resource implements ICosmosDbAccount {
+export class ArmDatabaseAccounts extends Resource implements IDatabaseAccount {
   /**
    * ARM resource type.
    */
@@ -140,7 +141,7 @@ export class ArmDatabaseAccounts extends Resource implements ICosmosDbAccount {
    * @param props - Properties to validate
    * @throws {Error} If validation fails
    */
-  private validateProps(props: ArmDatabaseAccountsProps): void {
+  protected validateProps(props: ArmDatabaseAccountsProps): void {
     // Validate database account name
     if (!props.databaseAccountName || props.databaseAccountName.trim() === '') {
       throw new Error('Database account name cannot be empty');
@@ -204,7 +205,7 @@ export class ArmDatabaseAccounts extends Resource implements ICosmosDbAccount {
    *
    * @returns ARM template resource object
    */
-  public toArmTemplate(): Record<string, unknown> {
+  public toArmTemplate(): ArmResource {
     const properties: any = {
       databaseAccountOfferType: this.databaseAccountOfferType,
       locations: this.props.locations,
@@ -247,24 +248,16 @@ export class ArmDatabaseAccounts extends Resource implements ICosmosDbAccount {
       properties.capabilities = this.props.capabilities;
     }
 
-    const template: Record<string, unknown> = {
+    const template = {
       type: this.resourceType,
       apiVersion: this.apiVersion,
       name: this.databaseAccountName,
       location: this.location,
       properties,
+      ...(this.props.kind && { kind: this.props.kind }),
+      ...(this.props.tags && Object.keys(this.props.tags).length > 0 && { tags: this.props.tags }),
     };
 
-    // Add kind at top level if specified
-    if (this.props.kind) {
-      template.kind = this.props.kind;
-    }
-
-    // Add tags if present
-    if (this.props.tags && Object.keys(this.props.tags).length > 0) {
-      template.tags = this.props.tags;
-    }
-
-    return template;
+    return template as ArmResource;
   }
 }

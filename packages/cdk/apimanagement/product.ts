@@ -1,10 +1,11 @@
 import { Construct, Resource } from '@atakora/lib';
 import { DeploymentScope } from '@atakora/lib';
+import type { ArmResource } from '@atakora/lib/src/core/resource';
 import type {
   ArmApiManagementProductProps,
   ApiManagementProductProps,
-  IApiManagement,
-  IApiManagementProduct,
+  IService,
+  IServiceProduct,
 } from './api-management-types';
 import { ProductState } from './api-management-types';
 
@@ -52,7 +53,7 @@ export class ArmApiManagementProduct extends Resource {
   /**
    * Parent API Management service.
    */
-  public readonly apiManagementService: IApiManagement;
+  public readonly apiManagementService: IService;
 
   /**
    * Product name.
@@ -129,7 +130,7 @@ export class ArmApiManagementProduct extends Resource {
     this.productId = this.resourceId;
   }
 
-  private validateProps(props: ArmApiManagementProductProps): void {
+  protected validateProps(props: ArmApiManagementProductProps): void {
     if (!props.productName || props.productName.trim() === '') {
       throw new Error('Product name cannot be empty');
     }
@@ -139,7 +140,7 @@ export class ArmApiManagementProduct extends Resource {
     }
   }
 
-  public toArmTemplate(): object {
+  public toArmTemplate(): ArmResource {
     const properties: any = {
       displayName: this.displayName,
     };
@@ -174,7 +175,7 @@ export class ArmApiManagementProduct extends Resource {
       name: `${this.apiManagementService.serviceName}/${this.productName}`,
       properties,
       dependsOn: [this.apiManagementService.apiManagementId],
-    };
+    } as ArmResource;
   }
 }
 
@@ -193,7 +194,7 @@ export class ArmApiManagementProduct extends Resource {
  * });
  * ```
  */
-export class ApiManagementProduct extends Construct implements IApiManagementProduct {
+export class ApiManagementProduct extends Construct implements IServiceProduct {
   private readonly armProduct: ArmApiManagementProduct;
 
   public readonly productName: string;

@@ -1,5 +1,6 @@
-import { Construct, Resource, ArmResource } from '@atakora/lib';
+import { Construct, Resource } from '@atakora/lib';
 import { DeploymentScope } from '@atakora/lib';
+import type { ArmResource } from '@atakora/lib/src/core/resource';
 import type {
   ArmApiManagementPolicyProps,
   ApiManagementPolicyProps,
@@ -117,17 +118,17 @@ export class ArmApiManagementPolicy extends Resource {
 
     // Build resource ID
     if (this.isApiPolicy) {
-      const apiParent = props.parent as IApiManagementApi;
+      const apiParent = props.parent as IServiceApi;
       this.resourceId = `${apiParent.apiId}/policies/policy`;
     } else {
-      const serviceParent = props.parent as IApiManagement;
+      const serviceParent = props.parent as IService;
       this.resourceId = `${serviceParent.apiManagementId}/policies/policy`;
     }
 
     this.policyId = this.resourceId;
   }
 
-  private validateProps(props: ArmApiManagementPolicyProps): void {
+  protected validateProps(props: ArmApiManagementPolicyProps): void {
     if (!props.properties.value || props.properties.value.trim() === '') {
       throw new Error('Policy XML content cannot be empty');
     }
@@ -159,7 +160,7 @@ export class ArmApiManagementPolicy extends Resource {
         name: `${this.getServiceNameFromApi(apiParent)}/${apiParent.apiName}/policy`,
         properties,
         dependsOn: [apiParent.apiId],
-      };
+      } as ArmResource;
     } else {
       const serviceParent = this.parent as IService;
       return {
@@ -168,14 +169,14 @@ export class ArmApiManagementPolicy extends Resource {
         name: `${serviceParent.serviceName}/policy`,
         properties,
         dependsOn: [serviceParent.apiManagementId],
-      };
+      } as ArmResource;
     }
   }
 
   /**
    * Extract service name from API resource ID.
    */
-  private getServiceNameFromApi(api: IApiManagementApi): string {
+  private getServiceNameFromApi(api: IServiceApi): string {
     // API ID format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.ApiManagement/service/{serviceName}/apis/{apiName}
     const parts = api.apiId.split('/');
     const serviceIndex = parts.indexOf('service');
@@ -232,7 +233,7 @@ export class ArmApiManagementPolicy extends Resource {
  * });
  * ```
  */
-export class ApiManagementPolicy extends Construct implements IApiManagementPolicy {
+export class ApiManagementPolicy extends Construct implements IServicePolicy {
   private readonly armPolicy: ArmApiManagementPolicy;
 
   public readonly policyXml: string;

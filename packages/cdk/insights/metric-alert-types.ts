@@ -1,3 +1,5 @@
+import type { IActionGroup } from './action-group-types';
+
 /**
  * Type definitions for Metric Alert constructs.
  *
@@ -451,16 +453,6 @@ export interface MetricAlertsProps {
    * These tags will be merged with the parent's tags.
    */
   readonly tags?: Record<string, string>;
-}
-
-/**
- * Reference to an Action Group.
- */
-export interface IActionGroup {
-  /**
-   * Resource ID of the action group.
-   */
-  readonly actionGroupId: string;
 }
 
 /**

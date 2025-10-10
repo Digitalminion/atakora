@@ -1,4 +1,5 @@
 import { Construct, Resource, DeploymentScope } from '@atakora/lib';
+import type { ArmResource } from '@atakora/lib';
 import { ValidationResult, ValidationResultBuilder } from '@atakora/lib';
 import type { ArmSitesProps, ManagedServiceIdentity, SiteConfig } from './site-types';
 
@@ -284,7 +285,7 @@ export class ArmSites extends Resource {
    *
    * @returns ARM template resource object
    */
-  public toArmTemplate(): object {
+  public toArmTemplate(): ArmResource {
     const properties: any = {
       serverFarmId: this.serverFarmId,
     };

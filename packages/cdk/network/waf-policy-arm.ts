@@ -146,7 +146,7 @@ export class ArmWafPolicy extends Resource {
    * @param props - Properties to validate
    * @throws {Error} If validation fails
    */
-  private validateProps(props: ArmWafPolicyProps): void {
+  protected validateProps(props: ArmWafPolicyProps): void {
     // Validate policy name
     if (!props.policyName || props.policyName.trim() === '') {
       throw new Error('WAF policy name cannot be empty');

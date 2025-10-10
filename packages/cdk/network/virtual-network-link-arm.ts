@@ -121,7 +121,7 @@ export class ArmVirtualNetworkLink extends Resource implements IVirtualNetworkLi
   /**
    * Validates the properties for the Virtual Network Link.
    */
-  private validateProps(props: ArmVirtualNetworkLinkProps): void {
+  protected validateProps(props: ArmVirtualNetworkLinkProps): void {
     // Validate Private DNS zone name
     if (!props.privateDnsZoneName || props.privateDnsZoneName.trim() === '') {
       throw new Error('Private DNS zone name cannot be empty');

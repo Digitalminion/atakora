@@ -100,7 +100,7 @@ export class ArmPrivateDnsZone extends Resource {
   /**
    * Validates the properties for the Private DNS Zone.
    */
-  private validateProps(props: ArmPrivateDnsZoneProps): void {
+  protected validateProps(props: ArmPrivateDnsZoneProps): void {
     // Validate zone name
     if (!props.zoneName || props.zoneName.trim() === '') {
       throw new Error('Private DNS zone name cannot be empty');

@@ -1,6 +1,6 @@
 import { Construct } from '@atakora/lib';
 import type { IResourceGroup } from '@atakora/lib';
-import { ArmActionGroups } from './arm-action-group';
+import { ArmActionGroups } from './action-group-arm';
 import type { ActionGroupsProps, IActionGroup } from './action-group-types';
 
 /**

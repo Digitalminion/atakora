@@ -1,6 +1,7 @@
 import { Construct } from '@atakora/lib';
 import { Resource } from '@atakora/lib';
 import { DeploymentScope } from '@atakora/lib';
+import type { ArmResource } from '@atakora/lib';
 import type { ArmDiagnosticSettingsProps } from './diagnostic-setting-types';
 
 /**
@@ -67,7 +68,7 @@ export class ArmDiagnosticSettings extends Resource {
     this.resourceId = `${this.targetResourceId}/providers/Microsoft.Insights/diagnosticSettings/${this.name}`;
   }
 
-  private validateProps(props: ArmDiagnosticSettingsProps): void {
+  protected validateProps(props: ArmDiagnosticSettingsProps): void {
     if (!props.name || props.name.trim() === '') {
       throw new Error('Diagnostic setting name cannot be empty');
     }
@@ -98,7 +99,7 @@ export class ArmDiagnosticSettings extends Resource {
     }
   }
 
-  public toArmTemplate(): object {
+  public toArmTemplate(): ArmResource {
     const properties: any = {};
 
     if (this.workspaceId) {
@@ -139,6 +140,6 @@ export class ArmDiagnosticSettings extends Resource {
       scope: this.targetResourceId,
       name: this.name,
       properties,
-    };
+    } as ArmResource;
   }
 }

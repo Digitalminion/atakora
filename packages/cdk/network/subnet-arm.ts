@@ -8,7 +8,7 @@ import type {
 } from './subnet-types';
 import {
   ValidationResult,
-  ValidationResultBuilder,
+  ValidationResultBuilder, ArmResource,
   ValidationError,
   isValidCIDR,
 } from '@atakora/lib';
@@ -414,7 +414,7 @@ export class ArmSubnet extends Resource {
    *
    * @returns ARM template resource object
    */
-  public toArmTemplate(): object {
+  public toArmTemplate(): ArmResource {
     const properties: any = {};
 
     // Always include addressPrefix if provided

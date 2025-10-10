@@ -1,5 +1,6 @@
-import { Construct, Resource, ArmResource } from '@atakora/lib';
+import { Construct, Resource } from '@atakora/lib';
 import { DeploymentScope } from '@atakora/lib';
+import type { ArmResource } from '@atakora/lib/src/core/resource';
 import type {
   ArmServiceProps,
   ApiManagementSku,
@@ -255,7 +256,7 @@ export class ArmService extends Resource {
    * @param props - Properties to validate
    * @throws {Error} If validation fails
    */
-  private validateProps(props: ArmServiceProps): void {
+  protected validateProps(props: ArmServiceProps): void {
     // Validate service name
     if (!props.serviceName || props.serviceName.trim() === '') {
       throw new Error('API Management service name cannot be empty');
@@ -414,6 +415,6 @@ export class ArmService extends Resource {
       ...(this.identity && { identity: this.identity }),
       properties: Object.keys(properties).length > 0 ? properties : undefined,
       tags: Object.keys(this.tags).length > 0 ? this.tags : undefined,
-    };
+    } as ArmResource;
   }
 }

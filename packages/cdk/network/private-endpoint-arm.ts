@@ -174,7 +174,7 @@ export class ArmPrivateEndpoint extends Resource {
    * @param props - Properties to validate
    * @throws {Error} If validation fails
    */
-  private validateProps(props: ArmPrivateEndpointProps): void {
+  protected validateProps(props: ArmPrivateEndpointProps): void {
     // Validate private endpoint name
     if (!props.privateEndpointName || props.privateEndpointName.trim() === '') {
       throw new Error('Private endpoint name cannot be empty');

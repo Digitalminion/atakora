@@ -252,3 +252,8 @@ export interface IWorkspace {
    */
   readonly workspaceId: string;
 }
+
+/**
+ * Alias for IWorkspace for backwards compatibility.
+ */
+export type ILogAnalyticsWorkspace = IWorkspace;

@@ -154,7 +154,7 @@ export class ArmPublicIpAddress extends Resource {
    * @param props - Properties to validate
    * @throws {Error} If validation fails
    */
-  private validateProps(props: ArmPublicIpAddressProps): void {
+  protected validateProps(props: ArmPublicIpAddressProps): void {
     // Validate public IP address name
     if (!props.publicIpAddressName || props.publicIpAddressName.trim() === '') {
       throw new Error('Public IP address name cannot be empty');
@@ -278,6 +278,6 @@ export class ArmPublicIpAddress extends Resource {
       },
       properties: properties,
       tags: Object.keys(this.tags).length > 0 ? this.tags : undefined,
-    };
+    } as ArmResource;
   }
 }

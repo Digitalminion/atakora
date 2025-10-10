@@ -246,7 +246,7 @@ export class ArmSearchServices extends Resource {
     if (this.networkRuleSet !== undefined) {
       properties.networkRuleSet = {
         ...(this.networkRuleSet.ipRules && { ipRules: this.networkRuleSet.ipRules }),
-      };
+      } as ArmResource;
     }
 
     return {
@@ -259,6 +259,6 @@ export class ArmSearchServices extends Resource {
       },
       properties: Object.keys(properties).length > 0 ? properties : undefined,
       tags: Object.keys(this.tags).length > 0 ? this.tags : undefined,
-    };
+    } as ArmResource;
   }
 }

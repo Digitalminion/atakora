@@ -251,7 +251,7 @@ export class ArmApplicationGateway extends Resource {
    * @param props - Properties to validate
    * @throws {Error} If validation fails
    */
-  private validateProps(props: ArmApplicationGatewayProps): void {
+  protected validateProps(props: ArmApplicationGatewayProps): void {
     // Validate gateway name
     if (!props.gatewayName || props.gatewayName.trim() === '') {
       throw new Error('Application gateway name cannot be empty');

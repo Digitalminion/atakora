@@ -205,7 +205,7 @@ export class ArmComponents extends Resource {
    * @param props - Properties to validate
    * @throws {Error} If validation fails
    */
-  private validateProps(props: ArmComponentsProps): void {
+  protected validateProps(props: ArmComponentsProps): void {
     // Validate name
     if (!props.name || props.name.trim() === '') {
       throw new Error('Application Insights component name cannot be empty');
@@ -320,6 +320,6 @@ export class ArmComponents extends Resource {
       kind: this.kind,
       tags: Object.keys(this.tags).length > 0 ? this.tags : undefined,
       properties,
-    };
+    } as ArmResource;
   }
 }

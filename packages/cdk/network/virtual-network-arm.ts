@@ -7,8 +7,8 @@ import {
   isValidCIDR,
   isWithinCIDR,
   cidrsOverlap,
+  ArmResource,
 } from '@atakora/lib';
-import { NetworkResourceTransformer } from '@atakora/lib';
 
 /**
  * L1 construct for Azure Virtual Network.
@@ -547,24 +547,91 @@ export class ArmVirtualNetwork extends Resource {
    *
    * @returns ARM template resource object
    */
-  public toArmTemplate(): object {
-    // Use type-safe transformer for properties
-    const transformer = new NetworkResourceTransformer();
-
-    // Build properties input
-    const propertiesInput = {
-      addressSpace: this.addressSpace,
-      subnets: this.subnets,
-      dhcpOptions: this.dhcpOptions,
-      enableDdosProtection: this.enableDdosProtection,
-      enableVmProtection: this.enableVmProtection,
+  public toArmTemplate(): ArmResource {
+    const properties: any = {
+      addressSpace: {
+        addressPrefixes: this.addressSpace.addressPrefixes,
+      },
     };
 
-    // Transform properties using type-safe transformer
-    const properties = transformer.transformVirtualNetworkProperties(propertiesInput);
+    // Add inline subnets if provided
+    if (this.subnets && this.subnets.length > 0) {
+      properties.subnets = this.subnets.map((subnet) => {
+        const subnetProps: any = {
+          addressPrefix: subnet.addressPrefix,
+        };
 
-    // Build final ARM template
-    const template = {
+        // Add NSG reference if provided
+        if (subnet.networkSecurityGroup) {
+          const nsgId = subnet.networkSecurityGroup.id;
+          // Convert NSG ID to ARM resourceId() expression
+          const nsgName = nsgId.split('/').pop();
+          subnetProps.networkSecurityGroup = {
+            id: `[resourceId('Microsoft.Network/networkSecurityGroups', '${nsgName}')]`,
+          };
+        }
+
+        // Add service endpoints if provided
+        if (subnet.serviceEndpoints && subnet.serviceEndpoints.length > 0) {
+          subnetProps.serviceEndpoints = subnet.serviceEndpoints.map((endpoint) => ({
+            service: endpoint.service,
+          }));
+        }
+
+        // Add delegations if provided (CRITICAL - must use properties wrapper)
+        if (subnet.delegations && subnet.delegations.length > 0) {
+          subnetProps.delegations = subnet.delegations.map((delegation) => ({
+            name: delegation.name,
+            properties: {
+              serviceName: delegation.serviceName,
+            },
+          }));
+        }
+
+        return {
+          name: subnet.name,
+          properties: subnetProps,
+        };
+      });
+    }
+
+    // Add DHCP options if provided
+    if (this.dhcpOptions) {
+      properties.dhcpOptions = {
+        dnsServers: this.dhcpOptions.dnsServers,
+      };
+    }
+
+    // Add DDoS protection
+    if (this.enableDdosProtection) {
+      properties.enableDdosProtection = this.enableDdosProtection;
+    }
+
+    // Add VM protection
+    if (this.enableVmProtection) {
+      properties.enableVmProtection = this.enableVmProtection;
+    }
+
+    // Build dependsOn array for explicit dependencies
+    const dependsOn: string[] = [];
+    const uniqueDeps = new Set<string>();
+
+    // Add NSG dependencies from inline subnets
+    if (this.subnets) {
+      this.subnets.forEach((subnet) => {
+        if (subnet.networkSecurityGroup) {
+          const nsgId = subnet.networkSecurityGroup.id;
+          const nsgName = nsgId.split('/').pop();
+          const nsgResourceId = `[resourceId('Microsoft.Network/networkSecurityGroups', '${nsgName}')]`;
+          uniqueDeps.add(nsgResourceId);
+        }
+      });
+    }
+
+    // Convert set to array
+    dependsOn.push(...Array.from(uniqueDeps));
+
+    const template: any = {
       type: this.resourceType,
       apiVersion: this.apiVersion,
       name: this.virtualNetworkName,
@@ -572,6 +639,11 @@ export class ArmVirtualNetwork extends Resource {
       tags: Object.keys(this.tags).length > 0 ? this.tags : undefined,
       properties,
     };
+
+    // Only include dependsOn if there are dependencies
+    if (dependsOn.length > 0) {
+      template.dependsOn = dependsOn;
+    }
 
     return template;
   }

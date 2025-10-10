@@ -1,5 +1,6 @@
 import { Construct, Resource } from '@atakora/lib';
 import { DeploymentScope } from '@atakora/lib';
+import type { ArmResource } from '@atakora/lib';
 import type { ArmResourceGroupsProps } from './resource-group-types';
 
 /**
@@ -118,7 +119,7 @@ export class ArmResourceGroups extends Resource {
    * @param props - Properties to validate
    * @throws {Error} If validation fails
    */
-  private validateProps(props: ArmResourceGroupsProps): void {
+  protected validateProps(props: ArmResourceGroupsProps): void {
     // Validate resource group name
     if (!props.resourceGroupName || props.resourceGroupName.trim() === '') {
       throw new Error('Resource group name cannot be empty');
@@ -155,7 +156,7 @@ export class ArmResourceGroups extends Resource {
    *
    * @returns ARM template resource object
    */
-  public toArmTemplate(): object {
+  public toArmTemplate(): ArmResource {
     return {
       type: this.resourceType,
       apiVersion: this.apiVersion,

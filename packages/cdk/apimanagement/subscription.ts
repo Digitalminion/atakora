@@ -1,12 +1,13 @@
 import { Construct, Resource } from '@atakora/lib';
 import { DeploymentScope } from '@atakora/lib';
+import type { ArmResource } from '@atakora/lib/src/core/resource';
 import type {
   ArmApiManagementSubscriptionProps,
   ApiManagementSubscriptionProps,
-  IApiManagement,
-  IApiManagementSubscription,
-  IApiManagementProduct,
-  IApiManagementApi,
+  IService,
+  IServiceSubscription,
+  IServiceProduct,
+  IServiceApi,
 } from './api-management-types';
 import { SubscriptionState } from './api-management-types';
 
@@ -53,7 +54,7 @@ export class ArmApiManagementSubscription extends Resource {
   /**
    * Parent API Management service.
    */
-  public readonly apiManagementService: IApiManagement;
+  public readonly apiManagementService: IService;
 
   /**
    * Subscription name.
@@ -126,7 +127,7 @@ export class ArmApiManagementSubscription extends Resource {
     this.secondaryKey = `reference('${this.subscriptionId}').secondaryKey`;
   }
 
-  private validateProps(props: ArmApiManagementSubscriptionProps): void {
+  protected validateProps(props: ArmApiManagementSubscriptionProps): void {
     if (!props.subscriptionName || props.subscriptionName.trim() === '') {
       throw new Error('Subscription name cannot be empty');
     }
@@ -140,7 +141,7 @@ export class ArmApiManagementSubscription extends Resource {
     }
   }
 
-  public toArmTemplate(): object {
+  public toArmTemplate(): ArmResource {
     const properties: any = {
       displayName: this.displayName,
       scope: this.scopePath,
@@ -160,7 +161,7 @@ export class ArmApiManagementSubscription extends Resource {
       name: `${this.apiManagementService.serviceName}/${this.subscriptionName}`,
       properties,
       dependsOn: [this.apiManagementService.apiManagementId],
-    };
+    } as ArmResource;
   }
 }
 
@@ -179,7 +180,7 @@ export class ArmApiManagementSubscription extends Resource {
  * });
  * ```
  */
-export class ApiManagementSubscription extends Construct implements IApiManagementSubscription {
+export class ApiManagementSubscription extends Construct implements IServiceSubscription {
   private readonly armSubscription: ArmApiManagementSubscription;
 
   public readonly subscriptionName: string;
@@ -221,8 +222,8 @@ export class ApiManagementSubscription extends Construct implements IApiManageme
   }
 
   private buildScopePath(
-    scopeProduct?: IApiManagementProduct,
-    scopeApi?: IApiManagementApi
+    scopeProduct?: IServiceProduct,
+    scopeApi?: IServiceApi
   ): string {
     if (scopeProduct) {
       return `/products/${scopeProduct.productName}`;

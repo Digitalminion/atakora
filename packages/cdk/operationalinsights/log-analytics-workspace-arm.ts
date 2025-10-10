@@ -1,5 +1,6 @@
 import { Construct, Resource } from '@atakora/lib';
 import { DeploymentScope } from '@atakora/lib';
+import type { ArmResource } from '@atakora/lib';
 import type { ArmWorkspacesProps } from './log-analytics-workspace-types';
 
 /**
@@ -158,7 +159,7 @@ export class ArmWorkspaces extends Resource {
    * @param props - Properties to validate
    * @throws {Error} If validation fails
    */
-  private validateProps(props: ArmWorkspacesProps): void {
+  protected validateProps(props: ArmWorkspacesProps): void {
     // Validate workspace name
     if (!props.workspaceName || props.workspaceName.trim() === '') {
       throw new Error('Workspace name cannot be empty');
@@ -215,7 +216,7 @@ export class ArmWorkspaces extends Resource {
    *
    * @returns ARM template resource object
    */
-  public toArmTemplate(): object {
+  public toArmTemplate(): ArmResource {
     const properties: any = {
       sku: {
         name: this.sku.name,

@@ -3,7 +3,7 @@ import { constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/lib';
 import { ArmDatabaseAccounts } from './cosmos-db-arm';
 import type {
   DatabaseAccountsProps,
-  ICosmosDbAccount,
+  IDatabaseAccount,
   DatabaseAccountOfferType,
   ConsistencyLevel,
   CosmosDbKind,
@@ -55,7 +55,7 @@ import type {
  * });
  * ```
  */
-export class DatabaseAccounts extends Construct implements ICosmosDbAccount {
+export class DatabaseAccounts extends Construct implements IDatabaseAccount {
   /**
    * The underlying L1 construct.
    */
@@ -273,10 +273,10 @@ export class DatabaseAccounts extends Construct implements ICosmosDbAccount {
    * @param scope - The parent construct
    * @param id - The construct ID
    * @param accountId - The full resource ID of the Cosmos DB account
-   * @returns An ICosmosDbAccount reference
+   * @returns An IDatabaseAccount reference
    */
-  public static fromAccountId(scope: Construct, id: string, accountId: string): ICosmosDbAccount {
-    class Import extends Construct implements ICosmosDbAccount {
+  public static fromAccountId(scope: Construct, id: string, accountId: string): IDatabaseAccount {
+    class Import extends Construct implements IDatabaseAccount {
       public readonly accountId = accountId;
       public readonly resourceId = accountId;
       public readonly databaseAccountName: string;

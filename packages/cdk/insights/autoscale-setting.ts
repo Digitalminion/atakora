@@ -1,6 +1,6 @@
 import { Construct } from '@atakora/lib';
 import type { IResourceGroup } from '@atakora/lib';
-import { ArmAutoscaleSettings } from './arm-autoscale-setting';
+import { ArmAutoscaleSettings } from './autoscale-setting-arm';
 import type { AutoscaleSettingsProps, IAutoscaleSetting, AutoscaleProfile } from './autoscale-setting-types';
 
 /**

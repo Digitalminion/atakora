@@ -1,6 +1,6 @@
 import { Construct } from '@atakora/lib';
 import type { IResourceGroup } from '@atakora/lib';
-import { ArmMetricAlerts } from './arm-metric-alert';
+import { ArmMetricAlerts } from './metric-alert-arm';
 import type { MetricAlertsProps, IMetricAlert, MetricAlertCriterion } from './metric-alert-types';
 import { CriterionType } from './metric-alert-types';
 

@@ -1,5 +1,5 @@
 import { Construct } from '@atakora/lib';
-import { ArmDiagnosticSettings } from './arm-diagnostic-setting';
+import { ArmDiagnosticSettings } from './diagnostic-setting-arm';
 import type {
   DiagnosticSettingsProps,
   IDiagnosticSetting,

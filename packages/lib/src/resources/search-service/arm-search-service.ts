@@ -1,5 +1,5 @@
 import { Construct } from '../../core/construct';
-import { Resource } from '../../core/resource';
+import { Resource, ArmResource } from '../../core/resource';
 import { DeploymentScope } from '../../core/azure/scopes';
 import type {
   ArmSearchServiceProps,
@@ -162,7 +162,7 @@ export class ArmSearchService extends Resource {
    * @param props - Properties to validate
    * @throws {Error} If validation fails
    */
-  private validateProps(props: ArmSearchServiceProps): void {
+  protected validateProps(props: ArmSearchServiceProps): void {
     // Validate service name
     if (!props.serviceName || props.serviceName.trim() === '') {
       throw new Error('Search service name cannot be empty');
@@ -224,7 +224,7 @@ export class ArmSearchService extends Resource {
    *
    * @returns ARM template resource object
    */
-  public toArmTemplate(): object {
+  public toArmTemplate(): ArmResource {
     const properties: any = {};
 
     // Add optional properties

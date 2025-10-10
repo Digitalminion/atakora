@@ -164,7 +164,7 @@ export class ArmMetricAlerts extends Resource {
   /**
    * Validates metric alert properties against ARM constraints.
    */
-  private validateProps(props: ArmMetricAlertsProps): void {
+  protected validateProps(props: ArmMetricAlertsProps): void {
     if (!props.name || props.name.trim() === '') {
       throw new Error('Metric alert name cannot be empty');
     }

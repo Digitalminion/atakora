@@ -1,5 +1,6 @@
 import { Construct, Resource } from '@atakora/lib';
 import { DeploymentScope } from '@atakora/lib';
+import type { ArmResource } from '@atakora/lib/src/core/resource';
 import type {
   ArmOpenAIServiceProps,
   CognitiveServicesSku,
@@ -139,7 +140,7 @@ export class ArmAccounts extends Resource {
   /**
    * Validates the properties for the OpenAI Service.
    */
-  private validateProps(props: ArmOpenAIServiceProps): void {
+  protected validateProps(props: ArmOpenAIServiceProps): void {
     // Validate account name
     if (!props.accountName || props.accountName.trim() === '') {
       throw new Error('OpenAI Service account name cannot be empty');
@@ -182,7 +183,7 @@ export class ArmAccounts extends Resource {
   /**
    * Converts the OpenAI Service to an ARM template resource definition.
    */
-  public toArmTemplate(): Record<string, unknown> {
+  public toArmTemplate(): ArmResource {
     const properties: Record<string, unknown> = {};
 
     // Add optional properties if defined
@@ -207,6 +208,6 @@ export class ArmAccounts extends Resource {
       sku: this.sku,
       properties: Object.keys(properties).length > 0 ? properties : undefined,
       tags: Object.keys(this.tags).length > 0 ? this.tags : undefined,
-    };
+    } as ArmResource;
   }
 }

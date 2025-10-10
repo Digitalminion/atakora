@@ -189,7 +189,7 @@ export class ArmActionGroups extends Resource {
    * @param props - Properties to validate
    * @throws {Error} If validation fails
    */
-  private validateProps(props: ArmActionGroupsProps): void {
+  protected validateProps(props: ArmActionGroupsProps): void {
     // Validate action group name
     if (!props.actionGroupName || props.actionGroupName.trim() === '') {
       throw new Error('Action group name cannot be empty');

@@ -1,5 +1,6 @@
-import { Construct, Resource, ArmResource } from '@atakora/lib';
+import { Construct, Resource } from '@atakora/lib';
 import { DeploymentScope } from '@atakora/lib';
+import type { ArmResource } from '@atakora/lib/src/core/resource';
 import type {
   ArmApiManagementApiProps,
   ApiManagementApiProps,
@@ -148,7 +149,7 @@ export class ArmApiManagementApi extends Resource {
     this.apiId = this.resourceId;
   }
 
-  private validateProps(props: ArmApiManagementApiProps): void {
+  protected validateProps(props: ArmApiManagementApiProps): void {
     if (!props.apiName || props.apiName.trim() === '') {
       throw new Error('API name cannot be empty');
     }
@@ -213,7 +214,7 @@ export class ArmApiManagementApi extends Resource {
       name: `${this.apiManagementService.serviceName}/${this.apiName}`,
       properties,
       dependsOn: [this.apiManagementService.apiManagementId],
-    };
+    } as ArmResource;
   }
 }
 

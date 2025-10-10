@@ -4,7 +4,7 @@ import { DeploymentScope } from '@atakora/lib';
 import type { ArmNetworkSecurityGroupProps, SecurityRule } from './network-security-group-types';
 import {
   ValidationResult,
-  ValidationResultBuilder,
+  ValidationResultBuilder, ArmResource,
   ValidationError,
   isValidPortRange,
 } from '@atakora/lib';
@@ -424,7 +424,7 @@ export class ArmNetworkSecurityGroup extends Resource {
    *
    * @returns ARM template resource object
    */
-  public toArmTemplate(): object {
+  public toArmTemplate(): ArmResource {
     const properties: any = {};
 
     // Add security rules if present

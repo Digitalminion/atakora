@@ -4,7 +4,7 @@ import type { IResourceGroup } from '@atakora/lib';
 import { ArmService } from './api-management-arm';
 import type {
   ServiceProps,
-  IApiManagement,
+  IService,
   ApiManagementSkuName,
   VirtualNetworkType,
   HostnameConfiguration,
@@ -70,7 +70,7 @@ import type {
  * });
  * ```
  */
-export class Service extends Construct implements IApiManagement {
+export class Service extends Construct implements IService {
   /**
    * Underlying L1 construct.
    */

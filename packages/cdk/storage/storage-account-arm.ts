@@ -1,4 +1,5 @@
 import { Construct, Resource, DeploymentScope } from '@atakora/lib';
+import type { ArmResource } from '@atakora/lib';
 import { ValidationResult, ValidationResultBuilder } from '@atakora/lib';
 import type {
   ArmStorageAccountsProps,
@@ -268,7 +269,7 @@ export class ArmStorageAccounts extends Resource {
    *
    * @returns ARM template resource object
    */
-  public toArmTemplate(): object {
+  public toArmTemplate(): ArmResource {
     const properties: any = {};
 
     // Add optional properties
@@ -314,6 +315,6 @@ export class ArmStorageAccounts extends Resource {
       kind: this.kind,
       properties: Object.keys(properties).length > 0 ? properties : undefined,
       tags: Object.keys(this.tags).length > 0 ? this.tags : undefined,
-    };
+    } as ArmResource;
   }
 }
