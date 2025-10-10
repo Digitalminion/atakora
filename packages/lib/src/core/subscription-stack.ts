@@ -8,8 +8,7 @@ import type { Instance } from './context/instance';
 import type { Geography } from './azure/geography';
 import { DeploymentScope } from './azure/scopes';
 import { ResourceNameGenerator, NamingService, type NamingConventionConfig } from '../naming';
-import { ResourceGroupStack } from './resource-group-stack';
-import type { IResourceGroup } from '../resources/resource-group/types';
+import { ResourceGroupStack, type IResourceGroup } from './resource-group-stack';
 
 /**
  * Props for SubscriptionStack.

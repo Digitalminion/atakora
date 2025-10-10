@@ -2,30 +2,20 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
-    "outDir": "./dist",
-    "rootDir": ".",
+    "outDir": "../../dist/cdk",
+    "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "tsBuildInfoFile": "../../dist/cdk/.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
-      "@atakora/lib": ["../lib/src/index.ts"]
+      "@atakora/lib": ["../lib/src/index.ts"],
+      "@atakora/cdk": ["./src/index.ts"]
     }
   },
   "include": [
-    "network/**/*",
-    "storage/**/*",
-    "web/**/*",
-    "keyvault/**/*",
-    "sql/**/*",
-    "insights/**/*",
-    "operationalinsights/**/*",
-    "documentdb/**/*",
-    "cognitiveservices/**/*",
-    "search/**/*",
-    "apimanagement/**/*",
-    "compute/**/*",
-    "resources/**/*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",

@@ -1,6 +1,14 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Manifest, PackageConfig, CreateManifestOptions, AddPackageOptions } from './types';
+import {
+  Manifest,
+  AtokoraManifest,
+  PackageConfig,
+  CreateManifestOptions,
+  AddPackageOptions,
+  isLegacyManifest,
+  isModernManifest,
+} from './types';
 
 /**
  * Manages reading and writing of the Atakora project manifest
@@ -68,12 +76,52 @@ export class ManifestManager {
   }
 
   /**
+   * Normalizes a manifest to modern format
+   *
+   * @param manifest - Manifest in legacy or modern format
+   * @returns Manifest in modern format
+   */
+  private normalize(manifest: Manifest): AtokoraManifest {
+    if (isModernManifest(manifest)) {
+      return manifest;
+    }
+
+    // Convert legacy array format to modern Record format
+    if (isLegacyManifest(manifest)) {
+      const packages: Record<string, PackageConfig> = {};
+
+      for (const pkg of manifest.packages) {
+        packages[pkg.name] = {
+          path: pkg.path,
+          entry: pkg.entryPoint,
+          enabled: pkg.enabled,
+          metadata: pkg.metadata,
+        };
+      }
+
+      return {
+        version: manifest.version,
+        organization: manifest.organization,
+        project: manifest.project,
+        defaultPackage: manifest.defaultPackage || Object.keys(packages)[0] || '',
+        packages,
+        outputDirectory: manifest.outputDirectory,
+        createdAt: manifest.createdAt,
+        updatedAt: manifest.updatedAt,
+        metadata: manifest.metadata,
+      };
+    }
+
+    throw new Error('Invalid manifest format');
+  }
+
+  /**
    * Reads the manifest file
    *
-   * @returns Parsed manifest object
+   * @returns Parsed manifest object in modern format
    * @throws Error if manifest does not exist or is invalid JSON
    */
-  public read(): Manifest {
+  public read(): AtokoraManifest {
     const manifestPath = this.getManifestPath();
 
     if (!this.exists()) {
@@ -84,7 +132,8 @@ export class ManifestManager {
 
     try {
       const content = fs.readFileSync(manifestPath, 'utf-8');
-      return JSON.parse(content) as Manifest;
+      const manifest = JSON.parse(content) as Manifest;
+      return this.normalize(manifest);
     } catch (error) {
       if (error instanceof SyntaxError) {
         throw new Error(`Invalid JSON in manifest file: ${error.message}`);
@@ -98,7 +147,7 @@ export class ManifestManager {
    *
    * @param manifest - Manifest object to write
    */
-  public write(manifest: Manifest): void {
+  public write(manifest: AtokoraManifest): void {
     const manifestPath = this.getManifestPath();
     const manifestDir = this.getManifestDir();
 
@@ -118,27 +167,28 @@ export class ManifestManager {
    * @returns Created manifest object
    * @throws Error if manifest already exists
    */
-  public create(options: CreateManifestOptions): Manifest {
+  public create(options: CreateManifestOptions): AtokoraManifest {
     if (this.exists()) {
       throw new Error(`Project already initialized. Manifest exists at ${this.getManifestPath()}`);
     }
 
     const now = new Date().toISOString();
 
-    const manifest: Manifest = {
+    const manifest: AtokoraManifest = {
       version: ManifestManager.MANIFEST_VERSION,
       organization: options.organization,
       project: options.project,
       defaultPackage: options.firstPackageName,
-      packages: [
-        {
-          name: options.firstPackageName,
+      packages: {
+        [options.firstPackageName]: {
           path: `packages/${options.firstPackageName}`,
-          entryPoint: 'bin/app.ts',
+          entry: 'src/main.ts',
           enabled: true,
+          type: options.firstPackageType || 'infrastructure',
         },
-      ],
+      },
       outputDirectory: options.outputDirectory || ManifestManager.DEFAULT_OUTPUT_DIR,
+      cloudEnvironment: options.cloudEnvironment || 'AzureCloud',
       createdAt: now,
       updatedAt: now,
     };
@@ -157,23 +207,26 @@ export class ManifestManager {
     const manifest = this.read();
 
     // Check if package already exists
-    const existing = manifest.packages.find((pkg) => pkg.name === options.name);
-    if (existing) {
+    if (manifest.packages[options.name]) {
       throw new Error(`Package '${options.name}' already exists in manifest`);
     }
 
     // Create new package config
     const newPackage: PackageConfig = {
-      name: options.name,
       path: `packages/${options.name}`,
-      entryPoint: options.entryPoint || 'bin/app.ts',
+      entry: options.entry || 'src/main.ts',
       enabled: options.enabled !== false,
+      type: options.type,
+      deployment: options.deployment,
     };
 
     // Update manifest
-    const updatedManifest: Manifest = {
+    const updatedManifest: AtokoraManifest = {
       ...manifest,
-      packages: [...manifest.packages, newPackage],
+      packages: {
+        ...manifest.packages,
+        [options.name]: newPackage,
+      },
       defaultPackage: options.setAsDefault ? options.name : manifest.defaultPackage,
       updatedAt: new Date().toISOString(),
     };
@@ -191,13 +244,12 @@ export class ManifestManager {
     const manifest = this.read();
 
     // Validate package exists
-    const pkg = manifest.packages.find((p) => p.name === packageName);
-    if (!pkg) {
+    if (!manifest.packages[packageName]) {
       throw new Error(`Package '${packageName}' not found in manifest`);
     }
 
     // Update manifest
-    const updatedManifest: Manifest = {
+    const updatedManifest: AtokoraManifest = {
       ...manifest,
       defaultPackage: packageName,
       updatedAt: new Date().toISOString(),
@@ -214,7 +266,7 @@ export class ManifestManager {
    */
   public getPackage(packageName: string): PackageConfig | undefined {
     const manifest = this.read();
-    return manifest.packages.find((pkg) => pkg.name === packageName);
+    return manifest.packages[packageName];
   }
 
   /**
@@ -233,10 +285,13 @@ export class ManifestManager {
   /**
    * Lists all packages in the manifest
    *
-   * @returns Array of package configurations
+   * @returns Array of package configurations with names
    */
-  public listPackages(): ReadonlyArray<PackageConfig> {
+  public listPackages(): ReadonlyArray<PackageConfig & { name: string }> {
     const manifest = this.read();
-    return manifest.packages;
+    return Object.entries(manifest.packages).map(([name, config]) => ({
+      name,
+      ...config,
+    }));
   }
 }

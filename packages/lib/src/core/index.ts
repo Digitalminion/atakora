@@ -65,10 +65,12 @@ export { Resource } from './resource';
 export type { ResourceProps, ArmResource } from './resource';
 export { App } from './app';
 export type { AppProps, UserProfile, ProjectConfig } from './app';
+export { AzureApp } from './azure-app';
+export type { AzureAppProps, UserConfig, ProfileConfig } from './azure-app';
 export { SubscriptionStack } from './subscription-stack';
 export type { SubscriptionStackProps } from './subscription-stack';
 export { ResourceGroupStack } from './resource-group-stack';
-export type { ResourceGroupStackProps } from './resource-group-stack';
+export type { ResourceGroupStackProps, IResourceGroup } from './resource-group-stack';
 
 // Context components (non-Azure specific)
 export { Organization } from './context';

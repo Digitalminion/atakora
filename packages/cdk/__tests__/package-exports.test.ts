@@ -72,7 +72,7 @@ describe('Package Exports Configuration', () => {
 });
 
 describe('Namespace Index Files', () => {
-  const namespacesDir = path.join(__dirname, '..');
+  const namespacesDir = path.join(__dirname, '..', 'src');
 
   it('should have index.ts for all namespaces', () => {
     const expectedNamespaces = [

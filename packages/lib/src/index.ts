@@ -84,11 +84,5 @@ export * from './core';
 // Naming conventions and utilities
 export * from './naming';
 
-// Azure resource constructs (L1 and L2)
-export * from './resources';
-
-// Stack patterns and templates
-export * from './stacks';
-
 // Synthesis types (CloudAssembly, StackManifest, etc.)
 export type { CloudAssembly, StackManifest } from './synthesis';

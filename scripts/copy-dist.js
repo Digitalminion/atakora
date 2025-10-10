@@ -10,6 +10,7 @@ const path = require('path');
 // Package configurations: [source in root dist, destination in package]
 const packages = [
   { name: 'lib', src: 'dist/lib', dest: 'packages/lib/dist' },
+  { name: 'cdk', src: 'dist/cdk', dest: 'packages/cdk/dist' },
   { name: 'cli', src: 'dist/cli', dest: 'packages/cli/dist' },
 ];
 

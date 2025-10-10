@@ -6,6 +6,19 @@
   "bin": {
     "atakora": "./bin/atakora.js"
   },
+  "files": [
+    "bin/**/*",
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "dist/**/*.js.map",
+    "dist/**/*.d.ts.map",
+    "templates/**/*",
+    "!dist/**/*.test.*",
+    "!dist/**/__tests__",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
   "scripts": {
     "build": "tsc",
     "test": "vitest run",

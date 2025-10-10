@@ -3,6 +3,23 @@ import type { SubscriptionStack } from './subscription-stack';
 import { DeploymentScope } from './azure/scopes';
 
 /**
+ * Interface for Resource Group reference.
+ *
+ * @remarks
+ * Allows resources to reference a resource group without depending on the construct class.
+ */
+export interface IResourceGroup {
+  /**
+   * Name of the resource group.
+   */
+  readonly resourceGroupName: string;
+  /**
+   * Location of the resource group.
+   */
+  readonly location: string;
+}
+
+/**
  * Props for ResourceGroupStack.
  */
 export interface ResourceGroupStackProps {
