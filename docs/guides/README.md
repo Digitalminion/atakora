@@ -14,6 +14,10 @@ Comprehensive guides for using Atakora effectively.
 
 ## Core Concepts
 
+- **[Azure Functions](./azure-functions.md)** - Build serverless applications with type-safe handler interfaces for all 18 Azure Functions trigger types
+- **[REST APIs](./rest-api.md)** - Build type-safe REST APIs with OpenAPI support, backend integration, and reliability patterns
+- **[OpenAPI Integration](./openapi-integration.md)** - Import/export OpenAPI specs, generate TypeScript types, and validate at runtime
+
 Coming soon:
 
 - Infrastructure as Code with Atakora

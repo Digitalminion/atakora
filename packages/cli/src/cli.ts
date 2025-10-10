@@ -59,6 +59,7 @@ import { createDiffCommand } from './commands/diff';
 import { createInitCommand } from './commands/init';
 import { createAddCommand } from './commands/add';
 import { createSetDefaultCommand } from './commands/set-default';
+import { createFunctionCommand } from './commands/function';
 
 /**
  * ASCII banner displayed when running help or no commands.
@@ -139,6 +140,7 @@ ${chalk.bold('Documentation:')} ${chalk.blue.underline('https://github.com/digit
   program.addCommand(createSynthCommand());
   program.addCommand(createDeployCommand());
   program.addCommand(createDiffCommand());
+  program.addCommand(createFunctionCommand());
 
   program.parse(process.argv);
 }

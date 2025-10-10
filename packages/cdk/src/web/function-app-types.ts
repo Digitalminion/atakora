@@ -136,8 +136,8 @@ export interface TimerTriggerConfig {
    * CRON expression or TimeSpan format.
    *
    * @remarks
-   * CRON format: {second} {minute} {hour} {day} {month} {day-of-week}
-   * Example: '0 */5 * * * *' (every 5 minutes)
+   * CRON format: second minute hour day month day-of-week
+   * Example: '0 *\/5 * * * *' (every 5 minutes)
    *
    * TimeSpan format: hh:mm:ss
    * Example: '00:05:00' (every 5 minutes)

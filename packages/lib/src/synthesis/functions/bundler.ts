@@ -74,6 +74,13 @@ export class FunctionBundler {
       const result = await esbuild.build(buildOptions);
 
       // Extract bundle and source map
+      if (!result.outputFiles) {
+        throw new BuildError(
+          'esbuild did not produce output files (write: false required)',
+          functionId
+        );
+      }
+
       const bundle = result.outputFiles.find(f => f.path.endsWith('.js'));
       const sourceMap = result.outputFiles.find(f => f.path.endsWith('.js.map'));
 

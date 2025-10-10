@@ -355,6 +355,12 @@ export interface IFunctionApp {
 
   /**
    * Managed service identity (if enabled).
+   *
+   * @remarks
+   * FunctionApp extends GrantableResource which provides identity management.
+   * Access the identity through the class, not this interface property.
+   * This property is omitted from the interface to avoid conflicts with
+   * the protected identity property inherited from GrantableResource.
    */
-  readonly identity?: ManagedServiceIdentity;
+  // readonly identity?: ManagedServiceIdentity; // Commented out - provided by GrantableResource
 }

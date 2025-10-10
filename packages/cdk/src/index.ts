@@ -325,3 +325,13 @@ export * as apimanagement from './apimanagement';
  * @deprecated Import directly from '@atakora/cdk/resources' instead
  */
 export * as resources from './resources';
+
+/**
+ * @deprecated Import directly from '@atakora/cdk/eventhub' instead
+ */
+export * as eventhub from './eventhub';
+
+/**
+ * @deprecated Import directly from '@atakora/cdk/servicebus' instead
+ */
+export * as servicebus from './servicebus';

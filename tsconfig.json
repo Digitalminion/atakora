@@ -2,7 +2,6 @@
   "files": [],
   "references": [
     { "path": "./packages/lib" },
-    { "path": "./packages/cdk" },
-    { "path": "./packages/cli" }
+    { "path": "./packages/cdk" }
   ]
 }

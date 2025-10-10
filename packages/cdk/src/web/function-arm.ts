@@ -45,7 +45,7 @@ import type {
  *   functionName: 'TimerTrigger1',
  *   trigger: {
  *     type: 'timer',
- *     schedule: '0 */5 * * * *', // Every 5 minutes
+ *     schedule: '0 *\/5 * * * *', // Every 5 minutes
  *     runOnStartup: false
  *   },
  *   packageUri: 'https://storage.blob.core.windows.net/...'

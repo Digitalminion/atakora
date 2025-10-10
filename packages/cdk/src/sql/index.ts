@@ -65,6 +65,11 @@
 export { ArmServers } from './servers-arm';
 
 /**
+ * SQL Server L2 construct with grant methods
+ */
+export { Servers } from './servers';
+
+/**
  * SQL Server types and interfaces
  */
 export type {

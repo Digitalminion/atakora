@@ -105,3 +105,7 @@ export type {
 
 // Validation framework
 export * from './validation';
+
+// Azure RBAC grant system
+export * from './grants';
+export { GrantableResource } from './grantable-resource';

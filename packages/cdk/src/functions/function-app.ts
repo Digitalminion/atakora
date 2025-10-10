@@ -1,4 +1,4 @@
-import { Construct } from '@atakora/cdk';
+import { Construct, GrantableResource, ManagedIdentityType } from '@atakora/lib';
 import type { IResourceGroup } from '@atakora/cdk';
 import type {
   FunctionAppProps,
@@ -58,7 +58,27 @@ import { ManagedServiceIdentityType } from './function-app-types';
  * });
  * ```
  */
-export class FunctionApp extends Construct implements IFunctionApp {
+export class FunctionApp extends GrantableResource implements IFunctionApp {
+  /**
+   * ARM resource type.
+   */
+  public readonly resourceType = 'Microsoft.Web/sites';
+
+  /**
+   * API version for the resource.
+   */
+  public readonly apiVersion = '2023-01-01';
+
+  /**
+   * Resource name (same as functionAppName).
+   */
+  public readonly name: string;
+
+  /**
+   * Full resource ID.
+   */
+  public readonly resourceId: string;
+
   /**
    * Parent resource group.
    */
@@ -70,7 +90,7 @@ export class FunctionApp extends Construct implements IFunctionApp {
   public readonly functionAppName: string;
 
   /**
-   * Resource ID of the Function App.
+   * Resource ID of the Function App (alias for resourceId).
    */
   public readonly functionAppId: string;
 
@@ -88,11 +108,6 @@ export class FunctionApp extends Construct implements IFunctionApp {
    * Resource group name where the Function App is deployed.
    */
   public readonly resourceGroupName: string;
-
-  /**
-   * Managed service identity (if enabled).
-   */
-  public readonly identity?: ManagedServiceIdentity;
 
   /**
    * Runtime configuration.
@@ -156,6 +171,7 @@ export class FunctionApp extends Construct implements IFunctionApp {
    */
   constructor(scope: Construct, id: string, props: FunctionAppProps) {
     super(scope, id);
+    this.validateProps(props);
 
     // Validate required properties
     if (!props.plan) {
@@ -171,6 +187,7 @@ export class FunctionApp extends Construct implements IFunctionApp {
 
     // Auto-generate or use provided function app name
     this.functionAppName = this.resolveFunctionAppName(id, props);
+    this.name = this.functionAppName;
 
     // Default location to resource group's location or use provided
     this.location = props.location ?? this.parentResourceGroup.location;
@@ -188,8 +205,14 @@ export class FunctionApp extends Construct implements IFunctionApp {
     // Set Storage Account name
     this.storageAccountName = props.storageAccount.storageAccountName;
 
-    // Set identity
-    this.identity = props.identity;
+    // Set identity (protected property from GrantableResource)
+    if (props.identity) {
+      // Use type assertion to set protected property in constructor
+      (this as any).identity = {
+        type: this.convertIdentityType(props.identity.type),
+        userAssignedIdentities: props.identity.userAssignedIdentities,
+      };
+    }
 
     // Set environment variables
     this.environment = props.environment ?? {};
@@ -207,13 +230,79 @@ export class FunctionApp extends Construct implements IFunctionApp {
     };
 
     // Construct resource ID
-    this.functionAppId = `/subscriptions/{subscriptionId}/resourceGroups/${this.resourceGroupName}/providers/Microsoft.Web/sites/${this.functionAppName}`;
+    this.resourceId = `[resourceId('Microsoft.Web/sites', '${this.name}')]`;
+    this.functionAppId = this.resourceId;
 
     // Construct default hostname
     this.defaultHostName = `${this.functionAppName}.azurewebsites.net`;
 
     // Note: The actual ARM resource creation will be handled during synthesis
     // This L2 construct serves as a container for Azure Functions
+  }
+
+  /**
+   * Validates constructor properties.
+   *
+   * @param props - Properties to validate
+   * @throws {Error} If validation fails
+   *
+   * @internal
+   */
+  protected validateProps(props: FunctionAppProps): void {
+    // Basic validation is done in constructor
+    // Can be extended for more complex validation
+  }
+
+  /**
+   * Transforms this resource to ARM template JSON representation.
+   *
+   * @returns ARM template resource object
+   *
+   * @remarks
+   * This is a stub implementation. Full ARM template generation
+   * will be implemented when synthesis is added.
+   */
+  public toArmTemplate(): any {
+    return {
+      type: this.resourceType,
+      apiVersion: this.apiVersion,
+      name: this.name,
+      location: this.location,
+      kind: 'functionapp',
+      tags: this.tags,
+      identity: this.identity,
+      properties: {
+        serverFarmId: this.serverFarmId,
+        siteConfig: {
+          appSettings: Object.entries(this.environment).map(([name, value]) => ({
+            name,
+            value,
+          })),
+        },
+      },
+    };
+  }
+
+  /**
+   * Converts ManagedServiceIdentityType to ManagedIdentityType.
+   *
+   * @param type - Function app identity type
+   * @returns Core identity type
+   *
+   * @internal
+   */
+  private convertIdentityType(type: ManagedServiceIdentityType): ManagedIdentityType {
+    switch (type) {
+      case ManagedServiceIdentityType.SYSTEM_ASSIGNED:
+        return ManagedIdentityType.SYSTEM_ASSIGNED;
+      case ManagedServiceIdentityType.USER_ASSIGNED:
+        return ManagedIdentityType.USER_ASSIGNED;
+      case ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED:
+        return ManagedIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED;
+      case ManagedServiceIdentityType.NONE:
+      default:
+        return ManagedIdentityType.NONE;
+    }
   }
 
   /**

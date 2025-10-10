@@ -12,12 +12,42 @@ This directory contains Architectural Decision Records (ADRs) documenting signif
 
 ### Active Decisions
 
+#### Core Infrastructure (001-004)
+
 | ADR | Title | Date | Status |
 |-----|-------|------|--------|
 | [ADR-001](./adr-001-validation-architecture.md) | Validation Architecture | 2024-10 | Accepted |
 | [ADR-002](./adr-002-manifest-schema.md) | Manifest Schema | 2024-10 | Accepted |
 | [ADR-003](./adr-003-cdk-package-architecture.md) | CDK Package Architecture | 2024-10 | Accepted |
 | [ADR-004](./adr-004-cross-resource-references.md) | Cross-Resource References | 2024-10 | Accepted |
+
+#### Package Distribution & Documentation (005)
+
+| ADR | Title | Date | Status |
+|-----|-------|------|--------|
+| [ADR-005](../../design/architecture/adr-005-npm-package-distribution.md) | NPM Package Distribution | 2024-10 | Accepted |
+
+#### Azure Functions Support (006-009)
+
+| ADR | Title | Date | Status |
+|-----|-------|------|--------|
+| [ADR-006](../../design/architecture/adr-006-azure-functions-architecture.md) | Azure Functions Architecture | 2024-10 | Accepted |
+| [ADR-007](../../design/architecture/adr-007-resource-object-pattern.md) | Resource Object Pattern | 2024-10 | Accepted |
+| [ADR-009](../../design/architecture/adr-009-resolver-auto-detection.md) | Resolver Auto-Detection | 2024-10 | Accepted |
+
+#### API & GraphQL Support (010-012)
+
+| ADR | Title | Date | Status |
+|-----|-------|------|--------|
+| [ADR-010](../../design/architecture/adr-010-api-stack-architecture.md) | API Stack Architecture | 2024-10 | Accepted |
+| [ADR-011](../../design/architecture/adr-011-graphql-resolver-architecture.md) | GraphQL Resolver Architecture | 2024-10 | Accepted |
+| [ADR-012](../../design/architecture/adr-012-graphql-advanced-features.md) | GraphQL Advanced Features | 2024-10 | Accepted |
+
+#### Security & Access Control (013)
+
+| ADR | Title | Date | Status |
+|-----|-------|------|--------|
+| [ADR-013](../../design/architecture/adr-013-azure-rbac-grant-pattern.md) | Azure RBAC Grant Pattern | 2024-10 | Accepted |
 
 ### Supporting Documentation
 
@@ -94,6 +124,26 @@ What other options did we evaluate?
 - Type-safe references
 - No string-based IDs
 - Automatic dependency tracking
+
+### Azure Functions Architecture (ADR-006)
+
+**Decision**: Adopt AWS Amplify Gen 2 pattern with handler.ts + resource.ts separation
+
+**Rationale**:
+- Clean separation of runtime code from infrastructure configuration
+- Auto-discovery through filesystem scanning
+- Type-safe environment variable flow
+- Developer-friendly local development experience
+
+### Azure RBAC Grant Pattern (ADR-013)
+
+**Decision**: Implement AWS CDK-style grant methods for Azure role assignments
+
+**Rationale**:
+- Familiar developer experience for AWS CDK users
+- Semantic, resource-specific permission methods
+- Automatic managed identity enablement
+- Type-safe principal and role handling
 
 ## See Also
 

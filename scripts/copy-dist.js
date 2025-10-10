@@ -11,7 +11,7 @@ const path = require('path');
 const packages = [
   { name: 'lib', src: 'dist/lib', dest: 'packages/lib/dist' },
   { name: 'cdk', src: 'dist/cdk', dest: 'packages/cdk/dist' },
-  { name: 'cli', src: 'dist/cli', dest: 'packages/cli/dist' },
+  // CLI builds its own bundle, no need to copy
 ];
 
 /**

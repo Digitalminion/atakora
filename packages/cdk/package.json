@@ -124,6 +124,9 @@
       ],
       "resources": [
         "./dist/resources/index.d.ts"
+      ],
+      "functions": [
+        "./dist/functions/index.d.ts"
       ]
     }
   },

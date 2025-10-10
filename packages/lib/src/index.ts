@@ -86,3 +86,9 @@ export * from './naming';
 
 // Synthesis types (CloudAssembly, StackManifest, etc.)
 export type { CloudAssembly, StackManifest } from './synthesis';
+
+// Managed Identity constructs
+export * from './managedidentity';
+
+// Azure RBAC authorization (role assignments and well-known roles)
+export * from './authorization';

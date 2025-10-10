@@ -106,7 +106,7 @@ export class FunctionBuilder {
     this.bundler = new FunctionBundler();
     this.cache = new BuildCache(config?.cache);
     this.config = {
-      cache: config?.cache ?? {},
+      cache: config?.cache ?? { cacheDir: '.atakora/cache' },
       concurrency: config?.concurrency ?? 4,
       telemetry: config?.telemetry ?? true,
     };

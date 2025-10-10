@@ -1,0 +1,24 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Invalid OpenAPI Spec"
+  },
+  "paths": {
+    "/test": {
+      "get": {
+        "operationId": "invalidOperation",
+        "parameters": [
+          {
+            "name": "param1",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "invalid_type"
+            }
+          }
+        ],
+        "responses": {}
+      }
+    }
+  }
+}

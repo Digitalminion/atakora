@@ -183,7 +183,7 @@ export type {
 } from './types';
 
 // ============================================================================
-// Handler Function Types
+// Handler Function Types (Basic - from types.ts)
 // ============================================================================
 
 export type {
@@ -194,6 +194,86 @@ export type {
   EventHandler,
   FunctionHandler,
 } from './types';
+
+// ============================================================================
+// Comprehensive Handler Types (All 18 trigger types)
+// ============================================================================
+
+export type {
+  // Base handler type
+  AzureFunctionHandler,
+
+  // Core triggers (Priority 1)
+  BlobHandler,
+  ServiceBusQueueHandler,
+  ServiceBusTopicHandler,
+  EventHubHandler,
+  CosmosDBHandler,
+  EventGridHandler,
+
+  // IoT & Real-time (Priority 2)
+  IoTHubHandler,
+  SignalRNegotiateHandler,
+
+  // Third-party (Priority 3)
+  KafkaHandler,
+  RabbitMQHandler,
+  RedisStreamHandler,
+
+  // Durable Functions (Priority 4)
+  DurableOrchestratorHandler,
+  DurableActivityHandler,
+  DurableEntityHandler,
+
+  // Union type
+  AnyFunctionHandler,
+} from './handlers';
+
+// ============================================================================
+// Handler Input/Output Types
+// ============================================================================
+
+export type {
+  // Queue
+  QueueMessage,
+
+  // Blob
+  BlobItem,
+  BlobProperties,
+
+  // Service Bus
+  ServiceBusMessage,
+
+  // Event Hub
+  EventHubEvent,
+
+  // Cosmos DB
+  CosmosDocument,
+
+  // Event Grid
+  EventGridEvent,
+
+  // IoT Hub
+  IoTHubMessage,
+  IoTHubSystemProperties,
+
+  // SignalR
+  SignalRConnectionInfo,
+
+  // Kafka
+  KafkaEvent,
+
+  // RabbitMQ
+  RabbitMQMessage,
+  RabbitMQProperties,
+
+  // Redis
+  RedisStreamEntry,
+
+  // Durable Functions
+  DurableOrchestrationContext,
+  DurableEntityContext,
+} from './handlers';
 
 // ============================================================================
 // defineFunction Helper

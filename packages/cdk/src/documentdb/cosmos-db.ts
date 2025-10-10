@@ -1,4 +1,5 @@
 import { Construct, constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/cdk';
+import { GrantableResource, ManagedServiceIdentity, ManagedIdentityType, IGrantable, IGrantResult, WellKnownRoleIds } from '@atakora/lib';
 import { ArmDatabaseAccounts } from './cosmos-db-arm';
 import type {
   DatabaseAccountsProps,
@@ -55,6 +56,11 @@ import type {
  * ```
  */
 export class DatabaseAccounts extends Construct implements IDatabaseAccount {
+  /**
+   * Counter for generating unique grant IDs
+   */
+  private grantCounter = 0;
+
   /**
    * The underlying L1 construct.
    */
@@ -305,5 +311,191 @@ export class DatabaseAccounts extends Construct implements IDatabaseAccount {
     }
 
     return new Import();
+  }
+
+  // ============================================================
+  // Grant Methods
+  // ============================================================
+
+  /**
+   * Grant read access to Cosmos DB data (SQL API).
+   *
+   * @remarks
+   * Data plane read access for SQL API. Allows reading documents, querying containers,
+   * and reading stored procedures, triggers, and UDFs.
+   *
+   * **Permissions**:
+   * - Read documents
+   * - Query containers
+   * - Read stored procedures, triggers, UDFs
+   *
+   * **Common Use Cases**:
+   * - Read-only applications
+   * - Reporting tools
+   * - Data analysis
+   *
+   * **Note**: This role is for data plane access using SQL API.
+   * It does not grant access to account metadata.
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant a Function App read access to Cosmos DB:
+   * ```typescript
+   * const functionApp = new FunctionApp(stack, 'DataReader', {});
+   * const cosmosAccount = new DatabaseAccounts(resourceGroup, 'Database', {
+   *   location: 'eastus'
+   * });
+   *
+   * cosmosAccount.grantDataRead(functionApp);
+   * ```
+   */
+  public grantDataRead(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.COSMOS_DB_DATA_READER,
+      `Read data from ${this.databaseAccountName}`
+    );
+  }
+
+  /**
+   * Grant read and write access to Cosmos DB data (SQL API).
+   *
+   * @remarks
+   * Full data plane access for SQL API. Allows creating, reading, updating, and deleting
+   * documents, as well as executing stored procedures.
+   *
+   * **Permissions**:
+   * - All grantDataRead permissions
+   * - Create, update, delete documents
+   * - Execute stored procedures
+   *
+   * **Common Use Cases**:
+   * - Application data access
+   * - Data migration tools
+   * - CRUD operations
+   *
+   * **Note**: This role is for data plane access using SQL API.
+   * It does not grant access to account management or metadata operations.
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant a Web App read/write access to Cosmos DB:
+   * ```typescript
+   * const webApp = new WebApp(stack, 'App', {});
+   * cosmosAccount.grantDataWrite(webApp);
+   * ```
+   */
+  public grantDataWrite(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.COSMOS_DB_DATA_CONTRIBUTOR,
+      `Read and write data in ${this.databaseAccountName}`
+    );
+  }
+
+  /**
+   * Grant read access to Cosmos DB account metadata.
+   *
+   * @remarks
+   * View account properties without data access. This is a control plane role
+   * that allows viewing account configuration and metrics.
+   *
+   * **Permissions**:
+   * - Read account properties
+   * - List database accounts
+   * - View account metrics
+   *
+   * **Common Use Cases**:
+   * - Monitoring systems
+   * - Configuration readers
+   * - Cost analysis
+   *
+   * **Note**: This role does NOT grant access to data within the account.
+   * Use grantDataRead for data access.
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant monitoring system read access to account metadata:
+   * ```typescript
+   * const monitor = new VirtualMachine(stack, 'Monitor', {});
+   * cosmosAccount.grantAccountReader(monitor);
+   * ```
+   */
+  public grantAccountReader(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.COSMOS_DB_ACCOUNT_READER,
+      `Read account metadata for ${this.databaseAccountName}`
+    );
+  }
+
+  /**
+   * Grant operator access to manage Cosmos DB accounts (no data access).
+   *
+   * @remarks
+   * Control plane operations without data plane access. Allows managing account
+   * configuration, failover, and keys without accessing the data itself.
+   *
+   * **Permissions**:
+   * - All grantAccountReader permissions
+   * - Failover accounts
+   * - Regenerate keys
+   * - Manage throughput
+   *
+   * **Common Use Cases**:
+   * - Database administrators
+   * - Operations teams
+   * - Disaster recovery management
+   *
+   * **Note**: This role does NOT grant access to data within the account.
+   * Combine with grantDataRead or grantDataWrite for data access.
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant DBA operator access:
+   * ```typescript
+   * const dba = UserAssignedIdentity.fromId(stack, 'DBA', 'dba-identity-id');
+   * cosmosAccount.grantOperator(dba);
+   * ```
+   */
+  public grantOperator(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.COSMOS_DB_OPERATOR,
+      `Manage ${this.databaseAccountName} account`
+    );
+  }
+
+  /**
+   * Internal helper to create role assignments for grant methods.
+   * Uses composition pattern instead of extending GrantableResource.
+   */
+  protected grant(
+    grantable: IGrantable,
+    roleDefinitionId: string,
+    description?: string
+  ): IGrantResult {
+    // Use require to avoid circular dependency issues
+    const RoleAssignment = require('@atakora/lib/authorization').RoleAssignment;
+    const GrantResult = require('@atakora/lib/authorization').GrantResult;
+
+    const roleAssignment = new RoleAssignment(this, `Grant${this.grantCounter++}`, {
+      scope: this.resourceId,
+      roleDefinitionId,
+      principalId: grantable.principalId,
+      principalType: grantable.principalType,
+      tenantId: grantable.tenantId,
+      description
+    });
+
+    return new GrantResult(roleAssignment, roleDefinitionId, grantable, this.resourceId);
   }
 }

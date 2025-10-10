@@ -1,5 +1,7 @@
 import { Construct } from '@atakora/cdk';
 import type { IResourceGroup } from '@atakora/cdk';
+import type { IGrantable, IGrantResult } from '@atakora/lib';
+import { WellKnownRoleIds, RoleAssignment, GrantResult } from '@atakora/lib';
 import { ArmStorageAccounts } from './storage-account-arm';
 import type {
   StorageAccountsProps,
@@ -91,6 +93,11 @@ export class StorageAccounts extends Construct implements IStorageAccount {
    * Storage account kind.
    */
   public readonly kind: StorageAccountKind;
+
+  /**
+   * Counter for generating unique grant IDs.
+   */
+  private grantCounter = 0;
 
   /**
    * Creates a new StorageAccounts construct.
@@ -297,5 +304,188 @@ export class StorageAccounts extends Construct implements IStorageAccount {
    */
   private constructIdToPurpose(id: string): string {
     return id.toLowerCase();
+  }
+
+  /**
+   * Core grant method used by all resource-specific grant methods.
+   *
+   * @param grantable - Identity to grant permissions to
+   * @param roleDefinitionId - Azure role definition resource ID
+   * @param description - Optional description for the role assignment
+   * @returns Grant result with the created role assignment
+   *
+   * @internal
+   */
+  protected grant(grantable: IGrantable, roleDefinitionId: string, description?: string): IGrantResult {
+    // Create role assignment at this storage account's scope
+    const roleAssignment = new RoleAssignment(this, `Grant${this.generateGrantId()}`, {
+      scope: this.storageAccountId,
+      roleDefinitionId,
+      principalId: grantable.principalId,
+      principalType: grantable.principalType,
+      tenantId: grantable.tenantId,
+      description,
+    });
+
+    // Return result for further configuration
+    return new GrantResult(roleAssignment, roleDefinitionId, grantable, this.storageAccountId);
+  }
+
+  /**
+   * Generates a unique ID for each grant.
+   *
+   * @returns Sequential grant number as string
+   *
+   * @internal
+   */
+  private generateGrantId(): string {
+    return `${this.grantCounter++}`;
+  }
+
+  /**
+   * Grant read access to blob storage.
+   *
+   * @param grantable - Identity to grant access to
+   * @returns The created role assignment
+   *
+   * @example
+   * ```typescript
+   * const storage = new StorageAccounts(stack, 'Storage', { ... });
+   * const functionApp = new FunctionApp(stack, 'Function', { ... });
+   * storage.grantBlobRead(functionApp);
+   * ```
+   */
+  public grantBlobRead(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.STORAGE_BLOB_DATA_READER,
+      `Read access to blobs in ${this.storageAccountName}`
+    );
+  }
+
+  /**
+   * Grant write access to blob storage (includes read).
+   *
+   * @param grantable - Identity to grant access to
+   * @returns The created role assignment
+   */
+  public grantBlobWrite(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.STORAGE_BLOB_DATA_CONTRIBUTOR,
+      `Write access to blobs in ${this.storageAccountName}`
+    );
+  }
+
+  /**
+   * Grant full access to blob storage including POSIX ACLs.
+   *
+   * @param grantable - Identity to grant access to
+   * @returns The created role assignment
+   */
+  public grantBlobFullAccess(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.STORAGE_BLOB_DATA_OWNER,
+      `Full access to blobs in ${this.storageAccountName}`
+    );
+  }
+
+  /**
+   * Grant read access to table storage.
+   *
+   * @param grantable - Identity to grant access to
+   * @returns The created role assignment
+   */
+  public grantTableRead(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.STORAGE_TABLE_DATA_READER,
+      `Read access to tables in ${this.storageAccountName}`
+    );
+  }
+
+  /**
+   * Grant write access to table storage (includes read).
+   *
+   * @param grantable - Identity to grant access to
+   * @returns The created role assignment
+   */
+  public grantTableWrite(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.STORAGE_TABLE_DATA_CONTRIBUTOR,
+      `Write access to tables in ${this.storageAccountName}`
+    );
+  }
+
+  /**
+   * Grant read access to queue storage.
+   *
+   * @param grantable - Identity to grant access to
+   * @returns The created role assignment
+   */
+  public grantQueueRead(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.STORAGE_QUEUE_DATA_READER,
+      `Read access to queues in ${this.storageAccountName}`
+    );
+  }
+
+  /**
+   * Grant message processing access to queue storage (read and delete).
+   *
+   * @param grantable - Identity to grant access to
+   * @returns The created role assignment
+   */
+  public grantQueueProcess(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.STORAGE_QUEUE_DATA_MESSAGE_PROCESSOR,
+      `Process queue messages in ${this.storageAccountName}`
+    );
+  }
+
+  /**
+   * Grant message sending access to queue storage.
+   *
+   * @param grantable - Identity to grant access to
+   * @returns The created role assignment
+   */
+  public grantQueueSend(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.STORAGE_QUEUE_DATA_MESSAGE_SENDER,
+      `Send queue messages in ${this.storageAccountName}`
+    );
+  }
+
+  /**
+   * Grant read access to file shares.
+   *
+   * @param grantable - Identity to grant access to
+   * @returns The created role assignment
+   */
+  public grantFileRead(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.STORAGE_FILE_DATA_SMB_SHARE_READER,
+      `Read access to files in ${this.storageAccountName}`
+    );
+  }
+
+  /**
+   * Grant write access to file shares (includes read).
+   *
+   * @param grantable - Identity to grant access to
+   * @returns The created role assignment
+   */
+  public grantFileWrite(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.STORAGE_FILE_DATA_SMB_SHARE_CONTRIBUTOR,
+      `Write access to files in ${this.storageAccountName}`
+    );
   }
 }

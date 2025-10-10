@@ -1,5 +1,6 @@
 import { Construct } from '@atakora/cdk';
 import type { IResourceGroup } from '@atakora/cdk';
+import { GrantableResource, ManagedServiceIdentity, ManagedIdentityType, IGrantable, IGrantResult, WellKnownRoleIds } from '@atakora/lib';
 import { ArmVaults } from './vaults-arm';
 import type {
   VaultsProps,
@@ -52,6 +53,11 @@ import type {
  */
 export class Vaults extends Construct implements IVault {
   /**
+   * Counter for generating unique grant IDs
+   */
+  private grantCounter = 0;
+
+  /**
    * Underlying L1 construct.
    */
   private readonly armVault: ArmVaults;
@@ -90,6 +96,11 @@ export class Vaults extends Construct implements IVault {
    * Resource ID of the Key Vault.
    */
   public readonly vaultId: string;
+
+  /**
+   * ARM resource ID (required for GrantableResource).
+   */
+  public readonly resourceId: string;
 
   /**
    * Tags applied to the Key Vault (merged with parent tags).
@@ -177,6 +188,7 @@ export class Vaults extends Construct implements IVault {
 
     // Get resource ID from L1
     this.vaultId = this.armVault.vaultId;
+    this.resourceId = this.armVault.resourceId;
   }
 
   /**
@@ -381,5 +393,290 @@ export class Vaults extends Construct implements IVault {
    */
   private constructIdToPurpose(id: string): string {
     return id.toLowerCase();
+  }
+
+  // ============================================================
+  // Grant Methods
+  // ============================================================
+
+  /**
+   * Grant read access to Key Vault secrets.
+   *
+   * @remarks
+   * Provides read-only access to secret values using Azure RBAC.
+   * The grantee can read secret values, list secrets, and read secret metadata.
+   *
+   * **Permissions**:
+   * - Read secret values
+   * - List secrets
+   * - Read secret metadata
+   *
+   * **Common Use Cases**:
+   * - Applications reading configuration
+   * - Services accessing credentials
+   * - Automated processes
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant a VM read access to secrets:
+   * ```typescript
+   * const vm = new VirtualMachine(stack, 'VM', {});
+   * const vault = new Vaults(resourceGroup, 'Secrets', {
+   *   tenantId: '12345678-1234-1234-1234-123456789abc'
+   * });
+   *
+   * vault.grantSecretsRead(vm);
+   * ```
+   */
+  public grantSecretsRead(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.KEY_VAULT_SECRETS_USER,
+      `Read secrets from ${this.vaultName}`
+    );
+  }
+
+  /**
+   * Grant full access to Key Vault secrets (read, write, delete).
+   *
+   * @remarks
+   * Full secret management permissions including creating, updating, and deleting secrets.
+   *
+   * **Permissions**:
+   * - All grantSecretsRead permissions
+   * - Create and update secrets
+   * - Delete secrets
+   * - Manage secret versions
+   *
+   * **Common Use Cases**:
+   * - Secret rotation systems
+   * - DevOps tools
+   * - Administrative tasks
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant a Function App full access to secrets:
+   * ```typescript
+   * const functionApp = new FunctionApp(stack, 'Functions', {});
+   * vault.grantSecretsFullAccess(functionApp);
+   * ```
+   */
+  public grantSecretsFullAccess(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.KEY_VAULT_SECRETS_OFFICER,
+      `Manage secrets in ${this.vaultName}`
+    );
+  }
+
+  /**
+   * Grant cryptographic operations using keys.
+   *
+   * @remarks
+   * Permission to perform cryptographic operations with keys without managing them.
+   *
+   * **Permissions**:
+   * - Encrypt data
+   * - Decrypt data
+   * - Sign data
+   * - Verify signatures
+   * - Wrap keys
+   * - Unwrap keys
+   *
+   * **Common Use Cases**:
+   * - Encryption services
+   * - Digital signature systems
+   * - Key wrapping scenarios
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant an application encryption permissions:
+   * ```typescript
+   * const app = new WebApp(stack, 'App', {});
+   * vault.grantCryptoUse(app);
+   * ```
+   */
+  public grantCryptoUse(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.KEY_VAULT_CRYPTO_USER,
+      `Use cryptographic keys in ${this.vaultName}`
+    );
+  }
+
+  /**
+   * Grant full access to cryptographic keys (create, delete, manage).
+   *
+   * @remarks
+   * Full key management permissions including lifecycle operations.
+   *
+   * **Permissions**:
+   * - All grantCryptoUse permissions
+   * - Create keys
+   * - Import keys
+   * - Delete keys
+   * - Manage key versions
+   * - Rotate keys
+   *
+   * **Common Use Cases**:
+   * - Key administrators
+   * - Cryptographic infrastructure management
+   * - Key lifecycle management
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant key management permissions:
+   * ```typescript
+   * const keyAdmin = UserAssignedIdentity.fromId(stack, 'KeyAdmin', 'identity-id');
+   * vault.grantCryptoFullAccess(keyAdmin);
+   * ```
+   */
+  public grantCryptoFullAccess(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.KEY_VAULT_CRYPTO_OFFICER,
+      `Manage cryptographic keys in ${this.vaultName}`
+    );
+  }
+
+  /**
+   * Grant read access to certificates.
+   *
+   * @remarks
+   * Read-only access to certificates without modification permissions.
+   *
+   * **Permissions**:
+   * - Read certificate data
+   * - List certificates
+   * - Read certificate metadata
+   *
+   * **Common Use Cases**:
+   * - Certificate validation
+   * - Monitoring and alerts
+   * - Compliance scanning
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant certificate read access:
+   * ```typescript
+   * const monitor = new VirtualMachine(stack, 'Monitor', {});
+   * vault.grantCertificatesRead(monitor);
+   * ```
+   */
+  public grantCertificatesRead(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.KEY_VAULT_CERTIFICATES_USER,
+      `Read certificates from ${this.vaultName}`
+    );
+  }
+
+  /**
+   * Grant full access to certificates (create, delete, manage).
+   *
+   * @remarks
+   * Full certificate management including lifecycle operations.
+   *
+   * **Permissions**:
+   * - All grantCertificatesRead permissions
+   * - Create certificates
+   * - Import certificates
+   * - Delete certificates
+   * - Manage certificate policies
+   *
+   * **Common Use Cases**:
+   * - Certificate administrators
+   * - Automated certificate management
+   * - Certificate lifecycle management
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant certificate management permissions:
+   * ```typescript
+   * const certManager = new FunctionApp(stack, 'CertManager', {});
+   * vault.grantCertificatesFullAccess(certManager);
+   * ```
+   */
+  public grantCertificatesFullAccess(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.KEY_VAULT_CERTIFICATES_OFFICER,
+      `Manage certificates in ${this.vaultName}`
+    );
+  }
+
+  /**
+   * Grant full administrator access to Key Vault.
+   *
+   * @remarks
+   * Administrative access to all Key Vault objects including secrets, keys, and certificates.
+   * Use sparingly and only for administrative scenarios.
+   *
+   * **Permissions**:
+   * - All read permissions
+   * - Create, update, delete secrets, keys, and certificates
+   * - Manage access policies (when using RBAC)
+   *
+   * **Common Use Cases**:
+   * - Key Vault administrators
+   * - Full management scenarios
+   * - Migration and setup
+   *
+   * **Security Consideration**:
+   * This grants full access to all Key Vault data. Assign carefully and only when necessary.
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant administrator access:
+   * ```typescript
+   * const admin = UserAssignedIdentity.fromId(stack, 'Admin', 'admin-identity-id');
+   * vault.grantAdministrator(admin);
+   * ```
+   */
+  public grantAdministrator(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.KEY_VAULT_ADMINISTRATOR,
+      `Administrator access to ${this.vaultName}`
+    );
+  }
+
+  /**
+   * Internal helper to create role assignments for grant methods.
+   * Uses composition pattern instead of extending GrantableResource.
+   */
+  protected grant(
+    grantable: IGrantable,
+    roleDefinitionId: string,
+    description?: string
+  ): IGrantResult {
+    // Use require to avoid circular dependency issues
+    const RoleAssignment = require('@atakora/lib/authorization').RoleAssignment;
+    const GrantResult = require('@atakora/lib/authorization').GrantResult;
+
+    const roleAssignment = new RoleAssignment(this, `Grant${this.grantCounter++}`, {
+      scope: this.resourceId,
+      roleDefinitionId,
+      principalId: grantable.principalId,
+      principalType: grantable.principalType,
+      tenantId: grantable.tenantId,
+      description
+    });
+
+    return new GrantResult(roleAssignment, roleDefinitionId, grantable, this.resourceId);
   }
 }

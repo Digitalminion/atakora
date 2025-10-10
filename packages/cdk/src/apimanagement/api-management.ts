@@ -1,5 +1,6 @@
 import { Construct, constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/cdk';
 import type { IResourceGroup } from '@atakora/cdk';
+import { IGrantable, IGrantResult, WellKnownRoleIds } from '@atakora/lib';
 import { ArmService } from './api-management-arm';
 import type {
   ServiceProps,
@@ -71,6 +72,11 @@ import type {
  */
 export class Service extends Construct implements IService {
   /**
+   * Counter for generating unique grant IDs
+   */
+  private grantCounter = 0;
+
+  /**
    * Underlying L1 construct.
    */
   private readonly armApiManagement: ArmService;
@@ -99,6 +105,11 @@ export class Service extends Construct implements IService {
    * Resource ID of the API Management service.
    */
   public readonly apiManagementId: string;
+
+  /**
+   * ARM resource ID (required for grant methods).
+   */
+  public readonly resourceId: string;
 
   /**
    * Gateway URL.
@@ -213,6 +224,7 @@ export class Service extends Construct implements IService {
 
     // Get computed properties from L1
     this.apiManagementId = this.armApiManagement.apiManagementId;
+    this.resourceId = this.apiManagementId; // Alias for grant methods
     this.gatewayUrl = this.armApiManagement.gatewayUrl;
     this.managementUrl = this.armApiManagement.managementUrl;
   }
@@ -417,5 +429,188 @@ export class Service extends Construct implements IService {
    */
   private constructIdToPurpose(id: string): string {
     return id.toLowerCase();
+  }
+
+  // ============================================================
+  // Grant Methods
+  // ============================================================
+
+  /**
+   * Grant full management access to the API Management service and APIs.
+   *
+   * @remarks
+   * Provides complete control over the API Management service including API definitions,
+   * policies, backends, products, and subscriptions.
+   *
+   * **Permissions**:
+   * - Manage service configuration
+   * - Create, update, delete APIs
+   * - Manage policies and backends
+   * - Configure products and subscriptions
+   *
+   * **Common Use Cases**:
+   * - API administrators
+   * - DevOps automation accounts
+   * - Full lifecycle management
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant a managed identity full API management access:
+   * ```typescript
+   * const apim = new Service(resourceGroup, 'Gateway', {
+   *   publisherName: 'Avient',
+   *   publisherEmail: 'admin@avient.com'
+   * });
+   *
+   * const identity = new UserAssignedIdentity(resourceGroup, 'DevOps');
+   * apim.grantServiceContributor(identity);
+   * ```
+   */
+  public grantServiceContributor(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.API_MANAGEMENT_SERVICE_CONTRIBUTOR,
+      `Full management access to ${this.serviceName}`
+    );
+  }
+
+  /**
+   * Grant service management access without API definition permissions.
+   *
+   * @remarks
+   * Allows managing the service infrastructure (scaling, networking, certificates)
+   * without the ability to create or modify APIs.
+   *
+   * **Permissions**:
+   * - Manage service configuration
+   * - Scale service
+   * - Configure networking and VPN
+   * - Manage certificates
+   *
+   * **Limitations**:
+   * - Cannot create or modify APIs
+   * - Cannot manage policies
+   * - Cannot manage subscriptions
+   *
+   * **Common Use Cases**:
+   * - Infrastructure operators
+   * - Automated scaling systems
+   * - Network administrators
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant infrastructure team operator access:
+   * ```typescript
+   * const infraTeam = UserAssignedIdentity.fromId(stack, 'InfraTeam', 'team-identity-id');
+   * apim.grantServiceOperator(infraTeam);
+   * ```
+   */
+  public grantServiceOperator(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.API_MANAGEMENT_SERVICE_OPERATOR,
+      `Service operations access to ${this.serviceName}`
+    );
+  }
+
+  /**
+   * Grant read-only access to the API Management service.
+   *
+   * @remarks
+   * Provides view-only access to service configuration, APIs, policies, and metrics.
+   *
+   * **Permissions**:
+   * - View service configuration
+   * - View APIs and operations
+   * - View policies and backends
+   * - View products and subscriptions
+   * - Read metrics and diagnostics
+   *
+   * **Common Use Cases**:
+   * - Monitoring systems
+   * - Auditing and compliance
+   * - Read-only dashboards
+   * - Documentation generation
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant monitoring system read access:
+   * ```typescript
+   * const monitor = new VirtualMachine(stack, 'Monitor', {});
+   * apim.grantServiceReader(monitor);
+   * ```
+   */
+  public grantServiceReader(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.API_MANAGEMENT_SERVICE_READER,
+      `Read access to ${this.serviceName}`
+    );
+  }
+
+  /**
+   * Grant developer portal content editor permissions.
+   *
+   * @remarks
+   * Allows editing and publishing developer portal content and customizations.
+   *
+   * **Permissions**:
+   * - Edit portal content
+   * - Customize portal appearance
+   * - Publish portal changes
+   * - Manage portal templates
+   *
+   * **Common Use Cases**:
+   * - Developer portal administrators
+   * - Content managers
+   * - Marketing teams customizing portal
+   *
+   * @param grantable - Identity to grant permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant content team portal editing access:
+   * ```typescript
+   * const contentTeam = UserAssignedIdentity.fromId(stack, 'Content', 'content-identity-id');
+   * apim.grantDeveloperPortalEditor(contentTeam);
+   * ```
+   */
+  public grantDeveloperPortalEditor(grantable: IGrantable): IGrantResult {
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.API_MANAGEMENT_DEVELOPER_PORTAL_CONTENT_EDITOR,
+      `Developer portal editing access to ${this.serviceName}`
+    );
+  }
+
+  /**
+   * Internal helper to create role assignments for grant methods.
+   * Uses composition pattern instead of extending GrantableResource.
+   */
+  protected grant(
+    grantable: IGrantable,
+    roleDefinitionId: string,
+    description?: string
+  ): IGrantResult {
+    // Use require to avoid circular dependency issues
+    const RoleAssignment = require('@atakora/lib/authorization').RoleAssignment;
+    const GrantResult = require('@atakora/lib/authorization').GrantResult;
+
+    const roleAssignment = new RoleAssignment(this, `Grant${this.grantCounter++}`, {
+      scope: this.resourceId,
+      roleDefinitionId,
+      principalId: grantable.principalId,
+      principalType: grantable.principalType,
+      tenantId: grantable.tenantId,
+      description
+    });
+
+    return new GrantResult(roleAssignment, roleDefinitionId, grantable, this.resourceId);
   }
 }

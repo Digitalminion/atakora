@@ -15,7 +15,7 @@ import type { TimerTriggerConfig } from '../function-app-types';
  * @example
  * ```typescript
  * const trigger = TimerTrigger.create()
- *   .withSchedule('0 */5 * * * *') // Every 5 minutes
+ *   .withSchedule('0 * /5 * * * *') // Every 5 minutes (avoid comment-close)
  *   .runOnStartup(false)
  *   .build();
  * ```
@@ -41,8 +41,8 @@ export class TimerTrigger {
    * @returns This builder for chaining
    *
    * @remarks
-   * CRON format: {second} {minute} {hour} {day} {month} {day-of-week}
-   * - Example: '0 */5 * * * *' (every 5 minutes)
+   * CRON format: second minute hour day month day-of-week
+   * - Example: '0 * /5 * * * *' (every 5 minutes)
    *
    * TimeSpan format: hh:mm:ss
    * - Example: '00:05:00' (every 5 minutes)
@@ -122,7 +122,7 @@ export class TimerTrigger {
  *
  * @example
  * ```typescript
- * const trigger = timerTrigger('0 */5 * * * *', {
+ * const trigger = timerTrigger('0 * /5 * * * *', {
  *   runOnStartup: false,
  *   useMonitor: true
  * });
@@ -153,17 +153,17 @@ export const CronSchedules = {
   EVERY_MINUTE: '0 * * * * *',
 
   /**
-   * Every 5 minutes: '0 */5 * * * *'
+   * Every 5 minutes: 0 (star)(slash)5 (star) (star) (star) (star)
    */
   EVERY_5_MINUTES: '0 */5 * * * *',
 
   /**
-   * Every 15 minutes: '0 */15 * * * *'
+   * Every 15 minutes: 0 (star)(slash)15 (star) (star) (star) (star)
    */
   EVERY_15_MINUTES: '0 */15 * * * *',
 
   /**
-   * Every 30 minutes: '0 */30 * * * *'
+   * Every 30 minutes: 0 (star)(slash)30 (star) (star) (star) (star)
    */
   EVERY_30_MINUTES: '0 */30 * * * *',
 
@@ -206,11 +206,11 @@ export const CronSchedules = {
  *
  * @remarks
  * Azure Functions uses 6-field CRON expressions (including seconds).
- * Format: {second} {minute} {hour} {day} {month} {day-of-week}
+ * Format: second minute hour day month day-of-week
  *
  * @example
  * ```typescript
- * const valid = validateCronExpression('0 */5 * * * *'); // true
+ * const valid = validateCronExpression('0 * /5 * * * *'); // true
  * const invalid = validateCronExpression('invalid'); // false
  * ```
  */
@@ -286,7 +286,7 @@ export function validateTimeSpan(timeSpan: string): boolean {
  * @example
  * ```typescript
  * const cron = timeSpanToCron('00:05:00');
- * // Returns: '0 */5 * * * *' (every 5 minutes)
+ * // Returns: '0 (star)/5 (star) (star) (star) (star)' - every 5 minutes
  * ```
  */
 export function timeSpanToCron(timeSpan: string): string {
@@ -324,7 +324,7 @@ export function timeSpanToCron(timeSpan: string): string {
  *
  * @example
  * ```typescript
- * const description = describeCronExpression('0 */5 * * * *');
+ * const description = describeCronExpression('0 * /5 * * * *');
  * // Returns: 'Every 5 minutes'
  * ```
  */
