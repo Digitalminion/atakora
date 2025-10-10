@@ -430,7 +430,9 @@ For simple applications, a single stack is often sufficient:
 
 ```typescript
 import { AzureApp, ResourceGroupStack } from '@atakora/lib';
-import { VirtualNetworks, StorageAccounts, Sites } from '@atakora/cdk';
+import { VirtualNetworks } from '@atakora/cdk/network';
+import { StorageAccounts } from '@atakora/cdk/storage';
+import { Sites } from '@atakora/cdk/web';
 
 const app = new AzureApp({
   organization: 'Contoso',

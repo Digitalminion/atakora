@@ -1,0 +1,24 @@
+{
+  "$schema": "https://atakora.io/schema/manifest.json",
+  "version": "1.0.0",
+  "name": "multi-region-app",
+  "organization": "Contoso",
+  "project": "MultiRegionApp",
+  "packages": [
+    {
+      "name": "multi-region",
+      "path": "./",
+      "entry": "src/app.ts",
+      "default": true
+    }
+  ],
+  "environments": {
+    "prod": {
+      "subscriptionId": "${AZURE_SUBSCRIPTION_ID}",
+      "regions": ["eastus2", "westus2"]
+    }
+  },
+  "outputs": {
+    "directory": ".atakora/arm.out"
+  }
+}

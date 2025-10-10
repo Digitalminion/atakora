@@ -1,0 +1,38 @@
+{
+  "name": "@atakora-examples/government-cloud",
+  "version": "1.0.0",
+  "description": "Azure Government Cloud infrastructure with enhanced security and compliance",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "synth": "npm run build && node dist/app.ts",
+    "deploy": "npm run synth && atakora deploy --cloud AzureUSGovernment",
+    "diff": "npm run synth && atakora diff --cloud AzureUSGovernment",
+    "destroy": "atakora destroy --cloud AzureUSGovernment",
+    "clean": "rm -rf dist .atakora/arm.out"
+  },
+  "dependencies": {
+    "@atakora/lib": "^1.0.0",
+    "@atakora/cdk": "^1.0.0",
+    "constructs": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "azure",
+    "government-cloud",
+    "infrastructure-as-code",
+    "atakora",
+    "compliance",
+    "security",
+    "fedramp",
+    "nist"
+  ],
+  "author": "Atakora Team",
+  "license": "MIT"
+}

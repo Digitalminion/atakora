@@ -1,0 +1,32 @@
+{
+  "$schema": "https://atakora.io/schema/manifest.json",
+  "version": "1.0.0",
+  "name": "simple-web-app",
+  "organization": "Contoso",
+  "project": "SimpleWebApp",
+  "packages": [
+    {
+      "name": "web-app",
+      "path": "./",
+      "entry": "src/app.ts",
+      "default": true
+    }
+  ],
+  "environments": {
+    "dev": {
+      "location": "eastus2",
+      "subscriptionId": "${AZURE_SUBSCRIPTION_ID}"
+    },
+    "staging": {
+      "location": "eastus2",
+      "subscriptionId": "${AZURE_SUBSCRIPTION_ID}"
+    },
+    "prod": {
+      "location": "eastus2",
+      "subscriptionId": "${AZURE_SUBSCRIPTION_ID}"
+    }
+  },
+  "outputs": {
+    "directory": ".atakora/arm.out"
+  }
+}

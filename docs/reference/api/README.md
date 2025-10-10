@@ -30,15 +30,33 @@ import { App, Stack, Construct, Resource } from '@atakora/lib';
 
 Azure service-specific constructs organized by namespace:
 
-- **[@atakora/cdk/network](./cdk/network.md)** - Networking resources (VNet, NSG, etc.)
-- **[@atakora/cdk/storage](./cdk/storage.md)** - Storage resources (Storage Account, Blob, etc.)
-- **[@atakora/cdk/web](./cdk/web.md)** - Web & App Services (App Service, Static Web Apps)
-- **[@atakora/cdk/compute](./cdk/compute.md)** - Compute resources (Virtual Machines, VMSS)
-- **[@atakora/cdk/sql](./cdk/sql.md)** - SQL databases
-- **[@atakora/cdk/documentdb](./cdk/documentdb.md)** - Cosmos DB
-- **[@atakora/cdk/keyvault](./cdk/keyvault.md)** - Key Vault, secrets, keys
-- **[@atakora/cdk/insights](./cdk/insights.md)** - Application Insights
-- **[@atakora/cdk/resources](./cdk/resources.md)** - Resource Groups, locks
+#### Core Resources
+- **[@atakora/cdk/resources](./cdk/resources.md)** - Resource Groups and management resources
+- **[@atakora/cdk/managedidentity](./cdk/managedidentity.md)** - Managed Identities for Azure resources
+- **[@atakora/cdk/authorization](./cdk/authorization.md)** - Role-Based Access Control (RBAC)
+
+#### Networking
+- **[@atakora/cdk/network](./cdk/network.md)** - Virtual networks, subnets, NSGs, private endpoints, application gateways
+
+#### Compute & Hosting
+- **[@atakora/cdk/compute](./cdk/compute.md)** - Virtual Machines, VM Scale Sets
+- **[@atakora/cdk/web](./cdk/web.md)** - App Services, Function Apps, Static Web Apps
+
+#### Data & Storage
+- **[@atakora/cdk/storage](./cdk/storage.md)** - Storage Accounts, blobs, queues, tables, files
+- **[@atakora/cdk/sql](./cdk/sql.md)** - Azure SQL Server and SQL Database
+- **[@atakora/cdk/documentdb](./cdk/documentdb.md)** - Cosmos DB (SQL API, MongoDB API)
+
+#### Security & Management
+- **[@atakora/cdk/keyvault](./cdk/keyvault.md)** - Key Vault for secrets, keys, and certificates
+
+#### Monitoring & Operations
+- **[@atakora/cdk/insights](./cdk/insights.md)** - Application Insights, metric alerts, action groups, autoscale, diagnostics
+- **[@atakora/cdk/operationalinsights](./cdk/operationalinsights.md)** - Log Analytics Workspaces
+
+#### Integration & AI
+- **[@atakora/cdk/apimanagement](./cdk/apimanagement.md)** - API Management service, APIs, products, policies
+- **[@atakora/cdk/cognitiveservices](./cdk/cognitiveservices.md)** - Azure OpenAI and Cognitive Services
 
 **Import**:
 ```typescript
@@ -461,10 +479,32 @@ export class LegacyVirtualNetwork extends Construct {
 
 ### By Package
 
+#### Core
 - **[Core Library](./core/README.md)** - App, Stack, Construct, Resource
-- **[Network Resources](./cdk/network.md)** - VNet, Subnet, NSG, etc.
-- **[Storage Resources](./cdk/storage.md)** - Storage Account, Blob, etc.
-- **[Web Resources](./cdk/web.md)** - App Service, Functions, etc.
+
+#### Infrastructure & Resources
+- **[Resources](./cdk/resources.md)** - Resource Groups
+- **[Managed Identity](./cdk/managedidentity.md)** - Managed Identities
+- **[Authorization](./cdk/authorization.md)** - RBAC and Role Assignments
+- **[Network](./cdk/network.md)** - VNet, Subnet, NSG, Private Endpoints
+- **[Storage](./cdk/storage.md)** - Storage Accounts, Blobs, Queues, Tables
+- **[Key Vault](./cdk/keyvault.md)** - Secrets, Keys, Certificates
+
+#### Compute & Hosting
+- **[Compute](./cdk/compute.md)** - Virtual Machines, VM Scale Sets
+- **[Web](./cdk/web.md)** - App Services, Function Apps, Static Web Apps
+
+#### Data
+- **[SQL](./cdk/sql.md)** - Azure SQL Server and Databases
+- **[DocumentDB](./cdk/documentdb.md)** - Cosmos DB
+
+#### Monitoring & Operations
+- **[Insights](./cdk/insights.md)** - Application Insights, Alerts, Diagnostics
+- **[Operational Insights](./cdk/operationalinsights.md)** - Log Analytics Workspaces
+
+#### Integration & AI
+- **[API Management](./cdk/apimanagement.md)** - API Gateway and Management
+- **[Cognitive Services](./cdk/cognitiveservices.md)** - Azure OpenAI and AI Services
 
 ### By Use Case
 

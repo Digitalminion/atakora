@@ -1,0 +1,32 @@
+{
+  "$schema": "https://atakora.io/schema/manifest.json",
+  "version": "1.0.0",
+  "name": "government-cloud",
+  "organization": "GovernmentOrg",
+  "project": "GovCloudApp",
+  "cloud": "AzureUSGovernment",
+  "packages": [
+    {
+      "name": "gov-cloud-infrastructure",
+      "path": "./",
+      "entry": "src/app.ts",
+      "default": true
+    }
+  ],
+  "environments": {
+    "gov": {
+      "location": "usgovvirginia",
+      "subscriptionId": "${AZURE_SUBSCRIPTION_ID}",
+      "tenantId": "${AZURE_TENANT_ID}",
+      "cloud": "AzureUSGovernment"
+    }
+  },
+  "compliance": {
+    "frameworks": ["NIST-800-53", "FedRAMP"],
+    "dataResidency": "us-government",
+    "auditLogRetention": 90
+  },
+  "outputs": {
+    "directory": ".atakora/arm.out"
+  }
+}

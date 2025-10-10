@@ -10,7 +10,8 @@ Synthesis is the process of converting the construct tree into ARM template JSON
 
 ```typescript
 import { AzureApp, ResourceGroupStack } from '@atakora/lib';
-import { VirtualNetworks, StorageAccounts } from '@atakora/cdk/network';
+import { VirtualNetworks } from '@atakora/cdk/network';
+import { StorageAccounts } from '@atakora/cdk/storage';
 
 const app = new AzureApp({
   organization: 'Contoso',

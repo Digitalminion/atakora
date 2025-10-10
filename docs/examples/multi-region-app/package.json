@@ -1,0 +1,40 @@
+{
+  "name": "@atakora-examples/multi-region-app",
+  "version": "1.0.0",
+  "description": "Multi-region application infrastructure with global load balancing",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "synth": "npm run build && node dist/app.js",
+    "deploy": "npm run synth && atakora deploy",
+    "deploy:primary": "npm run synth && atakora deploy primaryStack",
+    "deploy:secondary": "npm run synth && atakora deploy secondaryStack",
+    "deploy:global": "npm run synth && atakora deploy GlobalStack",
+    "diff": "npm run synth && atakora diff",
+    "destroy": "atakora destroy",
+    "clean": "rm -rf dist .atakora/arm.out"
+  },
+  "dependencies": {
+    "@atakora/lib": "^1.0.0",
+    "@atakora/cdk": "^1.0.0",
+    "constructs": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "azure",
+    "infrastructure-as-code",
+    "atakora",
+    "multi-region",
+    "traffic-manager",
+    "high-availability",
+    "disaster-recovery"
+  ],
+  "author": "Atakora Team",
+  "license": "MIT"
+}

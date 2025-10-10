@@ -1,0 +1,36 @@
+{
+  "name": "@atakora-examples/simple-web-app",
+  "version": "1.0.0",
+  "description": "Simple web application infrastructure with App Service, SQL Database, and Application Insights",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "synth": "npm run build && node dist/app.js",
+    "deploy": "npm run synth && atakora deploy",
+    "diff": "npm run synth && atakora diff",
+    "destroy": "atakora destroy",
+    "clean": "rm -rf dist .atakora/arm.out"
+  },
+  "dependencies": {
+    "@atakora/lib": "^1.0.0",
+    "@atakora/cdk": "^1.0.0",
+    "constructs": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "azure",
+    "infrastructure-as-code",
+    "atakora",
+    "web-app",
+    "app-service",
+    "sql-database"
+  ],
+  "author": "Atakora Team",
+  "license": "MIT"
+}

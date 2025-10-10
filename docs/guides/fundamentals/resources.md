@@ -10,7 +10,8 @@ Resources are the building blocks of your Azure infrastructure. Atakora provides
 
 ```typescript
 import { AzureApp, ResourceGroupStack } from '@atakora/lib';
-import { VirtualNetworks, StorageAccounts } from '@atakora/cdk/network';
+import { VirtualNetworks } from '@atakora/cdk/network';
+import { StorageAccounts } from '@atakora/cdk/storage';
 
 const app = new AzureApp({
   organization: 'Contoso',
