@@ -14,10 +14,17 @@ This directory contains Architectural Decision Records (ADRs) documenting signif
 
 | ADR | Title | Date | Status |
 |-----|-------|------|--------|
-| [ADR-001](../../design/architecture/adr-001-validation-architecture.md) | Validation Architecture | 2024-10 | Accepted |
-| [ADR-002](../../design/architecture/adr-002-manifest-schema.md) | Manifest Schema | 2024-10 | Accepted |
-| [ADR-003](../../design/architecture/adr-003-cdk-package-architecture.md) | CDK Package Architecture | 2024-10 | Accepted |
-| [ADR-004](../../adr/ADR-004-cross-resource-references.md) | Cross-Resource References | 2024-10 | Accepted |
+| [ADR-001](./adr-001-validation-architecture.md) | Validation Architecture | 2024-10 | Accepted |
+| [ADR-002](./adr-002-manifest-schema.md) | Manifest Schema | 2024-10 | Accepted |
+| [ADR-003](./adr-003-cdk-package-architecture.md) | CDK Package Architecture | 2024-10 | Accepted |
+| [ADR-004](./adr-004-cross-resource-references.md) | Cross-Resource References | 2024-10 | Accepted |
+
+### Supporting Documentation
+
+| Document | Title | Description |
+|----------|-------|-------------|
+| [ARCHITECTURAL-RECOMMENDATIONS-001](./ARCHITECTURAL-RECOMMENDATIONS-001.md) | Architectural Recommendations | Initial architectural guidance |
+| [DEPLOYMENT-POST-MORTEM-001](./DEPLOYMENT-POST-MORTEM-001.md) | Deployment Post-Mortem | Lessons learned from deployment |
 
 ### Decision Process
 
@@ -96,4 +103,4 @@ What other options did we evaluate?
 
 ---
 
-**Last Updated**: 2025-10-08
+**Last Updated**: 2025-10-10
