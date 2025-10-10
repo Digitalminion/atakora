@@ -5,6 +5,11 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
     "./network": {
       "types": "./dist/network/index.d.ts",
       "import": "./dist/network/index.js",
@@ -73,6 +78,9 @@
   },
   "typesVersions": {
     "*": {
+      ".": [
+        "./dist/index.d.ts"
+      ],
       "network": [
         "./dist/network/index.d.ts"
       ],

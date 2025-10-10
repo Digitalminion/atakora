@@ -2,6 +2,58 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import { ConfigManager } from '../../config/config-manager';
 
+/**
+ * Creates the 'show' command to display profile configuration details.
+ *
+ * This command displays the full Azure configuration for a specific profile
+ * or the currently active profile. It provides a formatted view of tenant,
+ * subscription, cloud, and location settings.
+ *
+ * @returns A Commander.js Command instance configured to display profile details
+ *
+ * @example
+ * ```bash
+ * # Show active profile configuration
+ * azure-arm config show
+ *
+ * # Show a specific profile
+ * azure-arm config show production
+ *
+ * # Show government cloud profile
+ * azure-arm config show govcloud
+ * ```
+ *
+ * @remarks
+ * Command Arguments:
+ * - `[profile]`: Optional profile name (defaults to active profile)
+ *
+ * Display Information:
+ * - Profile name with active indicator
+ * - Tenant ID
+ * - Subscription display name (if available)
+ * - Subscription ID
+ * - Cloud environment
+ * - Default location/region
+ *
+ * Active Profile Indicator:
+ * - Shows "(active)" label in green for currently active profile
+ * - Helps users verify which profile will be used for deployments
+ *
+ * Error Handling:
+ * - Exits with code 1 if profile doesn't exist
+ * - Guides users to 'config select' to create profiles
+ * - Displays helpful error messages with next steps
+ *
+ * Use Cases:
+ * - Verify active profile before deployment
+ * - Check subscription and tenant IDs for troubleshooting
+ * - Confirm cloud environment (Commercial vs Government)
+ * - Review default region for resource deployment
+ *
+ * @see {@link ConfigManager.getProfile} for profile retrieval
+ * @see {@link listCommand} to view all profiles
+ * @see {@link useCommand} to switch active profile
+ */
 export function showCommand(): Command {
   const show = new Command('show')
     .description('Display current active profile configuration')

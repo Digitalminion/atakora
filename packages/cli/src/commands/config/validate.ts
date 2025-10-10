@@ -4,6 +4,81 @@ import ora from 'ora';
 import { ConfigManager } from '../../config/config-manager';
 import { authManager } from '../../auth/auth-manager';
 
+/**
+ * Creates the 'validate' command to verify profile configuration and Azure access.
+ *
+ * This command performs comprehensive validation of a profile's configuration,
+ * including format validation, authentication verification, and Azure API access
+ * checks. It confirms that the profile can be used for actual Azure operations.
+ *
+ * @returns A Commander.js Command instance configured for profile validation
+ *
+ * @example
+ * ```bash
+ * # Validate active profile
+ * azure-arm config validate
+ *
+ * # Validate specific profile
+ * azure-arm config validate production
+ *
+ * # Validate government cloud profile
+ * azure-arm config validate govcloud
+ * ```
+ *
+ * @remarks
+ * Command Arguments:
+ * - `[profile]`: Optional profile name (defaults to active profile)
+ *
+ * Validation Checks:
+ * 1. Profile Existence: Confirms profile exists in config
+ * 2. Format Validation: Verifies UUIDs and cloud environment values
+ * 3. Authentication: Tests Azure login and credential validity
+ * 4. Tenant Access: Confirms tenant is accessible with current credentials
+ * 5. Subscription Access: Verifies subscription exists and is enabled
+ *
+ * Format Validation:
+ * - Tenant ID must be valid UUID format
+ * - Subscription ID must be valid UUID format
+ * - Cloud environment must be one of: AzureCloud, AzureUSGovernment, AzureChinaCloud, AzureGermanCloud
+ *
+ * Azure API Checks:
+ * - Authenticates if not already logged in
+ * - Uses cached credentials when available
+ * - Lists tenants to verify tenant access
+ * - Lists subscriptions to verify subscription access
+ * - Checks subscription state (must be "Enabled")
+ *
+ * Error Reporting:
+ * - Errors: Critical issues that prevent profile use
+ * - Warnings: Non-critical issues (e.g., subscription state not "Enabled")
+ * - Exit code 1 if any errors found
+ * - Exit code 0 if only warnings or success
+ *
+ * Output Format:
+ * - Progressive spinner for each validation step
+ * - Green checkmarks for passed checks
+ * - Red X marks for failed checks
+ * - Yellow warnings for non-critical issues
+ * - Summary at end with error/warning counts
+ *
+ * Use Cases:
+ * - Troubleshoot profile configuration issues
+ * - Verify profile before deployment
+ * - Confirm Azure access after credential changes
+ * - Validate CI/CD profile setup
+ * - Pre-flight checks before resource provisioning
+ *
+ * Troubleshooting Guide:
+ * - Profile not found: Run 'config list' to see available profiles
+ * - Authentication failed: Run 'config login' to re-authenticate
+ * - Tenant not accessible: Check AAD permissions
+ * - Subscription not accessible: Verify RBAC role assignments
+ * - Subscription disabled: Contact Azure subscription admin
+ *
+ * @see {@link ConfigManager.getProfile} for profile retrieval
+ * @see {@link authManager} for authentication handling
+ * @see {@link selectCommand} to reconfigure profile
+ */
 export function validateCommand(): Command {
   const validate = new Command('validate')
     .description('Validate profile configuration and Azure access')

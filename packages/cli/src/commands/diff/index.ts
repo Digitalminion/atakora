@@ -43,6 +43,76 @@ interface ResourceChange {
   changes?: string[];
 }
 
+/**
+ * Creates the 'diff' command to preview infrastructure changes before deployment.
+ *
+ * This command compares local ARM templates with deployed Azure resources to show
+ * what changes would be made if deployment occurred. Similar to 'terraform plan'
+ * or 'git diff' for infrastructure.
+ *
+ * @returns A Commander.js Command instance configured for change preview
+ *
+ * @example
+ * ```bash
+ * # Show changes for all stacks
+ * atakora diff
+ *
+ * # Show changes for specific stack
+ * atakora diff Foundation
+ *
+ * # Diff templates from custom directory
+ * atakora diff --app ./custom-output
+ * ```
+ *
+ * @remarks
+ * Command Options:
+ * - `[stack]`: Optional specific stack name to diff
+ * - `-a, --app <path>`: Path to synthesized templates (default: "arm.out")
+ *
+ * Change Detection:
+ * - Add: Resources that will be created (shown in green with +)
+ * - Modify: Resources that will be updated (shown in yellow with ~)
+ * - Delete: Resources that will be removed (shown in red with -)
+ * - No Change: Resources that remain unchanged (shown in gray count)
+ *
+ * Diff Process:
+ * 1. Loads active Azure profile and authenticates
+ * 2. Loads cloud assembly with synthesized templates
+ * 3. Queries Azure for existing deployment resources
+ * 4. Compares local templates with deployed state
+ * 5. Displays categorized changes with summary
+ *
+ * Resource Comparison:
+ * - Matches resources by type and name
+ * - Compares properties for modifications
+ * - Identifies new resources not in Azure
+ * - Identifies removed resources not in template
+ * - Shows property-level changes for modifications
+ *
+ * Limitations:
+ * - Property comparison is basic (JSON string equality)
+ * - Some Azure-generated properties may cause false positives
+ * - No support for complex nested property diffs
+ * - Requires previous deployment to compare against
+ *
+ * Use Cases:
+ * - Verify expected changes before deployment
+ * - Detect unintended modifications
+ * - Review impact of infrastructure updates
+ * - Identify configuration drift
+ * - CI/CD pipeline validation
+ *
+ * Typical Workflow:
+ * 1. Modify TypeScript infrastructure code
+ * 2. Run 'atakora synth' to generate templates
+ * 3. Run 'atakora diff' to preview changes
+ * 4. Review output to verify expectations
+ * 5. Run 'atakora deploy' to apply changes
+ *
+ * @see {@link diffStack} for stack-specific diffing logic
+ * @see {@link computeChanges} for change detection algorithm
+ * @see {@link displayChanges} for change formatting
+ */
 export function createDiffCommand(): Command {
   const diff = new Command('diff')
     .description('Preview infrastructure changes before deployment')

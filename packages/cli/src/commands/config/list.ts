@@ -2,6 +2,45 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import { ConfigManager } from '../../config/config-manager';
 
+/**
+ * Creates the 'list' command to display all saved Azure profiles.
+ *
+ * This command shows all configured profiles with their tenant, subscription,
+ * cloud, and location information. The active profile is visually highlighted.
+ *
+ * @returns A Commander.js Command instance configured to list profiles
+ *
+ * @example
+ * ```bash
+ * # List profiles in human-readable format
+ * azure-arm config list
+ *
+ * # List profiles in JSON format for scripting
+ * azure-arm config list --json
+ * ```
+ *
+ * @remarks
+ * Command Options:
+ * - `--json`: Output in JSON format for programmatic consumption
+ *
+ * Output Format:
+ * - Human-readable: Table format with active profile marked with green dot
+ * - JSON: Structured data including active profile indicator
+ *
+ * Display Information:
+ * - Profile name (highlighted if active)
+ * - Subscription name and ID
+ * - Tenant ID
+ * - Cloud environment
+ * - Default location
+ *
+ * Empty State:
+ * - Displays helpful message when no profiles exist
+ * - Guides users to run 'azure-arm config select' to create first profile
+ *
+ * @see {@link ConfigManager.listProfiles} for profile retrieval logic
+ * @see {@link selectCommand} for creating new profiles
+ */
 export function listCommand(): Command {
   const list = new Command('list')
     .description('List all saved profiles')

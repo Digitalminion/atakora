@@ -1,7 +1,6 @@
-import { Construct } from '@atakora/lib';
-import type { IResourceGroup } from '@atakora/lib';
+import { Construct, constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/cdk';
+import type { IResourceGroup } from '@atakora/cdk';
 import { ArmVirtualNetwork } from './virtual-network-arm';
-import { constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/lib';
 import type {
   VirtualNetworksProps,
   IVirtualNetwork,
@@ -30,7 +29,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { VirtualNetwork } from '@atakora/lib';
+ * import { VirtualNetwork } from '@atakora/cdk/network';
  *
  * // Creates VNet with auto-generated name and defaults
  * const vnet = new VirtualNetwork(resourceGroup, 'MainVNet', {

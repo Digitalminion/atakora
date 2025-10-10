@@ -1,4 +1,4 @@
-import { Construct } from '@atakora/lib';
+import { Construct } from '@atakora/cdk';
 import type { IVirtualNetwork } from './virtual-network-types';
 import { ArmVirtualNetworkLink } from './virtual-network-link-arm';
 import type { VirtualNetworkLinksProps, IVirtualNetworkLink } from './virtual-network-link-types';
@@ -25,7 +25,7 @@ import type { VirtualNetworkLinksProps, IVirtualNetworkLink } from './virtual-ne
  * @example
  * Link a VNet to a Private DNS zone:
  * ```typescript
- * import { VirtualNetworkLink } from '@atakora/lib';
+ * import { VirtualNetworkLink } from '@atakora/cdk/network';
  *
  * const link = new VirtualNetworkLink(resourceGroup, 'VNetLink', {
  *   privateDnsZoneName: 'privatelink.blob.core.windows.net',

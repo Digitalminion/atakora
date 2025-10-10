@@ -1,7 +1,5 @@
-import { Construct } from '@atakora/lib';
-import { Resource } from '@atakora/lib';
-import { DeploymentScope } from '@atakora/lib';
-import { ValidationResult, ValidationResultBuilder, ArmResource } from '@atakora/lib';
+import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder } from '@atakora/cdk';
+import type { ArmResource } from '@atakora/cdk';
 import type { ArmWafPolicyProps, PolicySettings, ManagedRules, CustomRule } from './waf-policy-types';
 
 /**
@@ -21,7 +19,7 @@ import type { ArmWafPolicyProps, PolicySettings, ManagedRules, CustomRule } from
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmWafPolicy, WafPolicyMode, WafState, WafRuleSetType } from '@atakora/lib';
+ * import { ArmWafPolicy, WafPolicyMode, WafState, WafRuleSetType } from '@atakora/cdk/network';
  *
  * const wafPolicy = new ArmWafPolicy(resourceGroup, 'WafPolicy', {
  *   policyName: 'waf-prod-eastus-01',

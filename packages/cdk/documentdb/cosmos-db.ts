@@ -1,5 +1,4 @@
-import { Construct } from '@atakora/lib';
-import { constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/lib';
+import { Construct, constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/cdk';
 import { ArmDatabaseAccounts } from './cosmos-db-arm';
 import type {
   DatabaseAccountsProps,

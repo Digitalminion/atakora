@@ -1,7 +1,6 @@
-import { Construct } from '@atakora/lib';
-import type { IResourceGroup } from '@atakora/lib';
+import { Construct, constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/cdk';
+import type { IResourceGroup } from '@atakora/cdk';
 import { ArmWafPolicy } from './waf-policy-arm';
-import { constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/lib';
 import type {
   ApplicationGatewayWebApplicationFirewallPoliciesProps,
   IWafPolicy,
@@ -33,7 +32,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { WafPolicy } from '@atakora/lib';
+ * import { WafPolicy } from '@atakora/cdk/network';
  *
  * const wafPolicy = new WafPolicy(resourceGroup, 'MainWaf');
  * ```

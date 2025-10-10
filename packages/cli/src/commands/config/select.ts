@@ -6,6 +6,58 @@ import { TenantInfo, SubscriptionInfo } from '../../auth/azure-auth';
 import { authManager } from '../../auth/auth-manager';
 import { ConfigManager } from '../../config/config-manager';
 
+/**
+ * Creates the 'select' command for interactive Azure tenant and subscription selection.
+ *
+ * This command provides a guided, interactive experience to:
+ * 1. Authenticate with Azure (if not already authenticated)
+ * 2. Select from available tenants
+ * 3. Choose an enabled subscription within the tenant
+ * 4. Save configuration as a named profile
+ * 5. Set the profile as active
+ *
+ * @returns A Commander.js Command instance configured for interactive selection
+ *
+ * @example
+ * ```bash
+ * # Select tenant/subscription and save as default profile
+ * azure-arm config select
+ *
+ * # Select and save to a named profile
+ * azure-arm config select --profile production
+ *
+ * # Select for Azure Government Cloud
+ * azure-arm config select --cloud AzureUSGovernment --profile govcloud
+ * ```
+ *
+ * @remarks
+ * Command Options:
+ * - `-p, --profile <name>`: Profile name to save configuration (default: "default")
+ * - `--cloud <cloud>`: Azure cloud environment (default: "AzureCloud")
+ *   - Valid values: AzureCloud, AzureUSGovernment, AzureChinaCloud, AzureGermanCloud
+ *
+ * Interactive Flow:
+ * 1. Authentication: Uses cached credentials if available, prompts for login if needed
+ * 2. Tenant Selection: Displays all accessible tenants with display names
+ * 3. Subscription Selection: Shows only enabled subscriptions in selected tenant
+ * 4. Profile Save: Stores configuration with default location (eastus)
+ * 5. Activation: Automatically sets new profile as active
+ *
+ * Credential Caching:
+ * - Reuses existing Azure credentials when available
+ * - Skips re-authentication if already logged in to target cloud
+ * - Maintains tenant-scoped credentials for subscription listing
+ *
+ * Error Handling:
+ * - Exits if authentication fails
+ * - Exits if no tenants found
+ * - Exits if no enabled subscriptions available
+ * - Displays helpful error messages with remediation steps
+ *
+ * @see {@link authManager} for authentication and credential management
+ * @see {@link ConfigManager} for profile storage
+ * @see {@link loginCommand} for standalone authentication
+ */
 export function selectCommand(): Command {
   const select = new Command('select')
     .description('Interactively select Azure tenant and subscription')

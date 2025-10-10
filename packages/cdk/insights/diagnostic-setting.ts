@@ -1,4 +1,4 @@
-import { Construct } from '@atakora/lib';
+import { Construct } from '@atakora/cdk';
 import { ArmDiagnosticSettings } from './diagnostic-setting-arm';
 import type {
   DiagnosticSettingsProps,

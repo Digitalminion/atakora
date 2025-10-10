@@ -1,7 +1,6 @@
-import { Construct } from '@atakora/lib';
-import type { IResourceGroup } from '@atakora/lib';
+import { Construct, constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/cdk';
+import type { IResourceGroup } from '@atakora/cdk';
 import { ArmApplicationGateway } from './application-gateway-arm';
-import { constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/lib';
 import type {
   ApplicationGatewaysProps,
   IApplicationGateway,
@@ -44,7 +43,7 @@ import {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { ApplicationGateway } from '@atakora/lib';
+ * import { ApplicationGateway } from '@atakora/cdk/network';
  *
  * // Creates Application Gateway with auto-generated name and defaults
  * const appgw = new ApplicationGateway(resourceGroup, 'MainAppGw', {

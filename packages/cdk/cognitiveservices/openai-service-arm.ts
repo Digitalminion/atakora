@@ -1,6 +1,5 @@
-import { Construct, Resource } from '@atakora/lib';
-import { DeploymentScope } from '@atakora/lib';
-import type { ArmResource } from '@atakora/lib/src/core/resource';
+import { Construct, Resource, DeploymentScope } from '@atakora/cdk';
+import type { ArmResource } from '@atakora/cdk';
 import type {
   ArmOpenAIServiceProps,
   CognitiveServicesSku,

@@ -1,14 +1,6 @@
-import { Construct, Resource, DeploymentScope } from '@atakora/lib';
+import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder, ValidationError, isValidCIDR, isWithinCIDR, cidrsOverlap } from '@atakora/cdk';
 import type { ArmVirtualNetworkProps, AddressSpace, InlineSubnetProps } from './virtual-network-types';
-import {
-  ValidationResult,
-  ValidationResultBuilder,
-  ValidationError,
-  isValidCIDR,
-  isWithinCIDR,
-  cidrsOverlap,
-  ArmResource,
-} from '@atakora/lib';
+import type { ArmResource } from '@atakora/cdk';
 
 /**
  * L1 construct for Azure Virtual Network.
@@ -27,7 +19,7 @@ import {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmVirtualNetwork } from '@atakora/lib';
+ * import { ArmVirtualNetwork } from '@atakora/cdk/network';
  *
  * const vnet = new ArmVirtualNetwork(resourceGroup, 'VNet', {
  *   virtualNetworkName: 'vnet-digital-minion-authr-nonprod-eastus-01',

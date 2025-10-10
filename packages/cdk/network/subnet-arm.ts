@@ -1,17 +1,10 @@
-import { Construct } from '@atakora/lib';
-import { Resource } from '@atakora/lib';
-import { DeploymentScope } from '@atakora/lib';
+import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder, ValidationError, isValidCIDR } from '@atakora/cdk';
 import type {
   ArmSubnetProps,
   PrivateEndpointNetworkPolicies,
   PrivateLinkServiceNetworkPolicies,
 } from './subnet-types';
-import {
-  ValidationResult,
-  ValidationResultBuilder, ArmResource,
-  ValidationError,
-  isValidCIDR,
-} from '@atakora/lib';
+import type { ArmResource } from '@atakora/cdk';
 
 /**
  * L1 construct for Azure Subnet.
@@ -30,7 +23,7 @@ import {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmSubnet } from '@atakora/lib';
+ * import { ArmSubnet } from '@atakora/cdk/network';
  *
  * const subnet = new ArmSubnet(vnet, 'WebSubnet', {
  *   name: 'snet-web-01',

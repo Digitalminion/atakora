@@ -1,7 +1,5 @@
-import { Construct } from '@atakora/lib';
-import { Resource } from '@atakora/lib';
-import { DeploymentScope } from '@atakora/lib';
-import { ValidationResult, ValidationResultBuilder, ArmResource } from '@atakora/lib';
+import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder } from '@atakora/cdk';
+import type { ArmResource } from '@atakora/cdk';
 import type { ArmVirtualNetworkLinkProps, IVirtualNetworkLink } from './virtual-network-link-types';
 
 /**
@@ -23,7 +21,7 @@ import type { ArmVirtualNetworkLinkProps, IVirtualNetworkLink } from './virtual-
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmVirtualNetworkLink } from '@atakora/lib';
+ * import { ArmVirtualNetworkLink } from '@atakora/cdk/network';
  *
  * const link = new ArmVirtualNetworkLink(resourceGroup, 'VNetLink', {
  *   privateDnsZoneName: 'privatelink.blob.core.windows.net',

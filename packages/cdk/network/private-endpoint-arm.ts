@@ -1,7 +1,5 @@
-import { Construct } from '@atakora/lib';
-import { Resource } from '@atakora/lib';
-import { DeploymentScope } from '@atakora/lib';
-import { ValidationResult, ValidationResultBuilder, ArmResource } from '@atakora/lib';
+import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder } from '@atakora/cdk';
+import type { ArmResource } from '@atakora/cdk';
 import type {
   ArmPrivateEndpointProps,
   PrivateLinkServiceConnection,
@@ -26,7 +24,7 @@ import type {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmPrivateEndpoint } from '@atakora/lib';
+ * import { ArmPrivateEndpoint } from '@atakora/cdk/network';
  *
  * const endpoint = new ArmPrivateEndpoint(resourceGroup, 'StorageEndpoint', {
  *   privateEndpointName: 'pe-storage-blob-01',

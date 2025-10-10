@@ -1,13 +1,6 @@
-import { Construct } from '@atakora/lib';
-import { Resource } from '@atakora/lib';
-import { DeploymentScope } from '@atakora/lib';
+import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder, ValidationError, isValidPortRange } from '@atakora/cdk';
 import type { ArmNetworkSecurityGroupProps, SecurityRule } from './network-security-group-types';
-import {
-  ValidationResult,
-  ValidationResultBuilder, ArmResource,
-  ValidationError,
-  isValidPortRange,
-} from '@atakora/lib';
+import type { ArmResource } from '@atakora/cdk';
 
 /**
  * L1 construct for Azure Network Security Group.
@@ -26,7 +19,7 @@ import {
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmNetworkSecurityGroup, SecurityRuleProtocol, SecurityRuleAccess, SecurityRuleDirection } from '@atakora/lib';
+ * import { ArmNetworkSecurityGroup, SecurityRuleProtocol, SecurityRuleAccess, SecurityRuleDirection } from '@atakora/cdk/network';
  *
  * const nsg = new ArmNetworkSecurityGroup(resourceGroup, 'WebNSG', {
  *   networkSecurityGroupName: 'nsg-web-01',

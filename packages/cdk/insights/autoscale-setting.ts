@@ -1,5 +1,5 @@
-import { Construct } from '@atakora/lib';
-import type { IResourceGroup } from '@atakora/lib';
+import { Construct } from '@atakora/cdk';
+import type { IResourceGroup } from '@atakora/cdk';
 import { ArmAutoscaleSettings } from './autoscale-setting-arm';
 import type { AutoscaleSettingsProps, IAutoscaleSetting, AutoscaleProfile } from './autoscale-setting-types';
 

@@ -64,6 +64,118 @@ interface SynthesisResult {
   error?: Error;
 }
 
+/**
+ * Creates the 'synth' command to synthesize ARM templates from TypeScript constructs.
+ *
+ * This command is the core of the Atakora build process. It compiles TypeScript
+ * infrastructure code, executes it to build the construct tree, and generates
+ * deployable ARM template JSON files.
+ *
+ * @returns A Commander.js Command instance configured for template synthesis
+ *
+ * @example
+ * ```bash
+ * # Synthesize default package
+ * atakora synth
+ *
+ * # Synthesize specific package
+ * atakora synth --package backend
+ *
+ * # Synthesize all enabled packages
+ * atakora synth --all
+ *
+ * # Synthesize only specific stacks
+ * atakora synth --stack Foundation --stack Networking
+ *
+ * # Custom output directory
+ * atakora synth --output ./custom-output
+ *
+ * # Validate templates without writing files
+ * atakora synth --validate-only
+ *
+ * # Skip validation (faster for development)
+ * atakora synth --skip-validation
+ *
+ * # Merge all stacks into single template with nested deployments
+ * atakora synth --single-file
+ * ```
+ *
+ * @remarks
+ * Command Options:
+ * - `-p, --package <name>`: Synthesize specific package by name
+ * - `-a, --all`: Synthesize all enabled packages in manifest
+ * - `-o, --output <dir>`: Override default output directory
+ * - `--skip-validation`: Skip ARM template validation step
+ * - `--validate-only`: Validate without writing template files
+ * - `--stack <stack>`: Synthesize only specified stack(s) (can be repeated)
+ * - `--single-file`: Merge stacks into one template with nested deployments
+ *
+ * Synthesis Process:
+ * 1. Loads project manifest from .atakora/manifest.json
+ * 2. Determines which package(s) to synthesize
+ * 3. Resolves package entry point (default: bin/app.ts)
+ * 4. Executes TypeScript code using tsx runtime
+ * 5. Calls app.synth() to generate cloud assembly
+ * 6. Writes ARM template JSON files to output directory
+ * 7. Validates templates (unless --skip-validation)
+ * 8. Displays synthesis results with resource counts
+ *
+ * Output Structure:
+ * ```
+ * .atakora/arm.out/
+ * └── <package-name>/
+ *     ├── manifest.json        # Stack metadata
+ *     ├── Foundation.json      # Subscription-scoped resources
+ *     ├── Networking.json      # Resource group resources
+ *     └── parameters/          # Parameter files (optional)
+ * ```
+ *
+ * Validation:
+ * - ARM template schema compliance
+ * - Azure resource naming rules
+ * - Resource dependencies and references
+ * - Template size limits (4MB)
+ * - Resource count limits (800)
+ * - NSG rule validation
+ * - ARM expression syntax
+ *
+ * Package Selection:
+ * - No options: Uses manifest.defaultPackage
+ * - `--package <name>`: Synthesizes specific package
+ * - `--all`: Synthesizes all enabled packages
+ * - Exits with error if package not found or disabled
+ *
+ * Multi-Package Synthesis:
+ * - When using --all, synthesizes packages in sequence
+ * - Displays summary table with success/failure for each
+ * - Continues synthesizing even if one fails
+ * - Returns error code if any package failed
+ *
+ * Entry Point Resolution:
+ * - Modern manifest: Uses 'entry' field
+ * - Legacy manifest: Uses 'entryPoint' field
+ * - Default: bin/app.ts if not specified
+ * - Entry point must export 'app' or default export
+ * - Exported app must have synth() method
+ *
+ * Performance:
+ * - Uses tsx for fast TypeScript execution
+ * - Compiles and executes in single step
+ * - No separate tsc build required
+ * - Validation can be skipped for faster iteration
+ *
+ * Troubleshooting:
+ * - Set DEBUG=1 environment variable for stack traces
+ * - Check entry point exports 'app' or default
+ * - Verify app has synth() method
+ * - Ensure tsx package is installed
+ * - Check TypeScript compilation errors
+ *
+ * @see {@link synthesizePackage} for single package synthesis logic
+ * @see {@link validateTemplates} for template validation
+ * @see {@link displaySynthesisResults} for result formatting
+ * @see {@link TemplateValidator} for validation implementation
+ */
 export function createSynthCommand(): Command {
   const synth = new Command('synth')
     .description('Synthesize ARM templates from TypeScript constructs')

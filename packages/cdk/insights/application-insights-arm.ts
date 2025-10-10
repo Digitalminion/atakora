@@ -1,5 +1,5 @@
-import { Construct, Resource, DeploymentScope } from '@atakora/lib';
-import type { ArmResource } from '@atakora/lib';
+import { Construct, Resource, DeploymentScope } from '@atakora/cdk';
+import type { ArmResource } from '@atakora/cdk';
 import type {
   ArmComponentsProps,
   ApplicationType,

@@ -1,7 +1,6 @@
-import { Construct } from '@atakora/lib';
-import type { IResourceGroup } from '@atakora/lib';
+import { Construct, constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/cdk';
+import type { IResourceGroup } from '@atakora/cdk';
 import { ArmWorkspaces } from './log-analytics-workspace-arm';
-import { constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/lib';
 import type {
   WorkspacesProps,
   ILogAnalyticsWorkspace,

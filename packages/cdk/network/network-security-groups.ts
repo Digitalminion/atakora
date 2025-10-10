@@ -1,5 +1,5 @@
-import { Construct } from '@atakora/lib';
-import type { IResourceGroup } from '@atakora/lib';
+import { Construct } from '@atakora/cdk';
+import type { IResourceGroup } from '@atakora/cdk';
 import { ArmNetworkSecurityGroup } from './network-security-group-arm';
 import type {
   NetworkSecurityGroupsProps,
@@ -30,7 +30,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { NetworkSecurityGroup } from '@atakora/lib';
+ * import { NetworkSecurityGroup } from '@atakora/cdk/network';
  *
  * const nsg = new NetworkSecurityGroup(resourceGroup, 'WebNSG');
  * ```

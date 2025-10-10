@@ -1,7 +1,6 @@
-import { Construct } from '@atakora/lib';
-import type { IResourceGroup } from '@atakora/lib';
+import { Construct, constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/cdk';
+import type { IResourceGroup } from '@atakora/cdk';
 import { ArmPublicIpAddress } from './public-ip-address-arm';
-import { constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/lib';
 import type {
   PublicIPAddressesProps,
   IPublicIpAddress,
@@ -30,7 +29,7 @@ import type {
  * @example
  * Minimal usage (auto-generates everything):
  * ```typescript
- * import { PublicIpAddress } from '@atakora/lib';
+ * import { PublicIpAddress } from '@atakora/cdk/network';
  *
  * const publicIp = new PublicIpAddress(resourceGroup, 'AppPublicIp');
  * ```

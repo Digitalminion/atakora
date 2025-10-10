@@ -1,8 +1,6 @@
-import { Construct } from '@atakora/lib';
-import { Resource } from '@atakora/lib';
-import { DeploymentScope } from '@atakora/lib';
+import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder } from '@atakora/cdk';
+import type { ArmResource } from '@atakora/cdk';
 import type { ArmApplicationGatewayProps, ApplicationGatewaySku } from './application-gateway-types';
-import { ValidationResult, ValidationResultBuilder, ArmResource } from '@atakora/lib';
 
 /**
  * L1 construct for Azure Application Gateway.
@@ -21,7 +19,7 @@ import { ValidationResult, ValidationResultBuilder, ArmResource } from '@atakora
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmApplicationGateway, ApplicationGatewaySkuName, ApplicationGatewayTier } from '@atakora/lib';
+ * import { ArmApplicationGateway, ApplicationGatewaySkuName, ApplicationGatewayTier } from '@atakora/cdk/network';
  *
  * const appgw = new ArmApplicationGateway(resourceGroup, 'AppGw', {
  *   gatewayName: 'appgw-prod-eastus-01',

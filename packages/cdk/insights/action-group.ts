@@ -1,5 +1,5 @@
-import { Construct } from '@atakora/lib';
-import type { IResourceGroup } from '@atakora/lib';
+import { Construct } from '@atakora/cdk';
+import type { IResourceGroup } from '@atakora/cdk';
 import { ArmActionGroups } from './action-group-arm';
 import type { ActionGroupsProps, IActionGroup } from './action-group-types';
 
@@ -24,7 +24,7 @@ import type { ActionGroupsProps, IActionGroup } from './action-group-types';
  * @example
  * Minimal usage:
  * ```typescript
- * import { ActionGroup } from '@atakora/lib';
+ * import { ActionGroup } from '@atakora/cdk/insights';
  *
  * const actionGroup = new ActionGroup(resourceGroup, 'Alerts', {
  *   groupShortName: 'alerts',

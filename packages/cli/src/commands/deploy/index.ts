@@ -53,6 +53,80 @@ interface Deployment {
   properties: DeploymentProperties;
 }
 
+/**
+ * Creates the 'deploy' command for deploying ARM templates to Azure.
+ *
+ * This command orchestrates the complete deployment process including authentication,
+ * template loading, validation, user confirmation, and resource provisioning in Azure.
+ * It supports both subscription-scoped and resource group-scoped deployments.
+ *
+ * @returns A Commander.js Command instance configured for Azure deployment
+ *
+ * @example
+ * ```bash
+ * # Deploy all stacks from default output directory
+ * atakora deploy
+ *
+ * # Deploy specific stack
+ * atakora deploy Foundation
+ *
+ * # Deploy from custom output directory
+ * atakora deploy --app ./custom-output
+ *
+ * # Skip confirmation for CI/CD
+ * atakora deploy --auto-approve
+ *
+ * # Skip pre-deployment validation
+ * atakora deploy --skip-validation
+ * ```
+ *
+ * @remarks
+ * Command Options:
+ * - `[stack]`: Optional specific stack name to deploy
+ * - `-a, --app <path>`: Path to synthesized templates (default: "arm.out")
+ * - `--skip-validation`: Skip pre-deployment template validation
+ * - `--auto-approve`: Skip manual confirmation prompt
+ *
+ * Deployment Process:
+ * 1. Loads active Azure profile configuration
+ * 2. Authenticates with Azure (uses cached credentials when available)
+ * 3. Loads cloud assembly manifest from output directory
+ * 4. Determines which stacks to deploy (all or specific)
+ * 5. Displays deployment plan with resource counts
+ * 6. Prompts for confirmation (unless --auto-approve)
+ * 7. Deploys each stack in order
+ * 8. Monitors progress and displays results
+ *
+ * Deployment Modes:
+ * - Subscription Scope: Creates subscription-level resources (resource groups, policies, etc.)
+ * - Resource Group Scope: Creates resources within a resource group
+ * - Uses Incremental mode (preserves existing resources not in template)
+ *
+ * Requirements:
+ * - Active Azure profile (run 'azure-arm config select')
+ * - Synthesized templates exist (run 'azure-arm synth')
+ * - Valid Azure credentials with deployment permissions
+ * - AuthR stack deployed first (for resource group name extraction)
+ *
+ * Error Handling:
+ * - Exits with code 1 if profile not configured
+ * - Exits with code 1 if authentication fails
+ * - Exits with code 1 if cloud assembly not found
+ * - Exits with code 1 if specified stack doesn't exist
+ * - Exits with code 1 if any deployment fails
+ * - Displays Azure API errors with full details
+ *
+ * Safety Features:
+ * - Incremental deployment mode (no destructive updates)
+ * - Confirmation prompt before applying changes
+ * - Deployment plan display before execution
+ * - Per-stack success/failure reporting
+ * - Output display for debugging and verification
+ *
+ * @see {@link deployStack} for individual stack deployment logic
+ * @see {@link ConfigManager} for profile management
+ * @see {@link authManager} for Azure authentication
+ */
 export function createDeployCommand(): Command {
   const deploy = new Command('deploy')
     .description('Deploy ARM templates to Azure')
@@ -243,6 +317,42 @@ ${chalk.bold('Related Commands:')}
   return deploy;
 }
 
+/**
+ * Deploys a single stack to Azure.
+ *
+ * Handles both subscription-scoped and resource group-scoped deployments.
+ * Creates a timestamped deployment name, submits the template to Azure,
+ * polls for completion, and displays outputs.
+ *
+ * @param client - Azure Resource Management client for API calls
+ * @param assemblyPath - Path to cloud assembly directory containing templates
+ * @param stackName - Name of the stack to deploy
+ * @param stackManifest - Stack metadata from manifest.json
+ * @param profile - Active Azure profile configuration
+ * @param resourceGroupName - Optional resource group name for RG-scoped deployments
+ *
+ * @throws Error if resource group name missing for RG-scoped deployment
+ * @throws Error if deployment provisioning fails
+ *
+ * @remarks
+ * Deployment Scope Detection:
+ * - Checks template $schema for 'subscriptionDeploymentTemplate'
+ * - Subscription scope: Deploys directly to subscription
+ * - Resource group scope: Requires resourceGroupName parameter
+ *
+ * Deployment Naming:
+ * - Format: `{stackName}-{timestamp}`
+ * - Example: "Foundation-1234567890"
+ * - Enables tracking deployment history in Azure portal
+ *
+ * Progress Monitoring:
+ * - Uses Azure SDK polling mechanism
+ * - Displays spinner during deployment
+ * - Shows success/failure upon completion
+ * - Displays stack outputs after successful deployment
+ *
+ * @see {@link createDeployCommand} for overall deployment orchestration
+ */
 async function deployStack(
   client: ResourceManagementClient,
   assemblyPath: string,

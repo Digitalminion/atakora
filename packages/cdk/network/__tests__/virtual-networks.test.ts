@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { App, SubscriptionStack, Subscription, Geography, Organization, Project, Environment, Instance, Construct, ResourceGroup } from '@atakora/lib';
+import { App, SubscriptionStack, Subscription, Geography, Organization, Project, Environment, Instance, Construct, ResourceGroup } from '@atakora/cdk';
 import { VirtualNetworks } from '../index';
 
 describe('cdk/network/VirtualNetworks', () => {

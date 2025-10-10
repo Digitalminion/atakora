@@ -1,6 +1,5 @@
-import { Construct, Resource, DeploymentScope } from '@atakora/lib';
-import type { ArmResource } from '@atakora/lib';
-import { ValidationResult, ValidationResultBuilder } from '@atakora/lib';
+import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder } from '@atakora/cdk';
+import type { ArmResource } from '@atakora/cdk';
 import type {
   ArmStorageAccountsProps,
   StorageAccountSku,

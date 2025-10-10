@@ -1,6 +1,5 @@
-import { Construct, Resource, DeploymentScope } from '@atakora/lib';
-import type { ArmResource } from '@atakora/lib';
-import { ValidationResult, ValidationResultBuilder } from '@atakora/lib';
+import { Construct, Resource, DeploymentScope } from '@atakora/cdk';
+import type { ArmResource } from '@atakora/cdk';
 import type { ArmSitesProps, ManagedServiceIdentity, SiteConfig } from './site-types';
 
 /**
@@ -213,70 +212,6 @@ export class ArmSites extends Resource {
   }
 
   /**
-   * Validates ARM template structure before transformation.
-   *
-   * @remarks
-   * This validates the ARM-specific structure requirements that must be met
-   * after the toArmTemplate transformation.
-   *
-   * @returns Validation result with any errors or warnings
-   */
-  public validateArmStructure(): ValidationResult {
-    const builder = new ValidationResultBuilder();
-
-    // Generate ARM template to validate structure
-    const armTemplate = this.toArmTemplate() as any;
-
-    // Validate required fields are present
-    if (!armTemplate.type) {
-      builder.addError(
-        'ARM template missing type field',
-        'The type field is required for all ARM resources',
-        'Ensure toArmTemplate() includes type field',
-        'armTemplate.type'
-      );
-    }
-
-    if (!armTemplate.apiVersion) {
-      builder.addError(
-        'ARM template missing apiVersion field',
-        'The apiVersion field is required for all ARM resources',
-        'Ensure toArmTemplate() includes apiVersion field',
-        'armTemplate.apiVersion'
-      );
-    }
-
-    if (!armTemplate.name) {
-      builder.addError(
-        'ARM template missing name field',
-        'The name field is required for all ARM resources',
-        'Ensure toArmTemplate() includes name field',
-        'armTemplate.name'
-      );
-    }
-
-    return builder.build();
-  }
-
-  /**
-   * Builds a subnet reference for ARM templates.
-   * Converts a subnet resource ID to a resourceId() expression.
-   *
-   * @param subnetId - Full resource ID of the subnet
-   * @returns ARM resourceId() expression
-   */
-  private buildSubnetReference(subnetId: string): string {
-    // Extract subnet and VNet name from resource ID
-    // Format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/virtualNetworks/{vnet}/subnets/{subnet}
-    const parts = subnetId.split('/');
-    const subnetName = parts[parts.length - 1];
-    const vnetName = parts[parts.length - 3];
-
-    // Generate ARM resourceId() expression
-    return `[resourceId('Microsoft.Network/virtualNetworks/subnets', '${vnetName}', '${subnetName}')]`;
-  }
-
-  /**
    * Generates ARM template representation of this resource.
    *
    * @remarks
@@ -348,6 +283,24 @@ export class ArmSites extends Resource {
     }
 
     return template;
+  }
+
+  /**
+   * Builds a subnet reference for ARM templates.
+   * Converts a subnet resource ID to a resourceId() expression.
+   *
+   * @param subnetId - Full resource ID of the subnet
+   * @returns ARM resourceId() expression
+   */
+  private buildSubnetReference(subnetId: string): string {
+    // Extract subnet and VNet name from resource ID
+    // Format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/virtualNetworks/{vnet}/subnets/{subnet}
+    const parts = subnetId.split('/');
+    const subnetName = parts[parts.length - 1];
+    const vnetName = parts[parts.length - 3];
+
+    // Generate ARM resourceId() expression
+    return `[resourceId('Microsoft.Network/virtualNetworks/subnets', '${vnetName}', '${subnetName}')]`;
   }
 
   /**

@@ -1,7 +1,5 @@
-import { Construct } from '@atakora/lib';
-import { Resource } from '@atakora/lib';
-import { DeploymentScope } from '@atakora/lib';
-import type { ArmResource } from '@atakora/lib';
+import { Construct, Resource, DeploymentScope } from '@atakora/cdk';
+import type { ArmResource } from '@atakora/cdk';
 import type { ArmMetricAlertsProps } from './metric-alert-types';
 
 /**
@@ -21,7 +19,7 @@ import type { ArmMetricAlertsProps } from './metric-alert-types';
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmMetricAlert } from '@atakora/lib';
+ * import { ArmMetricAlert } from '@atakora/cdk/insights';
  *
  * const alert = new ArmMetricAlert(resourceGroup, 'Alert', {
  *   name: 'alert-cpu-high',

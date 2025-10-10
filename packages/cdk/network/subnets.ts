@@ -1,4 +1,4 @@
-import { Construct } from '@atakora/lib';
+import { Construct } from '@atakora/cdk';
 import { ArmSubnet } from './subnet-arm';
 import type { SubnetsProps, ISubnet, NetworkSecurityGroupReference } from './subnet-types';
 
@@ -30,7 +30,7 @@ interface IVirtualNetwork {
  * @example
  * Minimal usage (auto-generates name):
  * ```typescript
- * import { Subnet } from '@atakora/lib';
+ * import { Subnet } from '@atakora/cdk/network';
  *
  * // Creates subnet with auto-generated name
  * const subnet = new Subnet(vnet, 'WebSubnet', {

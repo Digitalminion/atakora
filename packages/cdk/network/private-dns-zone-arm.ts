@@ -1,7 +1,5 @@
-import { Construct } from '@atakora/lib';
-import { Resource } from '@atakora/lib';
-import { DeploymentScope } from '@atakora/lib';
-import { ValidationResult, ValidationResultBuilder, ArmResource } from '@atakora/lib';
+import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder } from '@atakora/cdk';
+import type { ArmResource } from '@atakora/cdk';
 import type { ArmPrivateDnsZoneProps } from './private-dns-zone-types';
 
 /**
@@ -23,7 +21,7 @@ import type { ArmPrivateDnsZoneProps } from './private-dns-zone-types';
  * @example
  * Basic usage:
  * ```typescript
- * import { ArmPrivateDnsZone } from '@atakora/lib';
+ * import { ArmPrivateDnsZone } from '@atakora/cdk/network';
  *
  * const zone = new ArmPrivateDnsZone(resourceGroup, 'BlobDnsZone', {
  *   zoneName: 'privatelink.blob.core.windows.net',

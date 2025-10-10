@@ -1,6 +1,5 @@
-import { Construct } from '@atakora/lib';
-import { constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/lib';
-import type { IResourceGroup } from '@atakora/lib';
+import { Construct, constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/cdk';
+import type { IResourceGroup } from '@atakora/cdk';
 import { ArmAccounts } from './openai-service-arm';
 import type {
   OpenAIServiceProps,

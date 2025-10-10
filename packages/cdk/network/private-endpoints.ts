@@ -1,6 +1,5 @@
-import { Construct } from '@atakora/lib';
+import { Construct, getServiceAbbreviation } from '@atakora/cdk';
 import { ArmPrivateEndpoint } from './private-endpoint-arm';
-import { getServiceAbbreviation } from '@atakora/lib';
 import type {
   PrivateEndpointsProps,
   IPrivateEndpoint,
@@ -38,7 +37,7 @@ interface IResourceGroup {
  * @example
  * Minimal usage (auto-generates name):
  * ```typescript
- * import { PrivateEndpoint } from '@atakora/lib';
+ * import { PrivateEndpoint } from '@atakora/cdk/network';
  *
  * // Creates private endpoint with auto-generated name
  * const endpoint = new PrivateEndpoint(resourceGroup, 'StorageEndpoint', {
