@@ -565,7 +565,7 @@ const webApp = new Sites(stack, 'WebApp', {
 Stack outputs provide information about deployed resources:
 
 ```typescript
-import { Output } from '@atakora/lib';
+import { Output } from '@atakora/cdk';
 
 const storage = new StorageAccounts(stack, 'Storage', {
   storageAccountName: 'stappdata',

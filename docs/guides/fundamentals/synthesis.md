@@ -9,7 +9,7 @@ The synthesis process transforms your TypeScript infrastructure code into deploy
 Synthesis is the process of converting the construct tree into ARM template JSON files. When you call `app.synth()`, Atakora walks the construct tree, collects all resources, resolves dependencies, and generates ARM templates ready for deployment.
 
 ```typescript
-import { AzureApp, ResourceGroupStack } from '@atakora/lib';
+import { AzureApp, ResourceGroupStack } from '@atakora/cdk';
 import { VirtualNetworks } from '@atakora/cdk/network';
 import { StorageAccounts } from '@atakora/cdk/storage';
 
@@ -424,7 +424,7 @@ Variables are computed values used in the template:
 Export resource properties for use by other systems:
 
 ```typescript
-import { Output } from '@atakora/lib';
+import { Output } from '@atakora/cdk';
 
 const storage = new StorageAccounts(stack, 'Storage', {
   storageAccountName: 'stappdata',

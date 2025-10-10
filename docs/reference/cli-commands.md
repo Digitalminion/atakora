@@ -252,9 +252,9 @@ packages/{package-name}/
 **Generated `bin/app.ts`:**
 
 ```typescript
-import { AzureApp, SubscriptionStack } from '@atakora/lib';
+import { App, SubscriptionStack } from '@atakora/cdk';
 
-const app = new AzureApp({
+const app = new App({
   organization: 'YourOrg', // From manifest
   project: 'YourProject', // From manifest
 });

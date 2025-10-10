@@ -226,17 +226,12 @@ ecommerce-infra/
 ### Backend Package (`packages/backend/bin/app.ts`)
 
 ```typescript
-import {
-  AzureApp,
-  SubscriptionStack,
-  ResourceGroup,
-  AppServicePlan,
-  AppService,
-  SqlServer,
-  SqlDatabase,
-} from '@atakora/lib';
+import { App, SubscriptionStack } from '@atakora/cdk';
+import { ResourceGroups } from '@atakora/cdk/resources';
+import { ServerFarms, Sites } from '@atakora/cdk/web';
+import { Servers, Databases } from '@atakora/cdk/sql';
 
-const app = new AzureApp({
+const app = new App({
   organization: 'Contoso',
   project: 'ECommerce',
 });
@@ -247,27 +242,27 @@ const backend = new SubscriptionStack(app, 'Backend', {
   instance: 1,
 });
 
-const rg = new ResourceGroup(backend, 'Backend', {
+const rg = new ResourceGroups(backend, 'Backend', {
   tags: { tier: 'backend' },
 });
 
-const appPlan = new AppServicePlan(backend, 'AppPlan', {
+const appPlan = new ServerFarms(backend, 'AppPlan', {
   resourceGroup: rg,
   sku: { name: 'P1V2', tier: 'PremiumV2' },
 });
 
-const api = new AppService(backend, 'API', {
+const api = new Sites(backend, 'API', {
   resourceGroup: rg,
-  appServicePlan: appPlan,
+  serverFarmId: appPlan.id,
 });
 
-const sqlServer = new SqlServer(backend, 'Database', {
+const sqlServer = new Servers(backend, 'Database', {
   resourceGroup: rg,
   administratorLogin: 'sqladmin',
 });
 
-const sqlDb = new SqlDatabase(backend, 'Products', {
-  server: sqlServer,
+const sqlDb = new Databases(backend, 'Products', {
+  resourceGroup: rg,
   sku: { name: 'S0', tier: 'Standard' },
 });
 
@@ -277,16 +272,12 @@ app.synth();
 ### Frontend Package (`packages/frontend/bin/app.ts`)
 
 ```typescript
-import {
-  AzureApp,
-  SubscriptionStack,
-  ResourceGroup,
-  StaticWebApp,
-  CdnProfile,
-  CdnEndpoint,
-} from '@atakora/lib';
+import { App, SubscriptionStack } from '@atakora/cdk';
+import { ResourceGroups } from '@atakora/cdk/resources';
+import { StaticSites } from '@atakora/cdk/web';
+import { Profiles, Endpoints } from '@atakora/cdk/cdn';
 
-const app = new AzureApp({
+const app = new App({
   organization: 'Contoso',
   project: 'ECommerce',
 });
@@ -297,22 +288,22 @@ const frontend = new SubscriptionStack(app, 'Frontend', {
   instance: 1,
 });
 
-const rg = new ResourceGroup(frontend, 'Frontend', {
+const rg = new ResourceGroups(frontend, 'Frontend', {
   tags: { tier: 'frontend' },
 });
 
-const staticSite = new StaticWebApp(frontend, 'WebApp', {
+const staticSite = new StaticSites(frontend, 'WebApp', {
   resourceGroup: rg,
   sku: { name: 'Standard', tier: 'Standard' },
 });
 
-const cdn = new CdnProfile(frontend, 'CDN', {
+const cdn = new Profiles(frontend, 'CDN', {
   resourceGroup: rg,
   sku: { name: 'Standard_Microsoft' },
 });
 
-const endpoint = new CdnEndpoint(frontend, 'Endpoint', {
-  profile: cdn,
+const endpoint = new Endpoints(frontend, 'Endpoint', {
+  resourceGroup: rg,
   originHostName: staticSite.defaultHostname,
 });
 
@@ -356,9 +347,10 @@ multi-env-infra/
 ### Development Package (`packages/dev/bin/app.ts`)
 
 ```typescript
-import { AzureApp, SubscriptionStack, ResourceGroup } from '@atakora/lib';
+import { App, SubscriptionStack } from '@atakora/cdk';
+import { ResourceGroups } from '@atakora/cdk/resources';
 
-const app = new AzureApp({
+const app = new App({
   organization: 'Contoso',
   project: 'MultiEnv',
 });
@@ -369,7 +361,7 @@ const dev = new SubscriptionStack(app, 'Dev', {
   instance: 1,
 });
 
-const rg = new ResourceGroup(dev, 'DevResources', {
+const rg = new ResourceGroups(dev, 'DevResources', {
   tags: {
     environment: 'development',
     costCenter: 'engineering',
@@ -387,9 +379,10 @@ app.synth();
 ### Production Package (`packages/prod/bin/app.ts`)
 
 ```typescript
-import { AzureApp, SubscriptionStack, ResourceGroup } from '@atakora/lib';
+import { App, SubscriptionStack } from '@atakora/cdk';
+import { ResourceGroups } from '@atakora/cdk/resources';
 
-const app = new AzureApp({
+const app = new App({
   organization: 'Contoso',
   project: 'MultiEnv',
 });
@@ -400,7 +393,7 @@ const prod = new SubscriptionStack(app, 'Prod', {
   instance: 1,
 });
 
-const rg = new ResourceGroup(prod, 'ProdResources', {
+const rg = new ResourceGroups(prod, 'ProdResources', {
   tags: {
     environment: 'production',
     costCenter: 'operations',
@@ -428,7 +421,7 @@ Export outputs from one package and import them as parameters in another.
 
 ```typescript
 // In backend package
-import { StackOutput } from '@atakora/lib';
+import { StackOutput } from '@atakora/cdk';
 
 new StackOutput(backend, 'APIUrl', {
   value: api.defaultHostName,
@@ -470,9 +463,10 @@ export const sharedConfig = {
 Import in any package:
 
 ```typescript
+import { App } from '@atakora/cdk';
 import { sharedConfig } from '../shared/config';
 
-const app = new AzureApp({
+const app = new App({
   organization: sharedConfig.organization,
   project: sharedConfig.project,
 });
@@ -499,7 +493,7 @@ Share common code using npm workspace dependencies:
   "name": "@myorg/frontend",
   "dependencies": {
     "@myorg/shared-config": "*",
-    "@atakora/lib": "^1.0.0"
+    "@atakora/cdk": "^1.0.0"
   }
 }
 ```

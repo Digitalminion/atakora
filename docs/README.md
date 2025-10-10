@@ -7,10 +7,10 @@ Welcome to Atakora - a TypeScript-first infrastructure-as-code framework for Azu
 Atakora lets you define Azure infrastructure using TypeScript, synthesize it into ARM templates, and deploy with confidence. Write infrastructure code that's as reliable and maintainable as your application code.
 
 ```typescript
-import { AzureApp, ResourceGroupStack } from '@atakora/lib';
+import { App, ResourceGroupStack } from '@atakora/cdk';
 import { VirtualNetworks } from '@atakora/cdk/network';
 
-const app = new AzureApp({
+const app = new App({
   organization: 'Contoso',
   project: 'ProductionInfra',
 });
@@ -32,7 +32,7 @@ app.synth();
 
 ```bash
 # Install the CLI
-npm install -g @atakora/cli @atakora/lib
+npm install -g @atakora/cli @atakora/cdk
 
 # Initialize a new project
 npx atakora init
@@ -113,7 +113,7 @@ Technical reference documentation:
   - [set-default](./reference/cli/set-default.md) - Set default package
 
 - **API Reference**
-  - [Core API](./reference/api/core/README.md) - @atakora/lib exports
+  - [Core API](./reference/api/core/README.md) - @atakora/cdk core exports
   - [Network Resources](./reference/api/cdk/network.md) - Microsoft.Network resources
   - [Storage Resources](./reference/api/cdk/storage.md) - Microsoft.Storage resources
   - [Web Resources](./reference/api/cdk/web.md) - Microsoft.Web resources

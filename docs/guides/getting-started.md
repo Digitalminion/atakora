@@ -19,7 +19,7 @@ With Atakora, you get:
 Install Atakora globally to access the CLI:
 
 ```bash
-npm install -g @atakora/cli @atakora/lib
+npm install -g @atakora/cli @atakora/cdk
 ```
 
 Or use it directly with npx (no installation required):
@@ -81,10 +81,11 @@ ProductionInfra/
 After initialization, edit your infrastructure code in `packages/networking/bin/app.ts`:
 
 ```typescript
-import { AzureApp, SubscriptionStack, ResourceGroup } from '@atakora/lib';
+import { App, SubscriptionStack } from '@atakora/cdk';
+import { ResourceGroups } from '@atakora/cdk/resources';
 
 // Create the Atakora application
-const app = new AzureApp({
+const app = new App({
   organization: 'Contoso',
   project: 'ProductionInfra',
 });
@@ -97,7 +98,7 @@ const foundation = new SubscriptionStack(app, 'Foundation', {
 });
 
 // Add resources to your stack
-const rg = new ResourceGroup(foundation, 'Platform', {
+const rg = new ResourceGroups(foundation, 'Platform', {
   tags: {
     purpose: 'infrastructure',
     environment: 'nonprod',
@@ -110,7 +111,7 @@ app.synth();
 
 ### Understanding the Code
 
-**AzureApp**: The root construct that contains all your infrastructure. The organization and project names are used in naming conventions throughout your infrastructure.
+**App**: The root construct that contains all your infrastructure. The organization and project names are used in naming conventions throughout your infrastructure.
 
 **SubscriptionStack**: A deployment scope that maps to an Azure subscription. The stack:
 
@@ -118,7 +119,7 @@ app.synth();
 - Has an environment (`nonprod`, `prod`, `sandbox`, `gov`)
 - Has an instance number for deploying multiple copies
 
-**ResourceGroup**: An Azure resource group that will contain other Azure resources. Resources are organized in a construct tree where each resource has a parent.
+**ResourceGroups**: An Azure resource group that will contain other Azure resources. Resources are organized in a construct tree where each resource has a parent.
 
 **app.synth()**: Generates ARM templates from your TypeScript code. Must be called at the end of your infrastructure definition.
 
@@ -207,9 +208,11 @@ The deployment command will:
 Expand your infrastructure by adding more resources to the stack:
 
 ```typescript
-import { AzureApp, SubscriptionStack, ResourceGroup, VirtualNetwork, Subnet } from '@atakora/lib';
+import { App, SubscriptionStack } from '@atakora/cdk';
+import { ResourceGroups } from '@atakora/cdk/resources';
+import { VirtualNetworks, Subnets } from '@atakora/cdk/network';
 
-const app = new AzureApp({
+const app = new App({
   organization: 'Contoso',
   project: 'ProductionInfra',
 });
@@ -220,23 +223,23 @@ const foundation = new SubscriptionStack(app, 'Foundation', {
   instance: 1,
 });
 
-const rg = new ResourceGroup(foundation, 'Platform', {
+const rg = new ResourceGroups(foundation, 'Platform', {
   tags: { purpose: 'infrastructure' },
 });
 
 // Add a virtual network
-const vnet = new VirtualNetwork(foundation, 'MainVNet', {
+const vnet = new VirtualNetworks(foundation, 'MainVNet', {
   resourceGroup: rg,
   addressPrefixes: ['10.0.0.0/16'],
 });
 
 // Add subnets
-const appSubnet = new Subnet(foundation, 'AppSubnet', {
+const appSubnet = new Subnets(foundation, 'AppSubnet', {
   virtualNetwork: vnet,
   addressPrefix: '10.0.1.0/24',
 });
 
-const dataSubnet = new Subnet(foundation, 'DataSubnet', {
+const dataSubnet = new Subnets(foundation, 'DataSubnet', {
   virtualNetwork: vnet,
   addressPrefix: '10.0.2.0/24',
 });

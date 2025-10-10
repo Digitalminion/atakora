@@ -23,7 +23,7 @@ The `AzureApp` is the root container for all your infrastructure. It represents 
 ### Creating an App
 
 ```typescript
-import { AzureApp } from '@atakora/lib';
+import { AzureApp } from '@atakora/cdk';
 
 const app = new AzureApp({
   organization: 'Contoso',
@@ -96,7 +96,7 @@ Atakora provides two primary stack types:
 Deploys resources within a specific resource group. This is the most common stack type for application infrastructure.
 
 ```typescript
-import { AzureApp, ResourceGroupStack } from '@atakora/lib';
+import { AzureApp, ResourceGroupStack } from '@atakora/cdk';
 
 const app = new AzureApp({
   organization: 'Contoso',
@@ -132,7 +132,7 @@ const stack = new ResourceGroupStack(app, 'Application', {
 Deploys resources at the subscription level. Used for foundational resources that span multiple resource groups.
 
 ```typescript
-import { AzureApp, SubscriptionStack } from '@atakora/lib';
+import { AzureApp, SubscriptionStack } from '@atakora/cdk';
 
 const app = new AzureApp({
   organization: 'Contoso',
@@ -429,7 +429,7 @@ appStack.addDependency(foundationStack);
 For simple applications, a single stack is often sufficient:
 
 ```typescript
-import { AzureApp, ResourceGroupStack } from '@atakora/lib';
+import { AzureApp, ResourceGroupStack } from '@atakora/cdk';
 import { VirtualNetworks } from '@atakora/cdk/network';
 import { StorageAccounts } from '@atakora/cdk/storage';
 import { Sites } from '@atakora/cdk/web';
@@ -467,7 +467,7 @@ app.synth();
 Deploy to multiple environments using separate stacks:
 
 ```typescript
-import { AzureApp, ResourceGroupStack } from '@atakora/lib';
+import { AzureApp, ResourceGroupStack } from '@atakora/cdk';
 
 const app = new AzureApp({
   organization: 'Contoso',

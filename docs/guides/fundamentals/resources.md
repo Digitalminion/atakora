@@ -9,7 +9,7 @@ Learn how to create, configure, and manage Azure resources using Atakora's type-
 Resources are the building blocks of your Azure infrastructure. Atakora provides strongly-typed constructs for Azure resources that offer IntelliSense support, compile-time validation, and sensible defaults.
 
 ```typescript
-import { AzureApp, ResourceGroupStack } from '@atakora/lib';
+import { AzureApp, ResourceGroupStack } from '@atakora/cdk';
 import { VirtualNetworks } from '@atakora/cdk/network';
 import { StorageAccounts } from '@atakora/cdk/storage';
 
@@ -525,7 +525,7 @@ const webApp = new Sites(stack, 'WebApp', {
 Export resource properties as stack outputs:
 
 ```typescript
-import { Output } from '@atakora/lib';
+import { Output } from '@atakora/cdk';
 
 const storage = new StorageAccounts(stack, 'Storage', {
   storageAccountName: 'stappdata',

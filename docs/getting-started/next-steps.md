@@ -273,7 +273,7 @@ See [App and Stacks Guide](../guides/fundamentals/app-and-stacks.md)
 Write unit tests using standard testing frameworks:
 
 ```typescript
-import { AzureApp } from '@atakora/lib';
+import { AzureApp } from '@atakora/cdk';
 
 test('creates VNet with correct address space', () => {
   const app = new AzureApp({ /* ... */ });

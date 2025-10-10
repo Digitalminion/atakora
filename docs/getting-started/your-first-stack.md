@@ -85,7 +85,7 @@ npm install
 Open `packages/networking/bin/app.ts`. You'll see the basic structure:
 
 ```typescript
-import { AzureApp, SubscriptionStack } from '@atakora/lib';
+import { AzureApp, SubscriptionStack } from '@atakora/cdk';
 
 const app = new AzureApp({
   organization: 'Contoso',
@@ -121,7 +121,7 @@ Atakora provides different stack types for different deployment scopes:
 Deploys to a specific resource group:
 
 ```typescript
-import { AzureApp, ResourceGroupStack } from '@atakora/lib';
+import { AzureApp, ResourceGroupStack } from '@atakora/cdk';
 
 const app = new AzureApp({
   organization: 'Contoso',
@@ -149,7 +149,7 @@ const stack = new ResourceGroupStack(app, 'NetworkStack', {
 Deploys at subscription level (can create resource groups):
 
 ```typescript
-import { AzureApp, SubscriptionStack } from '@atakora/lib';
+import { AzureApp, SubscriptionStack } from '@atakora/cdk';
 
 const app = new AzureApp({
   organization: 'Contoso',
@@ -175,7 +175,7 @@ For this tutorial, we'll use **ResourceGroupStack** for simplicity.
 Replace the contents of `packages/networking/bin/app.ts` with this complete infrastructure:
 
 ```typescript
-import { AzureApp, ResourceGroupStack } from '@atakora/lib';
+import { AzureApp, ResourceGroupStack } from '@atakora/cdk';
 import {
   VirtualNetworks,
   Subnets,
@@ -705,7 +705,7 @@ While not covered in this tutorial, you can unit test infrastructure code:
 
 ```typescript
 // test/network-stack.test.ts
-import { AzureApp, ResourceGroupStack } from '@atakora/lib';
+import { AzureApp, ResourceGroupStack } from '@atakora/cdk';
 import { VirtualNetworks } from '@atakora/cdk/network';
 
 test('VNet has correct address space', () => {

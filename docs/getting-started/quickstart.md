@@ -17,7 +17,7 @@ All defined in type-safe TypeScript, synthesized to ARM templates, and deployed 
 
 Before starting, ensure you have:
 
-- [x] Atakora CLI installed (`npm install -g @atakora/cli @atakora/lib`)
+- [x] Atakora CLI installed (`npm install -g @atakora/cli`)
 - [x] Azure CLI installed and authenticated (`az login`)
 - [x] Active Azure subscription
 - [x] Node.js 18+ installed
@@ -82,7 +82,7 @@ npm install
 ```
 
 This installs:
-- `@atakora/lib` - Core framework
+- `@atakora/cdk` - Core framework and Azure resource constructs
 - `constructs` - Construct library
 - TypeScript compiler and type definitions
 
@@ -91,7 +91,7 @@ This installs:
 Edit `packages/platform/bin/app.ts` with this infrastructure code:
 
 ```typescript
-import { AzureApp, ResourceGroupStack } from '@atakora/lib';
+import { AzureApp, ResourceGroupStack } from '@atakora/cdk';
 import { VirtualNetworks } from '@atakora/cdk/network';
 import { StorageAccounts } from '@atakora/cdk/storage';
 
