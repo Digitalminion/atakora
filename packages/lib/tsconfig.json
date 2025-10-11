@@ -6,7 +6,12 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "tsBuildInfoFile": "../../dist/lib/.tsbuildinfo"
+    "tsBuildInfoFile": "../../dist/lib/.tsbuildinfo",
+    "baseUrl": ".",
+    "paths": {
+      "@atakora/cdk/api/rest": ["../../dist/cdk/api/rest/index.d.ts"],
+      "@atakora/cdk/*": ["../../dist/cdk/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["src/**/*.test.ts", "src/**/*.spec.ts"]

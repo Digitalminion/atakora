@@ -10,7 +10,7 @@ import type {
   ParameterSchema,
   ResponseDefinition,
   ContentTypeDefinition,
-} from '@atakora/cdk/src/api/rest';
+} from '@atakora/cdk/api/rest';
 import type {
   ArmOperationProperties,
   ArmTemplateParameter,

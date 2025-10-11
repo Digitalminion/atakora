@@ -13,7 +13,7 @@ import type {
   ContainerAppBackend,
   TlsConfiguration,
   CircuitBreakerConfig,
-} from '@atakora/cdk/src/api/rest/backend-types';
+} from '@atakora/cdk/api/rest';
 import type {
   ArmBackendProperties,
   ArmBackendCredentials,

@@ -1,6 +1,6 @@
 {
   "name": "@atakora/cli",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Azure Infrastructure as TypeScript - Type-safe ARM template generation",
   "bin": {
     "atakora": "./dist/cli.bundle.js"

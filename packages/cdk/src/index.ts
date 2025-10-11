@@ -335,3 +335,11 @@ export * as eventhub from './eventhub';
  * @deprecated Import directly from '@atakora/cdk/servicebus' instead
  */
 export * as servicebus from './servicebus';
+
+/**
+ * @deprecated Import directly from '@atakora/cdk/functions' instead
+ */
+export * as functions from './functions';
+
+// Note: API REST module is available via '@atakora/cdk/api/rest'
+// It's not re-exported here due to naming conflicts with the api namespace

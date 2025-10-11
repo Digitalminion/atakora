@@ -22,7 +22,7 @@ export interface GeneratePackageOptions {
 
   /**
    * Entry point file path relative to package
-   * @default "bin/app.ts"
+   * @default "src/app.ts"
    */
   readonly entryPoint?: string;
 }
@@ -36,8 +36,7 @@ export class PackageGenerator {
    *
    * Creates:
    * - packages/{name}/
-   * - packages/{name}/bin/app.ts
-   * - packages/{name}/lib/
+   * - packages/{name}/src/app.ts
    * - packages/{name}/package.json
    * - packages/{name}/tsconfig.json
    *
@@ -45,7 +44,7 @@ export class PackageGenerator {
    */
   public generate(options: GeneratePackageOptions): void {
     const packagePath = path.join(options.workspaceRoot, 'packages', options.packageName);
-    const entryPoint = options.entryPoint || 'bin/app.ts';
+    const entryPoint = options.entryPoint || 'src/app.ts';
 
     // Check if package directory already exists
     if (fs.existsSync(packagePath)) {
@@ -69,14 +68,11 @@ export class PackageGenerator {
     // Create main package directory
     fs.mkdirSync(packagePath, { recursive: true });
 
-    // Create bin directory if entry point is in bin/
+    // Create entry point directory (e.g., src/)
     const entryDir = path.dirname(entryPoint);
     if (entryDir !== '.') {
       fs.mkdirSync(path.join(packagePath, entryDir), { recursive: true });
     }
-
-    // Create lib directory for additional code
-    fs.mkdirSync(path.join(packagePath, 'lib'), { recursive: true });
   }
 
   /**
@@ -144,7 +140,7 @@ export class PackageGenerator {
    * Generates app entry point file
    */
   private generateAppFile(packagePath: string, entryPoint: string, packageName: string): void {
-    const appContent = `import { App } from '@atakora/lib';
+    const appContent = `import { App } from '@atakora/cdk';
 // Import Azure resources from @atakora/cdk namespaces
 // import { VirtualNetworks, NetworkSecurityGroups } from '@atakora/cdk/network';
 // import { StorageAccounts } from '@atakora/cdk/storage';
@@ -191,7 +187,7 @@ Infrastructure package for ${packageName}.
    npm install
    \`\`\`
 
-2. Define your infrastructure in \`bin/app.ts\`
+2. Define your infrastructure in \`src/app.ts\`
 
 3. Synthesize ARM templates:
    \`\`\`bash
@@ -200,8 +196,7 @@ Infrastructure package for ${packageName}.
 
 ## Project Structure
 
-- \`bin/\` - Entry point and application definition
-- \`lib/\` - Reusable infrastructure constructs
+- \`src/\` - Source code and application definition
 - \`dist/\` - Compiled TypeScript output
 
 ## Available Scripts

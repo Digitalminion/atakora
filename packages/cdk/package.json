@@ -1,6 +1,6 @@
 {
   "name": "@atakora/cdk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Azure resource constructs for Atakora - organized by Microsoft.* namespaces",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -73,6 +73,11 @@
       "import": "./dist/apimanagement/index.js",
       "require": "./dist/apimanagement/index.js"
     },
+    "./apimanagement/rest": {
+      "types": "./dist/apimanagement/rest/index.d.ts",
+      "import": "./dist/apimanagement/rest/index.js",
+      "require": "./dist/apimanagement/rest/index.js"
+    },
     "./resources": {
       "types": "./dist/resources/index.d.ts",
       "import": "./dist/resources/index.js",
@@ -82,6 +87,16 @@
       "types": "./dist/functions/index.d.ts",
       "import": "./dist/functions/index.js",
       "require": "./dist/functions/index.js"
+    },
+    "./api/rest": {
+      "types": "./dist/api/rest/index.d.ts",
+      "import": "./dist/api/rest/index.js",
+      "require": "./dist/api/rest/index.js"
+    },
+    "./storage/queue": {
+      "types": "./dist/storage/queue/index.d.ts",
+      "import": "./dist/storage/queue/index.js",
+      "require": "./dist/storage/queue/index.js"
     }
   },
   "typesVersions": {
@@ -125,11 +140,20 @@
       "apimanagement": [
         "./dist/apimanagement/index.d.ts"
       ],
+      "apimanagement/rest": [
+        "./dist/apimanagement/rest/index.d.ts"
+      ],
       "resources": [
         "./dist/resources/index.d.ts"
       ],
       "functions": [
         "./dist/functions/index.d.ts"
+      ],
+      "api/rest": [
+        "./dist/api/rest/index.d.ts"
+      ],
+      "storage/queue": [
+        "./dist/storage/queue/index.d.ts"
       ]
     }
   },

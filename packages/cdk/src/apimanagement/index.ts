@@ -13,3 +13,14 @@ export * from './api';
 export * from './product';
 export * from './subscription';
 export * from './policy';
+
+// REST API Stack exports (high-level orchestration)
+export { RestApiStack } from './rest/stack';
+export type { RestApiStackProps, ApiConfig, ApiOperationConfig } from './rest/stack';
+export {
+  createRestApi,
+  createCrudApi,
+  createAsyncApi,
+  createCatalogApi,
+  restApi,
+} from './rest/resource';

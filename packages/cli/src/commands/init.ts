@@ -44,7 +44,7 @@ ${chalk.bold('Description:')}
   │   └── manifest.json    ${chalk.dim('# Package manifest')}
   ├── ${chalk.cyan('packages/')}           ${chalk.dim('# Infrastructure packages')}
   │   └── ${chalk.cyan('backend/')}
-  │       ├── bin/app.ts   ${chalk.dim('# Entry point')}
+  │       ├── src/app.ts   ${chalk.dim('# Entry point')}
   │       └── package.json
   ├── package.json         ${chalk.dim('# Root workspace config')}
   ├── tsconfig.json        ${chalk.dim('# TypeScript config')}
@@ -188,7 +188,7 @@ ${chalk.bold('What happens:')}
         console.log(`     ${chalk.dim('$')} ${chalk.bold('npm install')}\n`);
         console.log(`  ${chalk.cyan('2.')} Define your infrastructure`);
         console.log(
-          `     ${chalk.dim('Edit:')} ${chalk.bold(`packages/${firstPackageName}/bin/app.ts`)}\n`
+          `     ${chalk.dim('Edit:')} ${chalk.bold(`packages/${firstPackageName}/src/app.ts`)}\n`
         );
         console.log(`  ${chalk.cyan('3.')} Generate ARM templates`);
         console.log(`     ${chalk.dim('$')} ${chalk.bold('npm run synth')}\n`);
@@ -373,7 +373,7 @@ This project uses [Atakora](https://github.com/digital-minion/atakora) to define
    \`\`\`
 
 2. **Define infrastructure:**
-   Edit \`packages/*/bin/app.ts\` to define your Azure resources using Atakora constructs.
+   Edit \`packages/*/src/app.ts\` to define your Azure resources using Atakora constructs.
 
 3. **Synthesize ARM templates:**
    \`\`\`bash
