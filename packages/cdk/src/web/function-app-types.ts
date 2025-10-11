@@ -163,9 +163,469 @@ export interface TimerTriggerConfig {
 }
 
 /**
+ * Queue trigger configuration.
+ */
+export interface QueueTriggerConfig {
+  readonly type: 'queue';
+
+  /**
+   * Queue name to monitor.
+   */
+  readonly queueName: string;
+
+  /**
+   * Storage account connection string app setting name.
+   *
+   * @remarks
+   * Defaults to 'AzureWebJobsStorage'.
+   */
+  readonly connection?: string;
+}
+
+/**
+ * Blob trigger configuration.
+ */
+export interface BlobTriggerConfig {
+  readonly type: 'blob';
+
+  /**
+   * Blob path pattern to monitor.
+   *
+   * @remarks
+   * Example: 'samples-workitems/{name}' or 'container/path/{name}.{ext}'
+   */
+  readonly path: string;
+
+  /**
+   * Storage account connection string app setting name.
+   *
+   * @remarks
+   * Defaults to 'AzureWebJobsStorage'.
+   */
+  readonly connection?: string;
+
+  /**
+   * Data type for the blob content.
+   *
+   * @remarks
+   * - 'binary': Buffer
+   * - 'string': string
+   * Defaults to 'binary'.
+   */
+  readonly dataType?: 'binary' | 'string';
+}
+
+/**
+ * Service Bus Queue trigger configuration.
+ */
+export interface ServiceBusQueueTriggerConfig {
+  readonly type: 'serviceBusQueue';
+
+  /**
+   * Queue name to monitor.
+   */
+  readonly queueName: string;
+
+  /**
+   * Service Bus connection string app setting name.
+   *
+   * @remarks
+   * Defaults to 'AzureWebJobsServiceBus'.
+   */
+  readonly connection?: string;
+
+  /**
+   * Enable session support for ordered processing.
+   */
+  readonly isSessionsEnabled?: boolean;
+}
+
+/**
+ * Service Bus Topic trigger configuration.
+ */
+export interface ServiceBusTopicTriggerConfig {
+  readonly type: 'serviceBusTopic';
+
+  /**
+   * Topic name to monitor.
+   */
+  readonly topicName: string;
+
+  /**
+   * Subscription name.
+   */
+  readonly subscriptionName: string;
+
+  /**
+   * Service Bus connection string app setting name.
+   *
+   * @remarks
+   * Defaults to 'AzureWebJobsServiceBus'.
+   */
+  readonly connection?: string;
+
+  /**
+   * Enable session support for ordered processing.
+   */
+  readonly isSessionsEnabled?: boolean;
+}
+
+/**
+ * Event Hub trigger configuration.
+ */
+export interface EventHubTriggerConfig {
+  readonly type: 'eventHub';
+
+  /**
+   * Event Hub name.
+   */
+  readonly eventHubName: string;
+
+  /**
+   * Event Hub connection string app setting name.
+   */
+  readonly connection: string;
+
+  /**
+   * Consumer group name.
+   *
+   * @remarks
+   * Defaults to '$Default'.
+   */
+  readonly consumerGroup?: string;
+
+  /**
+   * Cardinality of the batch.
+   *
+   * @remarks
+   * - 'one': Process one event at a time
+   * - 'many': Process batch of events
+   * Defaults to 'many'.
+   */
+  readonly cardinality?: 'one' | 'many';
+}
+
+/**
+ * Cosmos DB trigger configuration.
+ */
+export interface CosmosDBTriggerConfig {
+  readonly type: 'cosmosDB';
+
+  /**
+   * Cosmos DB database name.
+   */
+  readonly databaseName: string;
+
+  /**
+   * Collection (container) name to monitor.
+   */
+  readonly collectionName: string;
+
+  /**
+   * Cosmos DB connection string app setting name.
+   */
+  readonly connection: string;
+
+  /**
+   * Lease collection name.
+   *
+   * @remarks
+   * Used to store change feed lease state.
+   * Defaults to 'leases'.
+   */
+  readonly leaseCollectionName?: string;
+
+  /**
+   * Create lease collection if it doesn't exist.
+   *
+   * @remarks
+   * Defaults to false.
+   */
+  readonly createLeaseCollectionIfNotExists?: boolean;
+
+  /**
+   * Preferred locations for geo-replicated accounts.
+   */
+  readonly preferredLocations?: string;
+
+  /**
+   * Start from the beginning of the change feed.
+   *
+   * @remarks
+   * Defaults to false (starts from current time).
+   */
+  readonly startFromBeginning?: boolean;
+}
+
+/**
+ * Event Grid trigger configuration.
+ */
+export interface EventGridTriggerConfig {
+  readonly type: 'eventGrid';
+
+  /**
+   * Subscription topic filter.
+   *
+   * @remarks
+   * Optional filter for the Event Grid topic.
+   */
+  readonly topicFilter?: string;
+
+  /**
+   * Subscription subject filter.
+   *
+   * @remarks
+   * Optional filter for event subjects.
+   */
+  readonly subjectFilter?: string;
+}
+
+/**
+ * IoT Hub trigger configuration.
+ */
+export interface IoTHubTriggerConfig {
+  readonly type: 'iotHub';
+
+  /**
+   * Event Hub-compatible name.
+   *
+   * @remarks
+   * The name of the Event Hub-compatible endpoint.
+   */
+  readonly path: string;
+
+  /**
+   * IoT Hub connection string app setting name.
+   */
+  readonly connection: string;
+
+  /**
+   * Consumer group name.
+   *
+   * @remarks
+   * Defaults to '$Default'.
+   */
+  readonly consumerGroup?: string;
+
+  /**
+   * Cardinality of the batch.
+   *
+   * @remarks
+   * - 'one': Process one message at a time
+   * - 'many': Process batch of messages
+   * Defaults to 'many'.
+   */
+  readonly cardinality?: 'one' | 'many';
+}
+
+/**
+ * SignalR trigger configuration.
+ */
+export interface SignalRTriggerConfig {
+  readonly type: 'signalR';
+
+  /**
+   * Hub name.
+   */
+  readonly hubName: string;
+
+  /**
+   * Event category.
+   *
+   * @remarks
+   * - 'connections': Connection lifecycle events
+   * - 'messages': Message events
+   */
+  readonly category: 'connections' | 'messages';
+
+  /**
+   * Event name to trigger on.
+   */
+  readonly event: string;
+
+  /**
+   * SignalR connection string app setting name.
+   *
+   * @remarks
+   * Defaults to 'AzureSignalRConnectionString'.
+   */
+  readonly connection?: string;
+}
+
+/**
+ * Kafka trigger configuration.
+ */
+export interface KafkaTriggerConfig {
+  readonly type: 'kafka';
+
+  /**
+   * Kafka topic name.
+   */
+  readonly topic: string;
+
+  /**
+   * Kafka broker list.
+   */
+  readonly brokerList: string;
+
+  /**
+   * Consumer group ID.
+   */
+  readonly consumerGroup?: string;
+
+  /**
+   * Protocol for communication.
+   *
+   * @remarks
+   * Examples: 'plaintext', 'ssl', 'sasl_plaintext', 'sasl_ssl'
+   * Defaults to 'plaintext'.
+   */
+  readonly protocol?: string;
+
+  /**
+   * Authentication mode for SASL.
+   */
+  readonly authenticationMode?: string;
+
+  /**
+   * Username for SASL authentication.
+   */
+  readonly username?: string;
+
+  /**
+   * Password app setting name for SASL authentication.
+   */
+  readonly password?: string;
+}
+
+/**
+ * RabbitMQ trigger configuration.
+ */
+export interface RabbitMQTriggerConfig {
+  readonly type: 'rabbitMQ';
+
+  /**
+   * Queue name to monitor.
+   */
+  readonly queueName: string;
+
+  /**
+   * RabbitMQ connection string app setting name.
+   */
+  readonly connection: string;
+
+  /**
+   * Host name for the RabbitMQ server.
+   *
+   * @remarks
+   * Optional if connection string is provided.
+   */
+  readonly hostName?: string;
+
+  /**
+   * Port number for the RabbitMQ server.
+   */
+  readonly port?: number;
+}
+
+/**
+ * Redis Stream trigger configuration.
+ */
+export interface RedisStreamTriggerConfig {
+  readonly type: 'redisStream';
+
+  /**
+   * Redis connection string app setting name.
+   */
+  readonly connection: string;
+
+  /**
+   * Stream key to monitor.
+   */
+  readonly key: string;
+
+  /**
+   * Consumer group name.
+   */
+  readonly consumerGroup?: string;
+
+  /**
+   * Polling interval in milliseconds.
+   */
+  readonly pollingIntervalInMs?: number;
+
+  /**
+   * Maximum batch size.
+   */
+  readonly maxBatchSize?: number;
+}
+
+/**
+ * Durable Orchestrator trigger configuration.
+ */
+export interface DurableOrchestratorTriggerConfig {
+  readonly type: 'orchestrationTrigger';
+
+  /**
+   * Orchestration name.
+   *
+   * @remarks
+   * Optional, defaults to the function name.
+   */
+  readonly orchestration?: string;
+}
+
+/**
+ * Durable Activity trigger configuration.
+ */
+export interface DurableActivityTriggerConfig {
+  readonly type: 'activityTrigger';
+
+  /**
+   * Activity name.
+   *
+   * @remarks
+   * Optional, defaults to the function name.
+   */
+  readonly activity?: string;
+}
+
+/**
+ * Durable Entity trigger configuration.
+ */
+export interface DurableEntityTriggerConfig {
+  readonly type: 'entityTrigger';
+
+  /**
+   * Entity name.
+   *
+   * @remarks
+   * Optional, defaults to the function name.
+   */
+  readonly entityName?: string;
+}
+
+/**
  * Union type for all trigger configurations.
  */
-export type TriggerConfig = HttpTriggerConfig | TimerTriggerConfig;
+export type TriggerConfig =
+  | HttpTriggerConfig
+  | TimerTriggerConfig
+  | QueueTriggerConfig
+  | BlobTriggerConfig
+  | ServiceBusQueueTriggerConfig
+  | ServiceBusTopicTriggerConfig
+  | EventHubTriggerConfig
+  | CosmosDBTriggerConfig
+  | EventGridTriggerConfig
+  | IoTHubTriggerConfig
+  | SignalRTriggerConfig
+  | KafkaTriggerConfig
+  | RabbitMQTriggerConfig
+  | RedisStreamTriggerConfig
+  | DurableOrchestratorTriggerConfig
+  | DurableActivityTriggerConfig
+  | DurableEntityTriggerConfig;
 
 /**
  * Function App site configuration.
