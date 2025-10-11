@@ -4,6 +4,9 @@
   "description": "Core library",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist/**/*.js",
     "dist/**/*.d.ts",
