@@ -147,7 +147,7 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "clean": "rm -rf ./dist && rm -rf ../../dist/cdk",
-    "bundle:analyze": "webpack-bundle-analyzer dist/stats.json",
+    "bundle:analyze": "tsx scripts/analyze-bundle.ts",
     "circular:check": "madge --circular --extensions ts src/"
   },
   "keywords": [
@@ -164,7 +164,9 @@
     "@atakora/lib": "*"
   },
   "devDependencies": {
+    "esbuild": "^0.19.12",
     "madge": "^8.0.0",
+    "tsx": "^4.20.6",
     "vite-tsconfig-paths": "^5.1.4",
     "webpack-bundle-analyzer": "^4.10.1"
   },

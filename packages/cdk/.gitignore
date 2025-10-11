@@ -1,0 +1,4 @@
+
+# Bundle analysis temporary files
+.bundle-analysis/
+bundle-analysis-results/

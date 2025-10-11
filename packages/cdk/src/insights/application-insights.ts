@@ -11,44 +11,104 @@ import type {
 } from './application-insights-types';
 
 /**
- * L2 construct for Azure Application Insights (Microsoft.Insights/components).
+ * Azure Application Insights component for application performance monitoring and telemetry.
  *
- * @remarks
- * Intent-based API with sensible defaults and auto-naming.
- * Provides developer-friendly experience with minimal required configuration.
+ * Application Insights provides comprehensive application performance monitoring (APM),
+ * distributed tracing, and telemetry collection for web applications, APIs, and services.
+ * This construct creates a workspace-based Application Insights component that stores
+ * telemetry data in a Log Analytics workspace, enabling unified querying and long-term
+ * retention of application logs and metrics.
  *
- * **Features**:
- * - Auto-generates component name using parent naming context
- * - Defaults location to parent resource group's location
- * - Merges tags with parent tags
- * - Sensible defaults for application type, retention, and network access
- * - Workspace-based Application Insights (recommended)
+ * **Why This Exists**:
+ * Application Insights is essential for observability in production applications. It provides
+ * real-time monitoring of request rates, response times, failure rates, and custom telemetry.
+ * The workspace-based approach (introduced in 2020) unifies application telemetry with
+ * infrastructure logs, enabling powerful cross-resource queries and simplified data governance.
+ *
+ * **How It Fits In**:
+ * Application Insights integrates with:
+ * - Log Analytics Workspaces: Required for workspace-based architecture
+ * - Action Groups: For alerting based on application metrics
+ * - App Service / Functions: Automatic telemetry collection via instrumentation
+ * - Diagnostic Settings: Enabling export to Event Hubs or Storage
+ *
+ * **Design Decisions**:
+ * - Workspace-based mode is enforced (required parameter) for best practices
+ * - Defaults to 90-day retention balancing cost and troubleshooting needs
+ * - Public network access enabled by default for flexibility (can be disabled for security)
+ * - Auto-naming prevents resource name conflicts across deployments
+ *
+ * **Performance Considerations**:
+ * - Sampling can reduce ingestion costs but may miss low-frequency events
+ * - Retention beyond 90 days incurs additional costs
+ * - Disable IP masking only when compliance requires logging IP addresses
+ *
+ * **Government vs Commercial Cloud**:
+ * - Both clouds support Application Insights with identical functionality
+ * - Gov cloud endpoints: https://monitor.azure.us (vs https://monitor.azure.com)
+ * - Data sovereignty: Gov cloud data stays within US government datacenters
+ * - Compliance: Gov cloud meets FedRAMP, DoD IL5, and CJIS requirements
  *
  * **ARM Resource Type**: `Microsoft.Insights/components`
  * **API Version**: `2020-02-02`
  * **Deployment Scope**: ResourceGroup
  *
  * @example
- * Minimal usage (auto-generates everything):
+ * Basic web application monitoring with automatic naming:
  * ```typescript
  * import { Components } from '@atakora/cdk/insights';
+ * import { Workspaces } from '@atakora/cdk/operationalinsights';
  *
- * const appInsights = new Components(resourceGroup, 'WebApp', {
- *   workspace: logAnalyticsWorkspace
+ * // Create Log Analytics workspace first
+ * const workspace = new Workspaces(resourceGroup, 'Monitoring', {
+ *   retentionInDays: 30
  * });
+ *
+ * // Create Application Insights component
+ * const appInsights = new Components(resourceGroup, 'WebApp', {
+ *   workspace: workspace,
+ *   applicationType: ApplicationType.WEB
+ * });
+ *
+ * // Use instrumentation key in App Service
+ * webApp.addAppSetting('APPINSIGHTS_INSTRUMENTATIONKEY', appInsights.instrumentationKey);
  * ```
  *
  * @example
- * With custom properties:
+ * High-security configuration with disabled public access:
  * ```typescript
  * const appInsights = new Components(resourceGroup, 'ApiApp', {
  *   workspace: logAnalyticsWorkspace,
  *   applicationType: ApplicationType.WEB,
  *   retentionInDays: 90,
+ *   // Disable public network access for enhanced security
  *   publicNetworkAccessForIngestion: PublicNetworkAccess.DISABLED,
- *   publicNetworkAccessForQuery: PublicNetworkAccess.DISABLED
+ *   publicNetworkAccessForQuery: PublicNetworkAccess.DISABLED,
+ *   // Disable IP masking for audit requirements
+ *   disableIpMasking: false,
+ *   // Use connection string (recommended over instrumentation key)
+ *   disableLocalAuth: false
+ * });
+ *
+ * // Private endpoint configuration required when public access disabled
+ * // See: https://docs.microsoft.com/azure/azure-monitor/app/private-link
+ * ```
+ *
+ * @example
+ * Cost-optimized configuration with sampling:
+ * ```typescript
+ * const appInsights = new Components(resourceGroup, 'DevApp', {
+ *   workspace: logAnalyticsWorkspace,
+ *   retentionInDays: 30,
+ *   // Sample 20% of telemetry to reduce costs
+ *   samplingPercentage: 20,
+ *   tags: { environment: 'development', costCenter: 'eng' }
  * });
  * ```
+ *
+ * @see {@link https://docs.microsoft.com/azure/azure-monitor/app/app-insights-overview | Application Insights Documentation}
+ * @see {@link https://docs.microsoft.com/azure/azure-monitor/app/create-workspace-resource | Workspace-based Application Insights}
+ * @see {@link https://docs.microsoft.com/azure/azure-monitor/app/sampling | Telemetry Sampling}
  */
 export class Components extends Construct implements IApplicationInsights {
   /**
