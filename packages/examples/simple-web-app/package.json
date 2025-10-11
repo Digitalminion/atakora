@@ -12,9 +12,8 @@
     "clean": "rm -rf dist .atakora/arm.out"
   },
   "dependencies": {
-    "@atakora/lib": "^1.0.0",
-    "@atakora/cdk": "^1.0.0",
-    "constructs": "^10.0.0"
+    "@atakora/lib": "workspace:*",
+    "@atakora/cdk": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",

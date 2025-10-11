@@ -17,5 +17,9 @@
     "types": ["node"]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", ".atakora"]
+  "exclude": ["node_modules", "dist", ".atakora"],
+  "references": [
+    { "path": "../../lib" },
+    { "path": "../../cdk" }
+  ]
 }

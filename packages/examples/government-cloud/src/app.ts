@@ -1,8 +1,8 @@
-import { AzureApp, ResourceGroupStack } from '@atakora/lib';
-import { VirtualNetworks, Subnets, NetworkSecurityGroups, SecurityRules, PrivateEndpoints } from '@atakora/cdk/network';
-import { StorageAccounts, BlobContainers } from '@atakora/cdk/storage';
-import { Vaults, Secrets } from '@atakora/cdk/keyvault';
-import { Workspaces } from '@atakora/cdk/operationalinsights';
+import { App, SubscriptionStack, ResourceGroupStack, Subscription, Geography, Organization, Project, Environment, Instance } from '@atakora/cdk';
+import { VirtualNetworks, Subnets, NetworkSecurityGroups, PrivateEndpoints, PrivateEndpointNetworkPolicies, PrivateLinkServiceNetworkPolicies, SecurityRuleProtocol, SecurityRuleAccess, SecurityRuleDirection } from '@atakora/cdk/network';
+import { StorageAccounts, StorageAccountSkuName, StorageAccountKind, TlsVersion, NetworkAclDefaultAction, NetworkAclBypass } from '@atakora/cdk/storage';
+import { Vaults, KeyVaultSkuName } from '@atakora/cdk/keyvault';
+import { Workspaces, WorkspaceSku } from '@atakora/cdk/operationalinsights';
 
 /**
  * Azure Government Cloud Example
@@ -17,18 +17,27 @@ import { Workspaces } from '@atakora/cdk/operationalinsights';
  */
 
 // Configuration for Government Cloud
-const app = new AzureApp({
-  organization: process.env.ORGANIZATION || 'GovernmentOrg',
-  project: process.env.PROJECT || 'GovCloudApp',
-});
+const app = new App();
 
 const environment = process.env.ENVIRONMENT || 'gov';
 const location = process.env.AZURE_LOCATION || 'usgovvirginia'; // Gov Cloud region
 
+// Create subscription stack
+const subscriptionStack = new SubscriptionStack(app, 'GovCloudFoundation', {
+  subscription: Subscription.fromId(process.env.AZURE_SUBSCRIPTION_ID || '00000000-0000-0000-0000-000000000000'),
+  geography: Geography.fromValue(location),
+  organization: Organization.fromValue('governmentorg'),
+  project: new Project('govcloud'),
+  environment: Environment.fromValue('gov'),
+  instance: Instance.fromNumber(1),
+});
+
 // Create resource group stack
-const stack = new ResourceGroupStack(app, 'GovCloudStack', {
-  resourceGroupName: `rg-govcloud-${environment}`,
-  location: location,
+const stack = new ResourceGroupStack(subscriptionStack, 'GovCloudStack', {
+  resourceGroup: {
+    resourceGroupName: `rg-govcloud-${environment}`,
+    location: location,
+  },
   tags: {
     environment: environment,
     application: 'government-cloud-app',
@@ -41,9 +50,7 @@ const stack = new ResourceGroupStack(app, 'GovCloudStack', {
 // Log Analytics Workspace for centralized logging
 const logAnalytics = new Workspaces(stack, 'LogAnalytics', {
   workspaceName: `law-govcloud-${environment}`,
-  sku: {
-    name: 'PerGB2018',
-  },
+  sku: WorkspaceSku.PER_GB_2018,
   retentionInDays: 90, // Compliance requirement: retain logs for 90 days
   tags: {
     purpose: 'compliance-logging',
@@ -53,9 +60,7 @@ const logAnalytics = new Workspaces(stack, 'LogAnalytics', {
 // Virtual Network with restricted access
 const vnet = new VirtualNetworks(stack, 'SecureVNet', {
   virtualNetworkName: `vnet-govcloud-${environment}`,
-  addressSpace: {
-    addressPrefixes: ['10.100.0.0/16'], // Government-specific address space
-  },
+  addressSpace: ['10.100.0.0/16'], // Government-specific address space
   enableDdosProtection: false, // DDoS Standard not available in all Gov regions
   tags: {
     purpose: 'secure-networking',
@@ -63,81 +68,70 @@ const vnet = new VirtualNetworks(stack, 'SecureVNet', {
 });
 
 // Private subnet for backend services
-const privateSubnet = new Subnets(stack, 'PrivateSubnet', {
-  virtualNetworkName: vnet.name,
-  subnetName: 'snet-private',
+const privateSubnet = new Subnets(vnet, 'PrivateSubnet', {
+  name: 'snet-private',
   addressPrefix: '10.100.1.0/24',
   serviceEndpoints: [
     { service: 'Microsoft.Storage' },
     { service: 'Microsoft.KeyVault' },
   ],
-  privateEndpointNetworkPolicies: 'Disabled',
-  privateLinkServiceNetworkPolicies: 'Disabled',
+  privateEndpointNetworkPolicies: PrivateEndpointNetworkPolicies.DISABLED,
+  privateLinkServiceNetworkPolicies: PrivateLinkServiceNetworkPolicies.DISABLED,
 });
 
 // Management subnet for admin access
-const mgmtSubnet = new Subnets(stack, 'ManagementSubnet', {
-  virtualNetworkName: vnet.name,
-  subnetName: 'snet-management',
+const mgmtSubnet = new Subnets(vnet, 'ManagementSubnet', {
+  name: 'snet-management',
   addressPrefix: '10.100.10.0/24',
 });
 
-// Network Security Group with restrictive rules
+// Network Security Group with restrictive rules (inline security rules)
 const nsg = new NetworkSecurityGroups(stack, 'PrivateNSG', {
   networkSecurityGroupName: `nsg-private-${environment}`,
+  securityRules: [
+    {
+      name: 'AllowHTTPSFromMgmt',
+      priority: 100,
+      direction: SecurityRuleDirection.INBOUND,
+      access: SecurityRuleAccess.ALLOW,
+      protocol: SecurityRuleProtocol.TCP,
+      sourcePortRange: '*',
+      destinationPortRange: '443',
+      sourceAddressPrefix: '10.100.10.0/24',
+      destinationAddressPrefix: '*',
+      description: 'Allow HTTPS from management subnet',
+    },
+    {
+      name: 'DenyAllInbound',
+      priority: 4096,
+      direction: SecurityRuleDirection.INBOUND,
+      access: SecurityRuleAccess.DENY,
+      protocol: SecurityRuleProtocol.ALL,
+      sourcePortRange: '*',
+      destinationPortRange: '*',
+      sourceAddressPrefix: '*',
+      destinationAddressPrefix: '*',
+      description: 'Deny all inbound traffic by default',
+    },
+  ],
   tags: {
     purpose: 'network-security',
   },
 });
 
-// Deny all inbound by default (explicit)
-new SecurityRules(stack, 'DenyAllInbound', {
-  networkSecurityGroupName: nsg.name,
-  securityRuleName: 'DenyAllInbound',
-  priority: 4096,
-  direction: 'Inbound',
-  access: 'Deny',
-  protocol: '*',
-  sourcePortRange: '*',
-  destinationPortRange: '*',
-  sourceAddressPrefix: '*',
-  destinationAddressPrefix: '*',
-  description: 'Deny all inbound traffic by default',
-});
-
-// Allow HTTPS from management subnet only
-new SecurityRules(stack, 'AllowHTTPSFromMgmt', {
-  networkSecurityGroupName: nsg.name,
-  securityRuleName: 'AllowHTTPSFromMgmt',
-  priority: 100,
-  direction: 'Inbound',
-  access: 'Allow',
-  protocol: 'Tcp',
-  sourcePortRange: '*',
-  destinationPortRange: '443',
-  sourceAddressPrefix: '10.100.10.0/24',
-  destinationAddressPrefix: '*',
-  description: 'Allow HTTPS from management subnet',
-});
-
 // Secure Storage Account with private endpoint
 const storage = new StorageAccounts(stack, 'SecureStorage', {
-  accountName: `stgovcloud${environment}${Math.random().toString(36).slice(2, 6)}`.toLowerCase(),
-  sku: {
-    name: 'Standard_RAGRS', // Read-access geo-redundant for gov cloud
-  },
-  kind: 'StorageV2',
-  enableHttpsTrafficOnly: true,
-  minimumTlsVersion: 'TLS1_2',
-  allowBlobPublicAccess: false, // Never allow public access in gov cloud
-  allowSharedKeyAccess: false, // Require Azure AD authentication
-  networkRuleSet: {
-    defaultAction: 'Deny', // Deny all by default
-    bypass: 'AzureServices',
+  storageAccountName: `stgovcloud${environment}${Math.random().toString(36).slice(2, 6)}`.toLowerCase(),
+  sku: StorageAccountSkuName.STANDARD_RAGRS, // Read-access geo-redundant for gov cloud
+  kind: StorageAccountKind.STORAGE_V2,
+  minimumTlsVersion: TlsVersion.TLS1_2,
+  enableBlobPublicAccess: false, // Never allow public access in gov cloud
+  networkAcls: {
+    defaultAction: NetworkAclDefaultAction.DENY, // Deny all by default
+    bypass: NetworkAclBypass.AZURE_SERVICES,
     virtualNetworkRules: [
       {
-        id: privateSubnet.id,
-        action: 'Allow',
+        id: privateSubnet.subnetId,
       },
     ],
   },
@@ -147,66 +141,32 @@ const storage = new StorageAccounts(stack, 'SecureStorage', {
   },
 });
 
-// Blob container for sensitive data
-new BlobContainers(stack, 'SensitiveDataContainer', {
-  accountName: storage.name,
-  containerName: 'sensitive-data',
-  publicAccess: 'None',
-});
-
 // Azure Key Vault for secrets management
 const keyVault = new Vaults(stack, 'SecureKeyVault', {
   vaultName: `kv-govcloud-${environment}-${Math.random().toString(36).slice(2, 4)}`.toLowerCase(),
   tenantId: process.env.AZURE_TENANT_ID || 'your-tenant-id',
-  sku: {
-    family: 'A',
-    name: 'premium', // Hardware security modules for government compliance
-  },
+  sku: KeyVaultSkuName.PREMIUM, // Hardware security modules for government compliance
   enabledForDeployment: false,
   enabledForDiskEncryption: false,
   enabledForTemplateDeployment: true,
   enableSoftDelete: true,
   softDeleteRetentionInDays: 90,
   enablePurgeProtection: true, // Cannot be disabled - compliance requirement
-  networkAcls: {
-    defaultAction: 'Deny',
-    bypass: 'AzureServices',
-    virtualNetworkRules: [
-      {
-        id: privateSubnet.id,
-      },
-    ],
-  },
   tags: {
     purpose: 'secrets-management',
     classification: 'sensitive',
   },
 });
 
-// Store storage connection string in Key Vault
-new Secrets(stack, 'StorageConnectionSecret', {
-  vaultName: keyVault.name,
-  secretName: 'storage-connection-string',
-  properties: {
-    value: storage.primaryConnectionString,
-    contentType: 'text/plain',
-  },
-  tags: {
-    purpose: 'storage-credentials',
-  },
-});
+// TODO: Key Vault Secrets construct not yet implemented
+// Secrets can be added manually or using ARM templates after deployment
 
 // Private Endpoint for Storage Account
 new PrivateEndpoints(stack, 'StoragePrivateEndpoint', {
   privateEndpointName: `pe-storage-${environment}`,
-  subnetId: privateSubnet.id,
-  privateLinkServiceConnections: [
-    {
-      name: 'storage-connection',
-      privateLinkServiceId: storage.id,
-      groupIds: ['blob'],
-    },
-  ],
+  subnet: privateSubnet,
+  privateLinkServiceId: storage.storageAccountId,
+  groupIds: ['blob'],
   tags: {
     purpose: 'private-connectivity',
   },
@@ -215,14 +175,9 @@ new PrivateEndpoints(stack, 'StoragePrivateEndpoint', {
 // Private Endpoint for Key Vault
 new PrivateEndpoints(stack, 'KeyVaultPrivateEndpoint', {
   privateEndpointName: `pe-keyvault-${environment}`,
-  subnetId: privateSubnet.id,
-  privateLinkServiceConnections: [
-    {
-      name: 'keyvault-connection',
-      privateLinkServiceId: keyVault.id,
-      groupIds: ['vault'],
-    },
-  ],
+  subnet: privateSubnet,
+  privateLinkServiceId: keyVault.vaultId,
+  groupIds: ['vault'],
   tags: {
     purpose: 'private-connectivity',
   },
