@@ -106,7 +106,7 @@ const nsg = new NetworkSecurityGroups(stack, 'PrivateNSG', {
       priority: 4096,
       direction: SecurityRuleDirection.INBOUND,
       access: SecurityRuleAccess.DENY,
-      protocol: SecurityRuleProtocol.ALL,
+      protocol: SecurityRuleProtocol.ANY,
       sourcePortRange: '*',
       destinationPortRange: '*',
       sourceAddressPrefix: '*',
@@ -146,9 +146,6 @@ const keyVault = new Vaults(stack, 'SecureKeyVault', {
   vaultName: `kv-govcloud-${environment}-${Math.random().toString(36).slice(2, 4)}`.toLowerCase(),
   tenantId: process.env.AZURE_TENANT_ID || 'your-tenant-id',
   sku: KeyVaultSkuName.PREMIUM, // Hardware security modules for government compliance
-  enabledForDeployment: false,
-  enabledForDiskEncryption: false,
-  enabledForTemplateDeployment: true,
   enableSoftDelete: true,
   softDeleteRetentionInDays: 90,
   enablePurgeProtection: true, // Cannot be disabled - compliance requirement
