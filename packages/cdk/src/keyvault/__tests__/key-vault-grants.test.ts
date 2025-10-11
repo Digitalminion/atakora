@@ -10,8 +10,7 @@ import {
   Instance,
   ResourceGroup,
 } from '@atakora/cdk';
-import { IGrantable, PrincipalType } from '@atakora/lib/core/grants';
-import { WellKnownRoleIds } from '@atakora/lib/authorization';
+import { IGrantable, PrincipalType, WellKnownRoleIds } from '@atakora/lib';
 import { Vaults } from '../vaults';
 
 /**

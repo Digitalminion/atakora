@@ -18,15 +18,11 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Construct } from '@atakora/lib';
-import { StorageAccounts } from '../../storage/storage-accounts';
-import { Vaults } from '../../keyvault/vaults';
-import { CosmosDb } from '../../documentdb/cosmos-db';
-import { FunctionApp } from '../../functions/function-app';
-import { UserAssignedIdentity } from '@atakora/lib/managedidentity';
-import { WellKnownRoleIds, CrossStackGrant } from '@atakora/lib/authorization';
-import { PrincipalType } from '@atakora/lib/src/core/grants/principal-type';
-import { ManagedServiceIdentityType } from '../../functions/function-app-types';
+import { Construct, WellKnownRoleIds, PrincipalType, UserAssignedIdentity, CrossStackGrant } from '@atakora/lib';
+import { StorageAccounts } from '@atakora/cdk/storage';
+import { Vaults } from '@atakora/cdk/keyvault';
+import { DatabaseAccounts } from '@atakora/cdk/documentdb';
+import { FunctionApp, ManagedServiceIdentityType } from '@atakora/cdk/functions';
 
 // Mock ResourceGroup for testing
 class MockResourceGroup extends Construct {
@@ -205,7 +201,7 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
         },
       });
 
-      const grant = vault.grantCryptoUser(functionApp);
+      const grant = vault.grantCryptoUse(functionApp);
 
       expect(grant.roleDefinitionId).toBe(WellKnownRoleIds.KEY_VAULT_CRYPTO_USER);
     });
@@ -213,8 +209,8 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
 
   describe('Cosmos DB Grants', () => {
     it('should grant data read access', () => {
-      const cosmos = new CosmosDb(resourceGroup, 'Cosmos', {
-        accountName: 'test-cosmos',
+      const cosmos = new DatabaseAccounts(resourceGroup, 'Cosmos', {
+        databaseAccountName: 'test-cosmos',
         location: 'eastus',
       });
 
@@ -233,8 +229,8 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
     });
 
     it('should grant data write access', () => {
-      const cosmos = new CosmosDb(resourceGroup, 'Cosmos', {
-        accountName: 'test-cosmos',
+      const cosmos = new DatabaseAccounts(resourceGroup, 'Cosmos', {
+        databaseAccountName: 'test-cosmos',
         location: 'eastus',
       });
 
@@ -246,7 +242,7 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
         },
       });
 
-      const grant = cosmos.grantDataContribute(functionApp);
+      const grant = cosmos.grantDataWrite(functionApp);
 
       expect(grant.roleDefinitionId).toBe(WellKnownRoleIds.COSMOS_DB_DATA_CONTRIBUTOR);
     });
@@ -407,8 +403,8 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
         vaultName: 'test-vault',
       });
 
-      const cosmos = new CosmosDb(resourceGroup, 'Cosmos', {
-        accountName: 'test-cosmos',
+      const cosmos = new DatabaseAccounts(resourceGroup, 'Cosmos', {
+        databaseAccountName: 'test-cosmos',
         location: 'eastus',
       });
 
