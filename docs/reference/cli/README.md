@@ -19,6 +19,7 @@ The Atakora CLI provides commands for managing infrastructure-as-code projects. 
 | [`diff`](./diff.md) | Show template changes | Preview deployment impact |
 | [`config`](./config.md) | Manage authentication | Configure Azure credentials |
 | [`set-default`](./set-default.md) | Set default package | Switch active workspace |
+| [`function`](./function.md) | Manage Azure Functions | Create, test, and deploy functions |
 
 ## Installation
 
@@ -444,6 +445,7 @@ Detailed documentation for each command:
 - **[`diff`](./diff.md)** - Show differences between local and deployed
 - **[`config`](./config.md)** - Manage authentication configuration
 - **[`set-default`](./set-default.md)** - Set the default active package
+- **[`function`](./function.md)** - Manage Azure Functions (create, deploy, test)
 
 ## See Also
 
