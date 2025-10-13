@@ -1,4 +1,5 @@
 import type { IActionGroup } from './action-group-types';
+import { schema } from '@atakora/lib';
 
 /**
  * Type definitions for Metric Alert constructs.
@@ -6,45 +7,21 @@ import type { IActionGroup } from './action-group-types';
  * @packageDocumentation
  */
 
-/**
- * Metric alert criterion type discriminator.
- */
-export enum CriterionType {
-  STATIC_THRESHOLD = 'StaticThresholdCriterion',
-  DYNAMIC_THRESHOLD = 'DynamicThresholdCriterion',
-}
-
-/**
- * Operator for metric threshold comparison.
- */
-export enum MetricAlertOperator {
-  EQUALS = 'Equals',
-  NOT_EQUALS = 'NotEquals',
-  GREATER_THAN = 'GreaterThan',
-  GREATER_THAN_OR_EQUAL = 'GreaterThanOrEqual',
-  LESS_THAN = 'LessThan',
-  LESS_THAN_OR_EQUAL = 'LessThanOrEqual',
-}
+// Re-export enums from @atakora/lib schema
+export import CriterionType = schema.insights.CriterionType;
+export import MetricAlertOperator = schema.insights.MetricAlertOperator;
 
 /**
  * Time aggregation type for metrics.
  */
-export enum TimeAggregation {
-  AVERAGE = 'Average',
-  MINIMUM = 'Minimum',
-  MAXIMUM = 'Maximum',
-  TOTAL = 'Total',
-  COUNT = 'Count',
-}
+export const TimeAggregation = schema.insights.TimeAggregation;
+export type TimeAggregation = typeof TimeAggregation[keyof typeof TimeAggregation];
 
 /**
  * Alert sensitivity for dynamic thresholds.
  */
-export enum DynamicThresholdSensitivity {
-  LOW = 'Low',
-  MEDIUM = 'Medium',
-  HIGH = 'High',
-}
+export const DynamicThresholdSensitivity = schema.insights.DynamicThresholdSensitivity;
+export type DynamicThresholdSensitivity = typeof DynamicThresholdSensitivity[keyof typeof DynamicThresholdSensitivity];
 
 /**
  * Metric dimension for filtering.

@@ -1,0 +1,71 @@
+/**
+ * Shared types and schema for {{pascalCase}} resource
+ */
+
+/**
+ * {{pascalCase}} entity interface
+ */
+export interface {{pascalCase}} {
+  /**
+   * Unique identifier
+   */
+  id: string;
+
+  /**
+   * Partition key (same as id for single-partition design)
+   */
+  partitionKey?: string;
+
+  /**
+   * Creation timestamp
+   */
+  createdAt?: string;
+
+  /**
+   * Last update timestamp
+   */
+  updatedAt?: string;
+
+  // Add your custom fields here
+  // Example:
+  // name: string;
+  // email: string;
+  // status: 'active' | 'inactive';
+}
+
+/**
+ * JSON Schema definition for {{pascalCase}}
+ */
+export interface {{pascalCase}}Schema {
+  id: {
+    type: 'string';
+    required: true;
+  };
+  createdAt?: {
+    type: 'string';
+    format: 'date-time';
+  };
+  updatedAt?: {
+    type: 'string';
+    format: 'date-time';
+  };
+  // Add your schema fields here
+}
+
+/**
+ * Create{{pascalCase}} request body (omits id, createdAt, updatedAt)
+ */
+export type Create{{pascalCase}}Request = Omit<{{pascalCase}}, 'id' | 'createdAt' | 'updatedAt' | 'partitionKey'>;
+
+/**
+ * Update{{pascalCase}} request body (omits id, createdAt, partitionKey)
+ */
+export type Update{{pascalCase}}Request = Omit<{{pascalCase}}, 'id' | 'createdAt' | 'partitionKey'>;
+
+/**
+ * List{{pascalCase}}s response
+ */
+export interface List{{pascalCase}}sResponse {
+  items: {{pascalCase}}[];
+  continuationToken?: string;
+}

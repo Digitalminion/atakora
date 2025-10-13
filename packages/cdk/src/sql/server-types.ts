@@ -1,33 +1,22 @@
 /**
  * Type definitions for SQL Server constructs.
  *
+ * @remarks
+ * Types are re-exported from @atakora/lib/schema/sql for consistency.
+ *
  * @packageDocumentation
  */
 
-/**
- * SQL Server version.
- */
-export enum SqlServerVersion {
-  /**
-   * SQL Server 2019 (version 12.0).
-   */
-  V12_0 = '12.0',
-}
+// Import from lib schema namespace
+import { schema } from '@atakora/lib';
 
-/**
- * Public network access setting.
- */
-export enum PublicNetworkAccess {
-  /**
-   * Enabled - allows public access.
-   */
-  ENABLED = 'Enabled',
+// Re-export enums from lib schema
+export const SqlServerVersion = schema.sql.SqlServerVersion;
+export const PublicNetworkAccess = schema.sql.PublicNetworkAccess;
 
-  /**
-   * Disabled - no public access.
-   */
-  DISABLED = 'Disabled',
-}
+// Re-export types for TypeScript
+export type SqlServerVersion = typeof SqlServerVersion[keyof typeof SqlServerVersion];
+export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
 
 /**
  * Properties for ArmServers (L1 construct).

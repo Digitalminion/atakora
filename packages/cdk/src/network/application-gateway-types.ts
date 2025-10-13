@@ -4,55 +4,43 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * Application Gateway SKU name.
  */
-export enum ApplicationGatewaySkuName {
-  Standard_v2 = 'Standard_v2',
-  WAF_v2 = 'WAF_v2',
-}
+export const ApplicationGatewaySkuName = schema.network.ApplicationGatewaySkuName;
+export type ApplicationGatewaySkuName = typeof ApplicationGatewaySkuName[keyof typeof ApplicationGatewaySkuName];
 
 /**
  * Application Gateway SKU tier.
  */
-export enum ApplicationGatewayTier {
-  Standard_v2 = 'Standard_v2',
-  WAF_v2 = 'WAF_v2',
-}
+export const ApplicationGatewayTier = schema.network.ApplicationGatewayTier;
+export type ApplicationGatewayTier = typeof ApplicationGatewayTier[keyof typeof ApplicationGatewayTier];
 
 /**
  * Application Gateway protocol.
  */
-export enum ApplicationGatewayProtocol {
-  Http = 'Http',
-  Https = 'Https',
-}
+export const ApplicationGatewayProtocol = schema.network.ApplicationGatewayProtocol;
+export type ApplicationGatewayProtocol = typeof ApplicationGatewayProtocol[keyof typeof ApplicationGatewayProtocol];
 
 /**
  * Application Gateway request routing rule type.
  */
-export enum ApplicationGatewayRequestRoutingRuleType {
-  Basic = 'Basic',
-  PathBasedRouting = 'PathBasedRouting',
-}
+export const ApplicationGatewayRequestRoutingRuleType = schema.network.ApplicationGatewayRequestRoutingRuleType;
+export type ApplicationGatewayRequestRoutingRuleType = typeof ApplicationGatewayRequestRoutingRuleType[keyof typeof ApplicationGatewayRequestRoutingRuleType];
 
 /**
  * Application Gateway redirect type.
  */
-export enum ApplicationGatewayRedirectType {
-  Permanent = 'Permanent',
-  Found = 'Found',
-  SeeOther = 'SeeOther',
-  Temporary = 'Temporary',
-}
+export const ApplicationGatewayRedirectType = schema.network.ApplicationGatewayRedirectType;
+export type ApplicationGatewayRedirectType = typeof ApplicationGatewayRedirectType[keyof typeof ApplicationGatewayRedirectType];
 
 /**
  * Application Gateway cookie based affinity.
  */
-export enum ApplicationGatewayCookieBasedAffinity {
-  Enabled = 'Enabled',
-  Disabled = 'Disabled',
-}
+export const ApplicationGatewayCookieBasedAffinity = schema.network.ApplicationGatewayCookieBasedAffinity;
+export type ApplicationGatewayCookieBasedAffinity = typeof ApplicationGatewayCookieBasedAffinity[keyof typeof ApplicationGatewayCookieBasedAffinity];
 
 /**
  * Application Gateway SKU configuration.

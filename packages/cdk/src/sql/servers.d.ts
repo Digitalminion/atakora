@@ -1,0 +1,279 @@
+/**
+ * L2 construct for Azure SQL Server with grant capabilities.
+ *
+ * @remarks
+ * Provides an intent-based API with sensible defaults and built-in grant methods
+ * for role-based access control (RBAC).
+ *
+ * **Features**:
+ * - Auto-generates server names following naming conventions
+ * - Inherits and merges tags from parent
+ * - Applies secure defaults (TLS 1.2, disabled public access)
+ * - Extends GrantableResource for RBAC grant pattern
+ * - Built-in grant methods for common SQL permissions
+ *
+ * **Grant Methods**:
+ * - `grantDatabaseContributor()` - Manage databases
+ * - `grantSecurityManager()` - Manage security policies
+ * - `grantServerContributor()` - Manage server configuration
+ *
+ * @packageDocumentation
+ */
+import { Construct, GrantableResource } from '@atakora/lib';
+import type { IGrantable, IGrantResult, ArmResource } from '@atakora/lib';
+import type { ServersProps, IServers } from './server-types';
+/**
+ * L2 SQL Server construct with grant capabilities.
+ *
+ * @remarks
+ * Intent-based API that simplifies SQL Server creation with sensible defaults
+ * and provides built-in RBAC grant methods.
+ *
+ * **Default Behavior**:
+ * - Auto-generates server name if not provided
+ * - Inherits location from parent resource group
+ * - Sets minimalTlsVersion to '1.2' for security
+ * - Disables public network access by default
+ * - Merges tags from parent stack
+ *
+ * **Grant Pattern**:
+ * This class extends GrantableResource, enabling resources with managed identities
+ * to receive SQL permissions through semantic grant methods.
+ *
+ * @example
+ * Basic usage with minimal configuration:
+ * ```typescript
+ * import { Servers } from '@atakora/cdk/sql';
+ *
+ * const sqlServer = new Servers(resourceGroup, 'Database', {
+ *   administratorLogin: 'sqladmin',
+ *   administratorLoginPassword: 'P@ssw0rd123!'
+ * });
+ * ```
+ *
+ * @example
+ * With custom configuration:
+ * ```typescript
+ * const sqlServer = new Servers(resourceGroup, 'Database', {
+ *   serverName: 'sql-myapp-prod-001',
+ *   administratorLogin: 'sqladmin',
+ *   administratorLoginPassword: 'P@ssw0rd123!',
+ *   publicNetworkAccess: PublicNetworkAccess.ENABLED,
+ *   tags: { costCenter: '12345' }
+ * });
+ * ```
+ *
+ * @example
+ * Granting permissions to a managed identity:
+ * ```typescript
+ * // VM with managed identity
+ * const vm = new VirtualMachine(stack, 'VM', {
+ *   // ... vm config
+ * });
+ *
+ * // Grant SQL database contributor access
+ * sqlServer.grantDatabaseContributor(vm);
+ *
+ * // Grant security manager access
+ * sqlServer.grantSecurityManager(vm);
+ * ```
+ *
+ * @public
+ */
+export declare class Servers extends GrantableResource implements IServers {
+    /**
+     * Underlying L1 SQL Server construct.
+     *
+     * @remarks
+     * Provides access to the ARM-level construct for advanced scenarios.
+     */
+    private readonly armServer;
+    /**
+     * ARM resource type.
+     */
+    readonly resourceType: string;
+    /**
+     * Name of the SQL Server.
+     */
+    readonly serverName: string;
+    /**
+     * Resource name (same as serverName).
+     */
+    readonly name: string;
+    /**
+     * Azure region where the SQL Server is located.
+     */
+    readonly location: string;
+    /**
+     * Resource ID of the SQL Server.
+     */
+    readonly resourceId: string;
+    /**
+     * Resource ID of the SQL Server (alias for resourceId).
+     */
+    readonly serverId: string;
+    /**
+     * Creates a new L2 SQL Server construct.
+     *
+     * @param scope - Parent construct (typically a ResourceGroupStack)
+     * @param id - Unique identifier for this construct within the parent scope
+     * @param props - SQL Server properties
+     *
+     * @throws {Error} If parent is not a ResourceGroupStack (when location not provided)
+     */
+    constructor(scope: Construct, id: string, props: ServersProps);
+    /**
+     * Validates SQL Server properties.
+     *
+     * @param props - Properties to validate
+     * @internal
+     */
+    protected validateProps(props: ServersProps): void;
+    /**
+     * Generates ARM template representation.
+     *
+     * @returns ARM template resource object
+     * @internal
+     */
+    toArmTemplate(): ArmResource;
+    /**
+     * Grant SQL database contributor access.
+     *
+     * @remarks
+     * Allows the grantee to manage SQL databases including:
+     * - Create and delete databases
+     * - Configure database settings
+     * - Manage backups
+     * - Scale databases
+     *
+     * This is a control plane permission for managing database resources,
+     * not data plane access to database contents.
+     *
+     * **Role**: SQL DB Contributor
+     * **GUID**: `9b7fa17d-e63e-47b0-bb0a-15c516ac86ec`
+     *
+     * @param grantable - Identity to grant permissions to (resource with managed identity)
+     * @returns Grant result for further configuration or dependency management
+     *
+     * @example
+     * ```typescript
+     * const functionApp = new FunctionApp(stack, 'Api', { ... });
+     * const sqlServer = new Servers(stack, 'Database', { ... });
+     *
+     * // Grant database management permissions
+     * sqlServer.grantDatabaseContributor(functionApp);
+     * ```
+     *
+     * @public
+     */
+    grantDatabaseContributor(grantable: IGrantable): IGrantResult;
+    /**
+     * Grant SQL security manager access.
+     *
+     * @remarks
+     * Allows the grantee to manage SQL database security including:
+     * - Manage security policies
+     * - Configure auditing
+     * - Manage threat detection
+     * - View security alerts
+     *
+     * This role is focused on security management without full database administration.
+     *
+     * **Role**: SQL Security Manager
+     * **GUID**: `056cd41c-7e88-42e1-933e-88ba6a50c9c3`
+     *
+     * @param grantable - Identity to grant permissions to (resource with managed identity)
+     * @returns Grant result for further configuration or dependency management
+     *
+     * @example
+     * ```typescript
+     * const securityService = new FunctionApp(stack, 'Security', { ... });
+     * const sqlServer = new Servers(stack, 'Database', { ... });
+     *
+     * // Grant security management permissions
+     * sqlServer.grantSecurityManager(securityService);
+     * ```
+     *
+     * @public
+     */
+    grantSecurityManager(grantable: IGrantable): IGrantResult;
+    /**
+     * Grant SQL server contributor access.
+     *
+     * @remarks
+     * Allows the grantee to manage SQL servers including:
+     * - Create and delete SQL servers
+     * - Configure server settings
+     * - Manage server firewall rules
+     * - All database contributor permissions
+     *
+     * This is the highest level of SQL management permission.
+     *
+     * **Role**: SQL Server Contributor
+     * **GUID**: `6d8ee4ec-f05a-4a1d-8b00-a9b17e38b437`
+     *
+     * @param grantable - Identity to grant permissions to (resource with managed identity)
+     * @returns Grant result for further configuration or dependency management
+     *
+     * @example
+     * ```typescript
+     * const infraService = new FunctionApp(stack, 'Infrastructure', { ... });
+     * const sqlServer = new Servers(stack, 'Database', { ... });
+     *
+     * // Grant full server management permissions
+     * sqlServer.grantServerContributor(infraService);
+     * ```
+     *
+     * @public
+     */
+    grantServerContributor(grantable: IGrantable): IGrantResult;
+    /**
+     * Import an existing SQL Server by name.
+     *
+     * @remarks
+     * Creates a reference to an existing SQL Server without managing its lifecycle.
+     * Useful for referencing SQL Servers created outside the current stack.
+     *
+     * @param scope - Parent construct
+     * @param id - Unique identifier for this reference
+     * @param serverName - Name of the existing SQL Server
+     * @param location - Azure region where the server is located
+     * @returns SQL Server reference implementing IServers
+     *
+     * @example
+     * ```typescript
+     * const existingServer = Servers.fromServerName(
+     *   stack,
+     *   'ExistingDatabase',
+     *   'sql-prod-eastus-001',
+     *   'eastus'
+     * );
+     *
+     * // Can be used for grants
+     * existingServer.grantDatabaseContributor(myApp);
+     * ```
+     *
+     * @public
+     */
+    static fromServerName(scope: Construct, id: string, serverName: string, location: string): IServers;
+    /**
+     * Generates a resource-specific name following naming conventions.
+     *
+     * @param serviceAbbreviation - Azure service abbreviation (e.g., 'sql')
+     * @param purpose - Purpose derived from construct ID
+     * @returns Generated resource name
+     *
+     * @internal
+     */
+    private generateResourceName;
+    /**
+     * Merges tags from parent stack with provided tags.
+     *
+     * @param tags - Additional tags to merge
+     * @returns Merged tag collection
+     *
+     * @internal
+     */
+    private mergeTags;
+}
+//# sourceMappingURL=servers.d.ts.map

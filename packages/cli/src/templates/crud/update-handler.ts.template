@@ -1,0 +1,114 @@
+import { AzureFunction, Context, HttpRequest } from '@azure/functions';
+import { CosmosClient } from '@azure/cosmos';
+import { DefaultAzureCredential } from '@azure/identity';
+import type { {{pascalCase}}, Update{{pascalCase}}Request } from '../resource';
+
+/**
+ * Azure Function HTTP handler for updating a {{camelCase}}
+ */
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest
+): Promise<void> {
+  context.log('{{pascalCase}} UPDATE function processed a request');
+
+  try {
+    // Get ID from route parameters
+    const id = req.params?.id || context.bindingData?.id;
+
+    if (!id) {
+      context.res = {
+        status: 400,
+        body: { error: 'ID parameter is required' },
+      };
+      return;
+    }
+
+    // Parse request body
+    const requestBody: Update{{pascalCase}}Request = req.body;
+
+    if (!requestBody) {
+      context.res = {
+        status: 400,
+        body: { error: 'Request body is required' },
+      };
+      return;
+    }
+
+    // Get environment variables
+    const cosmosEndpoint = process.env.COSMOS_ENDPOINT;
+    const databaseName = process.env.COSMOS_DATABASE_NAME;
+    const containerName = process.env.COSMOS_CONTAINER_NAME;
+
+    if (!cosmosEndpoint || !databaseName || !containerName) {
+      context.res = {
+        status: 500,
+        body: { error: 'Missing Cosmos DB configuration' },
+      };
+      return;
+    }
+
+    // Create Cosmos client with managed identity
+    const credential = new DefaultAzureCredential();
+    const client = new CosmosClient({
+      endpoint: cosmosEndpoint,
+      aadCredentials: credential,
+    });
+
+    const database = client.database(databaseName);
+    const container = database.container(containerName);
+
+    // Read existing item
+    const { resource: existing } = await container.item(id, id).read<{{pascalCase}}>();
+
+    if (!existing) {
+      context.res = {
+        status: 404,
+        body: { error: '{{pascalCase}} not found' },
+      };
+      return;
+    }
+
+    // Update the item
+    const updated{{pascalCase}}: {{pascalCase}} = {
+      ...existing,
+      ...requestBody,
+      id, // Preserve ID
+      partitionKey: existing.partitionKey, // Preserve partition key
+      createdAt: existing.createdAt, // Preserve creation time
+      updatedAt: new Date().toISOString(),
+    };
+
+    const { resource } = await container
+      .item(id, id)
+      .replace(updated{{pascalCase}});
+
+    context.res = {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: resource,
+    };
+  } catch (error: any) {
+    context.log.error('Error updating {{camelCase}}:', error);
+
+    if (error.code === 404) {
+      context.res = {
+        status: 404,
+        body: { error: '{{pascalCase}} not found' },
+      };
+      return;
+    }
+
+    context.res = {
+      status: 500,
+      body: {
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+    };
+  }
+};
+
+export default httpTrigger;

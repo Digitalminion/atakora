@@ -67,6 +67,8 @@ export { App } from './app';
 export type { AppProps, UserProfile, ProjectConfig } from './app';
 export { AzureApp } from './azure-app';
 export type { AzureAppProps, UserConfig, ProfileConfig } from './azure-app';
+export { ManagementGroupStack } from './management-group-stack';
+export type { ManagementGroupStackProps } from './management-group-stack';
 export { SubscriptionStack } from './subscription-stack';
 export type { SubscriptionStackProps } from './subscription-stack';
 export { ResourceGroupStack } from './resource-group-stack';

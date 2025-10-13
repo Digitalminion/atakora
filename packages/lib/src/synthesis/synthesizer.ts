@@ -10,6 +10,7 @@ import { ValidationPipeline, ValidationLevel } from './validate/validation-pipel
 import { SchemaValidator } from './validate/schema-validator';
 import { NamingValidator } from './validate/naming-validator';
 import { LimitValidator } from './validate/limit-validator';
+import { ArmResourceValidator } from './validate/arm-resource-validator';
 import { DeploymentScope } from '../core/azure/scopes';
 import { Resource } from '../core/resource';
 
@@ -83,6 +84,7 @@ export class Synthesizer {
     this.validatorRegistry.register(new SchemaValidator());
     this.validatorRegistry.register(new NamingValidator());
     this.validatorRegistry.register(new LimitValidator());
+    this.validatorRegistry.register(new ArmResourceValidator());
 
     // Initialize validation pipeline with registry
     this.validationPipeline = new ValidationPipeline(this.validatorRegistry);

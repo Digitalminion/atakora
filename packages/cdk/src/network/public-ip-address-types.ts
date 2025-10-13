@@ -4,29 +4,25 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * SKU name for public IP address.
  */
-export enum PublicIPAddressSku {
-  BASIC = 'Basic',
-  STANDARD = 'Standard',
-}
+export const PublicIPAddressSku = schema.network.PublicIPAddressSku;
+export type PublicIPAddressSku = typeof PublicIPAddressSku[keyof typeof PublicIPAddressSku];
 
 /**
  * Public IP address allocation method.
  */
-export enum PublicIPAllocationMethod {
-  STATIC = 'Static',
-  DYNAMIC = 'Dynamic',
-}
+export const PublicIPAllocationMethod = schema.network.PublicIPAllocationMethod;
+export type PublicIPAllocationMethod = typeof PublicIPAllocationMethod[keyof typeof PublicIPAllocationMethod];
 
 /**
  * IP address version.
  */
-export enum IpVersion {
-  IPV4 = 'IPv4',
-  IPV6 = 'IPv6',
-}
+export const IpVersion = schema.network.IpVersion;
+export type IpVersion = typeof IpVersion[keyof typeof IpVersion];
 
 /**
  * SKU configuration.

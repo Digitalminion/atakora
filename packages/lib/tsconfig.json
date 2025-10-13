@@ -2,16 +2,11 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "./src",
-    "outDir": "../../dist/lib",
+    "outDir": "./dist",
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "tsBuildInfoFile": "../../dist/lib/.tsbuildinfo",
-    "baseUrl": ".",
-    "paths": {
-      "@atakora/cdk/api/rest": ["../../dist/cdk/api/rest/index.d.ts"],
-      "@atakora/cdk/*": ["../../dist/cdk/*"]
-    }
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "include": ["src/**/*"],
   "exclude": ["src/**/*.test.ts", "src/**/*.spec.ts"]

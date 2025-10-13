@@ -65,6 +65,7 @@ export {
   App,
 
   // Stack types for different deployment scopes
+  ManagementGroupStack,
   SubscriptionStack,
   ResourceGroupStack,
 
@@ -85,6 +86,7 @@ export type {
   ProjectConfig,
 
   // Stack configuration
+  ManagementGroupStackProps,
   SubscriptionStackProps,
   ResourceGroupStackProps,
 
@@ -188,6 +190,39 @@ export {
  */
 export type {
   ResourceValidator,
+} from '@atakora/lib';
+
+// ============================================================================
+// RBAC AND GRANT SYSTEM EXPORTS
+// Azure role-based access control and permission grants
+// ============================================================================
+
+/**
+ * Grant system interfaces and types
+ */
+export type {
+  IGrantable,
+  IGrantResult,
+} from '@atakora/lib';
+
+/**
+ * Grant system classes and utilities
+ */
+export {
+  PrincipalType,
+  GrantableResource,
+  WellKnownRoleIds,
+  RoleAssignment,
+  GrantResult,
+} from '@atakora/lib';
+
+/**
+ * Grant error classes
+ */
+export {
+  GrantError,
+  MissingIdentityError,
+  InvalidRoleAssignmentError,
 } from '@atakora/lib';
 
 // ============================================================================
@@ -307,6 +342,16 @@ export * as operationalinsights from './operationalinsights';
 export * as documentdb from './documentdb';
 
 /**
+ * @deprecated Import directly from '@atakora/cdk/cache' instead
+ */
+export * as cache from './cache';
+
+/**
+ * @deprecated Import directly from '@atakora/cdk/cdn' instead
+ */
+export * as cdn from './cdn';
+
+/**
  * @deprecated Import directly from '@atakora/cdk/cognitiveservices' instead
  */
 export * as cognitiveservices from './cognitiveservices';
@@ -341,5 +386,42 @@ export * as servicebus from './servicebus';
  */
 export * as functions from './functions';
 
+/**
+ * Subscription-level RBAC authorization
+ */
+export * as authorization from './authorization';
+
+/**
+ * Azure Policy for compliance and governance
+ */
+export * as policy from './policy';
+
+/**
+ * Azure Cost Management budgets for cost control
+ */
+export * as budget from './budget';
+
+/**
+ * Azure Resource Locks for resource protection
+ */
+export * as locks from './locks';
+
+/**
+ * Azure monitoring and activity log alerts
+ */
+export * as monitoring from './monitoring';
+
+/**
+ * Azure Management Group creation and management
+ */
+export * as managementgroups from './managementgroups';
+
+/**
+ * Azure SignalR Service for real-time communication
+ */
+export * as signalr from './signalr';
+
 // Note: API REST module is available via '@atakora/cdk/api/rest'
 // It's not re-exported here due to naming conflicts with the api namespace
+
+// Note: Data Stack is now in @atakora/component/data as a high-level composite

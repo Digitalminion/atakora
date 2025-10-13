@@ -66,11 +66,11 @@ const storage = new StorageAccounts(stack, 'Storage', {
 
 For complete documentation, see:
 
-- [CDK Package Guide](../../docs/usage/guides/cdk-package-guide.md)
-- [Resource Examples](../../docs/usage/examples/)
-- [API Reference](../../docs/reference/api/cdk/)
-- [Migration Guide](../../docs/usage/guides/migration/cdk-migration-summary.md)
-- [Architecture (ADR-003)](../../docs/design/architecture/adr-003-cdk-package-architecture.md)
+- [Getting Started Guide](../../docs/getting-started/)
+- [Resource Examples](../../docs/examples/)
+- [API Reference](../../docs/reference/)
+- [Migration Guide](../../docs/guides/migration/migrating-to-cdk-package.md)
+- [Architecture (ADR-003)](../../docs/architecture/decisions/adr-003-cdk-package-architecture.md)
 
 ## Development
 
@@ -100,7 +100,7 @@ npm run build          # Production build
 4. **Clear Boundaries**: Resources in CDK, framework in lib
 5. **Type Safety**: Full TypeScript support with strict mode
 
-See [ADR-003](../../docs/design/architecture/adr-003-cdk-package-architecture.md) for complete architectural details.
+See [ADR-003](../../docs/architecture/decisions/adr-003-cdk-package-architecture.md) for complete architectural details.
 
 ## Contributing
 
@@ -112,7 +112,7 @@ When contributing resources:
 4. Verify bundle size impact with `npm run bundle:analyze`
 5. Check for circular dependencies with `npm run circular:check`
 
-See [Contributing Guide](../../docs/contributor/CONTRIBUTING.md) for detailed guidelines.
+See [Contributing Guide](../../docs/contributing/README.md) for detailed guidelines.
 
 ## License
 

@@ -84,11 +84,91 @@ export * from './core';
 // Naming conventions and utilities
 export * from './naming';
 
-// Synthesis types (CloudAssembly, StackManifest, etc.)
+// Synthesis types and synthesizers (CloudAssembly, StackManifest, DataStackSynthesizer, etc.)
 export type { CloudAssembly, StackManifest } from './synthesis';
+export {
+  DataStackSynthesizer,
+  synthesizeCosmosContainer,
+  synthesizeEventTopics,
+  synthesizeResolvers,
+  validateContainerConfig,
+  validateEventSynthesis,
+  validateResolverSynthesis,
+  validateDataStackManifest,
+  IndexingMode,
+  IndexKind,
+  DataType,
+  EventType,
+  ResolverOperation,
+} from './synthesis';
+export type {
+  DataStackManifest,
+  DataStackSynthesisOptions,
+  DependencyGraph,
+  DependencyNode,
+  CosmosContainerConfig,
+  IndexingPolicy,
+  UniqueKeyPolicy,
+  TopicConfig,
+  SubscriptionConfig,
+  SqlFilter,
+  EventSynthesisResult,
+  ResolverConfig,
+  ResolverSynthesisResult,
+} from './synthesis';
 
 // Managed Identity constructs
 export * from './managedidentity';
 
 // Azure RBAC authorization (role assignments and well-known roles)
 export * from './authorization';
+
+// Azure resource schemas (centralized type definitions and enums)
+export * as schema from './schema';
+
+// Atakora schema DSL for data modeling
+export { defineSchema, Fields, allow, hasMany, hasOne, belongsTo, manyToMany, polymorphic } from './schema/atakora';
+export type { SchemaDefinition, InferSchemaType } from './schema/atakora';
+
+// Atakora runtime SDK (query and mutation builders, relationship loading)
+export {
+  QueryBuilder,
+  createQueryBuilder,
+  MutationBuilder,
+  createMutationBuilder,
+  RelationshipLoader,
+  createRelationshipLoader,
+} from './runtime';
+export type {
+  QueryOptions,
+  QueryResult,
+  MutationResult,
+  MutationError,
+  FilterOperator,
+  Filter,
+  SortDirection,
+  PaginationOptions,
+  RelationshipLoaderContext,
+  BatchLoaderOptions,
+} from './runtime';
+
+// Atakora code generation (types, SDK, React hooks)
+export {
+  generateTypes,
+  generateManyTypes,
+  generateSDK,
+  generateManySDK,
+  generateHooks,
+  generateManyHooks,
+} from './codegen';
+export type {
+  TypeGeneratorOptions,
+  GeneratedCode,
+  SDKGeneratorOptions,
+  GeneratedSDK,
+  HooksGeneratorOptions,
+  GeneratedHooks,
+} from './codegen';
+
+// API Management GraphQL types
+export * as graphql from './apimanagement/graphql';

@@ -44,11 +44,20 @@ ${chalk.bold('Description:')}
   │   └── manifest.json    ${chalk.dim('# Package manifest')}
   ├── ${chalk.cyan('packages/')}           ${chalk.dim('# Infrastructure packages')}
   │   └── ${chalk.cyan('backend/')}
-  │       ├── src/app.ts   ${chalk.dim('# Entry point')}
+  │       ├── src/index.ts ${chalk.dim('# Entry point')}
   │       └── package.json
   ├── package.json         ${chalk.dim('# Root workspace config')}
   ├── tsconfig.json        ${chalk.dim('# TypeScript config')}
   └── README.md
+
+  ${chalk.bold('Existing Monorepo Detection:')}
+  If run in a directory with an existing package.json that has workspaces
+  configured (e.g., workspaces: ["packages/*"]), init will:
+  ${chalk.green('✓')} Add Atakora to the existing monorepo
+  ${chalk.green('✓')} Create the backend package in existing packages/ folder
+  ${chalk.green('✓')} Add .atakora folder and manifest
+  ${chalk.green('✓')} Update existing package.json with Atakora scripts
+  ${chalk.yellow('⊘')} Skip creating new package.json, tsconfig.json, README.md
 
 ${chalk.bold('Examples:')}
   ${chalk.dim('# Interactive mode (prompts for input)')}
@@ -63,9 +72,9 @@ ${chalk.bold('Examples:')}
 ${chalk.bold('What happens:')}
   ${chalk.green('✓')} Creates project manifest in .atakora/manifest.json
   ${chalk.green('✓')} Generates first infrastructure package
-  ${chalk.green('✓')} Sets up npm workspace with package.json
-  ${chalk.green('✓')} Configures TypeScript with tsconfig.json
-  ${chalk.green('✓')} Creates .gitignore and README.md
+  ${chalk.green('✓')} Sets up npm workspace with package.json (or updates existing)
+  ${chalk.green('✓')} Configures TypeScript with tsconfig.json (if new project)
+  ${chalk.green('✓')} Creates/updates .gitignore with Atakora entries
 `
     )
     .action(async (options) => {
@@ -80,6 +89,9 @@ ${chalk.bold('What happens:')}
           console.log(chalk.gray('\nTo add a new package, use: atakora add <package-name>'));
           process.exit(1);
         }
+
+        // Check if we're in an existing monorepo with packages folder
+        const isExistingMonorepo = detectExistingMonorepo();
 
         // Get configuration via prompts or options
         let organization: string;
@@ -129,9 +141,16 @@ ${chalk.bold('What happens:')}
           firstPackageName = answers.firstPackageName;
         }
 
-        console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
-        console.log(chalk.bold.white('  Initializing Atakora Project'));
-        console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'));
+        if (isExistingMonorepo) {
+          console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+          console.log(chalk.bold.white('  Adding Atakora to Existing Project'));
+          console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'));
+          console.log(chalk.yellow('Detected existing monorepo structure'));
+        } else {
+          console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
+          console.log(chalk.bold.white('  Initializing Atakora Project'));
+          console.log(chalk.cyan('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'));
+        }
 
         // Create manifest
         spinner.start('Creating manifest...');
@@ -158,25 +177,38 @@ ${chalk.bold('What happens:')}
         });
         spinner.succeed(chalk.green(`Created packages/${firstPackageName}/`));
 
-        // Create root package.json
-        spinner.start('Creating root package.json...');
-        createRootPackageJson(project);
-        spinner.succeed(chalk.green('Created package.json'));
+        // Create or update root files only if not in existing monorepo
+        if (!isExistingMonorepo) {
+          // Create root package.json
+          spinner.start('Creating root package.json...');
+          createRootPackageJson(project);
+          spinner.succeed(chalk.green('Created package.json'));
 
-        // Create root tsconfig.json
-        spinner.start('Creating root tsconfig.json...');
-        createRootTsConfig();
-        spinner.succeed(chalk.green('Created tsconfig.json'));
+          // Create root tsconfig.json
+          spinner.start('Creating root tsconfig.json...');
+          createRootTsConfig();
+          spinner.succeed(chalk.green('Created tsconfig.json'));
 
-        // Create .gitignore
-        spinner.start('Creating .gitignore...');
-        createGitIgnore();
-        spinner.succeed(chalk.green('Created .gitignore'));
+          // Create .gitignore
+          spinner.start('Creating .gitignore...');
+          createGitIgnore();
+          spinner.succeed(chalk.green('Created .gitignore'));
 
-        // Create README
-        spinner.start('Creating README.md...');
-        createReadme(project, organization);
-        spinner.succeed(chalk.green('Created README.md'));
+          // Create README
+          spinner.start('Creating README.md...');
+          createReadme(project, organization);
+          spinner.succeed(chalk.green('Created README.md'));
+        } else {
+          // Update existing package.json with Atakora scripts
+          spinner.start('Updating root package.json...');
+          updateExistingPackageJson();
+          spinner.succeed(chalk.green('Updated package.json with Atakora scripts'));
+
+          // Ensure .gitignore has Atakora entries
+          spinner.start('Updating .gitignore...');
+          createGitIgnore();
+          spinner.succeed(chalk.green('Updated .gitignore'));
+        }
 
         // Success message
         console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
@@ -188,7 +220,7 @@ ${chalk.bold('What happens:')}
         console.log(`     ${chalk.dim('$')} ${chalk.bold('npm install')}\n`);
         console.log(`  ${chalk.cyan('2.')} Define your infrastructure`);
         console.log(
-          `     ${chalk.dim('Edit:')} ${chalk.bold(`packages/${firstPackageName}/src/app.ts`)}\n`
+          `     ${chalk.dim('Edit:')} ${chalk.bold(`packages/${firstPackageName}/src/index.ts`)}\n`
         );
         console.log(`  ${chalk.cyan('3.')} Generate ARM templates`);
         console.log(`     ${chalk.dim('$')} ${chalk.bold('npm run synth')}\n`);
@@ -373,7 +405,7 @@ This project uses [Atakora](https://github.com/digital-minion/atakora) to define
    \`\`\`
 
 2. **Define infrastructure:**
-   Edit \`packages/*/src/app.ts\` to define your Azure resources using Atakora constructs.
+   Edit \`packages/*/src/index.ts\` to define your Azure resources using Atakora constructs.
 
 3. **Synthesize ARM templates:**
    \`\`\`bash
@@ -418,5 +450,59 @@ For more information, see the [Atakora documentation](https://github.com/digital
   // Only create if doesn't exist
   if (!fs.existsSync(readmePath)) {
     fs.writeFileSync(readmePath, readme, 'utf-8');
+  }
+}
+
+/**
+ * Detects if we're in an existing monorepo with packages folder
+ */
+function detectExistingMonorepo(): boolean {
+  const packageJsonPath = path.join(process.cwd(), 'package.json');
+  const packagesPath = path.join(process.cwd(), 'packages');
+
+  // Check if package.json exists and has workspaces configured
+  if (fs.existsSync(packageJsonPath) && fs.existsSync(packagesPath)) {
+    try {
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+      // Check if workspaces is configured and includes packages/*
+      if (packageJson.workspaces) {
+        const workspaces = Array.isArray(packageJson.workspaces)
+          ? packageJson.workspaces
+          : packageJson.workspaces.packages || [];
+        return workspaces.some((ws: string) => ws === 'packages/*' || ws.startsWith('packages/'));
+      }
+    } catch {
+      // If we can't parse package.json, assume not a monorepo
+      return false;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Updates existing package.json with Atakora scripts
+ */
+function updateExistingPackageJson(): void {
+  const packageJsonPath = path.join(process.cwd(), 'package.json');
+
+  if (fs.existsSync(packageJsonPath)) {
+    const existing = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+
+    // Add Atakora scripts if they don't exist
+    const atakoraScripts = {
+      synth: 'atakora synth',
+      deploy: 'atakora deploy',
+      diff: 'atakora diff',
+    };
+
+    existing.scripts = {
+      ...existing.scripts,
+      ...Object.fromEntries(
+        Object.entries(atakoraScripts).filter(([key]) => !existing.scripts?.[key])
+      ),
+    };
+
+    fs.writeFileSync(packageJsonPath, JSON.stringify(existing, null, 2) + '\n', 'utf-8');
   }
 }

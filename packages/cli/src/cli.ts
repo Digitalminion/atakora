@@ -58,6 +58,7 @@ import { createDeployCommand } from './commands/deploy';
 import { createDiffCommand } from './commands/diff';
 import { createInitCommand } from './commands/init';
 import { createAddCommand } from './commands/add';
+import { createAddCrudCommand } from './commands/add-crud';
 import { createSetDefaultCommand } from './commands/set-default';
 import { createFunctionCommand } from './commands/function';
 
@@ -135,6 +136,7 @@ ${chalk.bold('Documentation:')} ${chalk.blue.underline('https://github.com/digit
   // Add commands
   program.addCommand(createInitCommand());
   program.addCommand(createAddCommand());
+  program.addCommand(createAddCrudCommand());
   program.addCommand(createSetDefaultCommand());
   program.addCommand(createConfigCommand());
   program.addCommand(createSynthCommand());

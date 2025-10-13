@@ -4,61 +4,39 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
 import type { IServerFarm } from './server-farm-types';
 import type { ManagedServiceIdentity } from '@atakora/lib';
 
 /**
  * Function runtime for Azure Functions.
  */
-export enum FunctionRuntime {
-  NODE = 'node',
-  PYTHON = 'python',
-  DOTNET = 'dotnet',
-  JAVA = 'java',
-  POWERSHELL = 'powershell',
-  CUSTOM = 'custom',
-}
+export const FunctionRuntime = schema.web.FunctionRuntime;
+export type FunctionRuntime = typeof FunctionRuntime[keyof typeof FunctionRuntime];
 
 /**
  * Authentication level for HTTP triggers.
  */
-export enum AuthLevel {
-  ANONYMOUS = 'anonymous',
-  FUNCTION = 'function',
-  ADMIN = 'admin',
-}
+export const AuthLevel = schema.web.AuthLevel;
+export type AuthLevel = typeof AuthLevel[keyof typeof AuthLevel];
 
 /**
  * HTTP methods.
  */
-export enum HttpMethod {
-  GET = 'GET',
-  POST = 'POST',
-  PUT = 'PUT',
-  DELETE = 'DELETE',
-  PATCH = 'PATCH',
-  HEAD = 'HEAD',
-  OPTIONS = 'OPTIONS',
-}
+export const HttpMethod = schema.web.HttpMethod;
+export type HttpMethod = typeof HttpMethod[keyof typeof HttpMethod];
 
 /**
  * FTPS state for the Function App.
  */
-export enum FtpsState {
-  ALL_ALLOWED = 'AllAllowed',
-  FTPS_ONLY = 'FtpsOnly',
-  DISABLED = 'Disabled',
-}
+export const FtpsState = schema.web.FtpsState;
+export type FtpsState = typeof FtpsState[keyof typeof FtpsState];
 
 /**
  * Minimum TLS version.
  */
-export enum MinTlsVersion {
-  TLS_1_0 = '1.0',
-  TLS_1_1 = '1.1',
-  TLS_1_2 = '1.2',
-  TLS_1_3 = '1.3',
-}
+export const MinTlsVersion = schema.web.MinTlsVersion;
+export type MinTlsVersion = typeof MinTlsVersion[keyof typeof MinTlsVersion];
 
 /**
  * CORS configuration.

@@ -6,16 +6,13 @@
 
 import type { IServerFarm } from './server-farm-types';
 import type { ManagedServiceIdentity } from '@atakora/lib';
-import { ManagedIdentityType } from '@atakora/lib';
+import { ManagedIdentityType, schema } from '@atakora/lib';
 
 /**
  * Kind of App Service.
  */
-export enum AppServiceKind {
-  APP = 'app',
-  FUNCTIONAPP = 'functionapp',
-  API = 'api',
-}
+export const AppServiceKind = schema.web.AppServiceKind;
+export type AppServiceKind = typeof AppServiceKind[keyof typeof AppServiceKind];
 
 /**
  * Managed service identity type.
@@ -26,38 +23,20 @@ export { ManagedIdentityType };
 /**
  * FTPS state for the App Service.
  */
-export enum FtpsState {
-  ALL_ALLOWED = 'AllAllowed',
-  FTPS_ONLY = 'FtpsOnly',
-  DISABLED = 'Disabled',
-}
+export const FtpsState = schema.web.FtpsState;
+export type FtpsState = typeof FtpsState[keyof typeof FtpsState];
 
 /**
  * Minimum TLS version.
  */
-export enum MinTlsVersion {
-  TLS_1_0 = '1.0',
-  TLS_1_1 = '1.1',
-  TLS_1_2 = '1.2',
-  TLS_1_3 = '1.3',
-}
+export const MinTlsVersion = schema.web.MinTlsVersion;
+export type MinTlsVersion = typeof MinTlsVersion[keyof typeof MinTlsVersion];
 
 /**
  * Connection string type.
  */
-export enum ConnectionStringType {
-  MYSQL = 'MySql',
-  SQL_SERVER = 'SQLServer',
-  SQL_AZURE = 'SQLAzure',
-  CUSTOM = 'Custom',
-  NOTIFICATION_HUB = 'NotificationHub',
-  SERVICE_BUS = 'ServiceBus',
-  EVENT_HUB = 'EventHub',
-  API_HUB = 'ApiHub',
-  DOC_DB = 'DocDb',
-  REDIS_CACHE = 'RedisCache',
-  POSTGRESQL = 'PostgreSQL',
-}
+export const ConnectionStringType = schema.web.ConnectionStringType;
+export type ConnectionStringType = typeof ConnectionStringType[keyof typeof ConnectionStringType];
 
 /**
  * Managed service identity configuration.

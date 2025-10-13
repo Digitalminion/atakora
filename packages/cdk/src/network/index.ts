@@ -7,6 +7,7 @@
  * - Network Security Groups (Microsoft.Network/networkSecurityGroups)
  * - Public IP Addresses (Microsoft.Network/publicIPAddresses)
  * - Private DNS Zones (Microsoft.Network/privateDnsZones)
+ * - Public DNS Zones (Microsoft.Network/dnsZones)
  * - Private Endpoints (Microsoft.Network/privateEndpoints)
  * - Application Gateways (Microsoft.Network/applicationGateways)
  * - WAF Policies (Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies)
@@ -69,6 +70,28 @@ export { PublicIPAddressSku, PublicIPAllocationMethod, IpVersion } from './publi
 export { ArmPrivateDnsZone } from './private-dns-zone-arm';
 export { PrivateDnsZones } from './private-dns-zones';
 export type { ArmPrivateDnsZoneProps, PrivateDnsZonesProps, IPrivateDnsZone } from './private-dns-zone-types';
+
+// Public DNS Zone exports
+export { ArmPublicDnsZone } from './public-dns-zone-arm';
+export { PublicDnsZones } from './public-dns-zones';
+export type { ArmPublicDnsZoneProps, PublicDnsZonesProps, IPublicDnsZone } from './public-dns-zone-types';
+export { DnsZoneType } from './public-dns-zone-types';
+
+// DNS Record exports
+export { ArmDnsCNameRecords } from './dns-cname-record-arm';
+export { ArmDnsTxtRecords } from './dns-txt-record-arm';
+export { DnsCNameRecords } from './dns-cname-records';
+export { DnsTxtRecords } from './dns-txt-records';
+export type {
+  ArmDnsCNameRecordProps,
+  ArmDnsTxtRecordProps,
+  DnsCNameRecordsProps,
+  DnsTxtRecordsProps,
+  IDnsCNameRecord,
+  IDnsTxtRecord,
+  DnsRecordType,
+} from './dns-record-types';
+export { DnsRecordType as DnsRecordTypeEnum } from './dns-record-types';
 
 // Virtual Network Link exports (for Private DNS Zone)
 export { ArmVirtualNetworkLink } from './virtual-network-link-arm';

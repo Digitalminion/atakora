@@ -10,35 +10,19 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * Key Vault SKU names.
  */
-export enum KeyVaultSkuName {
-  /**
-   * Standard vault.
-   */
-  STANDARD = 'standard',
-
-  /**
-   * Premium vault with HSM-backed keys.
-   */
-  PREMIUM = 'premium',
-}
+export const KeyVaultSkuName = schema.keyvault.KeyVaultSkuName;
+export type KeyVaultSkuName = typeof KeyVaultSkuName[keyof typeof KeyVaultSkuName];
 
 /**
  * Public network access options.
  */
-export enum PublicNetworkAccess {
-  /**
-   * Public network access is enabled.
-   */
-  ENABLED = 'enabled',
-
-  /**
-   * Public network access is disabled.
-   */
-  DISABLED = 'disabled',
-}
+export const PublicNetworkAccess = schema.keyvault.PublicNetworkAccess;
+export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
 
 /**
  * Key Vault SKU details.
@@ -58,32 +42,14 @@ export interface KeyVaultSku {
 /**
  * Network ACL bypass options.
  */
-export enum NetworkAclBypass {
-  /**
-   * Allow Azure services to bypass.
-   */
-  AZURE_SERVICES = 'AzureServices',
-
-  /**
-   * No bypass.
-   */
-  NONE = 'None',
-}
+export const NetworkAclBypass = schema.keyvault.NetworkAclBypass;
+export type NetworkAclBypass = typeof NetworkAclBypass[keyof typeof NetworkAclBypass];
 
 /**
  * Network ACL default action.
  */
-export enum NetworkAclDefaultAction {
-  /**
-   * Allow traffic by default.
-   */
-  ALLOW = 'Allow',
-
-  /**
-   * Deny traffic by default.
-   */
-  DENY = 'Deny',
-}
+export const NetworkAclDefaultAction = schema.keyvault.NetworkAclDefaultAction;
+export type NetworkAclDefaultAction = typeof NetworkAclDefaultAction[keyof typeof NetworkAclDefaultAction];
 
 /**
  * IP rule for network ACLs.

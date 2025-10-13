@@ -182,7 +182,7 @@ export class ManifestManager {
       packages: {
         [options.firstPackageName]: {
           path: `packages/${options.firstPackageName}`,
-          entry: 'src/main.ts',
+          entry: 'src/index.ts',
           enabled: true,
           type: options.firstPackageType || 'infrastructure',
         },
@@ -214,7 +214,7 @@ export class ManifestManager {
     // Create new package config
     const newPackage: PackageConfig = {
       path: `packages/${options.name}`,
-      entry: options.entry || 'src/main.ts',
+      entry: options.entry || 'src/index.ts',
       enabled: options.enabled !== false,
       type: options.type,
       deployment: options.deployment,

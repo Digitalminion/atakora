@@ -70,3 +70,106 @@ export type {
 export {
   ServiceBusSku,
 } from './service-bus-namespace-types';
+
+// ============================================================================
+// SERVICE BUS TOPIC EXPORTS
+// ============================================================================
+
+/**
+ * Service Bus Topic L1 construct
+ */
+export { ArmServiceBusTopic } from './service-bus-topic-arm';
+
+/**
+ * Service Bus Topic L2 construct with grant methods
+ */
+export { ServiceBusTopic } from './service-bus-topic';
+
+/**
+ * Service Bus Topic types and interfaces
+ */
+export type {
+  ArmServiceBusTopicProps,
+  ServiceBusTopicProps,
+  IServiceBusTopic,
+} from './service-bus-topic-types';
+
+/**
+ * Service Bus Topic enums
+ */
+export {
+  EntityStatus,
+  FilterType,
+} from './service-bus-topic-types';
+
+// ============================================================================
+// SERVICE BUS SUBSCRIPTION EXPORTS
+// ============================================================================
+
+/**
+ * Service Bus Subscription L1 construct
+ */
+export { ArmServiceBusSubscription } from './service-bus-subscription-arm';
+
+/**
+ * Service Bus Subscription L2 construct with grant methods
+ */
+export { ServiceBusSubscription } from './service-bus-subscription';
+
+/**
+ * Service Bus Subscription types and interfaces
+ */
+export type {
+  ArmServiceBusSubscriptionProps,
+  ServiceBusSubscriptionProps,
+  IServiceBusSubscription,
+  SqlFilter,
+  CorrelationFilter,
+  SqlRuleAction,
+} from './service-bus-topic-types';
+
+// ============================================================================
+// SERVICE BUS RULE EXPORTS
+// ============================================================================
+
+/**
+ * Service Bus Rule L1 construct
+ */
+export { ArmServiceBusRule } from './service-bus-rule';
+
+/**
+ * Service Bus Rule L2 construct
+ */
+export { ServiceBusRule } from './service-bus-rule';
+
+/**
+ * Service Bus Rule types and interfaces
+ */
+export type {
+  ArmServiceBusRuleProps,
+  ServiceBusRuleProps,
+  IServiceBusRule,
+} from './service-bus-topic-types';
+
+// ============================================================================
+// SERVICE BUS QUEUE EXPORTS
+// ============================================================================
+
+/**
+ * Service Bus Queue L1 construct
+ */
+export { ArmServiceBusQueue } from './service-bus-queue-arm';
+
+/**
+ * Service Bus Queue L2 construct with grant methods
+ */
+export { ServiceBusQueue } from './service-bus-queue';
+
+/**
+ * Service Bus Queue types and interfaces
+ */
+export type {
+  ArmServiceBusQueueProps,
+  ServiceBusQueueProps,
+  IServiceBusQueue,
+} from './service-bus-queue-types';

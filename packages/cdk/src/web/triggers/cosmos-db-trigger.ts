@@ -28,7 +28,7 @@ export class CosmosDBTrigger {
   private collectionName?: string;
   private connection?: string;
   private leaseCollectionName?: string;
-  private createLeaseCollectionIfNotExists?: boolean;
+  private createLeaseCollectionIfNotExistsFlag?: boolean;
   private preferredLocations?: string;
   private startFromBeginningFlag?: boolean;
 
@@ -120,7 +120,7 @@ export class CosmosDBTrigger {
    * ```
    */
   public createLeaseCollectionIfNotExists(create: boolean = true): this {
-    this.createLeaseCollectionIfNotExists = create;
+    this.createLeaseCollectionIfNotExistsFlag = create;
     return this;
   }
 
@@ -183,7 +183,7 @@ export class CosmosDBTrigger {
       collectionName: this.collectionName,
       connection: this.connection,
       leaseCollectionName: this.leaseCollectionName,
-      createLeaseCollectionIfNotExists: this.createLeaseCollectionIfNotExists,
+      createLeaseCollectionIfNotExists: this.createLeaseCollectionIfNotExistsFlag,
       preferredLocations: this.preferredLocations,
       startFromBeginning: this.startFromBeginningFlag,
     };

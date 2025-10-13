@@ -11,50 +11,25 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * Cognitive Services SKU names for OpenAI.
  */
-export enum CognitiveServicesSkuName {
-  /**
-   * Standard tier (S0) - required for OpenAI services.
-   */
-  S0 = 'S0',
-
-  /**
-   * Free tier (F0) - not available for OpenAI services.
-   */
-  F0 = 'F0',
-}
+export const CognitiveServicesSkuName = schema.cognitiveservices.CognitiveServicesSkuName;
+export type CognitiveServicesSkuName = typeof CognitiveServicesSkuName[keyof typeof CognitiveServicesSkuName];
 
 /**
  * Public network access options.
  */
-export enum PublicNetworkAccess {
-  /**
-   * Public network access is enabled.
-   */
-  ENABLED = 'Enabled',
-
-  /**
-   * Public network access is disabled.
-   */
-  DISABLED = 'Disabled',
-}
+export const PublicNetworkAccess = schema.cognitiveservices.PublicNetworkAccess;
+export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
 
 /**
  * Network rule action.
  */
-export enum NetworkRuleAction {
-  /**
-   * Allow traffic.
-   */
-  ALLOW = 'Allow',
-
-  /**
-   * Deny traffic.
-   */
-  DENY = 'Deny',
-}
+export const NetworkRuleAction = schema.cognitiveservices.NetworkRuleAction;
+export type NetworkRuleAction = typeof NetworkRuleAction[keyof typeof NetworkRuleAction];
 
 /**
  * SKU details for Cognitive Services.

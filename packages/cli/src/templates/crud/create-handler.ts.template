@@ -1,0 +1,83 @@
+import { AzureFunction, Context, HttpRequest } from '@azure/functions';
+import { CosmosClient } from '@azure/cosmos';
+import { DefaultAzureCredential } from '@azure/identity';
+import type { {{pascalCase}}, Create{{pascalCase}}Request } from '../resource';
+
+/**
+ * Azure Function HTTP handler for creating {{pluralCamelCase}}
+ */
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest
+): Promise<void> {
+  context.log('{{pascalCase}} CREATE function processed a request');
+
+  try {
+    // Get environment variables
+    const cosmosEndpoint = process.env.COSMOS_ENDPOINT;
+    const databaseName = process.env.COSMOS_DATABASE_NAME;
+    const containerName = process.env.COSMOS_CONTAINER_NAME;
+
+    if (!cosmosEndpoint || !databaseName || !containerName) {
+      context.res = {
+        status: 500,
+        body: { error: 'Missing Cosmos DB configuration' },
+      };
+      return;
+    }
+
+    // Parse request body
+    const requestBody: Create{{pascalCase}}Request = req.body;
+
+    if (!requestBody) {
+      context.res = {
+        status: 400,
+        body: { error: 'Request body is required' },
+      };
+      return;
+    }
+
+    // Create Cosmos client with managed identity
+    const credential = new DefaultAzureCredential();
+    const client = new CosmosClient({
+      endpoint: cosmosEndpoint,
+      aadCredentials: credential,
+    });
+
+    const database = client.database(databaseName);
+    const container = database.container(containerName);
+
+    // Create new {{camelCase}}
+    const now = new Date().toISOString();
+    const new{{pascalCase}}: {{pascalCase}} = {
+      id: crypto.randomUUID(),
+      partitionKey: crypto.randomUUID(), // Use same as id for single partition
+      ...requestBody,
+      createdAt: now,
+      updatedAt: now,
+    };
+
+    // Insert into Cosmos DB
+    const { resource } = await container.items.create(new{{pascalCase}});
+
+    context.res = {
+      status: 201,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: resource,
+    };
+  } catch (error) {
+    context.log.error('Error creating {{camelCase}}:', error);
+
+    context.res = {
+      status: 500,
+      body: {
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+    };
+  }
+};
+
+export default httpTrigger;

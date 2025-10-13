@@ -4,45 +4,25 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * SKU name for Server Farm.
  */
-export enum ServerFarmSkuName {
-  F1 = 'F1',
-  B1 = 'B1',
-  B2 = 'B2',
-  B3 = 'B3',
-  S1 = 'S1',
-  S2 = 'S2',
-  S3 = 'S3',
-  P1V2 = 'P1v2',
-  P2V2 = 'P2v2',
-  P3V2 = 'P3v2',
-  P1V3 = 'P1v3',
-  P2V3 = 'P2v3',
-  P3V3 = 'P3v3',
-}
+export const ServerFarmSkuName = schema.web.ServerFarmSkuName;
+export type ServerFarmSkuName = typeof ServerFarmSkuName[keyof typeof ServerFarmSkuName];
 
 /**
  * SKU tier for Server Farm.
  */
-export enum ServerFarmSkuTier {
-  FREE = 'Free',
-  BASIC = 'Basic',
-  STANDARD = 'Standard',
-  PREMIUM = 'Premium',
-  PREMIUM_V2 = 'PremiumV2',
-  PREMIUM_V3 = 'PremiumV3',
-}
+export const ServerFarmSkuTier = schema.web.ServerFarmSkuTier;
+export type ServerFarmSkuTier = typeof ServerFarmSkuTier[keyof typeof ServerFarmSkuTier];
 
 /**
  * Kind of Server Farm.
  */
-export enum ServerFarmKind {
-  LINUX = 'linux',
-  WINDOWS = 'windows',
-  APP = 'app',
-}
+export const ServerFarmKind = schema.web.ServerFarmKind;
+export type ServerFarmKind = typeof ServerFarmKind[keyof typeof ServerFarmKind];
 
 /**
  * SKU configuration for Server Farm.

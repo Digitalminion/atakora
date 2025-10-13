@@ -7,6 +7,182 @@
   "publishConfig": {
     "access": "public"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./authorization": {
+      "types": "./dist/authorization/index.d.ts",
+      "import": "./dist/authorization/index.js",
+      "require": "./dist/authorization/index.js"
+    },
+    "./apimanagement/rest": {
+      "types": "./dist/apimanagement/rest/index.d.ts",
+      "import": "./dist/apimanagement/rest/index.js",
+      "require": "./dist/apimanagement/rest/index.js"
+    },
+    "./synthesis/functions": {
+      "types": "./dist/synthesis/functions/index.d.ts",
+      "import": "./dist/synthesis/functions/index.js",
+      "require": "./dist/synthesis/functions/index.js"
+    },
+    "./schema/documentdb": {
+      "types": "./dist/schema/microsoft/documentdb/index.d.ts",
+      "import": "./dist/schema/microsoft/documentdb/index.js",
+      "require": "./dist/schema/microsoft/documentdb/index.js"
+    },
+    "./schema/servicebus": {
+      "types": "./dist/schema/microsoft/servicebus/index.d.ts",
+      "import": "./dist/schema/microsoft/servicebus/index.js",
+      "require": "./dist/schema/microsoft/servicebus/index.js"
+    },
+    "./schema/sql": {
+      "types": "./dist/schema/microsoft/sql/index.d.ts",
+      "import": "./dist/schema/microsoft/sql/index.js",
+      "require": "./dist/schema/microsoft/sql/index.js"
+    },
+    "./schema/operationalinsights": {
+      "types": "./dist/schema/microsoft/operationalinsights/index.d.ts",
+      "import": "./dist/schema/microsoft/operationalinsights/index.js",
+      "require": "./dist/schema/microsoft/operationalinsights/index.js"
+    },
+    "./schema/cognitiveservices": {
+      "types": "./dist/schema/microsoft/cognitiveservices/index.d.ts",
+      "import": "./dist/schema/microsoft/cognitiveservices/index.js",
+      "require": "./dist/schema/microsoft/cognitiveservices/index.js"
+    },
+    "./schema/search": {
+      "types": "./dist/schema/microsoft/search/index.d.ts",
+      "import": "./dist/schema/microsoft/search/index.js",
+      "require": "./dist/schema/microsoft/search/index.js"
+    },
+    "./schema/network": {
+      "types": "./dist/schema/microsoft/network/index.d.ts",
+      "import": "./dist/schema/microsoft/network/index.js",
+      "require": "./dist/schema/microsoft/network/index.js"
+    },
+    "./schema/web": {
+      "types": "./dist/schema/microsoft/web/index.d.ts",
+      "import": "./dist/schema/microsoft/web/index.js",
+      "require": "./dist/schema/microsoft/web/index.js"
+    },
+    "./schema/insights": {
+      "types": "./dist/schema/microsoft/insights/index.d.ts",
+      "import": "./dist/schema/microsoft/insights/index.js",
+      "require": "./dist/schema/microsoft/insights/index.js"
+    },
+    "./schema/keyvault": {
+      "types": "./dist/schema/microsoft/keyvault/index.d.ts",
+      "import": "./dist/schema/microsoft/keyvault/index.js",
+      "require": "./dist/schema/microsoft/keyvault/index.js"
+    },
+    "./schema/storage": {
+      "types": "./dist/schema/microsoft/storage/index.d.ts",
+      "import": "./dist/schema/microsoft/storage/index.js",
+      "require": "./dist/schema/microsoft/storage/index.js"
+    },
+    "./schema/cache": {
+      "types": "./dist/schema/microsoft/cache/index.d.ts",
+      "import": "./dist/schema/microsoft/cache/index.js",
+      "require": "./dist/schema/microsoft/cache/index.js"
+    },
+    "./schema/signalr": {
+      "types": "./dist/schema/microsoft/signalr/index.d.ts",
+      "import": "./dist/schema/microsoft/signalr/index.js",
+      "require": "./dist/schema/microsoft/signalr/index.js"
+    },
+    "./schema/authorization": {
+      "types": "./dist/schema/microsoft/authorization/index.d.ts",
+      "import": "./dist/schema/microsoft/authorization/index.js",
+      "require": "./dist/schema/microsoft/authorization/index.js"
+    },
+    "./schema/consumption": {
+      "types": "./dist/schema/microsoft/consumption/index.d.ts",
+      "import": "./dist/schema/microsoft/consumption/index.js",
+      "require": "./dist/schema/microsoft/consumption/index.js"
+    },
+    "./schema/resources": {
+      "types": "./dist/schema/microsoft/resources/index.d.ts",
+      "import": "./dist/schema/microsoft/resources/index.js",
+      "require": "./dist/schema/microsoft/resources/index.js"
+    },
+    "./schema/apimanagement": {
+      "types": "./dist/schema/microsoft/apimanagement/index.d.ts",
+      "import": "./dist/schema/microsoft/apimanagement/index.js",
+      "require": "./dist/schema/microsoft/apimanagement/index.js"
+    },
+    "./schema/eventhub": {
+      "types": "./dist/schema/microsoft/eventhub/index.d.ts",
+      "import": "./dist/schema/microsoft/eventhub/index.js",
+      "require": "./dist/schema/microsoft/eventhub/index.js"
+    },
+    "./schema/managedidentity": {
+      "types": "./dist/schema/microsoft/managedidentity/index.d.ts",
+      "import": "./dist/schema/microsoft/managedidentity/index.js",
+      "require": "./dist/schema/microsoft/managedidentity/index.js"
+    },
+    "./schema/aad": {
+      "types": "./dist/schema/microsoft/aad/index.d.ts",
+      "import": "./dist/schema/microsoft/aad/index.js",
+      "require": "./dist/schema/microsoft/aad/index.js"
+    },
+    "./schema/azureactivedirectory": {
+      "types": "./dist/schema/microsoft/azureactivedirectory/index.d.ts",
+      "import": "./dist/schema/microsoft/azureactivedirectory/index.js",
+      "require": "./dist/schema/microsoft/azureactivedirectory/index.js"
+    },
+    "./schema/purview": {
+      "types": "./dist/schema/microsoft/purview/index.d.ts",
+      "import": "./dist/schema/microsoft/purview/index.js",
+      "require": "./dist/schema/microsoft/purview/index.js"
+    },
+    "./schema/dbforpostgresql": {
+      "types": "./dist/schema/microsoft/dbforpostgresql/index.d.ts",
+      "import": "./dist/schema/microsoft/dbforpostgresql/index.js",
+      "require": "./dist/schema/microsoft/dbforpostgresql/index.js"
+    },
+    "./schema/dbformysql": {
+      "types": "./dist/schema/microsoft/dbformysql/index.d.ts",
+      "import": "./dist/schema/microsoft/dbformysql/index.js",
+      "require": "./dist/schema/microsoft/dbformysql/index.js"
+    },
+    "./schema/dbformariadb": {
+      "types": "./dist/schema/microsoft/dbformariadb/index.d.ts",
+      "import": "./dist/schema/microsoft/dbformariadb/index.js",
+      "require": "./dist/schema/microsoft/dbformariadb/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      ".": ["./dist/index.d.ts"],
+      "apimanagement/rest": ["./dist/apimanagement/rest/index.d.ts"],
+      "synthesis/functions": ["./dist/synthesis/functions/index.d.ts"],
+      "schema/documentdb": ["./dist/schema/microsoft/documentdb/index.d.ts"],
+      "schema/servicebus": ["./dist/schema/microsoft/servicebus/index.d.ts"],
+      "schema/sql": ["./dist/schema/microsoft/sql/index.d.ts"],
+      "schema/operationalinsights": ["./dist/schema/microsoft/operationalinsights/index.d.ts"],
+      "schema/cognitiveservices": ["./dist/schema/microsoft/cognitiveservices/index.d.ts"],
+      "schema/search": ["./dist/schema/microsoft/search/index.d.ts"],
+      "schema/network": ["./dist/schema/microsoft/network/index.d.ts"],
+      "schema/web": ["./dist/schema/microsoft/web/index.d.ts"],
+      "schema/insights": ["./dist/schema/microsoft/insights/index.d.ts"],
+      "schema/keyvault": ["./dist/schema/microsoft/keyvault/index.d.ts"],
+      "schema/storage": ["./dist/schema/microsoft/storage/index.d.ts"],
+      "schema/cache": ["./dist/schema/microsoft/cache/index.d.ts"],
+      "schema/signalr": ["./dist/schema/microsoft/signalr/index.d.ts"],
+      "schema/authorization": ["./dist/schema/microsoft/authorization/index.d.ts"],
+      "schema/consumption": ["./dist/schema/microsoft/consumption/index.d.ts"],
+      "schema/resources": ["./dist/schema/microsoft/resources/index.d.ts"],
+      "schema/apimanagement": ["./dist/schema/microsoft/apimanagement/index.d.ts"],
+      "schema/eventhub": ["./dist/schema/microsoft/eventhub/index.d.ts"],
+      "schema/managedidentity": ["./dist/schema/microsoft/managedidentity/index.d.ts"],
+      "schema/aad": ["./dist/schema/microsoft/aad/index.d.ts"],
+      "schema/azureactivedirectory": ["./dist/schema/microsoft/azureactivedirectory/index.d.ts"],
+      "schema/purview": ["./dist/schema/microsoft/purview/index.d.ts"]
+    }
+  },
   "files": [
     "dist/**/*.js",
     "dist/**/*.d.ts",
@@ -37,9 +213,8 @@
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.1",
     "constructs": "^10.3.0",
-    "esbuild": "^0.19.0"
-  },
-  "devDependencies": {
-    "@atakora/cdk": "*"
+    "esbuild": "^0.19.0",
+    "openapi-types": "^12.1.3",
+    "zod": "^3.25.76"
   }
 }

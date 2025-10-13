@@ -4,34 +4,25 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * SKU name for AI Search service.
  */
-export enum SearchServiceSku {
-  FREE = 'free',
-  BASIC = 'basic',
-  STANDARD = 'standard',
-  STANDARD2 = 'standard2',
-  STANDARD3 = 'standard3',
-  STORAGE_OPTIMIZED_L1 = 'storage_optimized_l1',
-  STORAGE_OPTIMIZED_L2 = 'storage_optimized_l2',
-}
+export const SearchServiceSku = schema.search.SearchServiceSku;
+export type SearchServiceSku = typeof SearchServiceSku[keyof typeof SearchServiceSku];
 
 /**
  * Hosting mode for search service.
  */
-export enum HostingMode {
-  DEFAULT = 'default',
-  HIGH_DENSITY = 'highDensity',
-}
+export const HostingMode = schema.search.HostingMode;
+export type HostingMode = typeof HostingMode[keyof typeof HostingMode];
 
 /**
  * Public network access setting.
  */
-export enum PublicNetworkAccess {
-  ENABLED = 'enabled',
-  DISABLED = 'disabled',
-}
+export const PublicNetworkAccess = schema.search.PublicNetworkAccess;
+export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
 
 /**
  * SKU configuration.

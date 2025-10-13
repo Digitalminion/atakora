@@ -1,28 +1,20 @@
 /**
  * Type definitions for Service Bus Namespace constructs.
  *
+ * @remarks
+ * Types are re-exported from @atakora/lib/schema/servicebus for consistency.
+ *
  * @packageDocumentation
  */
 
-/**
- * Service Bus SKU tier.
- */
-export enum ServiceBusSku {
-  /**
-   * Basic tier - shared messaging, up to 256KB messages.
-   */
-  BASIC = 'Basic',
+// Import from lib schema namespace
+import { schema } from '@atakora/lib';
 
-  /**
-   * Standard tier - shared messaging, topics/subscriptions, up to 256KB messages.
-   */
-  STANDARD = 'Standard',
+// Re-export enum from lib schema
+export const ServiceBusSku = schema.servicebus.ServiceBusSku;
 
-  /**
-   * Premium tier - dedicated resources, up to 1MB messages, geo-disaster recovery.
-   */
-  PREMIUM = 'Premium',
-}
+// Re-export type for TypeScript
+export type ServiceBusSku = typeof ServiceBusSku[keyof typeof ServiceBusSku];
 
 /**
  * Properties for ArmServiceBusNamespace (L1 construct).

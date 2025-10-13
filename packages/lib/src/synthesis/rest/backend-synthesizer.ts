@@ -1,6 +1,58 @@
 /**
  * Backend Synthesizer - Converts backend configurations to ARM backend resources
  *
+ * @remarks
+ * **Authentication Strategy - Defense in Depth**
+ *
+ * This synthesizer implements a dual authentication pattern for Azure Function and App Service backends:
+ *
+ * 1. **Function Keys** (Synthesized automatically):
+ *    - Uses ARM's `listKeys()` to retrieve function/host keys at deployment time
+ *    - Keys are passed via `x-functions-key` header in backend credentials
+ *    - Provides basic authentication layer
+ *
+ * 2. **RBAC via Managed Identity** (Configured at CDK layer):
+ *    - APIM service must have system-assigned managed identity enabled
+ *    - Grant APIM permission to invoke functions using `functionApp.grantInvoke(apim)`
+ *    - Creates role assignment with `Website Contributor` role
+ *    - Provides identity-based authentication
+ *
+ * **Why Both?**
+ * - Function keys: Simple, immediate auth that works out of the box
+ * - RBAC: More secure, supports conditional access, audit logging, no key rotation
+ * - Both are evaluated: APIM must pass function key AND have RBAC permission
+ *
+ * @example Defense in depth pattern
+ * ```typescript
+ * // 1. Create APIM with managed identity (CDK layer)
+ * const apim = new ApiManagementService(stack, 'APIM', {
+ *   identity: {
+ *     type: ManagedServiceIdentityType.SYSTEM_ASSIGNED
+ *   }
+ * });
+ *
+ * // 2. Create Function App with managed identity
+ * const functionApp = new FunctionApp(stack, 'Api', {
+ *   identity: {
+ *     type: ManagedServiceIdentityType.SYSTEM_ASSIGNED
+ *   }
+ * });
+ *
+ * // 3. Grant APIM permission to invoke (RBAC)
+ * functionApp.grantInvoke(apim);
+ *
+ * // 4. Configure backend (function keys added automatically at synthesis)
+ * const operation = get('/users')
+ *   .backend({
+ *     type: 'azureFunction',
+ *     functionApp: functionApp,
+ *     functionName: 'getUsers'
+ *   })
+ *   .build();
+ *
+ * // Result: APIM → Function auth requires BOTH function key AND RBAC role
+ * ```
+ *
  * @packageDocumentation
  */
 
@@ -13,7 +65,7 @@ import type {
   ContainerAppBackend,
   TlsConfiguration,
   CircuitBreakerConfig,
-} from '@atakora/cdk/api/rest';
+} from '../../apimanagement/rest';
 import type {
   ArmBackendProperties,
   ArmBackendCredentials,
@@ -195,6 +247,24 @@ export class BackendSynthesizer {
 
   /**
    * Synthesize credentials for Azure Function backend
+   *
+   * @remarks
+   * **Defense in Depth - Function Keys**
+   *
+   * This method synthesizes function key authentication:
+   * - Uses ARM's `listKeys()` to retrieve keys at deployment time
+   * - Keys are NOT exposed in the template (ARM function resolves them)
+   * - Automatically rotated when functions are redeployed
+   *
+   * **Combined with RBAC:**
+   * This is layer 1 of authentication. For production, also grant APIM
+   * permission to invoke via `functionApp.grantInvoke(apim)` at the CDK layer.
+   * Both layers are evaluated for maximum security.
+   *
+   * @param functionAppName - Name of the Function App
+   * @param functionName - Name of the specific function
+   * @param authLevel - Authorization level (anonymous, function, or admin)
+   * @returns ARM backend credentials with function key
    */
   private synthesizeAzureFunctionCredentials(
     functionAppName: string,

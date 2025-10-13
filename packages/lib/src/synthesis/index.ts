@@ -10,3 +10,6 @@ export { NetworkResourceTransformer, TransformationError } from './transform/typ
 
 // ARM type definitions
 export * from './transform/arm-network-types';
+
+// Data synthesis (Atakora schemas to infrastructure)
+export * from './data';

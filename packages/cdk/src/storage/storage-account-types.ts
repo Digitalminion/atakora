@@ -4,77 +4,49 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * SKU name for storage account.
  */
-export enum StorageAccountSkuName {
-  STANDARD_LRS = 'Standard_LRS',
-  STANDARD_GRS = 'Standard_GRS',
-  STANDARD_RAGRS = 'Standard_RAGRS',
-  STANDARD_ZRS = 'Standard_ZRS',
-  PREMIUM_LRS = 'Premium_LRS',
-  PREMIUM_ZRS = 'Premium_ZRS',
-  STANDARD_GZRS = 'Standard_GZRS',
-  STANDARD_RAGZRS = 'Standard_RAGZRS',
-}
+export const StorageAccountSkuName = schema.storage.StorageAccountSkuName;
+export type StorageAccountSkuName = typeof StorageAccountSkuName[keyof typeof StorageAccountSkuName];
 
 /**
  * Storage account kind.
  */
-export enum StorageAccountKind {
-  STORAGE = 'Storage',
-  STORAGE_V2 = 'StorageV2',
-  BLOB_STORAGE = 'BlobStorage',
-  FILE_STORAGE = 'FileStorage',
-  BLOCK_BLOB_STORAGE = 'BlockBlobStorage',
-}
+export const StorageAccountKind = schema.storage.StorageAccountKind;
+export type StorageAccountKind = typeof StorageAccountKind[keyof typeof StorageAccountKind];
 
 /**
  * Access tier for storage account.
  */
-export enum AccessTier {
-  HOT = 'Hot',
-  COOL = 'Cool',
-  PREMIUM = 'Premium',
-  COLD = 'Cold',
-}
+export const AccessTier = schema.storage.AccessTier;
+export type AccessTier = typeof AccessTier[keyof typeof AccessTier];
 
 /**
  * Minimum TLS version.
  */
-export enum TlsVersion {
-  TLS1_0 = 'TLS1_0',
-  TLS1_1 = 'TLS1_1',
-  TLS1_2 = 'TLS1_2',
-  TLS1_3 = 'TLS1_3',
-}
+export const TlsVersion = schema.storage.TlsVersion;
+export type TlsVersion = typeof TlsVersion[keyof typeof TlsVersion];
 
 /**
  * Public network access setting.
  */
-export enum PublicNetworkAccess {
-  ENABLED = 'Enabled',
-  DISABLED = 'Disabled',
-  SECURED_BY_PERIMETER = 'SecuredByPerimeter',
-}
+export const PublicNetworkAccess = schema.storage.PublicNetworkAccess;
+export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
 
 /**
  * Network ACL default action.
  */
-export enum NetworkAclDefaultAction {
-  ALLOW = 'Allow',
-  DENY = 'Deny',
-}
+export const NetworkAclDefaultAction = schema.storage.NetworkAclDefaultAction;
+export type NetworkAclDefaultAction = typeof NetworkAclDefaultAction[keyof typeof NetworkAclDefaultAction];
 
 /**
  * Network ACL bypass setting.
  */
-export enum NetworkAclBypass {
-  NONE = 'None',
-  LOGGING = 'Logging',
-  METRICS = 'Metrics',
-  AZURE_SERVICES = 'AzureServices',
-}
+export const NetworkAclBypass = schema.storage.NetworkAclBypass;
+export type NetworkAclBypass = typeof NetworkAclBypass[keyof typeof NetworkAclBypass];
 
 /**
  * SKU configuration.

@@ -1,7 +1,7 @@
 import { Construct } from '@atakora/cdk';
-import type { IService } from '../api-management-types';
-import { ApiManagementApi } from '../api';
-import type { IRestOperation } from '../../api/rest';
+import type { IService } from '../core/types';
+import { ApiManagementApi } from '../core/api';
+import type { IRestOperation } from './operation';
 
 /**
  * Configuration for a single API operation.
@@ -87,7 +87,7 @@ export interface RestApiStackProps {
  * Basic usage:
  * ```typescript
  * import { RestApiStack } from '@atakora/cdk/apimanagement/rest';
- * import { get, post } from '@atakora/cdk/api/rest';
+ * import { get, post } from '@atakora/cdk/apimanagement/rest';
  *
  * const getUserOp = get('/users/{id}')
  *   .operationId('getUser')

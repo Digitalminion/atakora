@@ -88,6 +88,21 @@
       "import": "./dist/functions/index.js",
       "require": "./dist/functions/index.js"
     },
+    "./servicebus": {
+      "types": "./dist/servicebus/index.d.ts",
+      "import": "./dist/servicebus/index.js",
+      "require": "./dist/servicebus/index.js"
+    },
+    "./eventhub": {
+      "types": "./dist/eventhub/index.d.ts",
+      "import": "./dist/eventhub/index.js",
+      "require": "./dist/eventhub/index.js"
+    },
+    "./signalr": {
+      "types": "./dist/signalr/index.d.ts",
+      "import": "./dist/signalr/index.js",
+      "require": "./dist/signalr/index.js"
+    },
     "./api/rest": {
       "types": "./dist/api/rest/index.d.ts",
       "import": "./dist/api/rest/index.js",
@@ -97,6 +112,11 @@
       "types": "./dist/storage/queue/index.d.ts",
       "import": "./dist/storage/queue/index.js",
       "require": "./dist/storage/queue/index.js"
+    },
+    "./cdn": {
+      "types": "./dist/cdn/index.d.ts",
+      "import": "./dist/cdn/index.js",
+      "require": "./dist/cdn/index.js"
     }
   },
   "typesVersions": {
@@ -149,11 +169,23 @@
       "functions": [
         "./dist/functions/index.d.ts"
       ],
+      "servicebus": [
+        "./dist/servicebus/index.d.ts"
+      ],
+      "eventhub": [
+        "./dist/eventhub/index.d.ts"
+      ],
+      "signalr": [
+        "./dist/signalr/index.d.ts"
+      ],
       "api/rest": [
         "./dist/api/rest/index.d.ts"
       ],
       "storage/queue": [
         "./dist/storage/queue/index.d.ts"
+      ],
+      "cdn": [
+        "./dist/cdn/index.d.ts"
       ]
     }
   },

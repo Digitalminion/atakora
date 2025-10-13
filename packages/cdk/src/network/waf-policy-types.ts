@@ -4,86 +4,55 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * WAF policy mode.
  */
-export enum WafPolicyMode {
-  Prevention = 'Prevention',
-  Detection = 'Detection',
-}
+export const WafPolicyMode = schema.network.WafPolicyMode;
+export type WafPolicyMode = typeof WafPolicyMode[keyof typeof WafPolicyMode];
 
 /**
  * WAF rule set type.
  */
-export enum WafRuleSetType {
-  OWASP = 'OWASP',
-  Microsoft_BotManagerRuleSet = 'Microsoft_BotManagerRuleSet',
-}
+export const WafRuleSetType = schema.network.WafRuleSetType;
+export type WafRuleSetType = typeof WafRuleSetType[keyof typeof WafRuleSetType];
 
 /**
  * WAF rule set version.
  */
-export enum WafRuleSetVersion {
-  V3_2 = '3.2',
-  V3_1 = '3.1',
-  V3_0 = '3.0',
-}
+export const WafRuleSetVersion = schema.network.WafRuleSetVersion;
+export type WafRuleSetVersion = typeof WafRuleSetVersion[keyof typeof WafRuleSetVersion];
 
 /**
  * WAF state.
  */
-export enum WafState {
-  Enabled = 'Enabled',
-  Disabled = 'Disabled',
-}
+export const WafState = schema.network.WafState;
+export type WafState = typeof WafState[keyof typeof WafState];
 
 /**
  * WAF custom rule action.
  */
-export enum WafCustomRuleAction {
-  Allow = 'Allow',
-  Block = 'Block',
-  Log = 'Log',
-}
+export const WafCustomRuleAction = schema.network.WafCustomRuleAction;
+export type WafCustomRuleAction = typeof WafCustomRuleAction[keyof typeof WafCustomRuleAction];
 
 /**
  * WAF custom rule type.
  */
-export enum WafCustomRuleType {
-  MatchRule = 'MatchRule',
-  RateLimitRule = 'RateLimitRule',
-}
+export const WafCustomRuleType = schema.network.WafCustomRuleType;
+export type WafCustomRuleType = typeof WafCustomRuleType[keyof typeof WafCustomRuleType];
 
 /**
  * WAF match variable.
  */
-export enum WafMatchVariable {
-  RemoteAddr = 'RemoteAddr',
-  RequestMethod = 'RequestMethod',
-  QueryString = 'QueryString',
-  PostArgs = 'PostArgs',
-  RequestUri = 'RequestUri',
-  RequestHeaders = 'RequestHeaders',
-  RequestBody = 'RequestBody',
-  RequestCookies = 'RequestCookies',
-}
+export const WafMatchVariable = schema.network.WafMatchVariable;
+export type WafMatchVariable = typeof WafMatchVariable[keyof typeof WafMatchVariable];
 
 /**
  * WAF operator.
  */
-export enum WafOperator {
-  IPMatch = 'IPMatch',
-  Equal = 'Equal',
-  Contains = 'Contains',
-  LessThan = 'LessThan',
-  GreaterThan = 'GreaterThan',
-  LessThanOrEqual = 'LessThanOrEqual',
-  GreaterThanOrEqual = 'GreaterThanOrEqual',
-  BeginsWith = 'BeginsWith',
-  EndsWith = 'EndsWith',
-  Regex = 'Regex',
-  GeoMatch = 'GeoMatch',
-}
+export const WafOperator = schema.network.WafOperator;
+export type WafOperator = typeof WafOperator[keyof typeof WafOperator];
 
 /**
  * Policy settings configuration.

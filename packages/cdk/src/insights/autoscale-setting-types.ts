@@ -4,61 +4,37 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * Metric trigger operator.
  */
-export enum MetricOperator {
-  EQUALS = 'Equals',
-  NOT_EQUALS = 'NotEquals',
-  GREATER_THAN = 'GreaterThan',
-  GREATER_THAN_OR_EQUAL = 'GreaterThanOrEqual',
-  LESS_THAN = 'LessThan',
-  LESS_THAN_OR_EQUAL = 'LessThanOrEqual',
-}
+export const MetricOperator = schema.insights.MetricOperator;
+export type MetricOperator = typeof MetricOperator[keyof typeof MetricOperator];
 
 /**
  * Time aggregation type.
  */
-export enum TimeAggregationType {
-  AVERAGE = 'Average',
-  MINIMUM = 'Minimum',
-  MAXIMUM = 'Maximum',
-  TOTAL = 'Total',
-  COUNT = 'Count',
-  LAST = 'Last',
-}
+export const TimeAggregationType = schema.insights.TimeAggregationType;
+export type TimeAggregationType = typeof TimeAggregationType[keyof typeof TimeAggregationType];
 
 /**
  * Scale direction.
  */
-export enum ScaleDirection {
-  INCREASE = 'Increase',
-  DECREASE = 'Decrease',
-}
+export const ScaleDirection = schema.insights.ScaleDirection;
+export type ScaleDirection = typeof ScaleDirection[keyof typeof ScaleDirection];
 
 /**
  * Scale type.
  */
-export enum ScaleType {
-  CHANGE_COUNT = 'ChangeCount',
-  PERCENT_CHANGE_COUNT = 'PercentChangeCount',
-  EXACT_COUNT = 'ExactCount',
-  SERVICE_ALLOWED_NEXT_VALUE = 'ServiceAllowedNextValue',
-}
+export const ScaleType = schema.insights.ScaleType;
+export type ScaleType = typeof ScaleType[keyof typeof ScaleType];
 
 /**
  * Recurrence frequency.
  */
-export enum RecurrenceFrequency {
-  NONE = 'None',
-  SECOND = 'Second',
-  MINUTE = 'Minute',
-  HOUR = 'Hour',
-  DAY = 'Day',
-  WEEK = 'Week',
-  MONTH = 'Month',
-  YEAR = 'Year',
-}
+export const RecurrenceFrequency = schema.insights.RecurrenceFrequency;
+export type RecurrenceFrequency = typeof RecurrenceFrequency[keyof typeof RecurrenceFrequency];
 
 /**
  * Metric trigger for autoscale.

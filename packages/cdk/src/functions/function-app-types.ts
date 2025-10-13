@@ -4,17 +4,21 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
 import type { FunctionRuntime } from './types';
 
 /**
- * Managed service identity types.
+ * Managed service identity type for Function Apps.
  */
-export enum ManagedServiceIdentityType {
-  NONE = 'None',
-  SYSTEM_ASSIGNED = 'SystemAssigned',
-  USER_ASSIGNED = 'UserAssigned',
-  SYSTEM_ASSIGNED_USER_ASSIGNED = 'SystemAssigned,UserAssigned',
-}
+export const ManagedServiceIdentityType = schema.web.ManagedServiceIdentityType;
+export type ManagedServiceIdentityType =
+  typeof ManagedServiceIdentityType[keyof typeof ManagedServiceIdentityType];
+
+/**
+ * FTPS state for Function App.
+ */
+export const FtpsState = schema.web.FtpsState;
+export type FtpsState = typeof FtpsState[keyof typeof FtpsState];
 
 /**
  * Managed service identity configuration.
@@ -51,7 +55,7 @@ export interface FunctionAppSiteConfig {
   readonly cors?: CorsSettings;
   readonly http20Enabled?: boolean;
   readonly minTlsVersion?: string;
-  readonly ftpsState?: 'AllAllowed' | 'FtpsOnly' | 'Disabled';
+  readonly ftpsState?: FtpsState;
   readonly use32BitWorkerProcess?: boolean;
   readonly webSocketsEnabled?: boolean;
   readonly appSettings?: Array<{ name: string; value: string }>;

@@ -59,10 +59,10 @@ app.synth();
 
 For complete documentation, see:
 
-- [Getting Started Guide](../../docs/usage/getting-started/)
-- [Core Concepts](../../docs/usage/guides/core-concepts.md)
-- [API Reference](../../docs/reference/api/)
-- [Architecture Decision Records](../../docs/design/architecture/)
+- [Getting Started Guide](../../docs/getting-started/)
+- [Core Concepts](../../docs/guides/fundamentals/)
+- [API Reference](../../docs/reference/)
+- [Architecture Decision Records](../../docs/architecture/decisions/)
 
 ## What's Included
 

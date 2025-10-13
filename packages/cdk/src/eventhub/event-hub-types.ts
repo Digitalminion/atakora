@@ -4,6 +4,14 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
+/**
+ * Event Hub capture encoding format.
+ */
+export const CaptureEncoding = schema.eventhub.CaptureEncoding;
+export type CaptureEncoding = typeof CaptureEncoding[keyof typeof CaptureEncoding];
+
 /**
  * Properties for ArmEventHub (L1 construct).
  *
@@ -87,7 +95,7 @@ export interface EventHubCaptureDescription {
   /**
    * Capture encoding format.
    */
-  readonly encoding?: 'Avro' | 'AvroDeflate';
+  readonly encoding?: CaptureEncoding;
 
   /**
    * Time window for capture in seconds.

@@ -1,5 +1,5 @@
 import { Construct } from '@atakora/cdk';
-import type { IService } from '../api-management-types';
+import type { IService } from '../core/types';
 import { RestApiStack, type ApiConfig } from './stack';
 
 /**
@@ -24,7 +24,7 @@ import { RestApiStack, type ApiConfig } from './stack';
  * Basic usage:
  * ```typescript
  * import { createRestApi } from '@atakora/cdk/apimanagement/rest';
- * import { get, post } from '@atakora/cdk/api/rest';
+ * import { get, post } from '@atakora/cdk/apimanagement/rest';
  *
  * const getUserOp = get('/users/{id}')
  *   .operationId('getUser')
@@ -94,7 +94,7 @@ export function createRestApi(
  * @example
  * ```typescript
  * import { createCrudApi } from '@atakora/cdk/apimanagement/rest';
- * import { get, post, put, del } from '@atakora/cdk/api/rest';
+ * import { get, post, put, del } from '@atakora/cdk/apimanagement/rest';
  *
  * const apiStack = createCrudApi(scope, apim, {
  *   displayName: 'User Management API',
@@ -141,7 +141,7 @@ export function createCrudApi(
  * @example
  * ```typescript
  * import { createAsyncApi } from '@atakora/cdk/apimanagement/rest';
- * import { get, post, del } from '@atakora/cdk/api/rest';
+ * import { get, post, del } from '@atakora/cdk/apimanagement/rest';
  *
  * const apiStack = createAsyncApi(scope, apim, {
  *   displayName: 'Search API',
@@ -182,7 +182,7 @@ export function createAsyncApi(
  * @example
  * ```typescript
  * import { createCatalogApi } from '@atakora/cdk/apimanagement/rest';
- * import { get } from '@atakora/cdk/api/rest';
+ * import { get } from '@atakora/cdk/apimanagement/rest';
  *
  * const apiStack = createCatalogApi(scope, apim, {
  *   displayName: 'Product Catalog',

@@ -1,0 +1,76 @@
+import { AzureFunction, Context, HttpRequest } from '@azure/functions';
+import { CosmosClient } from '@azure/cosmos';
+import { DefaultAzureCredential } from '@azure/identity';
+
+/**
+ * Azure Function HTTP handler for deleting a {{camelCase}}
+ */
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest
+): Promise<void> {
+  context.log('{{pascalCase}} DELETE function processed a request');
+
+  try {
+    // Get ID from route parameters
+    const id = req.params?.id || context.bindingData?.id;
+
+    if (!id) {
+      context.res = {
+        status: 400,
+        body: { error: 'ID parameter is required' },
+      };
+      return;
+    }
+
+    // Get environment variables
+    const cosmosEndpoint = process.env.COSMOS_ENDPOINT;
+    const databaseName = process.env.COSMOS_DATABASE_NAME;
+    const containerName = process.env.COSMOS_CONTAINER_NAME;
+
+    if (!cosmosEndpoint || !databaseName || !containerName) {
+      context.res = {
+        status: 500,
+        body: { error: 'Missing Cosmos DB configuration' },
+      };
+      return;
+    }
+
+    // Create Cosmos client with managed identity
+    const credential = new DefaultAzureCredential();
+    const client = new CosmosClient({
+      endpoint: cosmosEndpoint,
+      aadCredentials: credential,
+    });
+
+    const database = client.database(databaseName);
+    const container = database.container(containerName);
+
+    // Delete item from Cosmos DB
+    await container.item(id, id).delete();
+
+    context.res = {
+      status: 204, // No content
+    };
+  } catch (error: any) {
+    context.log.error('Error deleting {{camelCase}}:', error);
+
+    if (error.code === 404) {
+      context.res = {
+        status: 404,
+        body: { error: '{{pascalCase}} not found' },
+      };
+      return;
+    }
+
+    context.res = {
+      status: 500,
+      body: {
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+    };
+  }
+};
+
+export default httpTrigger;

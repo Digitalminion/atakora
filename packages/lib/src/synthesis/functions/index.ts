@@ -73,3 +73,16 @@ export {
   StoragePackager,
   StoragePackagerOptions,
 } from './packaging/storage-packager';
+
+// ARM inline deployment components
+export {
+  FunctionBundler as ArmFunctionBundler,
+  FunctionBundlerOptions as ArmFunctionBundlerOptions,
+  FunctionBundleResult as ArmFunctionBundleResult,
+} from './function-bundler';
+export {
+  FunctionSynthesizer,
+  FunctionConfig as ArmFunctionConfig,
+  HttpTriggerConfig,
+  CosmosDbTriggerConfig,
+} from './function-synthesizer';

@@ -22,7 +22,7 @@ export interface GeneratePackageOptions {
 
   /**
    * Entry point file path relative to package
-   * @default "src/app.ts"
+   * @default "src/index.ts"
    */
   readonly entryPoint?: string;
 }
@@ -36,7 +36,7 @@ export class PackageGenerator {
    *
    * Creates:
    * - packages/{name}/
-   * - packages/{name}/src/app.ts
+   * - packages/{name}/src/index.ts
    * - packages/{name}/package.json
    * - packages/{name}/tsconfig.json
    *
@@ -44,7 +44,7 @@ export class PackageGenerator {
    */
   public generate(options: GeneratePackageOptions): void {
     const packagePath = path.join(options.workspaceRoot, 'packages', options.packageName);
-    const entryPoint = options.entryPoint || 'src/app.ts';
+    const entryPoint = options.entryPoint || 'src/index.ts';
 
     // Check if package directory already exists
     if (fs.existsSync(packagePath)) {
@@ -187,7 +187,7 @@ Infrastructure package for ${packageName}.
    npm install
    \`\`\`
 
-2. Define your infrastructure in \`src/app.ts\`
+2. Define your infrastructure in \`src/index.ts\`
 
 3. Synthesize ARM templates:
    \`\`\`bash

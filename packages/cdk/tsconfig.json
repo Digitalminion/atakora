@@ -2,15 +2,17 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
-    "outDir": "../../dist/cdk",
+    "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "tsBuildInfoFile": "../../dist/cdk/.tsbuildinfo",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
       "@atakora/lib": ["../lib/src/index.ts"],
+      "@atakora/lib/apimanagement/rest": ["../lib/src/apimanagement/rest/index.ts"],
+      "@atakora/lib/synthesis/functions": ["../lib/src/synthesis/functions/index.ts"],
       "@atakora/cdk": ["./src/index.ts"]
     }
   },

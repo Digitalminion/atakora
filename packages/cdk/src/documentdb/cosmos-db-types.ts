@@ -3,6 +3,7 @@
  *
  * @remarks
  * Enums, interfaces, and types for Cosmos DB database account resources.
+ * Types are re-exported from @atakora/lib/schema/documentdb for consistency.
  *
  * **Resource Type**: Microsoft.DocumentDB/databaseAccounts
  * **API Version**: 2024-08-15
@@ -10,80 +11,20 @@
  * @packageDocumentation
  */
 
-/**
- * Cosmos DB account kind.
- */
-export enum CosmosDbKind {
-  /**
-   * Global Document DB (SQL API).
-   */
-  GLOBAL_DOCUMENT_DB = 'GlobalDocumentDB',
+// Import from lib schema namespace
+import { schema } from '@atakora/lib';
 
-  /**
-   * MongoDB API.
-   */
-  MONGO_DB = 'MongoDB',
+// Re-export enums from lib schema
+export const CosmosDbKind = schema.documentdb.CosmosDbKind;
+export const DatabaseAccountOfferType = schema.documentdb.DatabaseAccountOfferType;
+export const ConsistencyLevel = schema.documentdb.ConsistencyLevel;
+export const PublicNetworkAccess = schema.documentdb.PublicNetworkAccess;
 
-  /**
-   * Parse (deprecated).
-   */
-  PARSE = 'Parse',
-}
-
-/**
- * Database account offer type.
- */
-export enum DatabaseAccountOfferType {
-  /**
-   * Standard offer type.
-   */
-  STANDARD = 'Standard',
-}
-
-/**
- * Consistency level for Cosmos DB.
- */
-export enum ConsistencyLevel {
-  /**
-   * Eventual consistency.
-   */
-  EVENTUAL = 'Eventual',
-
-  /**
-   * Session consistency (default).
-   */
-  SESSION = 'Session',
-
-  /**
-   * Bounded staleness consistency.
-   */
-  BOUNDED_STALENESS = 'BoundedStaleness',
-
-  /**
-   * Strong consistency.
-   */
-  STRONG = 'Strong',
-
-  /**
-   * Consistent prefix.
-   */
-  CONSISTENT_PREFIX = 'ConsistentPrefix',
-}
-
-/**
- * Public network access setting.
- */
-export enum PublicNetworkAccess {
-  /**
-   * Enabled - allows public access.
-   */
-  ENABLED = 'enabled',
-
-  /**
-   * Disabled - no public access.
-   */
-  DISABLED = 'disabled',
-}
+// Re-export types for TypeScript
+export type CosmosDbKind = typeof CosmosDbKind[keyof typeof CosmosDbKind];
+export type DatabaseAccountOfferType = typeof DatabaseAccountOfferType[keyof typeof DatabaseAccountOfferType];
+export type ConsistencyLevel = typeof ConsistencyLevel[keyof typeof ConsistencyLevel];
+export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
 
 /**
  * Consistency policy configuration.

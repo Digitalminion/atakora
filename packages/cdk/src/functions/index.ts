@@ -321,3 +321,26 @@ export type {
 // ============================================================================
 
 export { AzureFunction } from './azure-function';
+
+// ============================================================================
+// Middleware Utilities
+// ============================================================================
+
+export {
+  Allow,
+  AuthRule,
+  AuthorizationError,
+  checkAuthorization,
+  applyFieldAuthorization,
+  createAuthorizationContext,
+  withAuthorization,
+} from './middleware';
+
+export type {
+  AuthorizationContext,
+  AuthorizationResult,
+  AuthorizationRule,
+  FieldAuthorizationRules,
+  AuthorizationConfig,
+  CrudAuthorizationRules,
+} from './middleware';

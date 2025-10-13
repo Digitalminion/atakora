@@ -1,4 +1,5 @@
 import { Construct, GrantableResource, ManagedIdentityType } from '@atakora/lib';
+import type { IGrantable, IGrantResult } from '@atakora/lib';
 import type { IResourceGroup } from '@atakora/cdk';
 import type {
   FunctionAppProps,
@@ -465,6 +466,60 @@ export class FunctionApp extends GrantableResource implements IFunctionApp {
     Object.entries(variables).forEach(([key, value]) => {
       this.environment[key] = value;
     });
+  }
+
+  // ============================================================
+  // Grant Methods
+  // ============================================================
+
+  /**
+   * Grant permission to invoke this Function App.
+   *
+   * @remarks
+   * Grants the Website Contributor role, which allows:
+   * - Invoking function endpoints
+   * - Reading function app configuration
+   * - Managing function app settings
+   *
+   * This is typically used to grant API Management or other services
+   * permission to call functions using managed identity authentication.
+   *
+   * **Security Note**: This uses RBAC-based authentication. For defense in depth,
+   * combine with function keys (both are evaluated).
+   *
+   * @param grantable - Identity to grant invoke permissions to
+   * @returns Grant result with the created role assignment
+   *
+   * @example
+   * Grant API Management permission to invoke functions:
+   * ```typescript
+   * const apimService = new ApiManagementService(stack, 'APIM', {
+   *   identity: {
+   *     type: ManagedServiceIdentityType.SYSTEM_ASSIGNED
+   *   }
+   * });
+   *
+   * const functionApp = new FunctionApp(stack, 'Api', {
+   *   plan: appServicePlan,
+   *   storageAccount: storage,
+   *   identity: {
+   *     type: ManagedServiceIdentityType.SYSTEM_ASSIGNED
+   *   }
+   * });
+   *
+   * // Grant APIM permission to invoke the function (RBAC)
+   * functionApp.grantInvoke(apimService);
+   * ```
+   */
+  public grantInvoke(grantable: IGrantable): IGrantResult {
+    const { WellKnownRoleIds } = require('@atakora/lib/authorization');
+    const { IGrantResult } = require('@atakora/lib/core/grants');
+
+    return this.grant(
+      grantable,
+      WellKnownRoleIds.WEBSITE_CONTRIBUTOR,
+      `Allow ${grantable.principalId} to invoke ${this.functionAppName}`
+    );
   }
 
   /**

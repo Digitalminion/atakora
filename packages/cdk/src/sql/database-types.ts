@@ -1,43 +1,20 @@
 /**
  * Type definitions for SQL Database constructs.
  *
+ * @remarks
+ * Types are re-exported from @atakora/lib/schema/sql for consistency.
+ *
  * @packageDocumentation
  */
 
-/**
- * Database SKU tier.
- */
-export enum DatabaseSkuTier {
-  /**
-   * Basic tier.
-   */
-  BASIC = 'Basic',
+// Import from lib schema namespace
+import { schema } from '@atakora/lib';
 
-  /**
-   * Standard tier.
-   */
-  STANDARD = 'Standard',
+// Re-export enum from lib schema
+export const DatabaseSkuTier = schema.sql.DatabaseSkuTier;
 
-  /**
-   * Premium tier.
-   */
-  PREMIUM = 'Premium',
-
-  /**
-   * General Purpose tier.
-   */
-  GENERAL_PURPOSE = 'GeneralPurpose',
-
-  /**
-   * Business Critical tier.
-   */
-  BUSINESS_CRITICAL = 'BusinessCritical',
-
-  /**
-   * Hyperscale tier.
-   */
-  HYPERSCALE = 'Hyperscale',
-}
+// Re-export type for TypeScript
+export type DatabaseSkuTier = typeof DatabaseSkuTier[keyof typeof DatabaseSkuTier];
 
 /**
  * Database SKU configuration.

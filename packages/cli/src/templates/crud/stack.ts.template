@@ -1,0 +1,142 @@
+import { Construct } from '@atakora/cdk';
+import { DatabaseAccounts, PublicNetworkAccess } from '@atakora/cdk/documentdb';
+// import { RestApiStack } from '@atakora/cdk/apimanagement/rest'; // TODO: Add REST API configuration
+import { {{pascalCase}}Create } from './{{kebabCase}}-create/resource';
+import { {{pascalCase}}Read } from './{{kebabCase}}-read/resource';
+import { {{pascalCase}}Update } from './{{kebabCase}}-update/resource';
+import { {{pascalCase}}Delete } from './{{kebabCase}}-delete/resource';
+import { {{pascalCase}}List } from './{{kebabCase}}-list/resource';
+import type { {{pascalCase}}Schema } from './resource';
+
+export interface {{pascalCase}}StackProps {
+  /**
+   * Cosmos DB account to use (or will create new one)
+   */
+  readonly cosmosAccount?: DatabaseAccounts;
+
+  /**
+   * Database name (defaults to '{{kebabCase}}-db')
+   */
+  readonly databaseName?: string;
+
+  /**
+   * Container name (defaults to '{{pluralKebabCase}}')
+   */
+  readonly containerName?: string;
+}
+
+/**
+ * CRUD Stack for {{pascalCase}} resource
+ *
+ * Creates:
+ * - Cosmos DB container for {{pluralKebabCase}}
+ * - REST API with CRUD operations
+ * - Azure Functions for each operation
+ */
+export class {{pascalCase}}Stack extends Construct {
+  public readonly cosmosAccount: DatabaseAccounts;
+  public readonly containerName: string;
+  public readonly databaseName: string;
+
+  constructor(scope: Construct, id: string, props: {{pascalCase}}StackProps = {}) {
+    super(scope, id);
+
+    // Use provided Cosmos account or create new one
+    this.cosmosAccount = props.cosmosAccount ?? new DatabaseAccounts(this, 'CosmosAccount', {
+      location: 'eastus',
+      enableServerless: true,
+      publicNetworkAccess: PublicNetworkAccess.DISABLED,
+    });
+
+    this.databaseName = props.databaseName ?? '{{kebabCase}}-db';
+    this.containerName = props.containerName ?? '{{pluralKebabCase}}';
+
+    // TODO: Create Cosmos DB database and container
+    // Note: This requires SqlDatabases and SqlContainers constructs to be implemented
+
+    // Define API schema for {{pascalCase}}
+    const {{camelCase}}Schema: {{pascalCase}}Schema = {
+      id: { type: 'string', required: true },
+      // Add your schema fields here
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+    };
+
+    // Create Azure Functions for each operation
+    // Note: Each function construct will automatically:
+    // - Create a Function App with system-assigned managed identity
+    // - Grant appropriate Cosmos DB RBAC permissions (read or write)
+    // - Configure environment variables for Cosmos DB access
+    const createFunction = new {{pascalCase}}Create(this, 'Create', {
+      cosmosAccount: this.cosmosAccount,
+      databaseName: this.databaseName,
+      containerName: this.containerName,
+    });
+
+    const readFunction = new {{pascalCase}}Read(this, 'Read', {
+      cosmosAccount: this.cosmosAccount,
+      databaseName: this.databaseName,
+      containerName: this.containerName,
+    });
+
+    const updateFunction = new {{pascalCase}}Update(this, 'Update', {
+      cosmosAccount: this.cosmosAccount,
+      databaseName: this.databaseName,
+      containerName: this.containerName,
+    });
+
+    const deleteFunction = new {{pascalCase}}Delete(this, 'Delete', {
+      cosmosAccount: this.cosmosAccount,
+      databaseName: this.databaseName,
+      containerName: this.containerName,
+    });
+
+    const listFunction = new {{pascalCase}}List(this, 'List', {
+      cosmosAccount: this.cosmosAccount,
+      databaseName: this.databaseName,
+      containerName: this.containerName,
+    });
+
+    // TODO: Configure REST API with Azure API Management
+    // This requires setting up:
+    // 1. API Management service (with system-assigned managed identity)
+    // 2. REST API operations using RestOperationBuilder
+    // 3. Backend integration with Function Apps
+    // 4. Grant APIM permission to invoke functions (defense in depth)
+    //
+    // Example:
+    // const apim = new ApiManagementService(this, 'APIM', {
+    //   location: 'eastus',
+    //   identity: {
+    //     type: ManagedServiceIdentityType.SYSTEM_ASSIGNED
+    //   }
+    // });
+    //
+    // // Grant APIM permission to invoke functions (RBAC + function keys for defense in depth)
+    // createFunction.functionApp?.grantInvoke(apim);
+    // readFunction.functionApp?.grantInvoke(apim);
+    // updateFunction.functionApp?.grantInvoke(apim);
+    // deleteFunction.functionApp?.grantInvoke(apim);
+    // listFunction.functionApp?.grantInvoke(apim);
+    //
+    // const getUserOp = get('/{{pluralKebabCase}}/{id}')
+    //   .operationId('get{{pascalCase}}')
+    //   .summary('Get a {{camelCase}} by ID')
+    //   .responses({ 200: { description: '{{pascalCase}} found' } })
+    //   .backend({
+    //     type: 'azureFunction',
+    //     functionApp: readFunction.functionApp,
+    //     functionName: 'read-{{kebabCase}}'
+    //   })
+    //   .build();
+    //
+    // const apiStack = new RestApiStack(this, 'Api', {
+    //   apiManagementService: apim,
+    //   apis: [{
+    //     displayName: '{{pascalCase}} API',
+    //     path: 'api/{{pluralKebabCase}}',
+    //     operations: [{ operation: getUserOp }]
+    //   }]
+    // });
+  }
+}

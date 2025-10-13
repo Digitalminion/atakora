@@ -1,30 +1,22 @@
 /**
  * Type definitions for Log Analytics Workspace constructs.
  *
+ * @remarks
+ * Types are re-exported from @atakora/lib/schema/operationalinsights for consistency.
+ *
  * @packageDocumentation
  */
 
-/**
- * SKU name for Log Analytics Workspace.
- */
-export enum WorkspaceSku {
-  FREE = 'Free',
-  STANDARD = 'Standard',
-  PREMIUM = 'Premium',
-  PER_NODE = 'PerNode',
-  PER_GB_2018 = 'PerGB2018',
-  STANDALONE = 'Standalone',
-  CAPACITY_RESERVATION = 'CapacityReservation',
-  LA_CLUSTER = 'LACluster',
-}
+// Import from lib schema namespace
+import { schema } from '@atakora/lib';
 
-/**
- * Network access type for workspace operations.
- */
-export enum PublicNetworkAccess {
-  ENABLED = 'Enabled',
-  DISABLED = 'Disabled',
-}
+// Re-export enums from lib schema
+export const WorkspaceSku = schema.operationalinsights.WorkspaceSku;
+export const PublicNetworkAccess = schema.operationalinsights.PublicNetworkAccess;
+
+// Re-export types for TypeScript
+export type WorkspaceSku = typeof WorkspaceSku[keyof typeof WorkspaceSku];
+export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
 
 /**
  * SKU configuration for the workspace.

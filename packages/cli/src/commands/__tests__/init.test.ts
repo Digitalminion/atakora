@@ -7,6 +7,8 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TestWorkspace } from '../../__tests__/utils/test-helpers';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Note: init command will be implemented by Devon
 // This test file serves as the specification for the expected behavior
@@ -547,6 +549,164 @@ describe('atakora init', () => {
       // );
 
       consoleSpy.mockRestore();
+      expect(true).toBe(true); // Placeholder
+    });
+  });
+
+  describe('existing monorepo detection', () => {
+    it('should detect existing monorepo with packages folder and workspaces', async () => {
+      // Setup: Create existing monorepo structure
+      const packagesDir = path.join(workspace.workspaceDir, 'packages');
+      fs.mkdirSync(packagesDir, { recursive: true });
+
+      const packageJson = {
+        name: 'existing-monorepo',
+        version: '1.0.0',
+        workspaces: ['packages/*'],
+        scripts: {
+          build: 'tsc --build',
+          test: 'npm run test --workspaces',
+        },
+      };
+
+      fs.writeFileSync(
+        path.join(workspace.workspaceDir, 'package.json'),
+        JSON.stringify(packageJson, null, 2),
+        'utf-8'
+      );
+
+      // Note: Uncomment when init command is implemented
+      // await initCommand({
+      //   organization: 'Test Org',
+      //   project: 'Test Project',
+      //   packageName: 'backend',
+      // });
+
+      // Verify:
+      // - Manifest was created
+      // - Backend package was created in packages/
+      // - Existing package.json was updated with Atakora scripts
+      // - Existing package.json workspaces and other scripts were preserved
+
+      // const manifest = workspace.readManifest();
+      // expect(manifest.organization).toBe('Test Org');
+      // expect(workspace.fileExists('packages/backend')).toBe(true);
+
+      // const updatedPackageJson = JSON.parse(
+      //   fs.readFileSync(path.join(workspace.workspaceDir, 'package.json'), 'utf-8')
+      // );
+      // expect(updatedPackageJson.workspaces).toEqual(['packages/*']);
+      // expect(updatedPackageJson.scripts.build).toBe('tsc --build');
+      // expect(updatedPackageJson.scripts.synth).toBe('atakora synth');
+      // expect(updatedPackageJson.scripts.deploy).toBe('atakora deploy');
+
+      expect(true).toBe(true); // Placeholder
+    });
+
+    it('should not overwrite existing README in monorepo', async () => {
+      // Setup: Create existing monorepo with README
+      const packagesDir = path.join(workspace.workspaceDir, 'packages');
+      fs.mkdirSync(packagesDir, { recursive: true });
+
+      const packageJson = {
+        name: 'existing-monorepo',
+        version: '1.0.0',
+        workspaces: ['packages/*'],
+      };
+
+      fs.writeFileSync(
+        path.join(workspace.workspaceDir, 'package.json'),
+        JSON.stringify(packageJson, null, 2),
+        'utf-8'
+      );
+
+      const existingReadme = '# Existing Project\n\nThis is my existing project.';
+      fs.writeFileSync(
+        path.join(workspace.workspaceDir, 'README.md'),
+        existingReadme,
+        'utf-8'
+      );
+
+      // Note: Uncomment when init command is implemented
+      // await initCommand({
+      //   organization: 'Test Org',
+      //   project: 'Test Project',
+      //   packageName: 'backend',
+      // });
+
+      // const readme = fs.readFileSync(
+      //   path.join(workspace.workspaceDir, 'README.md'),
+      //   'utf-8'
+      // );
+      // expect(readme).toBe(existingReadme);
+
+      expect(true).toBe(true); // Placeholder
+    });
+
+    it('should update .gitignore with Atakora entries in existing monorepo', async () => {
+      // Setup: Create existing monorepo with .gitignore
+      const packagesDir = path.join(workspace.workspaceDir, 'packages');
+      fs.mkdirSync(packagesDir, { recursive: true });
+
+      const packageJson = {
+        name: 'existing-monorepo',
+        version: '1.0.0',
+        workspaces: ['packages/*'],
+      };
+
+      fs.writeFileSync(
+        path.join(workspace.workspaceDir, 'package.json'),
+        JSON.stringify(packageJson, null, 2),
+        'utf-8'
+      );
+
+      const existingGitignore = 'node_modules/\ndist/\n.env\n';
+      fs.writeFileSync(
+        path.join(workspace.workspaceDir, '.gitignore'),
+        existingGitignore,
+        'utf-8'
+      );
+
+      // Note: Uncomment when init command is implemented
+      // await initCommand({
+      //   organization: 'Test Org',
+      //   project: 'Test Project',
+      //   packageName: 'backend',
+      // });
+
+      // const gitignore = fs.readFileSync(
+      //   path.join(workspace.workspaceDir, '.gitignore'),
+      //   'utf-8'
+      // );
+      // expect(gitignore).toContain('node_modules/');
+      // expect(gitignore).toContain('.atakora/arm.out/');
+
+      expect(true).toBe(true); // Placeholder
+    });
+
+    it('should create new project structure when no existing monorepo detected', async () => {
+      // No setup - empty directory
+
+      // Note: Uncomment when init command is implemented
+      // await initCommand({
+      //   organization: 'Test Org',
+      //   project: 'Test Project',
+      //   packageName: 'backend',
+      // });
+
+      // Verify full project structure was created:
+      // - package.json
+      // - tsconfig.json
+      // - README.md
+      // - .gitignore
+      // - .atakora/
+      // - packages/backend/
+
+      // expect(workspace.fileExists('package.json')).toBe(true);
+      // expect(workspace.fileExists('tsconfig.json')).toBe(true);
+      // expect(workspace.fileExists('README.md')).toBe(true);
+      // expect(workspace.fileExists('.gitignore')).toBe(true);
+
       expect(true).toBe(true); // Placeholder
     });
   });

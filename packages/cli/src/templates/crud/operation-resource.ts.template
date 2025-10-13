@@ -1,0 +1,74 @@
+import { Construct } from '@atakora/cdk';
+import { ArmFunctionApp, type IFunctionApp } from '@atakora/cdk/web';
+import { DatabaseAccounts } from '@atakora/cdk/documentdb';
+
+export interface {{pascalCase}}{{operationPascal}}Props {
+  /**
+   * Cosmos DB account
+   */
+  readonly cosmosAccount: DatabaseAccounts;
+
+  /**
+   * Database name
+   */
+  readonly databaseName: string;
+
+  /**
+   * Container name
+   */
+  readonly containerName: string;
+}
+
+/**
+ * Azure Function for {{operationLower}} {{camelCase}}{{operationSuffix}}
+ *
+ * Creates:
+ * - Function App with system-assigned managed identity
+ * - Cosmos DB RBAC permissions (read or write based on operation)
+ * - Environment variables configured for Cosmos DB access
+ *
+ * TODO: Implement Azure Function App configuration
+ * This requires:
+ * 1. Creating an App Service Plan (ServerFarms)
+ * 2. Creating a Function App (ArmFunctionApp)
+ * 3. Packaging and deploying the handler code
+ */
+export class {{pascalCase}}{{operationPascal}} extends Construct {
+  public readonly functionApp?: IFunctionApp;
+
+  constructor(scope: Construct, id: string, props: {{pascalCase}}{{operationPascal}}Props) {
+    super(scope, id);
+
+    // TODO: Create Function App with managed identity
+    // Example:
+    // const appServicePlan = new ServerFarms(this, 'Plan', {
+    //   location: 'eastus',
+    //   sku: { name: ServerFarmSkuName.Y1, tier: ServerFarmSkuTier.DYNAMIC }
+    // });
+    //
+    // this.functionApp = new ArmFunctionApp(this, 'Function', {
+    //   location: 'eastus',
+    //   serverFarmId: appServicePlan.serverFarmId,
+    //   kind: AppServiceKind.FUNCTION_APP,
+    //   identity: {
+    //     type: ManagedServiceIdentityType.SYSTEM_ASSIGNED
+    //   },
+    //   siteConfig: {
+    //     appSettings: [
+    //       { name: 'COSMOS_ENDPOINT', value: props.cosmosAccount.documentEndpoint },
+    //       { name: 'COSMOS_DATABASE_NAME', value: props.databaseName },
+    //       { name: 'COSMOS_CONTAINER_NAME', value: props.containerName },
+    //       { name: 'FUNCTIONS_WORKER_RUNTIME', value: 'node' },
+    //       { name: 'WEBSITE_NODE_DEFAULT_VERSION', value: '~18' }
+    //     ]
+    //   }
+    // });
+    //
+    // Grant Cosmos DB access via RBAC
+    {{#if needsWrite}}
+    // props.cosmosAccount.grantDataWrite(this.functionApp);
+    {{else}}
+    // props.cosmosAccount.grantDataRead(this.functionApp);
+    {{/if}}
+  }
+}

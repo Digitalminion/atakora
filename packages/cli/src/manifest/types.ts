@@ -68,8 +68,8 @@ export interface PackageConfiguration {
 
   /**
    * Entry point file relative to package directory
-   * @default "src/app.ts"
-   * @example "src/app.ts" | "src/main.ts"
+   * @default "src/index.ts"
+   * @example "src/index.ts" | "src/main.ts"
    */
   readonly entry?: string;
 
@@ -267,7 +267,7 @@ export interface AddPackageOptions {
 
   /**
    * Entry point file relative to package directory
-   * @default "src/app.ts"
+   * @default "src/index.ts"
    */
   readonly entry?: string;
 

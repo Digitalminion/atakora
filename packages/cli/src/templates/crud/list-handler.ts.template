@@ -1,0 +1,80 @@
+import { AzureFunction, Context, HttpRequest } from '@azure/functions';
+import { CosmosClient } from '@azure/cosmos';
+import { DefaultAzureCredential } from '@azure/identity';
+import type { {{pascalCase}}, List{{pascalCase}}sResponse } from '../resource';
+
+/**
+ * Azure Function HTTP handler for listing {{pluralCamelCase}}
+ */
+const httpTrigger: AzureFunction = async function (
+  context: Context,
+  req: HttpRequest
+): Promise<void> {
+  context.log('{{pascalCase}} LIST function processed a request');
+
+  try {
+    // Get query parameters
+    const limit = req.query?.limit ? parseInt(req.query.limit) : 100;
+    const continuationToken = req.query?.continuationToken;
+
+    // Get environment variables
+    const cosmosEndpoint = process.env.COSMOS_ENDPOINT;
+    const databaseName = process.env.COSMOS_DATABASE_NAME;
+    const containerName = process.env.COSMOS_CONTAINER_NAME;
+
+    if (!cosmosEndpoint || !databaseName || !containerName) {
+      context.res = {
+        status: 500,
+        body: { error: 'Missing Cosmos DB configuration' },
+      };
+      return;
+    }
+
+    // Create Cosmos client with managed identity
+    const credential = new DefaultAzureCredential();
+    const client = new CosmosClient({
+      endpoint: cosmosEndpoint,
+      aadCredentials: credential,
+    });
+
+    const database = client.database(databaseName);
+    const container = database.container(containerName);
+
+    // Query items from Cosmos DB
+    const querySpec = {
+      query: 'SELECT * FROM c ORDER BY c.createdAt DESC',
+    };
+
+    const { resources, continuationToken: nextToken } = await container.items
+      .query<{{pascalCase}}>(querySpec, {
+        maxItemCount: limit,
+        continuationToken: continuationToken,
+      })
+      .fetchNext();
+
+    const response: List{{pascalCase}}sResponse = {
+      items: resources || [],
+      continuationToken: nextToken,
+    };
+
+    context.res = {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: response,
+    };
+  } catch (error) {
+    context.log.error('Error listing {{pluralCamelCase}}:', error);
+
+    context.res = {
+      status: 500,
+      body: {
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+    };
+  }
+};
+
+export default httpTrigger;

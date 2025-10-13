@@ -5,7 +5,7 @@
  */
 
 import type { ArmResource } from '../types';
-import type { IRestOperation } from '@atakora/cdk/api/rest';
+import type { IRestOperation } from '../../apimanagement/rest';
 import type {
   RestApiSynthesisOptions,
   RestApiSynthesisResult,

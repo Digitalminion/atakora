@@ -49,6 +49,8 @@ export {
 // Azure Functions exports
 export { ArmFunctionApp } from './function-app-arm';
 export { ArmFunction } from './function-arm';
+export { Function } from './function';
+export type { FunctionProps } from './function';
 export type {
   ArmFunctionAppProps,
   ArmFunctionProps,

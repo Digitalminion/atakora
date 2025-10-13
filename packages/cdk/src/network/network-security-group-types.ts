@@ -4,33 +4,25 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * Network protocol for security rules.
  */
-export enum SecurityRuleProtocol {
-  TCP = 'Tcp',
-  UDP = 'Udp',
-  ICMP = 'Icmp',
-  ESP = 'Esp',
-  AH = 'Ah',
-  ANY = '*',
-}
+export const SecurityRuleProtocol = schema.network.SecurityRuleProtocol;
+export type SecurityRuleProtocol = typeof SecurityRuleProtocol[keyof typeof SecurityRuleProtocol];
 
 /**
  * Access type for security rules.
  */
-export enum SecurityRuleAccess {
-  ALLOW = 'Allow',
-  DENY = 'Deny',
-}
+export const SecurityRuleAccess = schema.network.SecurityRuleAccess;
+export type SecurityRuleAccess = typeof SecurityRuleAccess[keyof typeof SecurityRuleAccess];
 
 /**
  * Direction for security rules.
  */
-export enum SecurityRuleDirection {
-  INBOUND = 'Inbound',
-  OUTBOUND = 'Outbound',
-}
+export const SecurityRuleDirection = schema.network.SecurityRuleDirection;
+export type SecurityRuleDirection = typeof SecurityRuleDirection[keyof typeof SecurityRuleDirection];
 
 /**
  * Security rule configuration.

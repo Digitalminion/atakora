@@ -4,46 +4,37 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * Application type for Application Insights.
  */
-export enum ApplicationType {
-  WEB = 'web',
-  OTHER = 'other',
-}
+export const ApplicationType = schema.insights.ApplicationType;
+export type ApplicationType = typeof ApplicationType[keyof typeof ApplicationType];
 
 /**
  * Request source for Application Insights.
  */
-export enum RequestSource {
-  REST = 'rest',
-  IBIZA_WEB_AI = 'IbizaWebAI CreateComponentExtensionBladeContext',
-}
+export const RequestSource = schema.insights.RequestSource;
+export type RequestSource = typeof RequestSource[keyof typeof RequestSource];
 
 /**
  * Flow type for Application Insights.
  */
-export enum FlowType {
-  BLUEFIELD = 'Bluefield',
-  REDFLAG = 'RedFlag',
-}
+export const FlowType = schema.insights.FlowType;
+export type FlowType = typeof FlowType[keyof typeof FlowType];
 
 /**
  * Public network access options.
  */
-export enum PublicNetworkAccess {
-  ENABLED = 'Enabled',
-  DISABLED = 'Disabled',
-}
+export const PublicNetworkAccess = schema.insights.PublicNetworkAccess;
+export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
 
 /**
  * Ingestion mode for Application Insights.
  */
-export enum IngestionMode {
-  APPLICATION_INSIGHTS = 'ApplicationInsights',
-  APPLICATION_INSIGHTS_WITH_DIAGNOSTIC_SETTINGS = 'ApplicationInsightsWithDiagnosticSettings',
-  LOG_ANALYTICS = 'LogAnalytics',
-}
+export const IngestionMode = schema.insights.IngestionMode;
+export type IngestionMode = typeof IngestionMode[keyof typeof IngestionMode];
 
 /**
  * Properties for ArmComponents (L1 construct).

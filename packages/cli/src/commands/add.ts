@@ -141,7 +141,7 @@ ${chalk.bold('What happens:')}
         console.log(chalk.bold('🚀 Next Steps:\n'));
         console.log(`  ${chalk.cyan('1.')} Define your infrastructure`);
         console.log(
-          `     ${chalk.dim('Edit:')} ${chalk.bold(`packages/${packageName}/src/app.ts`)}\n`
+          `     ${chalk.dim('Edit:')} ${chalk.bold(`packages/${packageName}/src/index.ts`)}\n`
         );
         console.log(`  ${chalk.cyan('2.')} Build the project`);
         console.log(`     ${chalk.dim('$')} ${chalk.bold('npm run build')}\n`);

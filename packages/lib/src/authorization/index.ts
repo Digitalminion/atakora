@@ -31,3 +31,6 @@ export * from './well-known-role-ids';
 
 // Cross-stack grant utilities
 export * from './cross-stack-grant';
+
+// Resource role grant helper
+export * from './grant-resource-role';
