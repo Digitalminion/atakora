@@ -13,7 +13,7 @@ describe('core/types', () => {
         const component = new TestNamingComponent('digital-minion');
         expect(component.value).toBe('digital-minion');
         expect(component.resourceName).toBe('digital-minion');
-        expect(component.title).toBe('Digital-products'); // Treats hyphenated as single word
+        expect(component.title).toBe('Digital Minion');
       });
 
       it('should create from options object', () => {
@@ -105,7 +105,7 @@ describe('core/types', () => {
 
       it('should handle single words', () => {
         const component = new TestNamingComponent('authr');
-        expect(component.title).toBe('Colorai');
+        expect(component.title).toBe('Authr');
       });
 
       it('should handle all uppercase input', () => {
