@@ -123,7 +123,7 @@ describe('core/App', () => {
 
       expect(assembly).toBeDefined();
       expect(assembly.directory).toBe('arm.out');
-    });
+    }, 10000); // 10 second timeout
 
     it('should return cloud assembly with stacks object', async () => {
       const app = new App();

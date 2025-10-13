@@ -433,7 +433,11 @@ export class ResourceFactory {
     // Check for tags
     const tagsProp = resource.properties.find((p) => p.name === 'tags');
     if (tagsProp) {
-      lines.push('      tags: Object.keys(this.tags).length > 0 ? this.tags : undefined,');
+      if (tagsProp.required) {
+        lines.push('      tags: Object.keys(this.tags).length > 0 ? this.tags : undefined,');
+      } else {
+        lines.push('      tags: this.tags !== undefined && Object.keys(this.tags).length > 0 ? this.tags : undefined,');
+      }
     }
 
     lines.push('    };');
