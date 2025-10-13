@@ -4,6 +4,8 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * Properties for ArmStorageQueues (L1 construct).
  *

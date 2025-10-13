@@ -4,6 +4,8 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * CORS rule for queue service.
  */
