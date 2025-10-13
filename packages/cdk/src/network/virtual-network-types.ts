@@ -4,32 +4,24 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * Address space for virtual network.
  *
  * @remarks
  * Contains array of IP address ranges in CIDR notation.
+ * Imported from schema for consistency.
  */
-export interface AddressSpace {
-  /**
-   * Array of IP address ranges in CIDR notation.
-   *
-   * @example ['10.0.0.0/16', '10.1.0.0/16']
-   */
-  readonly addressPrefixes: string[];
-}
+export type AddressSpace = schema.network.AddressSpace;
 
 /**
  * DHCP options for virtual network.
+ *
+ * @remarks
+ * Imported from schema for consistency.
  */
-export interface DhcpOptions {
-  /**
-   * Array of DNS server IP addresses.
-   *
-   * @example ['10.0.0.4', '10.0.0.5']
-   */
-  readonly dnsServers: string[];
-}
+export type DhcpOptions = schema.network.DhcpOptions;
 
 /**
  * Subnet configuration for inline subnet definition.

@@ -4,61 +4,23 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
 /**
  * Log category configuration.
+ *
+ * @remarks
+ * Imported from schema.insights.LogSettings
  */
-export interface LogSettings {
-  /**
-   * Category name.
-   */
-  readonly category?: string;
-
-  /**
-   * Category group name (alternative to category).
-   */
-  readonly categoryGroup?: string;
-
-  /**
-   * Whether the category is enabled.
-   */
-  readonly enabled: boolean;
-
-  /**
-   * Retention policy.
-   */
-  readonly retentionPolicy?: {
-    readonly enabled: boolean;
-    readonly days: number;
-  };
-}
+export type LogSettings = schema.insights.LogSettings;
 
 /**
  * Metric category configuration.
+ *
+ * @remarks
+ * Imported from schema.insights.MetricSettings
  */
-export interface MetricSettings {
-  /**
-   * Category name (usually 'AllMetrics').
-   */
-  readonly category: string;
-
-  /**
-   * Whether the category is enabled.
-   */
-  readonly enabled: boolean;
-
-  /**
-   * Retention policy.
-   */
-  readonly retentionPolicy?: {
-    readonly enabled: boolean;
-    readonly days: number;
-  };
-
-  /**
-   * Time grain (ISO 8601 duration).
-   */
-  readonly timeGrain?: string;
-}
+export type MetricSettings = schema.insights.MetricSettings;
 
 /**
  * Properties for ArmDiagnosticSetting (L1 construct).

@@ -4,6 +4,28 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
+/**
+ * Private endpoint network policies.
+ *
+ * @remarks
+ * Imported from schema for consistency with Azure ARM specifications.
+ * Controls whether network policies are applied to private endpoints in a subnet.
+ */
+export const PrivateEndpointNetworkPolicies = schema.network.PrivateEndpointNetworkPolicies;
+export type PrivateEndpointNetworkPolicies = typeof PrivateEndpointNetworkPolicies[keyof typeof PrivateEndpointNetworkPolicies];
+
+/**
+ * Private link service network policies.
+ *
+ * @remarks
+ * Imported from schema for consistency with Azure ARM specifications.
+ * Controls whether network policies are applied to private link services in a subnet.
+ */
+export const PrivateLinkServiceNetworkPolicies = schema.network.PrivateLinkServiceNetworkPolicies;
+export type PrivateLinkServiceNetworkPolicies = typeof PrivateLinkServiceNetworkPolicies[keyof typeof PrivateLinkServiceNetworkPolicies];
+
 /**
  * Private Link Service Connection configuration.
  *

@@ -10,7 +10,27 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
 import type { IVirtualNetwork } from './virtual-network-types';
+
+/**
+ * DNS zone type.
+ *
+ * @remarks
+ * Imported from schema for consistency with Azure ARM specifications.
+ */
+export const DnsZoneType = schema.network.DnsZoneType;
+export type DnsZoneType = typeof DnsZoneType[keyof typeof DnsZoneType];
+
+/**
+ * DNS record type.
+ *
+ * @remarks
+ * Imported from schema for consistency with Azure ARM specifications.
+ * Used for DNS record set operations within private DNS zones.
+ */
+export const DnsRecordType = schema.network.DnsRecordType;
+export type DnsRecordType = typeof DnsRecordType[keyof typeof DnsRecordType];
 
 /**
  * Properties for L1 ArmPrivateDnsZone construct.

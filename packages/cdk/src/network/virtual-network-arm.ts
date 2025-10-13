@@ -556,11 +556,19 @@ export class ArmVirtualNetwork extends Resource {
         // Add NSG reference if provided
         if (subnet.networkSecurityGroup) {
           const nsgId = subnet.networkSecurityGroup.id;
-          // Convert NSG ID to ARM resourceId() expression
-          const nsgName = nsgId.split('/').pop();
-          subnetProps.networkSecurityGroup = {
-            id: `[resourceId('Microsoft.Network/networkSecurityGroups', '${nsgName}')]`,
-          };
+          // Check if ID is already an ARM expression (starts with '[')
+          if (nsgId.startsWith('[')) {
+            // Already an ARM expression, use as-is
+            subnetProps.networkSecurityGroup = {
+              id: nsgId,
+            };
+          } else {
+            // Convert NSG ID to ARM resourceId() expression
+            const nsgName = nsgId.split('/').pop();
+            subnetProps.networkSecurityGroup = {
+              id: `[resourceId('Microsoft.Network/networkSecurityGroups', '${nsgName}')]`,
+            };
+          }
         }
 
         // Add service endpoints if provided
@@ -613,9 +621,16 @@ export class ArmVirtualNetwork extends Resource {
       this.subnets.forEach((subnet) => {
         if (subnet.networkSecurityGroup) {
           const nsgId = subnet.networkSecurityGroup.id;
-          const nsgName = nsgId.split('/').pop();
-          const nsgResourceId = `[resourceId('Microsoft.Network/networkSecurityGroups', '${nsgName}')]`;
-          uniqueDeps.add(nsgResourceId);
+          // Check if ID is already an ARM expression (starts with '[')
+          if (nsgId.startsWith('[')) {
+            // Already an ARM expression, use as-is
+            uniqueDeps.add(nsgId);
+          } else {
+            // Convert NSG ID to ARM resourceId() expression
+            const nsgName = nsgId.split('/').pop();
+            const nsgResourceId = `[resourceId('Microsoft.Network/networkSecurityGroups', '${nsgName}')]`;
+            uniqueDeps.add(nsgResourceId);
+          }
         }
       });
     }

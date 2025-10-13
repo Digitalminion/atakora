@@ -4,6 +4,13 @@
  * @packageDocumentation
  */
 
+import { schema } from '@atakora/lib';
+
+// Note: Resource Groups (Microsoft.Resources/resourceGroups) do not have enums
+// defined in the schema. The schema.resources namespace contains enums for
+// Microsoft.Authorization/locks (LockLevel, LockScope) but no resource group-specific
+// types. All resource group types are defined as interfaces below.
+
 /**
  * Properties for ArmResourceGroup (L1 construct).
  *

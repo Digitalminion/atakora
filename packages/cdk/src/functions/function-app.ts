@@ -264,6 +264,44 @@ export class FunctionApp extends GrantableResource implements IFunctionApp {
    * will be implemented when synthesis is added.
    */
   public toArmTemplate(): any {
+    // Build app settings with required Azure Functions settings
+    const appSettings: Array<{ name: string; value: string }> = [
+      // Required: Storage connection string for Azure Functions runtime
+      {
+        name: 'AzureWebJobsStorage',
+        value: `[concat('DefaultEndpointsProtocol=https;AccountName=${this.storageAccountName};AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', '${this.storageAccountName}'), '2025-01-01').keys[0].value)]`,
+      },
+      // Required: Functions extension version
+      {
+        name: 'FUNCTIONS_EXTENSION_VERSION',
+        value: '~4',
+      },
+      // Required: Functions runtime
+      {
+        name: 'FUNCTIONS_WORKER_RUNTIME',
+        value: this.runtime,
+      },
+    ];
+
+    // Add user-provided environment variables
+    Object.entries(this.environment).forEach(([name, value]) => {
+      appSettings.push({ name, value });
+    });
+
+    // Add dependsOn for storage account and server farm
+    const dependsOn: string[] = [
+      `[resourceId('Microsoft.Storage/storageAccounts', '${this.storageAccountName}')]`,
+    ];
+
+    // Ensure serverFarmId is an ARM expression
+    let serverFarmIdValue = this.serverFarmId;
+    if (!serverFarmIdValue.startsWith('[')) {
+      // If it's a literal ID, convert to ARM expression
+      const planName = serverFarmIdValue.split('/').pop();
+      serverFarmIdValue = `[resourceId('Microsoft.Web/serverfarms', '${planName}')]`;
+      dependsOn.push(serverFarmIdValue);
+    }
+
     return {
       type: this.resourceType,
       apiVersion: this.apiVersion,
@@ -273,14 +311,12 @@ export class FunctionApp extends GrantableResource implements IFunctionApp {
       tags: this.tags,
       identity: this.identity,
       properties: {
-        serverFarmId: this.serverFarmId,
+        serverFarmId: serverFarmIdValue,
         siteConfig: {
-          appSettings: Object.entries(this.environment).map(([name, value]) => ({
-            name,
-            value,
-          })),
+          appSettings,
         },
       },
+      dependsOn,
     };
   }
 
