@@ -141,3 +141,4 @@ vite.config.ts.timestamp-*
 /packages/color
 /arm.out
 /packages/lib/arm.out
+/.atakora/arm.out
