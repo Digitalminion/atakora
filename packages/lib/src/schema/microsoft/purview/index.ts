@@ -17,3 +17,14 @@ export {
   ManagedEventHubState,
   TenantEndpointState,
 } from './enums';
+
+// Export all types
+export type {
+  PurviewSku,
+  UserAssignedIdentity,
+  PurviewIdentity,
+  IngestionStorage,
+  CloudConnectors,
+  MergeInfo,
+  AccountProperties,
+} from './types';
