@@ -24,8 +24,9 @@ try {
     sourcemap: true,
     minify: false, // Keep readable for debugging
 
-    // No external packages - bundle everything for a self-contained CLI
-    external: [],
+    // Mark Azure SDK packages as external - they have native dependencies
+    // that don't bundle well and need to be loaded at runtime
+    external: ['@azure/*'],
 
     // Preserve function names for better stack traces
     keepNames: true,

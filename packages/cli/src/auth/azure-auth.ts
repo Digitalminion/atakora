@@ -1,5 +1,8 @@
-import { InteractiveBrowserCredential, TokenCredential } from '@azure/identity';
+import { DeviceCodeCredential, InteractiveBrowserCredential, TokenCredential, TokenCachePersistenceOptions } from '@azure/identity';
 import { SubscriptionClient } from '@azure/arm-subscriptions';
+import * as path from 'path';
+import * as os from 'os';
+import * as fs from 'fs';
 
 export type CloudEnvironment =
   | 'AzureCloud'
@@ -35,9 +38,18 @@ export interface AuthResult {
 export class AzureAuthService {
   private credential: TokenCredential | null = null;
   private cloudConfig: CloudConfig;
+  private tokenCachePath: string;
 
   constructor(cloud: CloudEnvironment = 'AzureCloud') {
     this.cloudConfig = this.getCloudConfig(cloud);
+    // Set explicit token cache path to avoid "path is undefined" errors
+    const cacheDir = path.join(os.homedir(), '.atakora');
+    this.tokenCachePath = path.join(cacheDir, 'token-cache.bin');
+
+    // Ensure cache directory exists
+    if (!fs.existsSync(cacheDir)) {
+      fs.mkdirSync(cacheDir, { recursive: true });
+    }
   }
 
   /**
@@ -74,8 +86,10 @@ export class AzureAuthService {
       // Only create a new credential if we don't have one already
       // This allows the Azure SDK to reuse cached tokens
       if (!this.credential) {
+        // Use InteractiveBrowserCredential with minimal configuration
+        // Don't specify tokenCachePersistenceOptions - let SDK handle defaults
         this.credential = new InteractiveBrowserCredential({
-          redirectUri: 'http://localhost:8080',
+          redirectUri: 'http://localhost',
           authorityHost: this.cloudConfig.authorityHost,
         });
       }
@@ -148,7 +162,7 @@ export class AzureAuthService {
     const credential = tenantId
       ? new InteractiveBrowserCredential({
           tenantId,
-          redirectUri: 'http://localhost:8080',
+          redirectUri: 'http://localhost',
           authorityHost: this.cloudConfig.authorityHost,
         })
       : this.credential;
@@ -184,7 +198,7 @@ export class AzureAuthService {
   createCredential(tenantId: string): TokenCredential {
     return new InteractiveBrowserCredential({
       tenantId,
-      redirectUri: 'http://localhost:8080',
+      redirectUri: 'http://localhost',
       authorityHost: this.cloudConfig.authorityHost,
     });
   }
