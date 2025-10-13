@@ -1,0 +1,14 @@
+{
+  "name": "crud-create-template",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Template for CRUD create function",
+  "main": "index.ts",
+  "dependencies": {
+    "@azure/cosmos": "^4.0.0",
+    "@azure/functions": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  }
+}

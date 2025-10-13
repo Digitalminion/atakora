@@ -1,0 +1,103 @@
+{
+  "name": "@atakora/component",
+  "version": "0.0.2",
+  "description": "Production-ready infrastructure patterns and components built on Atakora CDK. Includes CRUD APIs, web apps, microservices, and more.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./crud": {
+      "types": "./dist/crud/index.d.ts",
+      "import": "./dist/crud/index.js",
+      "require": "./dist/crud/index.js"
+    },
+    "./functions": {
+      "types": "./dist/functions/index.d.ts",
+      "import": "./dist/functions/index.js",
+      "require": "./dist/functions/index.js"
+    },
+    "./data": {
+      "types": "./dist/data/index.d.ts",
+      "import": "./dist/data/index.js",
+      "require": "./dist/data/index.js"
+    },
+    "./data/crud": {
+      "types": "./dist/data/crud/index.d.ts",
+      "import": "./dist/data/crud/index.js",
+      "require": "./dist/data/crud/index.js"
+    },
+    "./web": {
+      "types": "./dist/web/index.d.ts",
+      "import": "./dist/web/index.js",
+      "require": "./dist/web/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      ".": ["./dist/index.d.ts"],
+      "crud": ["./dist/crud/index.d.ts"],
+      "functions": ["./dist/functions/index.d.ts"],
+      "data": ["./dist/data/index.d.ts"],
+      "data/crud": ["./dist/data/crud/index.d.ts"],
+      "web": ["./dist/web/index.d.ts"]
+    }
+  },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "dist/**/*.js.map",
+    "dist/**/*.d.ts.map",
+    "!dist/**/crud/functions/crud-*.d.ts.map",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "prebuild": "node scripts/build-templates.js",
+    "build": "tsc && npm run postbuild",
+    "postbuild": "node -e \"const fs=require('fs'),path=require('path');const src='src/crud/functions',dst='dist/crud/functions';fs.mkdirSync(dst,{recursive:true});['crud-create.js','crud-read.js','crud-update.js','crud-delete.js','crud-list.js','crud-create.d.ts','crud-read.d.ts','crud-update.d.ts','crud-delete.d.ts','crud-list.d.ts'].forEach(f=>fs.copyFileSync(path.join(src,f),path.join(dst,f)))\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf ./dist && rm -rf ../../dist/component && rm -rf scripts/*/dist",
+    "templates": "node scripts/build-templates.js"
+  },
+  "keywords": [
+    "atakora",
+    "azure",
+    "infrastructure",
+    "cdk",
+    "components",
+    "patterns",
+    "crud",
+    "microservices",
+    "web-apps",
+    "infrastructure-as-code",
+    "iac",
+    "serverless",
+    "api"
+  ],
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@atakora/cdk": "*",
+    "@atakora/lib": "*"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "devDependencies": {
+    "@azure/cosmos": "^4.6.0",
+    "@azure/functions": "^4.8.0",
+    "@azure/identity": "^4.13.0",
+    "@types/node": "^20.19.21",
+    "esbuild": "^0.25.10"
+  }
+}

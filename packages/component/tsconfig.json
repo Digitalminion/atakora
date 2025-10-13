@@ -1,0 +1,36 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "baseUrl": ".",
+    "paths": {
+      "@atakora/lib": ["../lib/src/index.ts"],
+      "@atakora/cdk": ["../cdk/src/index.ts"],
+      "@atakora/cli": ["../cli/src/index.ts"]
+    }
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "src/crud/functions/crud-*.js"
+  ],
+  "references": [
+    {
+      "path": "../lib"
+    },
+    {
+      "path": "../cdk"
+    }
+  ]
+}
