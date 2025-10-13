@@ -865,11 +865,6 @@ export interface ApiCreateOrUpdateProperties {
    * Supported protocols.
    */
   readonly protocols?: (ApiProtocol | string)[];
-
-  /**
-   * API version set contract.
-   */
-  readonly apiVersionSet?: ApiVersionSetContractDetails;
 }
 
 /**

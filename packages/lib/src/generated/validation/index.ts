@@ -32,6 +32,9 @@ export * from './Microsoft.DBforMySQL.validators';
 // Microsoft.DocumentDB validators (2024-08-15)
 export * from './Microsoft.DocumentDB.validators';
 
+// Microsoft.Insights validators (2024-01-01-preview)
+export * from './Microsoft.Insights.validators';
+
 // Microsoft.KeyVault validators (2024-12-01-preview)
 export * from './Microsoft.KeyVault.validators';
 
@@ -44,5 +47,14 @@ export * from './Microsoft.OperationalInsights.validators';
 // Microsoft.Purview validators (2024-04-01-preview)
 export * from './Microsoft.Purview.validators';
 
+// Microsoft.ServiceBus validators (2024-01-01)
+export * from './Microsoft.ServiceBus.validators';
+
+// Microsoft.Sql validators (2023-08-01)
+export * from './Microsoft.Sql.validators';
+
 // Microsoft.Storage validators (2025-01-01)
 export * from './Microsoft.Storage.validators';
+
+// Microsoft.Web validators (2024-11-01)
+export * from './Microsoft.Web.validators';
