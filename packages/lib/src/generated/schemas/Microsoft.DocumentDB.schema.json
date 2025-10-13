@@ -1,0 +1,143 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Microsoft.DocumentDB Schema Metadata",
+  "description": "Schema metadata and validation rules for Azure Cosmos DB (Microsoft.DocumentDB) resources",
+  "version": "2024-08-15",
+  "provider": "Microsoft.DocumentDB",
+  "generated": "2025-10-13T00:00:00.000Z",
+  "generatedBy": "Felix (Schema & Validation Engineer)",
+  "resources": {
+    "databaseAccounts": {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2024-08-15",
+      "scope": "global",
+      "constraints": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "minLength": 3,
+          "maxLength": 44,
+          "pattern": "^[a-z0-9-]+$",
+          "description": "Account name must contain only lowercase letters, numbers, and hyphens. Must start and end with lowercase letter or number.",
+          "examples": [
+            "mycosmosdb123",
+            "my-cosmos-db-test",
+            "production-cosmos-001"
+          ],
+          "invalidExamples": [
+            {
+              "value": "My-Cosmos-DB",
+              "reason": "Contains uppercase letters"
+            },
+            {
+              "value": "db",
+              "reason": "Too short (less than 3 characters)"
+            },
+            {
+              "value": "-mycosmosdb",
+              "reason": "Starts with hyphen"
+            },
+            {
+              "value": "mycosmosdb-",
+              "reason": "Ends with hyphen"
+            }
+          ]
+        },
+        "tags": {
+          "type": "object",
+          "maxProperties": 15,
+          "propertyConstraints": {
+            "key": {
+              "maxLength": 128
+            },
+            "value": {
+              "maxLength": 256
+            }
+          },
+          "description": "Maximum of 15 tags. Each tag key must be ≤128 characters and value ≤256 characters."
+        },
+        "properties": {
+          "type": "object",
+          "required": false,
+          "nestedConstraints": {
+            "databaseAccountOfferType": {
+              "type": "string",
+              "enum": ["Standard"],
+              "description": "Database account offer type. Currently only 'Standard' is supported."
+            },
+            "consistencyPolicy": {
+              "type": "object",
+              "properties": {
+                "defaultConsistencyLevel": {
+                  "enum": [
+                    "Eventual",
+                    "Session",
+                    "BoundedStaleness",
+                    "Strong",
+                    "ConsistentPrefix"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "databaseAccounts/services": {
+      "type": "Microsoft.DocumentDB/databaseAccounts/services",
+      "apiVersion": "2024-08-15",
+      "constraints": {
+        "name": {
+          "type": "string",
+          "required": false,
+          "minLength": 3,
+          "maxLength": 50,
+          "description": "Cosmos DB service name must be between 3-50 characters."
+        }
+      }
+    }
+  },
+  "validationRules": [
+    {
+      "rule": "name_uniqueness",
+      "description": "Cosmos DB account names must be globally unique across all Azure regions",
+      "severity": "error"
+    },
+    {
+      "rule": "location_required",
+      "description": "At least one location must be specified in the locations array",
+      "severity": "error"
+    },
+    {
+      "rule": "name_format",
+      "description": "Account names must start and end with lowercase letters or numbers, not hyphens",
+      "severity": "error"
+    }
+  ],
+  "references": [
+    {
+      "title": "Azure Resource Naming Rules",
+      "url": "https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules"
+    },
+    {
+      "title": "Cosmos DB Documentation",
+      "url": "https://learn.microsoft.com/en-us/azure/cosmos-db/"
+    },
+    {
+      "title": "Cosmos DB ARM Template Reference",
+      "url": "https://learn.microsoft.com/en-us/azure/templates/microsoft.documentdb/databaseaccounts"
+    }
+  ],
+  "changeLog": [
+    {
+      "version": "2024-08-15",
+      "date": "2025-10-13",
+      "changes": [
+        "Initial schema metadata creation",
+        "Documented account name constraints (3-44 characters, lowercase)",
+        "Documented tag constraints (max 15 tags, key ≤128, value ≤256)",
+        "Added validation rules for name format and uniqueness"
+      ]
+    }
+  ]
+}

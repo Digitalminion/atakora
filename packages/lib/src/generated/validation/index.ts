@@ -23,6 +23,12 @@ export * from './Microsoft.Authorization.validators';
 // Microsoft.AzureActiveDirectory validators (2023-05-17-preview)
 export * from './Microsoft.AzureActiveDirectory.validators';
 
+// Microsoft.CognitiveServices validators (2023-05-01)
+export * from './Microsoft.CognitiveServices.validators';
+
+// Microsoft.Consumption validators (2023-11-01)
+export * from './Microsoft.Consumption.validators';
+
 // Microsoft.DBforMariaDB validators (2018-06-01)
 export * from './Microsoft.DBforMariaDB.validators';
 

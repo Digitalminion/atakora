@@ -12,6 +12,11 @@ Comprehensive guides for using Atakora effectively.
 
 - **[Multi-Package Projects](./multi-package-projects.md)** - Organize infrastructure using multiple packages for teams, environments, or deployment boundaries
 
+## Infrastructure Patterns
+
+- **[Backend Pattern](./patterns/backend/overview.md)** - Share infrastructure resources across multiple components for 60-70% cost reduction
+- **[All Patterns](./patterns/README.md)** - Browse all production-ready infrastructure patterns
+
 ## Core Concepts
 
 - **[Azure Functions](./azure-functions.md)** - Build serverless applications with type-safe handler interfaces for all 18 Azure Functions trigger types

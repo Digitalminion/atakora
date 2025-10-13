@@ -11,6 +11,8 @@ import {
   PostSchema,
   CommentSchema,
   CategorySchema,
+  PostLikesSchema,
+  PostCategoriesSchema,
 } from '../../../schema/atakora/examples';
 
 describe('DataStackSynthesizer', () => {
@@ -87,7 +89,7 @@ describe('DataStackSynthesizer', () => {
     it('should synthesize complete data stack for blog platform', () => {
       const synthesizer = new DataStackSynthesizer();
       const manifest = synthesizer.synthesize(
-        [UserSchema, PostSchema, CommentSchema, CategorySchema],
+        [UserSchema, PostSchema, CommentSchema, CategorySchema, PostLikesSchema, PostCategoriesSchema],
         {
           outdir: './cdk.out',
           databaseName: 'BlogDB',
@@ -98,19 +100,19 @@ describe('DataStackSynthesizer', () => {
 
       // Verify Cosmos DB configuration
       expect(manifest.cosmos.databaseName).toBe('BlogDB');
-      expect(manifest.cosmos.containers).toHaveLength(4);
+      expect(manifest.cosmos.containers).toHaveLength(6);
       expect(manifest.cosmos.containers.map((c) => c.containerName)).toEqual(
-        expect.arrayContaining(['User', 'Post', 'Comment', 'Category'])
+        expect.arrayContaining(['User', 'Post', 'Comment', 'Category', 'PostLikes', 'PostCategories'])
       );
 
       // Verify Service Bus configuration
-      expect(manifest.serviceBus.topics).toHaveLength(4);
+      expect(manifest.serviceBus.topics).toHaveLength(6);
       expect(manifest.serviceBus.subscriptions.length).toBeGreaterThan(0);
 
       // Verify GraphQL resolvers
       expect(manifest.resolvers.configs.length).toBeGreaterThan(0);
-      expect(manifest.resolvers.stats.get).toBe(4); // One for each schema
-      expect(manifest.resolvers.stats.create).toBe(4);
+      expect(manifest.resolvers.stats.get).toBe(6); // One for each schema
+      expect(manifest.resolvers.stats.create).toBe(6);
 
       // Verify dependency graph
       expect(manifest.dependencies.nodes.length).toBeGreaterThan(0);
@@ -120,16 +122,16 @@ describe('DataStackSynthesizer', () => {
       expect(manifest.dependencies.sortedIds[0]).toBe('database:BlogDB');
 
       // Verify metadata
-      expect(manifest.metadata.schemaCount).toBe(4);
+      expect(manifest.metadata.schemaCount).toBe(6);
       expect(manifest.metadata.entityNames).toEqual(
-        expect.arrayContaining(['User', 'Post', 'Comment', 'Category'])
+        expect.arrayContaining(['User', 'Post', 'Comment', 'Category', 'PostLikes', 'PostCategories'])
       );
     });
 
     it('should handle incremental synthesis', () => {
       const synthesizer = new DataStackSynthesizer();
       const manifest = synthesizer.synthesize(
-        [UserSchema, PostSchema, CommentSchema, CategorySchema],
+        [UserSchema, PostSchema, CommentSchema, CategorySchema, PostLikesSchema, PostCategoriesSchema],
         {
           outdir: './cdk.out',
           databaseName: 'BlogDB',
@@ -149,7 +151,7 @@ describe('DataStackSynthesizer', () => {
     it('should validate dependency graph has no circular dependencies', () => {
       const synthesizer = new DataStackSynthesizer();
       const manifest = synthesizer.synthesize(
-        [UserSchema, PostSchema, CommentSchema, CategorySchema],
+        [UserSchema, PostSchema, CommentSchema, CategorySchema, PostLikesSchema, PostCategoriesSchema],
         {
           outdir: './cdk.out',
           databaseName: 'BlogDB',
@@ -166,7 +168,7 @@ describe('DataStackSynthesizer', () => {
 
     it('should respect enableEvents flag', () => {
       const synthesizer = new DataStackSynthesizer();
-      const manifest = synthesizer.synthesize([UserSchema, PostSchema], {
+      const manifest = synthesizer.synthesize([UserSchema, PostSchema, PostLikesSchema, PostCategoriesSchema], {
         outdir: './cdk.out',
         enableEvents: false,
         enableGraphQL: true,
@@ -178,7 +180,7 @@ describe('DataStackSynthesizer', () => {
 
     it('should respect enableGraphQL flag', () => {
       const synthesizer = new DataStackSynthesizer();
-      const manifest = synthesizer.synthesize([UserSchema, PostSchema], {
+      const manifest = synthesizer.synthesize([UserSchema, PostSchema, PostLikesSchema, PostCategoriesSchema], {
         outdir: './cdk.out',
         enableEvents: true,
         enableGraphQL: false,

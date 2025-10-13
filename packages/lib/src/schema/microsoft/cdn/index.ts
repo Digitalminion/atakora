@@ -20,3 +20,28 @@ export {
   RedirectType,
   GeoFilterAction,
 } from './enums';
+
+// Export all types
+export type {
+  Sku,
+  ManagedServiceIdentity,
+  UserAssignedIdentity,
+  ProfileProperties,
+  CdnProfile,
+  DeepCreatedOrigin,
+  DeepCreatedOriginGroup,
+  GeoFilter,
+  UrlSigningKey,
+  DeliveryRule,
+  DeliveryRuleCondition,
+  DeliveryRuleAction,
+  EndpointPropertiesUpdateParametersDeliveryPolicy,
+  EndpointProperties,
+  CdnEndpoint,
+  CdnManagedHttpsParameters,
+  UserManagedHttpsParameters,
+  CustomDomainProperties,
+  CdnCustomDomain,
+  OriginProperties,
+  CdnOrigin,
+} from './types';

@@ -22,7 +22,7 @@ describe('naming/conventions', () => {
     });
 
     it('should have storage pattern', () => {
-      expect(DEFAULT_PATTERNS.storage).toBe('st');
+      expect(DEFAULT_PATTERNS.storage).toBe('sto');
     });
 
     it('should have keyvault pattern', () => {
@@ -46,7 +46,7 @@ describe('naming/conventions', () => {
         separator: '-',
         maxLength: 60,
         patterns: expect.objectContaining({
-          storage: 'st',
+          storage: 'sto',
           keyvault: 'kv',
           vnet: 'vnet',
         }),

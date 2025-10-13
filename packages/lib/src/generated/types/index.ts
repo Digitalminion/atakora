@@ -22,6 +22,8 @@ export * as AAD from './Microsoft.AAD';
 export * as ApiManagement from './Microsoft.ApiManagement';
 export * as Authorization from './Microsoft.Authorization';
 export * as AzureActiveDirectory from './Microsoft.AzureActiveDirectory';
+export * as CognitiveServices from './Microsoft.CognitiveServices';
+export * as Consumption from './Microsoft.Consumption';
 export * as DBforMariaDB from './Microsoft.DBforMariaDB';
 export * as DBforMySQL from './Microsoft.DBforMySQL';
 export * as DocumentDB from './Microsoft.DocumentDB';

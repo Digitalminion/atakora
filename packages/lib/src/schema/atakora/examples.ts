@@ -302,6 +302,78 @@ export const CategorySchema = defineSchema('Category', {
   },
 });
 
+/**
+ * PostLikes junction table for User-Post likes relationship.
+ */
+export const PostLikesSchema = defineSchema('PostLikes', {
+  fields: z.object({
+    id: Fields.id(),
+    userId: z.string().uuid(),
+    postId: z.string().uuid(),
+    createdAt: Fields.createdAt(),
+  }),
+
+  authorization: {
+    create: allow.authenticated(),
+    read: allow.public(),
+    delete: allow.owner('userId'),
+  },
+
+  indexes: {
+    userPost: { fields: ['userId', 'postId'], unique: true },
+    byUser: { fields: ['userId', 'createdAt'] },
+    byPost: { fields: ['postId', 'createdAt'] },
+  },
+
+  relationships: {
+    user: belongsTo('User', 'userId'),
+    post: belongsTo('Post', 'postId'),
+  },
+
+  metadata: {
+    displayName: 'Post Like',
+    pluralName: 'Post Likes',
+    description: 'Junction table for user-post likes',
+    icon: '❤️',
+  },
+});
+
+/**
+ * PostCategories junction table for Post-Category relationship.
+ */
+export const PostCategoriesSchema = defineSchema('PostCategories', {
+  fields: z.object({
+    id: Fields.id(),
+    postId: z.string().uuid(),
+    categoryId: z.string().uuid(),
+    createdAt: Fields.createdAt(),
+  }),
+
+  authorization: {
+    create: allow.authenticated(),
+    read: allow.public(),
+    delete: allow.owner('postId'),
+  },
+
+  indexes: {
+    postCategory: { fields: ['postId', 'categoryId'], unique: true },
+    byPost: { fields: ['postId'] },
+    byCategory: { fields: ['categoryId'] },
+  },
+
+  relationships: {
+    post: belongsTo('Post', 'postId'),
+    category: belongsTo('Category', 'categoryId'),
+  },
+
+  metadata: {
+    displayName: 'Post Category',
+    pluralName: 'Post Categories',
+    description: 'Junction table for post-category relationships',
+    icon: '🔗',
+  },
+});
+
 // ============================================================================
 // TYPE INFERENCE EXAMPLES
 // ============================================================================

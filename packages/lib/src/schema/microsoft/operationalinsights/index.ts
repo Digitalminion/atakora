@@ -9,3 +9,13 @@
 
 // Export all enums
 export { WorkspaceSku, PublicNetworkAccess } from './enums';
+
+// Export all types
+export type {
+  WorkspaceSkuDef,
+  WorkspaceCapping,
+  WorkspaceFeatures,
+  UserAssignedIdentity,
+  WorkspaceIdentity,
+  WorkspaceProperties,
+} from './types';

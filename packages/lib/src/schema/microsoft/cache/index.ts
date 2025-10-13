@@ -14,3 +14,18 @@ export {
   TlsVersion,
   PublicNetworkAccess,
 } from './enums';
+
+// Export all types
+export type {
+  Sku,
+  RedisConfiguration,
+  ManagedServiceIdentity,
+  UserAssignedIdentity,
+  PrivateEndpointConnection,
+  RedisCacheProperties,
+  RedisCache,
+  RedisFirewallRule,
+  RedisPatchSchedule,
+  ScheduleEntry,
+  RedisLinkedServer,
+} from './types';

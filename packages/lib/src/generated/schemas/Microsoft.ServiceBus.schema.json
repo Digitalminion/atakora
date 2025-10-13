@@ -1,0 +1,277 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Microsoft.ServiceBus Schema Metadata",
+  "description": "Schema metadata and validation rules for Azure Service Bus (Microsoft.ServiceBus) resources",
+  "version": "2024-01-01",
+  "provider": "Microsoft.ServiceBus",
+  "generated": "2025-10-13T00:00:00.000Z",
+  "generatedBy": "Felix (Schema & Validation Engineer)",
+  "resources": {
+    "namespaces": {
+      "type": "Microsoft.ServiceBus/namespaces",
+      "apiVersion": "2024-01-01",
+      "scope": "global",
+      "constraints": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "minLength": 6,
+          "maxLength": 50,
+          "pattern": "^[a-zA-Z][a-zA-Z0-9-]*$",
+          "additionalRules": [
+            "Cannot end with hyphen (-)",
+            "Cannot end with -sb or -mgmt",
+            "Cannot contain consecutive hyphens (--)",
+            "Must start with a letter",
+            "Must end with a letter or number"
+          ],
+          "description": "Namespace name must be 6-50 characters, start with a letter, and contain only letters, numbers, and hyphens.",
+          "examples": [
+            "myservicebus",
+            "my-servicebus-namespace",
+            "production-sb-001",
+            "MyServiceBus123"
+          ],
+          "invalidExamples": [
+            {
+              "value": "short",
+              "reason": "Too short (less than 6 characters)"
+            },
+            {
+              "value": "-myservicebus",
+              "reason": "Starts with hyphen (must start with letter)"
+            },
+            {
+              "value": "myservicebus-",
+              "reason": "Ends with hyphen"
+            },
+            {
+              "value": "myservicebus-sb",
+              "reason": "Ends with -sb (reserved suffix)"
+            },
+            {
+              "value": "myservicebus-mgmt",
+              "reason": "Ends with -mgmt (reserved suffix)"
+            },
+            {
+              "value": "my--servicebus",
+              "reason": "Contains consecutive hyphens"
+            }
+          ]
+        },
+        "properties": {
+          "type": "object",
+          "required": true,
+          "description": "Namespace properties are required"
+        }
+      }
+    },
+    "namespaces/queues": {
+      "type": "Microsoft.ServiceBus/namespaces/queues",
+      "apiVersion": "2024-01-01",
+      "constraints": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 260,
+          "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+          "description": "Queue name must be 1-260 characters, lowercase only, start and end with letter/number.",
+          "examples": [
+            "myqueue",
+            "my-queue-1",
+            "production-orders-queue"
+          ],
+          "invalidExamples": [
+            {
+              "value": "-myqueue",
+              "reason": "Starts with hyphen"
+            },
+            {
+              "value": "myqueue-",
+              "reason": "Ends with hyphen"
+            },
+            {
+              "value": "MyQueue",
+              "reason": "Contains uppercase letters (automatically converted to lowercase)"
+            }
+          ]
+        }
+      }
+    },
+    "namespaces/topics": {
+      "type": "Microsoft.ServiceBus/namespaces/topics",
+      "apiVersion": "2024-01-01",
+      "constraints": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 260,
+          "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
+          "description": "Topic name must be 1-260 characters, lowercase only, start and end with letter/number.",
+          "examples": [
+            "mytopic",
+            "my-topic-1",
+            "production-events-topic"
+          ],
+          "invalidExamples": [
+            {
+              "value": "-mytopic",
+              "reason": "Starts with hyphen"
+            },
+            {
+              "value": "mytopic-",
+              "reason": "Ends with hyphen"
+            },
+            {
+              "value": "MyTopic",
+              "reason": "Contains uppercase letters (automatically converted to lowercase)"
+            }
+          ]
+        }
+      }
+    },
+    "namespaces/topics/subscriptions": {
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions",
+      "apiVersion": "2024-01-01",
+      "constraints": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 50,
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$",
+          "description": "Subscription name must be 1-50 characters, start and end with letter/number.",
+          "examples": [
+            "mysubscription",
+            "my-subscription-1",
+            "ProcessorA"
+          ],
+          "invalidExamples": [
+            {
+              "value": "-mysubscription",
+              "reason": "Starts with hyphen"
+            },
+            {
+              "value": "mysubscription-",
+              "reason": "Ends with hyphen"
+            }
+          ]
+        }
+      }
+    },
+    "namespaces/topics/subscriptions/rules": {
+      "type": "Microsoft.ServiceBus/namespaces/topics/subscriptions/rules",
+      "apiVersion": "2024-01-01",
+      "constraints": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 260,
+          "pattern": "^[A-Za-z0-9]$|^[A-Za-z0-9][\\w-\\.\\/\\~]*[A-Za-z0-9]$",
+          "description": "Rule name must be 1-260 characters with specific pattern requirements.",
+          "examples": [
+            "myrule",
+            "my-rule-1",
+            "FilterRule.v1"
+          ]
+        }
+      }
+    },
+    "namespaces/AuthorizationRules": {
+      "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+      "apiVersion": "2024-01-01",
+      "constraints": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 50,
+          "description": "Authorization rule name must be 1-50 characters."
+        },
+        "properties": {
+          "type": "object",
+          "required": true,
+          "nestedConstraints": {
+            "rights": {
+              "type": "array",
+              "required": true,
+              "items": {
+                "enum": ["Manage", "Send", "Listen"]
+              },
+              "description": "Access rights for the authorization rule. At least one right must be specified."
+            }
+          }
+        }
+      }
+    }
+  },
+  "validationRules": [
+    {
+      "rule": "namespace_uniqueness",
+      "description": "Service Bus namespace names must be globally unique across all Azure regions",
+      "severity": "error"
+    },
+    {
+      "rule": "namespace_reserved_suffixes",
+      "description": "Namespace names cannot end with -sb or -mgmt (reserved suffixes)",
+      "severity": "error"
+    },
+    {
+      "rule": "no_consecutive_hyphens",
+      "description": "Namespace names cannot contain consecutive hyphens (RFC5890 2.3.1)",
+      "severity": "error"
+    },
+    {
+      "rule": "queue_topic_case_conversion",
+      "description": "Queue and topic names with uppercase letters are automatically converted to lowercase",
+      "severity": "warning"
+    },
+    {
+      "rule": "name_within_namespace",
+      "description": "Queue and topic names must be unique within their namespace",
+      "severity": "error"
+    },
+    {
+      "rule": "subscription_within_topic",
+      "description": "Subscription names must be unique within their parent topic",
+      "severity": "error"
+    }
+  ],
+  "references": [
+    {
+      "title": "Azure Resource Naming Rules",
+      "url": "https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules"
+    },
+    {
+      "title": "Service Bus Quotas and Limits",
+      "url": "https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-quotas"
+    },
+    {
+      "title": "Service Bus ARM Template Reference",
+      "url": "https://learn.microsoft.com/en-us/azure/templates/microsoft.servicebus/namespaces"
+    },
+    {
+      "title": "Service Bus Naming Restrictions (Blog)",
+      "url": "https://blog.sandro-pereira.com/2024/09/06/friday-fact-azure-service-bus-naming-size-limits-and-restrictions/"
+    }
+  ],
+  "changeLog": [
+    {
+      "version": "2024-01-01",
+      "date": "2025-10-13",
+      "changes": [
+        "Initial schema metadata creation",
+        "Documented namespace name constraints (6-50 characters, globally unique)",
+        "Documented reserved suffixes (-sb, -mgmt)",
+        "Documented consecutive hyphen restriction (RFC5890)",
+        "Documented queue/topic name constraints (1-260 characters, lowercase)",
+        "Documented subscription name constraints (1-50 characters)",
+        "Documented rule name constraints (1-260 characters with pattern)",
+        "Added validation rules for namespace uniqueness and format"
+      ]
+    }
+  ]
+}

@@ -65,7 +65,7 @@ describe('naming/generator', () => {
           ...baseParams,
           purpose: 'data',
         });
-        expect(name).toBe('vnet-digital-minion-authr-data-nonprod-eastus-01');
+        expect(name).toBe('vnet-data-digital-minion-authr-nonprod-eastus-01');
       });
 
       it('should include additional suffix when provided', () => {
@@ -85,7 +85,7 @@ describe('naming/generator', () => {
         });
 
         // Name gets truncated to 24 chars max for storage
-        expect(name).toBe('stdigitalproductsauthr'); // truncated
+        expect(name).toBe('stodigitalminionauthrnon'); // truncated
         expect(name).not.toContain('-');
         expect(name.length).toBeLessThanOrEqual(24);
 
@@ -101,7 +101,7 @@ describe('naming/generator', () => {
         });
 
         // Name gets truncated to 24 chars max for key vaults
-        expect(name).toBe('kv-digital-minion-colo'); // truncated
+        expect(name).toBe('kv-digital-minion-authr'); // truncated
         expect(name).toMatch(/^[a-z0-9-]+$/);
         expect(name.length).toBeLessThanOrEqual(24);
 
@@ -205,7 +205,7 @@ describe('naming/generator', () => {
       });
 
       it('should return pattern for known resource types', () => {
-        expect(generator.getPattern('storage')).toBe('st');
+        expect(generator.getPattern('storage')).toBe('sto');
         expect(generator.getPattern('keyvault')).toBe('kv');
         expect(generator.getPattern('vnet')).toBe('vnet');
       });

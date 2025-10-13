@@ -1,0 +1,181 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://atakora.dev/schemas/schema-metadata.json",
+  "title": "Azure ARM Schema Metadata",
+  "description": "Metadata describing generated TypeScript types and validators for Azure ARM resources",
+  "type": "object",
+  "required": [
+    "provider",
+    "apiVersion",
+    "generatedDate",
+    "sourceFile",
+    "statistics",
+    "resourceTypes",
+    "validationFeatures"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "JSON Schema reference"
+    },
+    "provider": {
+      "type": "string",
+      "pattern": "^Microsoft\\.[A-Za-z0-9.]+$",
+      "description": "Azure resource provider namespace (e.g., Microsoft.Storage, Microsoft.Sql)"
+    },
+    "apiVersion": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}(-preview)?$",
+      "description": "ARM API version (e.g., 2023-08-01, 2025-01-01-preview)"
+    },
+    "generatedDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when types/validators were generated"
+    },
+    "sourceFile": {
+      "type": "string",
+      "description": "Source ARM schema or OpenAPI specification file"
+    },
+    "generatedBy": {
+      "type": "string",
+      "description": "Agent or tool that generated the types/validators"
+    },
+    "statistics": {
+      "type": "object",
+      "required": ["totalInterfaces", "totalValidators"],
+      "properties": {
+        "totalInterfaces": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of TypeScript interfaces generated"
+        },
+        "totalValidators": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of validation functions generated"
+        },
+        "linesOfTypes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total lines of code in type definition file"
+        },
+        "linesOfValidators": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total lines of code in validator file"
+        }
+      }
+    },
+    "resourceTypes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^Microsoft\\.[A-Za-z0-9.]+/[A-Za-z0-9/]+$"
+      },
+      "description": "List of ARM resource types covered by this schema"
+    },
+    "validationFeatures": {
+      "type": "object",
+      "required": [
+        "requiredProperties",
+        "stringLengthConstraints",
+        "numericRangeConstraints",
+        "regexPatterns",
+        "enumValidation",
+        "nestedObjectValidation"
+      ],
+      "properties": {
+        "requiredProperties": {
+          "type": "boolean",
+          "description": "Whether validation checks for required properties"
+        },
+        "stringLengthConstraints": {
+          "type": "boolean",
+          "description": "Whether validation enforces minLength/maxLength constraints"
+        },
+        "numericRangeConstraints": {
+          "type": "boolean",
+          "description": "Whether validation enforces minimum/maximum numeric constraints"
+        },
+        "regexPatterns": {
+          "type": "boolean",
+          "description": "Whether validation enforces regex pattern constraints"
+        },
+        "enumValidation": {
+          "type": "boolean",
+          "description": "Whether validation enforces enum value constraints"
+        },
+        "nestedObjectValidation": {
+          "type": "boolean",
+          "description": "Whether validation recurses into nested objects"
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "documented": {
+          "type": "boolean",
+          "description": "Whether constraints are documented in TSDoc comments"
+        },
+        "implemented": {
+          "type": "string",
+          "enum": ["none", "partial", "complete"],
+          "description": "Level of constraint implementation in validators"
+        }
+      }
+    },
+    "commonConstraints": {
+      "type": "object",
+      "description": "Common validation constraints for resource properties",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "minLength": { "type": "integer", "minimum": 0 },
+          "maxLength": { "type": "integer", "minimum": 0 },
+          "minimum": { "type": "number" },
+          "maximum": { "type": "number" },
+          "pattern": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Implementation notes and observations"
+    },
+    "improvements": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Suggested improvements for future iterations"
+    },
+    "cloudSupport": {
+      "type": "object",
+      "properties": {
+        "commercial": { "type": "boolean" },
+        "government": { "type": "boolean" },
+        "china": { "type": "boolean" },
+        "notes": { "type": "string" }
+      },
+      "description": "Cloud environment support information"
+    },
+    "breakingChanges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["version", "description"],
+        "properties": {
+          "version": { "type": "string" },
+          "description": { "type": "string" },
+          "affectedResources": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      },
+      "description": "Breaking changes across API versions"
+    }
+  }
+}

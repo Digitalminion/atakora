@@ -1,0 +1,104 @@
+{
+  "$schema": "./schema-metadata.schema.json",
+  "provider": "Microsoft.Storage",
+  "apiVersion": "2025-01-01",
+  "generatedDate": "2025-10-04T02:15:31.643Z",
+  "sourceFile": "Microsoft.Storage.json",
+  "generatedBy": "Felix (Schema & Validation Engineer)",
+  "statistics": {
+    "totalInterfaces": 120,
+    "totalValidators": 17,
+    "linesOfTypes": 2325,
+    "linesOfValidators": 559
+  },
+  "resourceTypes": [
+    "Microsoft.Storage/storageAccounts",
+    "Microsoft.Storage/storageAccounts/blobServices",
+    "Microsoft.Storage/storageAccounts/blobServices/containers",
+    "Microsoft.Storage/storageAccounts/blobServices/containers/immutabilityPolicies",
+    "Microsoft.Storage/storageAccounts/encryptionScopes",
+    "Microsoft.Storage/storageAccounts/fileServices",
+    "Microsoft.Storage/storageAccounts/fileServices/shares",
+    "Microsoft.Storage/storageAccounts/inventoryPolicies",
+    "Microsoft.Storage/storageAccounts/localUsers",
+    "Microsoft.Storage/storageAccounts/managementPolicies",
+    "Microsoft.Storage/storageAccounts/objectReplicationPolicies",
+    "Microsoft.Storage/storageAccounts/privateEndpointConnections",
+    "Microsoft.Storage/storageAccounts/queueServices",
+    "Microsoft.Storage/storageAccounts/queueServices/queues",
+    "Microsoft.Storage/storageAccounts/storageTaskAssignments",
+    "Microsoft.Storage/storageAccounts/tableServices",
+    "Microsoft.Storage/storageAccounts/tableServices/tables"
+  ],
+  "validationFeatures": {
+    "requiredProperties": true,
+    "stringLengthConstraints": true,
+    "numericRangeConstraints": false,
+    "regexPatterns": false,
+    "enumValidation": false,
+    "nestedObjectValidation": false
+  },
+  "constraints": {
+    "documented": true,
+    "implemented": "partial"
+  },
+  "commonConstraints": {
+    "storageAccountName": {
+      "minLength": 3,
+      "maxLength": 24,
+      "pattern": "^[a-z0-9]+$",
+      "description": "Storage account names must be between 3 and 24 characters and contain only lowercase letters and numbers"
+    },
+    "containerName": {
+      "minLength": 3,
+      "maxLength": 63,
+      "pattern": "^[a-z0-9](?:[a-z0-9]|(?<=[a-z0-9])-(?=[a-z0-9])){1,61}[a-z0-9]$",
+      "description": "Container names must be between 3 and 63 characters and contain only lowercase letters, numbers, and hyphens"
+    },
+    "encryptionScopeName": {
+      "minLength": 3,
+      "maxLength": 63,
+      "description": "Encryption scope names must be between 3 and 63 characters"
+    },
+    "shareName": {
+      "minLength": 3,
+      "maxLength": 63,
+      "pattern": "^[a-z0-9](?:[a-z0-9]|(?<=[a-z0-9])-(?=[a-z0-9])){1,61}[a-z0-9]$",
+      "description": "Share names must be between 3 and 63 characters and contain only lowercase letters, numbers, and hyphens"
+    },
+    "queueName": {
+      "minLength": 3,
+      "maxLength": 63,
+      "pattern": "^[a-z0-9](?:[a-z0-9]|(?<=[a-z0-9])-(?=[a-z0-9])){1,61}[a-z0-9]$",
+      "description": "Queue names must be between 3 and 63 characters and contain only lowercase letters, numbers, and hyphens"
+    },
+    "tableName": {
+      "minLength": 3,
+      "maxLength": 63,
+      "pattern": "^[A-Za-z][A-Za-z0-9]{2,62}$",
+      "description": "Table names must be between 3 and 63 characters, start with a letter, and contain only alphanumeric characters"
+    }
+  },
+  "notes": [
+    "Types generated from ARM schema with comprehensive interface definitions",
+    "Validators implement required property checks and basic length constraints",
+    "String length validation implemented for resource names (minLength, maxLength)",
+    "Regex pattern validation not yet implemented",
+    "All 17 resource types have corresponding validation functions",
+    "TSDoc includes detailed property descriptions from ARM schema"
+  ],
+  "improvements": [
+    "Add regex pattern validation for resource names (storageAccount, container, share, queue, table)",
+    "Implement numeric range validation for properties with min/max constraints",
+    "Add enum value validation for properties with fixed value sets",
+    "Implement nested object property validation",
+    "Include constraint examples in TSDoc comments",
+    "Add cloud-specific validation (Government vs Commercial Azure differences)"
+  ],
+  "cloudSupport": {
+    "commercial": true,
+    "government": true,
+    "china": true,
+    "notes": "Storage accounts have different endpoint patterns per cloud"
+  }
+}
