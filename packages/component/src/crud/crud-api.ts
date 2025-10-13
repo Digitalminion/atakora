@@ -31,11 +31,21 @@ import {
   PublicNetworkAccess as WorkspacePublicNetworkAccess,
   WorkspaceSku,
 } from '@atakora/cdk/operationalinsights';
+import {
+  type IBackendComponent,
+  type IComponentDefinition,
+  type IResourceRequirement,
+  type ResourceMap,
+  type ValidationResult,
+  type ComponentOutputs,
+  isBackendManaged,
+} from '../backend';
 
 /**
  * CRUD API Component
  *
  * @example
+ * Traditional usage (backward compatible):
  * ```typescript
  * import { CrudApi } from '@atakora/component/crud';
  * import { ResourceGroupStack } from '@atakora/cdk';
@@ -62,8 +72,23 @@ import {
  * console.log(userApi.apiEndpoint);
  * console.log(userApi.operations);
  * ```
+ *
+ * @example
+ * Backend pattern usage (with shared resources):
+ * ```typescript
+ * import { CrudApi } from '@atakora/component/crud';
+ * import { defineBackend } from '@atakora/component/backend';
+ *
+ * const backend = defineBackend({
+ *   userApi: CrudApi.define('UserApi', {
+ *     entityName: 'User',
+ *     schema: { ... },
+ *     partitionKey: '/id'
+ *   })
+ * });
+ * ```
  */
-export class CrudApi extends Construct {
+export class CrudApi extends Construct implements IBackendComponent<CrudApiProps> {
   /**
    * Cosmos DB account
    */
@@ -72,17 +97,17 @@ export class CrudApi extends Construct {
   /**
    * Functions App (hosting for Azure Functions)
    */
-  public readonly functionsApp: FunctionsApp;
+  public functionsApp!: FunctionsApp;
 
   /**
    * Log Analytics Workspace (if monitoring is enabled)
    */
-  public readonly logAnalyticsWorkspace?: ILogAnalyticsWorkspace;
+  public logAnalyticsWorkspace?: ILogAnalyticsWorkspace;
 
   /**
    * Application Insights instance (if monitoring is enabled)
    */
-  public readonly applicationInsights?: IApplicationInsights;
+  public applicationInsights?: IApplicationInsights;
 
   /**
    * Database name
@@ -107,12 +132,12 @@ export class CrudApi extends Construct {
   /**
    * Generated CRUD operations
    */
-  public readonly operations: ReadonlyArray<CrudOperation>;
+  public operations!: ReadonlyArray<CrudOperation>;
 
   /**
    * Generated function code for deployment
    */
-  public readonly generatedFunctions: GeneratedFunctionApp;
+  public generatedFunctions!: GeneratedFunctionApp;
 
   /**
    * Partition key path
@@ -127,8 +152,23 @@ export class CrudApi extends Construct {
     return `https://api.example.com/${this.containerName}`;
   }
 
+  // IBackendComponent implementation
+  public readonly componentId: string;
+  public readonly componentType = 'CrudApi';
+  public readonly config: CrudApiProps;
+
+  private sharedResources?: ResourceMap;
+  private backendManaged: boolean = false;
+
   constructor(scope: Construct, id: string, props: CrudApiProps) {
     super(scope, id);
+
+    // Store component metadata
+    this.componentId = id;
+    this.config = props;
+
+    // Check if backend-managed
+    this.backendManaged = isBackendManaged(scope);
 
     this.entityName = props.entityName;
     this.entityNamePlural = props.entityNamePlural ?? `${props.entityName}s`;
@@ -141,14 +181,36 @@ export class CrudApi extends Construct {
     this.databaseName = props.databaseName ?? `${entityKebab}-db`;
     this.containerName = props.containerName ?? entityPluralKebab;
 
-    // Create or use existing Cosmos DB account
-    this.database = props.cosmosAccount ?? new DatabaseAccounts(this, 'DatabaseAccount', {
-      location: props.location,
-      enableServerless: true,
-      publicNetworkAccess: PublicNetworkAccess.DISABLED,
-      tags: props.tags,
-    });
+    // Backend-managed mode: Resources will be injected later via initialize()
+    // Traditional mode: Create resources now
+    if (!this.backendManaged) {
+      // Create or use existing Cosmos DB account
+      this.database = props.cosmosAccount ?? new DatabaseAccounts(this, 'DatabaseAccount', {
+        location: props.location,
+        enableServerless: true,
+        publicNetworkAccess: PublicNetworkAccess.DISABLED,
+        tags: props.tags,
+      });
+    } else {
+      // Placeholder - will be replaced in initialize()
+      this.database = null as any;
+    }
 
+    // Only create these resources in traditional (non-backend) mode
+    if (!this.backendManaged) {
+      this.initializeTraditionalMode(props, entityKebab, entityPluralKebab);
+    }
+  }
+
+  /**
+   * Initialize component in traditional mode (creates own resources)
+   * @internal
+   */
+  private initializeTraditionalMode(
+    props: CrudApiProps,
+    entityKebab: string,
+    entityPluralKebab: string
+  ): void {
     // Configure observability (monitoring is enabled by default)
     const enableMonitoring = props.enableMonitoring !== false;
 
@@ -350,5 +412,298 @@ export class CrudApi extends Construct {
       .replace(/([a-z])([A-Z])/g, '$1-$2')
       .replace(/[\s_]+/g, '-')
       .toLowerCase();
+  }
+
+  // ============================================================================
+  // Backend Pattern Support
+  // ============================================================================
+
+  /**
+   * Define a CRUD API component for use with defineBackend().
+   * Returns a component definition that declares resource requirements.
+   *
+   * @param id - Component identifier
+   * @param config - Component configuration
+   * @returns Component definition
+   *
+   * @example
+   * ```typescript
+   * import { defineBackend } from '@atakora/component/backend';
+   * import { CrudApi } from '@atakora/component/crud';
+   *
+   * const backend = defineBackend({
+   *   userApi: CrudApi.define('UserApi', {
+   *     entityName: 'User',
+   *     schema: {
+   *       id: 'string',
+   *       name: { type: 'string', required: true },
+   *       email: { type: 'string', required: true }
+   *     },
+   *     partitionKey: '/id'
+   *   })
+   * });
+   * ```
+   */
+  public static define(id: string, config: CrudApiProps): IComponentDefinition<CrudApiProps> {
+    const entityKebab = CrudApi.toKebabCaseStatic(config.entityName);
+    const databaseName = config.databaseName ?? `${entityKebab}-db`;
+    const containerName = config.containerName ?? CrudApi.toKebabCaseStatic(
+      config.entityNamePlural ?? `${config.entityName}s`
+    );
+    const partitionKey = config.partitionKey ?? '/id';
+
+    return {
+      componentId: id,
+      componentType: 'CrudApi',
+      config,
+      factory: (scope: Construct, componentId: string, componentConfig: CrudApiProps, resources: ResourceMap) => {
+        const instance = new CrudApi(scope, componentId, componentConfig);
+        instance.initialize(resources, scope);
+        return instance;
+      },
+    };
+  }
+
+  /**
+   * Static version of toKebabCase for use in static methods
+   * @internal
+   */
+  private static toKebabCaseStatic(str: string): string {
+    return str
+      .replace(/([a-z])([A-Z])/g, '$1-$2')
+      .replace(/[\s_]+/g, '-')
+      .toLowerCase();
+  }
+
+  /**
+   * Get resource requirements for this component.
+   * Declares what Azure resources this component needs.
+   *
+   * @returns Array of resource requirements
+   */
+  public getRequirements(): ReadonlyArray<IResourceRequirement> {
+    const entityKebab = this.toKebabCase(this.entityName);
+    const requirements: IResourceRequirement[] = [];
+
+    // Cosmos DB requirement
+    requirements.push({
+      resourceType: 'cosmos',
+      requirementKey: `${this.componentId}-cosmos`,
+      priority: 20,
+      config: {
+        enableServerless: true,
+        consistency: 'Session',
+        publicNetworkAccess: 'Disabled',
+        databases: [
+          {
+            name: this.databaseName,
+            containers: [
+              {
+                name: this.containerName,
+                partitionKey: this.partitionKey,
+                indexingPolicy: {
+                  automatic: true,
+                  indexingMode: 'Consistent',
+                },
+              },
+            ],
+          },
+        ],
+      },
+      metadata: {
+        source: this.componentId,
+        version: '1.0.0',
+        description: `Cosmos DB for ${this.entityName} CRUD API`,
+      },
+    });
+
+    // Functions App requirement
+    requirements.push({
+      resourceType: 'functions',
+      requirementKey: `${this.componentId}-functions`,
+      priority: 20,
+      config: {
+        runtime: 'node',
+        version: '20',
+        sku: 'Y1',
+        environmentVariables: {
+          COSMOS_ENDPOINT: '${cosmos.documentEndpoint}',
+          DATABASE_NAME: this.databaseName,
+          CONTAINER_NAME: this.containerName,
+          ...this.generatedFunctions?.environmentVariables,
+        },
+      },
+      metadata: {
+        source: this.componentId,
+        version: '1.0.0',
+        description: `Functions App for ${this.entityName} CRUD operations`,
+      },
+    });
+
+    // Optional: Storage requirement for Functions runtime
+    requirements.push({
+      resourceType: 'storage',
+      requirementKey: `${this.componentId}-storage`,
+      priority: 20,
+      config: {
+        sku: 'Standard_LRS',
+        kind: 'StorageV2',
+        accessTier: 'Hot',
+        enableHttpsOnly: true,
+      },
+      metadata: {
+        source: this.componentId,
+        version: '1.0.0',
+        description: `Storage for ${this.entityName} Functions runtime`,
+      },
+    });
+
+    return requirements;
+  }
+
+  /**
+   * Initialize component with shared resources from the backend.
+   * Called by the backend after resources are provisioned.
+   *
+   * @param resources - Map of provisioned resources
+   * @param scope - CDK construct scope
+   */
+  public initialize(resources: ResourceMap, scope: Construct): void {
+    if (!this.backendManaged) {
+      // Already initialized in traditional mode
+      return;
+    }
+
+    this.sharedResources = resources;
+
+    // Extract shared resources
+    const cosmosKey = `cosmos:${this.componentId}-cosmos`;
+    const functionsKey = `functions:${this.componentId}-functions`;
+
+    this.database = resources.get(cosmosKey) as DatabaseAccounts;
+    this.functionsApp = resources.get(functionsKey) as FunctionsApp;
+
+    if (!this.database) {
+      throw new Error(`Required Cosmos DB resource not found: ${cosmosKey}`);
+    }
+
+    if (!this.functionsApp) {
+      throw new Error(`Required Functions App resource not found: ${functionsKey}`);
+    }
+
+    // Generate function code
+    (this as any).generatedFunctions = generateCrudFunctions({
+      entityName: this.entityName,
+      entityNamePlural: this.entityNamePlural,
+      databaseName: this.databaseName,
+      containerName: this.containerName,
+      schema: this.config.schema,
+      partitionKey: this.partitionKey,
+      applicationInsightsConnectionString: this.applicationInsights?.connectionString,
+    });
+
+    // Configure functions app with environment variables
+    const envVars: Record<string, string> = {
+      COSMOS_ENDPOINT: this.database.documentEndpoint,
+      DATABASE_NAME: this.databaseName,
+      CONTAINER_NAME: this.containerName,
+      ...this.generatedFunctions.environmentVariables,
+    };
+
+    this.functionsApp.addEnvironmentVariables(envVars);
+
+    // Define operations metadata
+    const entityKebab = this.toKebabCase(this.entityName);
+    const entityPluralKebab = this.toKebabCase(this.entityNamePlural);
+
+    const operations: CrudOperation[] = [
+      {
+        operation: 'create',
+        functionApp: this.functionsApp.functionApp,
+        functionName: `create-${entityKebab}`,
+        httpMethod: 'POST',
+        pathPattern: `/${entityPluralKebab}`,
+      },
+      {
+        operation: 'read',
+        functionApp: this.functionsApp.functionApp,
+        functionName: `read-${entityKebab}`,
+        httpMethod: 'GET',
+        pathPattern: `/${entityPluralKebab}/{id}`,
+      },
+      {
+        operation: 'update',
+        functionApp: this.functionsApp.functionApp,
+        functionName: `update-${entityKebab}`,
+        httpMethod: 'PUT',
+        pathPattern: `/${entityPluralKebab}/{id}`,
+      },
+      {
+        operation: 'delete',
+        functionApp: this.functionsApp.functionApp,
+        functionName: `delete-${entityKebab}`,
+        httpMethod: 'DELETE',
+        pathPattern: `/${entityPluralKebab}/{id}`,
+      },
+      {
+        operation: 'list',
+        functionApp: this.functionsApp.functionApp,
+        functionName: `list-${entityPluralKebab}`,
+        httpMethod: 'GET',
+        pathPattern: `/${entityPluralKebab}`,
+      },
+    ];
+
+    (this as any).operations = operations;
+  }
+
+  /**
+   * Validate that provided resources meet this component's requirements.
+   *
+   * @param resources - Map of resources to validate
+   * @returns Validation result
+   */
+  public validateResources(resources: ResourceMap): ValidationResult {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    // Validate Cosmos DB resource
+    const cosmosKey = `cosmos:${this.componentId}-cosmos`;
+    if (!resources.has(cosmosKey)) {
+      errors.push(`Missing required Cosmos DB resource: ${cosmosKey}`);
+    }
+
+    // Validate Functions App resource
+    const functionsKey = `functions:${this.componentId}-functions`;
+    if (!resources.has(functionsKey)) {
+      errors.push(`Missing required Functions App resource: ${functionsKey}`);
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors: errors.length > 0 ? errors : undefined,
+      warnings: warnings.length > 0 ? warnings : undefined,
+    };
+  }
+
+  /**
+   * Get component outputs for cross-component references.
+   *
+   * @returns Component outputs
+   */
+  public getOutputs(): ComponentOutputs {
+    return {
+      componentId: this.componentId,
+      componentType: this.componentType,
+      apiEndpoint: this.apiEndpoint,
+      databaseName: this.databaseName,
+      containerName: this.containerName,
+      operations: this.operations.map((op) => ({
+        operation: op.operation,
+        functionName: op.functionName,
+        httpMethod: op.httpMethod,
+        pathPattern: op.pathPattern,
+      })),
+    };
   }
 }

@@ -74,11 +74,6 @@ export interface FunctionsAppProps {
   readonly existingPlan?: ServerFarms;
 
   /**
-   * Use an existing Storage Account instead of creating new one
-   */
-  readonly existingStorage?: StorageAccounts;
-
-  /**
    * Global environment variables for all functions
    */
   readonly environment?: Record<string, string>;

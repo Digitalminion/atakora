@@ -4,7 +4,7 @@
  * @remarks
  * High-level component that bundles everything needed to run Azure Functions:
  * - App Service Plan (hosting plan)
- * - Storage Account (required for function app state)
+ * - Storage Account (dedicated for function runtime - always created)
  * - Function App (the actual function app)
  * - Managed Identity (for secure access to resources)
  * - Application Insights (optional monitoring)
@@ -12,17 +12,32 @@
  * This component makes it easy to create a function app without worrying about
  * all the individual dependencies.
  *
+ * IMPORTANT: Each Functions App creates its own dedicated storage account for
+ * runtime operations. This follows Azure best practices and ensures proper
+ * isolation between Functions runtime and application data storage.
+ *
+ * @see {@link https://learn.microsoft.com/azure/azure-functions/storage-considerations}
+ *
  * @packageDocumentation
  */
 
 import { Construct } from '@atakora/cdk';
 import { FunctionApp } from '@atakora/cdk/functions';
 import { ServerFarms, ServerFarmSkuName, ServerFarmSkuTier } from '@atakora/cdk/web';
-import { StorageAccounts, StorageAccountSkuName, StorageAccountKind } from '@atakora/cdk/storage';
+import { StorageAccounts, StorageAccountSkuName, StorageAccountKind, TlsVersion, NetworkAclDefaultAction, NetworkAclBypass } from '@atakora/cdk/storage';
 import { FunctionRuntime as CdkFunctionRuntime } from '@atakora/cdk/functions';
 import { ManagedServiceIdentityType } from '@atakora/cdk/functions';
 import type { FunctionsAppProps, FunctionRuntime } from './types';
 import { FunctionAppPresets } from './types';
+import {
+  type IBackendComponent,
+  type IComponentDefinition,
+  type IResourceRequirement,
+  type ResourceMap,
+  type ValidationResult,
+  type ComponentOutputs,
+  isBackendManaged,
+} from '../backend';
 
 /**
  * Functions App Component
@@ -32,7 +47,7 @@ import { FunctionAppPresets } from './types';
  * Handles all the wiring and configuration automatically.
  *
  * @example
- * Simple serverless function app:
+ * Traditional usage (backward compatible):
  * ```typescript
  * import { FunctionsApp } from '@atakora/component/functions';
  * import { ResourceGroupStack } from '@atakora/cdk';
@@ -54,26 +69,36 @@ import { FunctionAppPresets } from './types';
  * ```
  *
  * @example
- * Premium plan for production APIs:
+ * Backend pattern usage:
  * ```typescript
- * const functionsApp = new FunctionsApp(stack, 'Api', {
- *   runtime: FunctionRuntime.NODE,
- *   plan: FunctionAppPresets.PREMIUM_EP1.plan,
- *   environment: {
- *     NODE_ENV: 'production',
- *     LOG_LEVEL: 'info'
- *   }
+ * import { defineBackend } from '@atakora/component/backend';
+ * import { FunctionsApp } from '@atakora/component/functions';
+ *
+ * const backend = defineBackend({
+ *   functions: FunctionsApp.define('ApiFunction', {
+ *     runtime: 'node',
+ *     runtimeVersion: '20'
+ *   })
  * });
  * ```
  */
-export class FunctionsApp extends Construct {
+export class FunctionsApp extends Construct implements IBackendComponent<FunctionsAppProps> {
   /**
    * App Service Plan (hosting plan)
    */
   public readonly plan: ServerFarms;
 
   /**
-   * Storage Account (required for function app state)
+   * Storage Account (dedicated for function runtime operations)
+   *
+   * @remarks
+   * This storage account is automatically created and dedicated to this Functions App.
+   * It is used for:
+   * - Function app content and deployment packages (blob storage)
+   * - Trigger coordination and scale controller operations (queue storage)
+   * - Function execution history, locks, and leases (table storage)
+   *
+   * Per Azure best practices, this storage is isolated from application data storage.
    */
   public readonly storage: StorageAccounts;
 
@@ -107,8 +132,23 @@ export class FunctionsApp extends Construct {
    */
   public readonly environment: Record<string, string>;
 
+  // IBackendComponent implementation
+  public readonly componentId: string;
+  public readonly componentType = 'FunctionsApp';
+  public readonly config: FunctionsAppProps;
+
+  private sharedResources?: ResourceMap;
+  private backendManaged: boolean = false;
+
   constructor(scope: Construct, id: string, props: FunctionsAppProps = {}) {
     super(scope, id);
+
+    // Store component metadata
+    this.componentId = id;
+    this.config = props;
+
+    // Check if backend-managed
+    this.backendManaged = isBackendManaged(scope);
 
     this.location = props.location ?? this.getLocationFromParent(scope);
     this.environment = props.environment ?? {};
@@ -116,8 +156,9 @@ export class FunctionsApp extends Construct {
     // Use existing or create new App Service Plan
     this.plan = props.existingPlan ?? this.createAppServicePlan(id, props);
 
-    // Use existing or create new Storage Account
-    this.storage = props.existingStorage ?? this.createStorageAccount(id, props);
+    // ALWAYS create dedicated storage account for Functions runtime
+    // Per ADR-001, Functions Apps must not share storage with application data
+    this.storage = this.createFunctionRuntimeStorage(id, props);
 
     // Create Function App
     this.functionApp = this.createFunctionApp(id, props);
@@ -156,14 +197,42 @@ export class FunctionsApp extends Construct {
   }
 
   /**
-   * Creates Storage Account
+   * Creates dedicated storage account for Functions runtime operations
+   *
+   * @remarks
+   * Per ADR-001 (Azure Functions App Storage Separation), each Functions App
+   * MUST have its own dedicated storage account for runtime operations.
+   *
+   * This storage account is configured specifically for Functions requirements:
+   * - Standard_LRS tier (sufficient for most scenarios)
+   * - StorageV2 kind (required for all storage services)
+   * - TLS 1.2 minimum version
+   * - HTTPS-only traffic
+   * - No public blob access
+   * - Azure Services bypass enabled (required for Functions provisioning)
+   *
+   * The storage account is tagged to indicate its purpose and ownership.
+   *
+   * @param id - Construct ID for naming
+   * @param props - Component properties
+   * @returns Configured StorageAccounts construct
    */
-  private createStorageAccount(id: string, props: FunctionsAppProps): StorageAccounts {
-    return new StorageAccounts(this, 'Storage', {
+  private createFunctionRuntimeStorage(id: string, props: FunctionsAppProps): StorageAccounts {
+    return new StorageAccounts(this, 'RuntimeStorage', {
       location: this.location,
-      sku: StorageAccountSkuName.STANDARD_LRS, // Locally redundant storage is sufficient for function state
+      sku: StorageAccountSkuName.STANDARD_LRS,
       kind: StorageAccountKind.STORAGE_V2,
-      tags: props.tags,
+      minimumTlsVersion: TlsVersion.TLS1_2,
+      enableBlobPublicAccess: false,
+      networkAcls: {
+        defaultAction: NetworkAclDefaultAction.ALLOW, // Functions need access during provisioning
+        bypass: NetworkAclBypass.AZURE_SERVICES,
+      },
+      tags: {
+        ...props.tags,
+        'storage-purpose': 'functions-runtime',
+        'managed-by': 'functions-app',
+      },
     });
   }
 
@@ -288,5 +357,136 @@ export class FunctionsApp extends Construct {
     Object.entries(variables).forEach(([key, value]) => {
       this.addEnvironmentVariable(key, value);
     });
+  }
+
+  // ============================================================================
+  // Backend Pattern Support
+  // ============================================================================
+
+  /**
+   * Define a Functions App component for use with defineBackend().
+   *
+   * @param id - Component identifier
+   * @param config - Component configuration
+   * @returns Component definition
+   */
+  public static define(id: string, config: FunctionsAppProps = {}): IComponentDefinition<FunctionsAppProps> {
+    return {
+      componentId: id,
+      componentType: 'FunctionsApp',
+      config,
+      factory: (scope: Construct, componentId: string, componentConfig: FunctionsAppProps, resources: ResourceMap) => {
+        const instance = new FunctionsApp(scope, componentId, componentConfig);
+        instance.initialize(resources, scope);
+        return instance;
+      },
+    };
+  }
+
+  /**
+   * Get resource requirements for this component.
+   *
+   * @returns Array of resource requirements
+   */
+  public getRequirements(): ReadonlyArray<IResourceRequirement> {
+    const requirements: IResourceRequirement[] = [];
+
+    // Functions App requirement (self)
+    requirements.push({
+      resourceType: 'functions',
+      requirementKey: this.componentId,
+      priority: 10,
+      config: {
+        runtime: this.config.runtime || 'node',
+        version: this.config.runtimeVersion || '20',
+        sku: 'Y1',
+        alwaysOn: false,
+        environmentVariables: this.config.environment || {},
+      },
+      metadata: {
+        source: this.componentId,
+        version: '1.0.0',
+        description: 'Azure Functions App',
+      },
+    });
+
+    // Storage requirement for runtime
+    requirements.push({
+      resourceType: 'storage',
+      requirementKey: `${this.componentId}-runtime`,
+      priority: 10,
+      config: {
+        sku: 'Standard_LRS',
+        kind: 'StorageV2',
+        accessTier: 'Hot',
+        enableHttpsOnly: true,
+      },
+      metadata: {
+        source: this.componentId,
+        version: '1.0.0',
+        description: 'Storage for Functions runtime',
+      },
+    });
+
+    return requirements;
+  }
+
+  /**
+   * Initialize component with shared resources from the backend.
+   *
+   * @param resources - Map of provisioned resources
+   * @param scope - CDK construct scope
+   */
+  public initialize(resources: ResourceMap, scope: Construct): void {
+    if (!this.backendManaged) {
+      // Already initialized in traditional mode
+      return;
+    }
+
+    this.sharedResources = resources;
+    // In backend mode, resources are shared - nothing additional to initialize
+  }
+
+  /**
+   * Validate that provided resources meet this component's requirements.
+   *
+   * @param resources - Map of resources to validate
+   * @returns Validation result
+   */
+  public validateResources(resources: ResourceMap): ValidationResult {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    const functionsKey = `functions:${this.componentId}`;
+    if (!resources.has(functionsKey)) {
+      errors.push(`Missing required Functions App resource: ${functionsKey}`);
+    }
+
+    const storageKey = `storage:${this.componentId}-runtime`;
+    if (!resources.has(storageKey)) {
+      warnings.push(`Missing optional Storage resource: ${storageKey}`);
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors: errors.length > 0 ? errors : undefined,
+      warnings: warnings.length > 0 ? warnings : undefined,
+    };
+  }
+
+  /**
+   * Get component outputs for cross-component references.
+   *
+   * @returns Component outputs
+   */
+  public getOutputs(): ComponentOutputs {
+    return {
+      componentId: this.componentId,
+      componentType: this.componentType,
+      functionAppId: this.functionAppId,
+      functionAppName: this.functionAppName,
+      defaultHostName: this.defaultHostName,
+      location: this.location,
+    };
   }
 }
