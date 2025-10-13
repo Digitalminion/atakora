@@ -30,6 +30,15 @@ import {
   DEFAULT_CACHEABLE_FILE_TYPES,
   DEFAULT_COMPRESSIBLE_CONTENT_TYPES,
 } from './types';
+import {
+  type IBackendComponent,
+  type IComponentDefinition,
+  type IResourceRequirement,
+  type ResourceMap,
+  type ValidationResult,
+  type ComponentOutputs,
+  isBackendManaged,
+} from '../backend';
 
 /**
  * Static Site with CDN Component
@@ -39,7 +48,7 @@ import {
  * Automatically configures storage, CDN, DNS, and SSL certificates.
  *
  * @example
- * Simple static site with CDN:
+ * Traditional usage (backward compatible):
  * ```typescript
  * import { StaticSiteWithCdn } from '@atakora/component/web';
  * import { ResourceGroupStack } from '@atakora/cdk';
@@ -73,8 +82,22 @@ import {
  *
  * console.log(prodSite.customDomainEndpoint); // https://www.myapp.com
  * ```
+ *
+ * @example
+ * Backend pattern usage (with shared resources):
+ * ```typescript
+ * import { StaticSiteWithCdn } from '@atakora/component/web';
+ * import { defineBackend } from '@atakora/component/backend';
+ *
+ * const backend = defineBackend({
+ *   website: StaticSiteWithCdn.define('Website', {
+ *     indexDocument: 'index.html',
+ *     enableSpaMode: true
+ *   })
+ * });
+ * ```
  */
-export class StaticSiteWithCdn extends Construct {
+export class StaticSiteWithCdn extends Construct implements IBackendComponent<StaticSiteWithCdnProps> {
   /**
    * Storage account hosting the static website
    */
@@ -148,17 +171,55 @@ export class StaticSiteWithCdn extends Construct {
    */
   public readonly spaMode: boolean;
 
+  // IBackendComponent implementation
+  public readonly componentId: string;
+  public readonly componentType = 'StaticSiteWithCdn';
+  public readonly config: StaticSiteWithCdnProps;
+
+  private sharedResources?: ResourceMap;
+  private backendManaged: boolean = false;
+
   constructor(scope: Construct, id: string, props: StaticSiteWithCdnProps = {}) {
     super(scope, id);
+
+    // Store component metadata
+    this.componentId = id;
+    this.config = props;
+
+    // Check if backend-managed
+    this.backendManaged = isBackendManaged(scope);
 
     this.location = props.location ?? this.getLocationFromParent(scope);
     this.spaMode = props.enableSpaMode ?? false;
     this.indexDocument = props.indexDocument ?? 'index.html';
     this.errorDocument = this.spaMode ? this.indexDocument : (props.errorDocument ?? '404.html');
 
+    // Backend-managed mode: Resources will be injected later via initialize()
+    // Traditional mode: Create resources now
+    if (!this.backendManaged) {
+      // Traditional mode - create own resources
+      this.initializeTraditionalMode(props);
+    } else {
+      // Backend-managed mode - placeholders will be replaced in initialize()
+      this.storageAccount = null as any;
+      this.storageAccountName = '';
+      this.storageWebEndpoint = '';
+      this.cdnProfile = null as any;
+      this.cdnEndpointResource = null as any;
+      this.cdnProfileName = '';
+      this.cdnEndpointName = '';
+      this.cdnEndpoint = '';
+    }
+  }
+
+  /**
+   * Initialize component in traditional mode (creates own resources)
+   * @internal
+   */
+  private initializeTraditionalMode(props: StaticSiteWithCdnProps): void {
     // Create or use existing storage account
-    this.storageAccount = props.storageAccount ?? this.createStorageAccount(props);
-    this.storageAccountName = this.storageAccount.storageAccountName;
+    (this as any).storageAccount = props.storageAccount ?? this.createStorageAccount(props);
+    (this as any).storageAccountName = this.storageAccount.storageAccountName;
 
     // Configure static website hosting on storage account
     this.configureStaticWebsite(props);
@@ -167,20 +228,20 @@ export class StaticSiteWithCdn extends Construct {
     // Format: https://<account>.z13.web.core.windows.net
     // Note: The zone number (z13) varies by region
     const zoneNumber = this.getStorageZoneNumber(this.location);
-    this.storageWebEndpoint = `https://${this.storageAccountName}.${zoneNumber}.web.core.windows.net`;
+    (this as any).storageWebEndpoint = `https://${this.storageAccountName}.${zoneNumber}.web.core.windows.net`;
 
-    // Create CDN Profile and Endpoint
+    // Create CDN Profile and Endpoint (always created in traditional mode)
     const cdnResources = this.createCdnResources(props);
-    this.cdnProfile = cdnResources.profile;
-    this.cdnEndpointResource = cdnResources.endpoint;
-    this.cdnProfileName = this.cdnProfile.profileName;
-    this.cdnEndpointName = this.cdnEndpointResource.endpointName;
-    this.cdnEndpoint = `https://${this.cdnEndpointResource.hostName}`;
+    (this as any).cdnProfile = cdnResources.profile;
+    (this as any).cdnEndpointResource = cdnResources.endpoint;
+    (this as any).cdnProfileName = this.cdnProfile.profileName;
+    (this as any).cdnEndpointName = this.cdnEndpointResource.endpointName;
+    (this as any).cdnEndpoint = `https://${this.cdnEndpointResource.hostName}`;
 
     // Configure custom domain if provided
     if (props.customDomain && props.dnsZoneName) {
-      this.dnsZone = this.configureDnsAndCustomDomain(props);
-      this.customDomainEndpoint = `https://${props.customDomain}`;
+      (this as any).dnsZone = this.configureDnsAndCustomDomain(props);
+      (this as any).customDomainEndpoint = `https://${props.customDomain}`;
     }
   }
 
@@ -527,5 +588,192 @@ export class StaticSiteWithCdn extends Construct {
     );
 
     return instructions.join('\n');
+  }
+
+  // ============================================================================
+  // Backend Pattern Support
+  // ============================================================================
+
+  /**
+   * Define a Static Site with CDN component for use with defineBackend().
+   * Returns a component definition that declares resource requirements.
+   *
+   * @param id - Component identifier
+   * @param config - Component configuration
+   * @returns Component definition
+   *
+   * @example
+   * ```typescript
+   * import { defineBackend } from '@atakora/component/backend';
+   * import { StaticSiteWithCdn } from '@atakora/component/web';
+   *
+   * const backend = defineBackend({
+   *   website: StaticSiteWithCdn.define('Website', {
+   *     indexDocument: 'index.html',
+   *     enableSpaMode: true
+   *   })
+   * });
+   * ```
+   */
+  public static define(id: string, config: StaticSiteWithCdnProps = {}): IComponentDefinition<StaticSiteWithCdnProps> {
+    return {
+      componentId: id,
+      componentType: 'StaticSiteWithCdn',
+      config,
+      factory: (scope: Construct, componentId: string, componentConfig: StaticSiteWithCdnProps, resources: ResourceMap) => {
+        const instance = new StaticSiteWithCdn(scope, componentId, componentConfig);
+        instance.initialize(resources, scope);
+        return instance;
+      },
+    };
+  }
+
+  /**
+   * Get resource requirements for this component.
+   * Declares what Azure resources this component needs.
+   *
+   * @returns Array of resource requirements
+   */
+  public getRequirements(): ReadonlyArray<IResourceRequirement> {
+    const requirements: IResourceRequirement[] = [];
+
+    // Storage requirement for static website hosting
+    requirements.push({
+      resourceType: 'storage',
+      requirementKey: `${this.componentId}-static-site`,
+      priority: 20,
+      config: {
+        sku: 'Standard_LRS',
+        kind: 'StorageV2',
+        accessTier: 'Hot',
+        enableHttpsOnly: true,
+        enableStaticWebsite: true,
+        indexDocument: this.config.indexDocument || 'index.html',
+        errorDocument: this.config.errorDocument,
+      },
+      metadata: {
+        source: this.componentId,
+        version: '1.0.0',
+        description: `Storage for ${this.componentId} static website`,
+      },
+    });
+
+    // CDN requirement (always included for static sites)
+    requirements.push({
+      resourceType: 'cdn',
+      requirementKey: `${this.componentId}-cdn`,
+      priority: 20,
+      config: {
+        sku: this.config.cdnSku || 'Standard_Microsoft',
+        originHostName: '${storage.primaryEndpoints.web}',
+        enableCompression: this.config.enableCompression !== false,
+        cacheMaxAge: this.config.cacheMaxAge || 3600,
+      },
+      metadata: {
+        source: this.componentId,
+        version: '1.0.0',
+        description: `CDN for ${this.componentId} static site`,
+      },
+    });
+
+    return requirements;
+  }
+
+  /**
+   * Initialize component with shared resources from the backend.
+   * Called by the backend after resources are provisioned.
+   *
+   * @param resources - Map of provisioned resources
+   * @param scope - CDK construct scope
+   */
+  public initialize(resources: ResourceMap, scope: Construct): void {
+    if (!this.backendManaged) {
+      // Already initialized in traditional mode
+      return;
+    }
+
+    this.sharedResources = resources;
+
+    // Extract shared resources
+    const storageKey = `storage:${this.componentId}-static-site`;
+    const storage = resources.get(storageKey) as StorageAccounts;
+
+    if (!storage) {
+      throw new Error(`Required Storage resource not found: ${storageKey}`);
+    }
+
+    // Set storage account properties
+    (this as any).storageAccount = storage;
+    (this as any).storageAccountName = storage.storageAccountName;
+
+    // Generate storage web endpoint
+    const zoneNumber = this.getStorageZoneNumber(this.location);
+    (this as any).storageWebEndpoint = `https://${this.storageAccountName}.${zoneNumber}.web.core.windows.net`;
+
+    // Set up CDN
+    const cdnKey = `cdn:${this.componentId}-cdn`;
+    const cdnProfile = resources.get(cdnKey) as ICdnProfile;
+
+    if (cdnProfile) {
+      (this as any).cdnProfile = cdnProfile;
+      (this as any).cdnProfileName = cdnProfile.profileName;
+      // Note: CDN endpoint would need to be extracted from the CDN profile
+      // This depends on how the CDN provider implements the resource
+    }
+
+    // Configure custom domain if provided
+    if (this.config.customDomain && this.config.dnsZoneName) {
+      (this as any).dnsZone = this.configureDnsAndCustomDomain(this.config);
+      (this as any).customDomainEndpoint = `https://${this.config.customDomain}`;
+    }
+  }
+
+  /**
+   * Validate that provided resources meet this component's requirements.
+   *
+   * @param resources - Map of resources to validate
+   * @returns Validation result
+   */
+  public validateResources(resources: ResourceMap): ValidationResult {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    // Validate Storage resource
+    const storageKey = `storage:${this.componentId}-static-site`;
+    if (!resources.has(storageKey)) {
+      errors.push(`Missing required Storage resource: ${storageKey}`);
+    }
+
+    // Validate CDN resource
+    const cdnKey = `cdn:${this.componentId}-cdn`;
+    if (!resources.has(cdnKey)) {
+      warnings.push(`CDN resource not found: ${cdnKey}`);
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors: errors.length > 0 ? errors : undefined,
+      warnings: warnings.length > 0 ? warnings : undefined,
+    };
+  }
+
+  /**
+   * Get component outputs for cross-component references.
+   *
+   * @returns Component outputs
+   */
+  public getOutputs(): ComponentOutputs {
+    return {
+      componentId: this.componentId,
+      componentType: this.componentType,
+      storageAccountName: this.storageAccountName,
+      storageWebEndpoint: this.storageWebEndpoint,
+      cdnEndpoint: this.cdnEndpoint,
+      cdnProfileName: this.cdnProfileName,
+      cdnEndpointName: this.cdnEndpointName,
+      customDomainEndpoint: this.customDomainEndpoint,
+      indexDocument: this.indexDocument,
+      errorDocument: this.errorDocument,
+    };
   }
 }

@@ -43,6 +43,15 @@ import {
   PublicNetworkAccess as WorkspacePublicNetworkAccess,
   WorkspaceSku,
 } from '@atakora/cdk/operationalinsights';
+import {
+  type IBackendComponent,
+  type IComponentDefinition,
+  type IResourceRequirement,
+  type ResourceMap,
+  type ValidationResult,
+  type ComponentOutputs,
+  isBackendManaged,
+} from '../backend';
 
 /**
  * Data Stack construct.
@@ -67,7 +76,7 @@ import {
  * const resolvers = dataStack.getResolvers();
  * ```
  */
-export class DataStack extends Construct implements IDataStack {
+export class DataStack extends Construct implements IDataStack, IBackendComponent<DataStackProps> {
   public readonly databaseName: string;
   public readonly cosmosAccount: IDatabaseAccount;
   public readonly serviceBusNamespace?: IServiceBusNamespace;
@@ -81,106 +90,130 @@ export class DataStack extends Construct implements IDataStack {
   private readonly topicMap: Map<string, IServiceBusTopic> = new Map();
   private readonly resolverList: IGraphQLResolver[] = [];
 
+  // IBackendComponent implementation
+  public readonly componentId: string;
+  public readonly componentType = 'DataStack';
+  public readonly config: DataStackProps;
+
+  private sharedResources?: ResourceMap;
+  private backendManaged: boolean = false;
+
   constructor(scope: Construct, id: string, props: DataStackProps) {
     super(scope, id);
 
-    // Store references
-    this.cosmosAccount = props.cosmosAccount;
-    this.serviceBusNamespace = props.serviceBusNamespace;
-    this.signalRService = props.signalRService;
-    this.functionApp = props.functionApp;
+    // Store component metadata
+    this.componentId = id;
+    this.config = props;
+
+    // Check if backend-managed
+    this.backendManaged = isBackendManaged(scope);
+
     this.databaseName = props.databaseName || 'MainDB';
 
-    // Configure observability (monitoring is enabled by default)
-    const enableMonitoring = props.enableMonitoring !== false;
+    // Backend-managed mode: Resources will be injected later via initialize()
+    // Traditional mode: Create resources now
+    if (!this.backendManaged) {
+      // Store references
+      this.cosmosAccount = props.cosmosAccount;
+      this.serviceBusNamespace = props.serviceBusNamespace;
+      this.signalRService = props.signalRService;
+      this.functionApp = props.functionApp;
 
-    if (enableMonitoring) {
-      // Create or use existing Log Analytics Workspace
-      this.logAnalyticsWorkspace = props.logAnalyticsWorkspace ?? new ArmWorkspaces(this, 'LogAnalytics', {
-        workspaceName: `log-data-stack`,
-        location: 'eastus',
-        sku: { name: WorkspaceSku.PER_GB_2018 },
-        retentionInDays: props.logRetentionInDays ?? 90,
-        publicNetworkAccessForIngestion: WorkspacePublicNetworkAccess.DISABLED,
-        publicNetworkAccessForQuery: WorkspacePublicNetworkAccess.DISABLED,
-        tags: props.tags,
-      });
+      // Configure observability (monitoring is enabled by default)
+      const enableMonitoring = props.enableMonitoring !== false;
 
-      // Create or use existing Application Insights
-      this.applicationInsights = props.applicationInsights ?? new ArmComponents(this, 'AppInsights', {
-        name: `appi-data-stack`,
-        location: 'eastus',
-        kind: 'web',
-        applicationType: ApplicationType.WEB,
-        workspaceResourceId: this.logAnalyticsWorkspace!.workspaceId,
-        retentionInDays: props.logRetentionInDays ?? 90,
-        disableLocalAuth: true,
-        publicNetworkAccessForIngestion: InsightsPublicNetworkAccess.DISABLED,
-        publicNetworkAccessForQuery: InsightsPublicNetworkAccess.DISABLED,
-        tags: props.tags,
-      });
-
-      // Configure Cosmos DB diagnostic settings (enabled by default when monitoring is enabled)
-      if (props.enableCosmosDiagnostics !== false) {
-        new ArmDiagnosticSettings(this, 'CosmosDiagnostics', {
-          name: 'data-stack-cosmos-diagnostics',
-          targetResourceId: this.cosmosAccount.accountId,
-          workspaceId: this.logAnalyticsWorkspace!.workspaceId,
-          logs: [
-            {
-              category: 'DataPlaneRequests',
-              enabled: true,
-              retentionPolicy: {
-                enabled: true,
-                days: props.logRetentionInDays ?? 90,
-              },
-            },
-            {
-              category: 'QueryRuntimeStatistics',
-              enabled: true,
-              retentionPolicy: {
-                enabled: true,
-                days: props.logRetentionInDays ?? 90,
-              },
-            },
-            {
-              category: 'PartitionKeyStatistics',
-              enabled: true,
-              retentionPolicy: {
-                enabled: true,
-                days: props.logRetentionInDays ?? 90,
-              },
-            },
-          ],
-          metrics: [
-            {
-              category: 'Requests',
-              enabled: true,
-              retentionPolicy: {
-                enabled: true,
-                days: props.logRetentionInDays ?? 90,
-              },
-            },
-          ],
+      if (enableMonitoring) {
+        // Create or use existing Log Analytics Workspace
+        this.logAnalyticsWorkspace = props.logAnalyticsWorkspace ?? new ArmWorkspaces(this, 'LogAnalytics', {
+          workspaceName: `log-data-stack`,
+          location: 'eastus',
+          sku: { name: WorkspaceSku.PER_GB_2018 },
+          retentionInDays: props.logRetentionInDays ?? 90,
+          publicNetworkAccessForIngestion: WorkspacePublicNetworkAccess.DISABLED,
+          publicNetworkAccessForQuery: WorkspacePublicNetworkAccess.DISABLED,
+          tags: props.tags,
         });
+
+        // Create or use existing Application Insights
+        this.applicationInsights = props.applicationInsights ?? new ArmComponents(this, 'AppInsights', {
+          name: `appi-data-stack`,
+          location: 'eastus',
+          kind: 'web',
+          applicationType: ApplicationType.WEB,
+          workspaceResourceId: this.logAnalyticsWorkspace!.workspaceId,
+          retentionInDays: props.logRetentionInDays ?? 90,
+          disableLocalAuth: true,
+          publicNetworkAccessForIngestion: InsightsPublicNetworkAccess.DISABLED,
+          publicNetworkAccessForQuery: InsightsPublicNetworkAccess.DISABLED,
+          tags: props.tags,
+        });
+
+        // Configure Cosmos DB diagnostic settings (enabled by default when monitoring is enabled)
+        if (props.enableCosmosDiagnostics !== false) {
+          new ArmDiagnosticSettings(this, 'CosmosDiagnostics', {
+            name: 'data-stack-cosmos-diagnostics',
+            targetResourceId: this.cosmosAccount.accountId,
+            workspaceId: this.logAnalyticsWorkspace!.workspaceId,
+            logs: [
+              {
+                category: 'DataPlaneRequests',
+                enabled: true,
+                retentionPolicy: {
+                  enabled: true,
+                  days: props.logRetentionInDays ?? 90,
+                },
+              },
+              {
+                category: 'QueryRuntimeStatistics',
+                enabled: true,
+                retentionPolicy: {
+                  enabled: true,
+                  days: props.logRetentionInDays ?? 90,
+                },
+              },
+              {
+                category: 'PartitionKeyStatistics',
+                enabled: true,
+                retentionPolicy: {
+                  enabled: true,
+                  days: props.logRetentionInDays ?? 90,
+                },
+              },
+            ],
+            metrics: [
+              {
+                category: 'Requests',
+                enabled: true,
+                retentionPolicy: {
+                  enabled: true,
+                  days: props.logRetentionInDays ?? 90,
+                },
+              },
+            ],
+          });
+        }
       }
+
+      // Synthesize infrastructure
+      const synthesizer = new DataStackSynthesizer();
+      this.manifest = synthesizer.synthesize(props.schemas, {
+        outdir: './cdk.out',
+        databaseName: this.databaseName,
+        enableEvents: props.enableEvents ?? true,
+        enableGraphQL: props.enableGraphQL ?? true,
+        ...props.synthesisOptions,
+      });
+
+      // Create infrastructure resources
+      this.createCosmosInfrastructure(props);
+      this.createServiceBusInfrastructure(props);
+      this.createGraphQLInfrastructure(props);
+      this.createRealtimeInfrastructure(props);
+    } else {
+      // Placeholder - will be replaced in initialize()
+      this.cosmosAccount = null as any;
+      this.manifest = null as any;
     }
-
-    // Synthesize infrastructure
-    const synthesizer = new DataStackSynthesizer();
-    this.manifest = synthesizer.synthesize(props.schemas, {
-      outdir: './cdk.out',
-      databaseName: this.databaseName,
-      enableEvents: props.enableEvents ?? true,
-      enableGraphQL: props.enableGraphQL ?? true,
-      ...props.synthesisOptions,
-    });
-
-    // Create infrastructure resources
-    this.createCosmosInfrastructure(props);
-    this.createServiceBusInfrastructure(props);
-    this.createGraphQLInfrastructure(props);
-    this.createRealtimeInfrastructure(props);
   }
 
   /**
@@ -356,5 +389,240 @@ export class DataStack extends Construct implements IDataStack {
    */
   public getManifest(): DataStackManifest {
     return this.manifest;
+  }
+
+  // ============================================================================
+  // Backend Pattern Support
+  // ============================================================================
+
+  /**
+   * Define a Data Stack component for use with defineBackend().
+   * Returns a component definition that declares resource requirements.
+   *
+   * @param id - Component identifier
+   * @param config - Component configuration
+   * @returns Component definition
+   *
+   * @example
+   * ```typescript
+   * import { defineBackend } from '@atakora/component/backend';
+   * import { DataStack } from '@atakora/component/data';
+   *
+   * const backend = defineBackend({
+   *   dataStack: DataStack.define('DataStack', {
+   *     schemas: [UserSchema, PostSchema],
+   *     enableEvents: true,
+   *     enableGraphQL: true,
+   *     enableRealtime: true
+   *   })
+   * });
+   * ```
+   */
+  public static define(id: string, config: DataStackProps): IComponentDefinition<DataStackProps> {
+    return {
+      componentId: id,
+      componentType: 'DataStack',
+      config,
+      factory: (scope: Construct, componentId: string, componentConfig: DataStackProps, resources: ResourceMap) => {
+        const instance = new DataStack(scope, componentId, componentConfig);
+        instance.initialize(resources, scope);
+        return instance;
+      },
+    };
+  }
+
+  /**
+   * Get resource requirements for this component.
+   * Declares what Azure resources this component needs.
+   *
+   * @returns Array of resource requirements
+   */
+  public getRequirements(): ReadonlyArray<IResourceRequirement> {
+    const requirements: IResourceRequirement[] = [];
+
+    // Cosmos DB requirement for data storage
+    requirements.push({
+      resourceType: 'cosmos',
+      requirementKey: `${this.componentId}-cosmos`,
+      priority: 20,
+      config: {
+        enableServerless: true,
+        consistency: 'Session',
+        publicNetworkAccess: 'Disabled',
+        databases: this.config.schemas?.map(schema => ({
+          name: this.databaseName,
+          containers: [{
+            name: schema.name || `${this.componentId}-container`,
+            partitionKey: schema.partitionKey || '/id',
+          }]
+        })) || [{
+          name: this.databaseName,
+          containers: [],
+        }],
+      },
+      metadata: {
+        source: this.componentId,
+        version: '1.0.0',
+        description: `Cosmos DB for ${this.componentId} data stack`,
+      },
+    });
+
+    // Functions requirement for GraphQL resolvers
+    if (this.config.enableGraphQL !== false) {
+      requirements.push({
+        resourceType: 'functions',
+        requirementKey: `${this.componentId}-functions`,
+        priority: 20,
+        config: {
+          runtime: 'node',
+          version: '20',
+          sku: 'Y1',
+          environmentVariables: {
+            COSMOS_ENDPOINT: '${cosmos.documentEndpoint}',
+            DATABASE_NAME: this.databaseName,
+          },
+        },
+        metadata: {
+          source: this.componentId,
+          version: '1.0.0',
+          description: `Functions for ${this.componentId} GraphQL resolvers`,
+        },
+      });
+    }
+
+    // Service Bus requirement for event-driven architecture
+    if (this.config.enableEvents !== false) {
+      requirements.push({
+        resourceType: 'servicebus',
+        requirementKey: `${this.componentId}-servicebus`,
+        priority: 20,
+        config: {
+          sku: 'Standard',
+          topics: this.config.schemas?.map(s => s.name || 'default') || [],
+        },
+        metadata: {
+          source: this.componentId,
+          version: '1.0.0',
+          description: `Service Bus for ${this.componentId} events`,
+        },
+      });
+    }
+
+    return requirements;
+  }
+
+  /**
+   * Initialize component with shared resources from the backend.
+   * Called by the backend after resources are provisioned.
+   *
+   * @param resources - Map of provisioned resources
+   * @param scope - CDK construct scope
+   */
+  public initialize(resources: ResourceMap, scope: Construct): void {
+    if (!this.backendManaged) {
+      // Already initialized in traditional mode
+      return;
+    }
+
+    this.sharedResources = resources;
+
+    // Extract shared resources
+    const cosmosKey = `cosmos:${this.componentId}-cosmos`;
+    (this as any).cosmosAccount = resources.get(cosmosKey) as IDatabaseAccount;
+
+    if (!this.cosmosAccount) {
+      throw new Error(`Required Cosmos DB resource not found: ${cosmosKey}`);
+    }
+
+    // Optional: Extract Functions App if GraphQL is enabled
+    if (this.config.enableGraphQL !== false) {
+      const functionsKey = `functions:${this.componentId}-functions`;
+      (this as any).functionApp = resources.get(functionsKey) as IFunctionApp;
+
+      if (!this.functionApp) {
+        throw new Error(`Required Functions App resource not found: ${functionsKey}`);
+      }
+    }
+
+    // Optional: Extract Service Bus if events are enabled
+    if (this.config.enableEvents !== false) {
+      const serviceBusKey = `servicebus:${this.componentId}-servicebus`;
+      (this as any).serviceBusNamespace = resources.get(serviceBusKey) as IServiceBusNamespace;
+    }
+
+    // Synthesize infrastructure
+    const synthesizer = new DataStackSynthesizer();
+    (this as any).manifest = synthesizer.synthesize(this.config.schemas, {
+      outdir: './cdk.out',
+      databaseName: this.databaseName,
+      enableEvents: this.config.enableEvents ?? true,
+      enableGraphQL: this.config.enableGraphQL ?? true,
+      ...this.config.synthesisOptions,
+    });
+
+    // Create infrastructure resources with injected resources
+    this.createCosmosInfrastructure(this.config);
+    this.createServiceBusInfrastructure(this.config);
+    this.createGraphQLInfrastructure(this.config);
+    this.createRealtimeInfrastructure(this.config);
+  }
+
+  /**
+   * Validate that provided resources meet this component's requirements.
+   *
+   * @param resources - Map of resources to validate
+   * @returns Validation result
+   */
+  public validateResources(resources: ResourceMap): ValidationResult {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    // Validate Cosmos DB resource
+    const cosmosKey = `cosmos:${this.componentId}-cosmos`;
+    if (!resources.has(cosmosKey)) {
+      errors.push(`Missing required Cosmos DB resource: ${cosmosKey}`);
+    }
+
+    // Validate Functions App resource if GraphQL is enabled
+    if (this.config.enableGraphQL !== false) {
+      const functionsKey = `functions:${this.componentId}-functions`;
+      if (!resources.has(functionsKey)) {
+        errors.push(`Missing required Functions App resource: ${functionsKey}`);
+      }
+    }
+
+    // Validate Service Bus resource if events are enabled
+    if (this.config.enableEvents !== false) {
+      const serviceBusKey = `servicebus:${this.componentId}-servicebus`;
+      if (!resources.has(serviceBusKey)) {
+        warnings.push(`Missing optional Service Bus resource: ${serviceBusKey}`);
+      }
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors: errors.length > 0 ? errors : undefined,
+      warnings: warnings.length > 0 ? warnings : undefined,
+    };
+  }
+
+  /**
+   * Get component outputs for cross-component references.
+   *
+   * @returns Component outputs
+   */
+  public getOutputs(): ComponentOutputs {
+    return {
+      componentId: this.componentId,
+      componentType: this.componentType,
+      databaseName: this.databaseName,
+      containers: Array.from(this.containerMap.keys()),
+      topics: Array.from(this.topicMap.keys()),
+      resolvers: this.resolverList.map(r => ({
+        resolverName: r.resolverName,
+        entityName: r.entityName,
+        operation: r.operation,
+      })),
+    };
   }
 }

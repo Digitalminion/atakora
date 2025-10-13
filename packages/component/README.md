@@ -156,13 +156,18 @@ backend.components.productApi.operations;
 
 ### Documentation
 
-- [Backend Pattern Overview](./docs/backend-pattern.md) - Core concepts and benefits
-- [API Reference](./docs/backend-api-reference.md) - Complete API documentation
-- [Basic Examples](./docs/examples/basic-backend.md) - Common usage patterns
-- [Advanced Examples](./docs/examples/advanced-backend.md) - Complex scenarios
-- [Migration Guide](./docs/migration-guide.md) - Migrate from traditional pattern
-- [Best Practices](./docs/best-practices.md) - Production recommendations
-- [Troubleshooting](./docs/troubleshooting.md) - Common issues and solutions
+Complete documentation is available in the main Atakora docs:
+
+- [Backend Pattern Overview](../../docs/guides/patterns/backend/overview.md) - Core concepts and benefits
+- [API Reference](../../docs/guides/patterns/backend/api-reference.md) - Complete API documentation
+- [Basic Examples](../../docs/guides/patterns/backend/examples/basic-examples.md) - Common usage patterns
+- [Advanced Examples](../../docs/guides/patterns/backend/examples/advanced-examples.md) - Complex scenarios
+- [Migration Guide](../../docs/guides/patterns/backend/migration-guide.md) - Migrate from traditional pattern
+- [Best Practices](../../docs/guides/patterns/backend/best-practices.md) - Production recommendations
+- [Troubleshooting](../../docs/guides/patterns/backend/troubleshooting.md) - Common issues and solutions
+
+**Quick Links:**
+- [All Patterns](../../docs/guides/patterns/README.md) - Browse all infrastructure patterns
 
 ## Coming Soon
 
@@ -250,12 +255,13 @@ See the `/examples` directory for complete working examples of each component.
 
 ## Full Documentation
 
-For complete documentation, see the [docs](./docs/) directory:
+For complete documentation, see the main Atakora documentation:
 
-- **Getting Started**: [Backend Pattern Overview](./docs/backend-pattern.md)
-- **API Reference**: [Complete API Documentation](./docs/backend-api-reference.md)
-- **Examples**: [Basic](./docs/examples/basic-backend.md) | [Advanced](./docs/examples/advanced-backend.md)
-- **Guides**: [Migration](./docs/migration-guide.md) | [Best Practices](./docs/best-practices.md) | [Troubleshooting](./docs/troubleshooting.md)
+- **Getting Started**: [Backend Pattern Overview](../../docs/guides/patterns/backend/overview.md)
+- **API Reference**: [Complete API Documentation](../../docs/guides/patterns/backend/api-reference.md)
+- **Examples**: [Basic](../../docs/guides/patterns/backend/examples/basic-examples.md) | [Advanced](../../docs/guides/patterns/backend/examples/advanced-examples.md)
+- **Guides**: [Migration](../../docs/guides/patterns/backend/migration-guide.md) | [Best Practices](../../docs/guides/patterns/backend/best-practices.md) | [Troubleshooting](../../docs/guides/patterns/backend/troubleshooting.md)
+- **All Patterns**: [Infrastructure Patterns](../../docs/guides/patterns/README.md)
 
 ## Development
 

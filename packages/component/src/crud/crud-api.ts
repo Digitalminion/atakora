@@ -92,7 +92,7 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
   /**
    * Cosmos DB account
    */
-  public readonly database: DatabaseAccounts;
+  public database: DatabaseAccounts;
 
   /**
    * Functions App (hosting for Azure Functions)
