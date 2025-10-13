@@ -1,7 +1,10 @@
 {
   "files": [],
   "references": [
+    { "path": "./packages/backend" },
     { "path": "./packages/cdk" },
+    { "path": "./packages/cli" },
+    { "path": "./packages/component" },
     { "path": "./packages/lib" }
   ]
 }

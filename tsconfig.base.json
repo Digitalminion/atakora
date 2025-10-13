@@ -11,9 +11,12 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
+    "downlevelIteration": true,
     "baseUrl": ".",
     "paths": {
-      "@atakora/lib": ["./packages/lib/src/index.ts"]
+      "@atakora/lib": ["./packages/lib/src/index.ts"],
+      "@atakora/cli": ["./packages/cli/src/index.ts"],
+      "@atakora/cdk": ["./packages/lib/cdk/index.ts"]
     }
   },
   "exclude": ["node_modules", "dist"]
