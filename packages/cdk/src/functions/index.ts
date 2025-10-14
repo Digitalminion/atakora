@@ -323,6 +323,13 @@ export type {
 export { AzureFunction } from './azure-function';
 
 // ============================================================================
+// Inline Function (for generated code)
+// ============================================================================
+
+export { InlineFunction } from './inline-function';
+export type { InlineFunctionProps } from './inline-function';
+
+// ============================================================================
 // Middleware Utilities
 // ============================================================================
 

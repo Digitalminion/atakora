@@ -319,6 +319,20 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
 
     this.functionsApp.addEnvironmentVariables(envVars);
 
+    // Create InlineFunction constructs for each generated function
+    const { InlineFunction } = require('@atakora/cdk/functions');
+    this.generatedFunctions.functions.forEach((generatedFunc) => {
+      new InlineFunction(this.functionsApp.functionApp, generatedFunc.functionName, {
+        functionName: generatedFunc.functionName,
+        code: generatedFunc.code,
+        httpTrigger: {
+          methods: this.getHttpMethodsForOperation(generatedFunc.operation),
+          authLevel: 'function',
+          route: this.getRouteForOperation(generatedFunc.operation, entityKebab, entityPluralKebab),
+        },
+      });
+    });
+
     // Create Cosmos DB database and container
     const { CosmosDBDatabase, CosmosDBContainer } = require('@atakora/cdk/documentdb');
 
@@ -412,6 +426,50 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
       .replace(/([a-z])([A-Z])/g, '$1-$2')
       .replace(/[\s_]+/g, '-')
       .toLowerCase();
+  }
+
+  /**
+   * Get HTTP methods for a CRUD operation
+   */
+  private getHttpMethodsForOperation(operation: 'create' | 'read' | 'update' | 'delete' | 'list'): string[] {
+    switch (operation) {
+      case 'create':
+        return ['POST'];
+      case 'read':
+        return ['GET'];
+      case 'update':
+        return ['PUT', 'PATCH'];
+      case 'delete':
+        return ['DELETE'];
+      case 'list':
+        return ['GET'];
+      default:
+        return ['GET', 'POST'];
+    }
+  }
+
+  /**
+   * Get route pattern for a CRUD operation
+   */
+  private getRouteForOperation(
+    operation: 'create' | 'read' | 'update' | 'delete' | 'list',
+    entityKebab: string,
+    entityPluralKebab: string
+  ): string {
+    switch (operation) {
+      case 'create':
+        return `api/${entityPluralKebab}`;
+      case 'read':
+        return `api/${entityPluralKebab}/{id}`;
+      case 'update':
+        return `api/${entityPluralKebab}/{id}`;
+      case 'delete':
+        return `api/${entityPluralKebab}/{id}`;
+      case 'list':
+        return `api/${entityPluralKebab}`;
+      default:
+        return `api/${entityPluralKebab}`;
+    }
   }
 
   // ============================================================================
@@ -617,9 +675,23 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
 
     this.functionsApp.addEnvironmentVariables(envVars);
 
-    // Define operations metadata
+    // Define operations metadata and create InlineFunction constructs
     const entityKebab = this.toKebabCase(this.entityName);
     const entityPluralKebab = this.toKebabCase(this.entityNamePlural);
+
+    // Create InlineFunction constructs for each generated function
+    const { InlineFunction } = require('@atakora/cdk/functions');
+    this.generatedFunctions.functions.forEach((generatedFunc) => {
+      new InlineFunction(this.functionsApp.functionApp, generatedFunc.functionName, {
+        functionName: generatedFunc.functionName,
+        code: generatedFunc.code,
+        httpTrigger: {
+          methods: this.getHttpMethodsForOperation(generatedFunc.operation),
+          authLevel: 'function',
+          route: this.getRouteForOperation(generatedFunc.operation, entityKebab, entityPluralKebab),
+        },
+      });
+    });
 
     const operations: CrudOperation[] = [
       {
