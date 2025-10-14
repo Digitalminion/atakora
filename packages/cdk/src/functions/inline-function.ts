@@ -1,4 +1,4 @@
-import { Construct } from '@atakora/cdk';
+import { Construct, Resource, type ArmResource } from '@atakora/cdk';
 import type { IFunctionApp } from './function-app-types';
 
 /**
@@ -58,7 +58,22 @@ export interface InlineFunctionProps {
  * });
  * ```
  */
-export class InlineFunction extends Construct {
+export class InlineFunction extends Resource {
+  /**
+   * ARM resource type
+   */
+  public readonly resourceType = 'Microsoft.Web/sites/functions' as const;
+
+  /**
+   * ARM resource name
+   */
+  public readonly name: string;
+
+  /**
+   * ARM resource ID for the inline function
+   */
+  public readonly resourceId: string;
+
   /**
    * Function name
    */
@@ -89,6 +104,24 @@ export class InlineFunction extends Construct {
     this.functionName = props.functionName;
     this.code = props.code;
     this.httpTrigger = props.httpTrigger;
+
+    // Set ARM resource name (format: functionAppName/functionName)
+    this.name = `${this.functionAppName}/${this.functionName}`;
+
+    // Set ARM resource ID
+    this.resourceId = `[resourceId('Microsoft.Web/sites/functions', '${this.functionAppName}', '${this.functionName}')]`;
+  }
+
+  /**
+   * Validate props (required by Resource base class)
+   */
+  protected validateProps(props: InlineFunctionProps): void {
+    if (!props.functionName) {
+      throw new Error('functionName is required');
+    }
+    if (!props.code) {
+      throw new Error('code is required');
+    }
   }
 
   /**

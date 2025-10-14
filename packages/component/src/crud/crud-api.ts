@@ -321,8 +321,9 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
 
     // Create InlineFunction constructs for each generated function
     const { InlineFunction } = require('@atakora/cdk/functions');
+    const functionApp = this.getFunctionApp();
     this.generatedFunctions.functions.forEach((generatedFunc) => {
-      new InlineFunction(this.functionsApp.functionApp, generatedFunc.functionName, {
+      new InlineFunction(functionApp, generatedFunc.functionName, {
         functionName: generatedFunc.functionName,
         code: generatedFunc.code,
         httpTrigger: {
@@ -349,7 +350,7 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
 
     // Grant function app write access to Cosmos DB container
     // This allows all CRUD operations (create, read, update, delete, list)
-    cosmosContainer.grantWriteData(this.functionsApp.functionApp);
+    cosmosContainer.grantWriteData(functionApp);
 
     // Define CRUD operations metadata
     // Note: The actual functions will be deployed to functionsApp.functionApp
@@ -357,35 +358,35 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
     const operations: CrudOperation[] = [
       {
         operation: 'create',
-        functionApp: this.functionsApp.functionApp,
+        functionApp,
         functionName: `create-${entityKebab}`,
         httpMethod: 'POST',
         pathPattern: `/${entityPluralKebab}`,
       },
       {
         operation: 'read',
-        functionApp: this.functionsApp.functionApp,
+        functionApp,
         functionName: `read-${entityKebab}`,
         httpMethod: 'GET',
         pathPattern: `/${entityPluralKebab}/{id}`,
       },
       {
         operation: 'update',
-        functionApp: this.functionsApp.functionApp,
+        functionApp,
         functionName: `update-${entityKebab}`,
         httpMethod: 'PUT',
         pathPattern: `/${entityPluralKebab}/{id}`,
       },
       {
         operation: 'delete',
-        functionApp: this.functionsApp.functionApp,
+        functionApp,
         functionName: `delete-${entityKebab}`,
         httpMethod: 'DELETE',
         pathPattern: `/${entityPluralKebab}/{id}`,
       },
       {
         operation: 'list',
-        functionApp: this.functionsApp.functionApp,
+        functionApp,
         functionName: `list-${entityPluralKebab}`,
         httpMethod: 'GET',
         pathPattern: `/${entityPluralKebab}`,
@@ -426,6 +427,17 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
       .replace(/([a-z])([A-Z])/g, '$1-$2')
       .replace(/[\s_]+/g, '-')
       .toLowerCase();
+  }
+
+  /**
+   * Get the actual FunctionApp construct.
+   * In traditional mode, functionsApp is a FunctionsApp wrapper with a .functionApp property.
+   * In backend-managed mode, functionsApp is a FunctionApp directly.
+   * @internal
+   */
+  private getFunctionApp(): any {
+    // Check if it's a wrapper (has functionApp property) or direct FunctionApp
+    return (this.functionsApp as any).functionApp ?? this.functionsApp;
   }
 
   /**
@@ -544,9 +556,10 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
     const requirements: IResourceRequirement[] = [];
 
     // Cosmos DB requirement
+    // Use shared key so all CRUD APIs share the same Cosmos DB account
     requirements.push({
       resourceType: 'cosmos',
-      requirementKey: `${this.componentId}-cosmos`,
+      requirementKey: 'shared-cosmos',
       priority: 20,
       config: {
         enableServerless: true,
@@ -577,10 +590,11 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
     });
 
     // Storage requirement for Functions runtime
+    // Use shared key so all CRUD APIs share the same storage account
     // IMPORTANT: This must come before functions requirement so it's provisioned first
     requirements.push({
       resourceType: 'storage',
-      requirementKey: `${this.componentId}-storage`,
+      requirementKey: 'shared-storage',
       priority: 20,
       config: {
         sku: 'Standard_LRS',
@@ -597,10 +611,11 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
     });
 
     // Functions App requirement
+    // Use shared key so all CRUD APIs share the same Function App
     // Depends on storage being provisioned first
     requirements.push({
       resourceType: 'functions',
-      requirementKey: `${this.componentId}-functions`,
+      requirementKey: 'shared-functions',
       priority: 20,
       config: {
         runtime: 'node',
@@ -639,9 +654,9 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
 
     this.sharedResources = resources;
 
-    // Extract shared resources
-    const cosmosKey = `cosmos:${this.componentId}-cosmos`;
-    const functionsKey = `functions:${this.componentId}-functions`;
+    // Extract shared resources using shared keys (all CRUD APIs share these resources)
+    const cosmosKey = 'cosmos:shared-cosmos';
+    const functionsKey = 'functions:shared-functions';
 
     this.database = resources.get(cosmosKey) as DatabaseAccounts;
     this.functionsApp = resources.get(functionsKey) as FunctionsApp;
@@ -681,8 +696,9 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
 
     // Create InlineFunction constructs for each generated function
     const { InlineFunction } = require('@atakora/cdk/functions');
+    const functionApp = this.getFunctionApp();
     this.generatedFunctions.functions.forEach((generatedFunc) => {
-      new InlineFunction(this.functionsApp.functionApp, generatedFunc.functionName, {
+      new InlineFunction(functionApp, generatedFunc.functionName, {
         functionName: generatedFunc.functionName,
         code: generatedFunc.code,
         httpTrigger: {
@@ -696,35 +712,35 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
     const operations: CrudOperation[] = [
       {
         operation: 'create',
-        functionApp: this.functionsApp.functionApp,
+        functionApp,
         functionName: `create-${entityKebab}`,
         httpMethod: 'POST',
         pathPattern: `/${entityPluralKebab}`,
       },
       {
         operation: 'read',
-        functionApp: this.functionsApp.functionApp,
+        functionApp,
         functionName: `read-${entityKebab}`,
         httpMethod: 'GET',
         pathPattern: `/${entityPluralKebab}/{id}`,
       },
       {
         operation: 'update',
-        functionApp: this.functionsApp.functionApp,
+        functionApp,
         functionName: `update-${entityKebab}`,
         httpMethod: 'PUT',
         pathPattern: `/${entityPluralKebab}/{id}`,
       },
       {
         operation: 'delete',
-        functionApp: this.functionsApp.functionApp,
+        functionApp,
         functionName: `delete-${entityKebab}`,
         httpMethod: 'DELETE',
         pathPattern: `/${entityPluralKebab}/{id}`,
       },
       {
         operation: 'list',
-        functionApp: this.functionsApp.functionApp,
+        functionApp,
         functionName: `list-${entityPluralKebab}`,
         httpMethod: 'GET',
         pathPattern: `/${entityPluralKebab}`,
@@ -744,14 +760,14 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    // Validate Cosmos DB resource
-    const cosmosKey = `cosmos:${this.componentId}-cosmos`;
+    // Validate Cosmos DB resource using shared key (all CRUD APIs share this resource)
+    const cosmosKey = 'cosmos:shared-cosmos';
     if (!resources.has(cosmosKey)) {
       errors.push(`Missing required Cosmos DB resource: ${cosmosKey}`);
     }
 
-    // Validate Functions App resource
-    const functionsKey = `functions:${this.componentId}-functions`;
+    // Validate Functions App resource using shared key (all CRUD APIs share this resource)
+    const functionsKey = 'functions:shared-functions';
     if (!resources.has(functionsKey)) {
       errors.push(`Missing required Functions App resource: ${functionsKey}`);
     }
