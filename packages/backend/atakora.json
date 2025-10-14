@@ -1,0 +1,6 @@
+{
+  "name": "colorai-backend",
+  "version": "0.1.0",
+  "entry": "dist/index.js",
+  "outputDirectory": "output"
+}

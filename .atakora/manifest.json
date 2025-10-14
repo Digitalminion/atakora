@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "organization": "Digital Products",
+  "project": "Color AI",
+  "defaultPackage": "backend",
+  "packages": {
+    "backend": {
+      "path": "packages/backend",
+      "entry": "src/index.ts",
+      "enabled": true,
+      "type": "infrastructure"
+    }
+  },
+  "outputDirectory": ".atakora/arm.out",
+  "cloudEnvironment": "AzureCloud",
+  "createdAt": "2025-10-11T05:33:56.424Z",
+  "updatedAt": "2025-10-11T05:33:56.424Z"
+}
