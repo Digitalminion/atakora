@@ -49,6 +49,9 @@
 // High-level patterns and components
 // ============================================================================
 
+// Backend pattern - Resource sharing and orchestration
+export * from './backend';
+
 // CRUD API components
 export * from './crud';
 
@@ -77,14 +80,16 @@ export * from './messaging';
 export const VERSION = '0.0.2';
 
 // ============================================================================
-// RE-EXPORT CDK FOR CONVENIENCE
-// Users can import both components and CDK constructs from one place
+// CDK IMPORTS
 // ============================================================================
 
 /**
- * Re-export core CDK functionality for convenience
- * @remarks
- * This allows users to import both high-level components and low-level
- * CDK constructs from the same package when needed.
+ * Note: CDK types are not re-exported to avoid naming conflicts.
+ * Import CDK types directly from '@atakora/cdk' when needed.
+ *
+ * @example
+ * ```typescript
+ * import { ResourceGroupStack } from '@atakora/cdk';
+ * import { CrudApi } from '@atakora/component';
+ * ```
  */
-export * from '@atakora/cdk';

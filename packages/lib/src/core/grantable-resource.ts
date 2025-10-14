@@ -241,9 +241,16 @@ export abstract class GrantableResource extends Resource implements IGrantable {
       this.identity.type === ManagedIdentityType.SYSTEM_ASSIGNED ||
       this.identity.type === ManagedIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED
     ) {
+      // Strip outer brackets from resourceId if present
+      // resourceId might be "[resourceId(...)]" or "resourceId(...)"
+      let resourceIdExpression = this.resourceId;
+      if (resourceIdExpression.startsWith('[') && resourceIdExpression.endsWith(']')) {
+        resourceIdExpression = resourceIdExpression.slice(1, -1);
+      }
+
       // Return ARM reference expression
       // This will be resolved during deployment to the actual principal ID
-      return `[reference(${this.resourceId}).identity.principalId]`;
+      return `[reference(${resourceIdExpression}).identity.principalId]`;
     }
 
     // For user-assigned only, this resource cannot act as a grantable

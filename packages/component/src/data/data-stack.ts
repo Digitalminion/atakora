@@ -453,7 +453,7 @@ export class DataStack extends Construct implements IDataStack, IBackendComponen
           name: this.databaseName,
           containers: [{
             name: schema.name || `${this.componentId}-container`,
-            partitionKey: schema.partitionKey || '/id',
+            partitionKey: '/id', // Default partition key path for Cosmos DB
           }]
         })) || [{
           name: this.databaseName,

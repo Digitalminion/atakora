@@ -368,6 +368,11 @@ export class RoleAssignmentArm extends Resource {
    * from the input strings. We construct an ARM expression that will be
    * evaluated during deployment.
    *
+   * **Important**: The guid() function can only use expressions that are
+   * available at template compilation time. The reference() function is
+   * only available in the properties section, so we extract the resourceId
+   * from principalId if it contains a reference() call.
+   *
    * @returns ARM expression that generates a GUID
    *
    * @internal
@@ -378,8 +383,31 @@ export class RoleAssignmentArm extends Resource {
    * ```
    */
   private generateAssignmentGuid(): string {
+    // Helper to format parameter for guid() - strips outer brackets if present
+    const formatParam = (param: string): string => {
+      if (param.startsWith('[') && param.endsWith(']')) {
+        // ARM expression - strip brackets and use directly (already inside outer guid expression)
+        return param.slice(1, -1);
+      }
+      // Literal string - wrap in quotes
+      return `'${param}'`;
+    };
+
+    // Extract a stable identifier for the principal
+    // If principalId contains reference(), extract the resourceId for guid calculation
+    let principalIdentifier = this.props.principalId;
+
+    // Check if principalId contains a reference() call
+    // Pattern: [reference(resourceId(...)).identity.principalId]
+    const referenceMatch = principalIdentifier.match(/\[?reference\((.*?)\)\.identity\.principalId\]?/);
+    if (referenceMatch) {
+      // Extract the resourceId expression from inside reference()
+      // Use the resourceId as the stable identifier instead
+      principalIdentifier = `[${referenceMatch[1]}]`;
+    }
+
     // Use ARM guid() function for deterministic GUID generation
     // The function combines scope, role, and principal to create a unique but deterministic GUID
-    return `[guid('${this.props.scope}', '${this.props.roleDefinitionId}', '${this.props.principalId}')]`;
+    return `[guid(${formatParam(this.props.scope)}, ${formatParam(this.props.roleDefinitionId)}, ${formatParam(principalIdentifier)})]`;
   }
 }

@@ -457,8 +457,8 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
       componentType: 'CrudApi',
       config,
       factory: (scope: Construct, componentId: string, componentConfig: CrudApiProps, resources: ResourceMap) => {
+        // Just create the instance - backend will call initialize() later
         const instance = new CrudApi(scope, componentId, componentConfig);
-        instance.initialize(resources, scope);
         return instance;
       },
     };
@@ -494,6 +494,7 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
         enableServerless: true,
         consistency: 'Session',
         publicNetworkAccess: 'Disabled',
+        location: this.config.location,
         databases: [
           {
             name: this.databaseName,
@@ -517,30 +518,8 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
       },
     });
 
-    // Functions App requirement
-    requirements.push({
-      resourceType: 'functions',
-      requirementKey: `${this.componentId}-functions`,
-      priority: 20,
-      config: {
-        runtime: 'node',
-        version: '20',
-        sku: 'Y1',
-        environmentVariables: {
-          COSMOS_ENDPOINT: '${cosmos.documentEndpoint}',
-          DATABASE_NAME: this.databaseName,
-          CONTAINER_NAME: this.containerName,
-          ...this.generatedFunctions?.environmentVariables,
-        },
-      },
-      metadata: {
-        source: this.componentId,
-        version: '1.0.0',
-        description: `Functions App for ${this.entityName} CRUD operations`,
-      },
-    });
-
-    // Optional: Storage requirement for Functions runtime
+    // Storage requirement for Functions runtime
+    // IMPORTANT: This must come before functions requirement so it's provisioned first
     requirements.push({
       resourceType: 'storage',
       requirementKey: `${this.componentId}-storage`,
@@ -550,11 +529,37 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
         kind: 'StorageV2',
         accessTier: 'Hot',
         enableHttpsOnly: true,
+        location: this.config.location,
       },
       metadata: {
         source: this.componentId,
         version: '1.0.0',
         description: `Storage for ${this.entityName} Functions runtime`,
+      },
+    });
+
+    // Functions App requirement
+    // Depends on storage being provisioned first
+    requirements.push({
+      resourceType: 'functions',
+      requirementKey: `${this.componentId}-functions`,
+      priority: 20,
+      config: {
+        runtime: 'node',
+        version: '20',
+        sku: 'Y1',
+        location: this.config.location,
+        environmentVariables: {
+          COSMOS_ENDPOINT: '${cosmos.documentEndpoint}',
+          DATABASE_NAME: this.databaseName,
+          CONTAINER_NAME: this.containerName,
+          // Additional env vars will be added during initialize()
+        },
+      },
+      metadata: {
+        source: this.componentId,
+        version: '1.0.0',
+        description: `Functions App for ${this.entityName} CRUD operations`,
       },
     });
 

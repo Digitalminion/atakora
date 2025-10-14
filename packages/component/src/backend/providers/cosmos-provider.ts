@@ -355,13 +355,41 @@ export class CosmosProvider extends BaseProvider<CosmosConfig, DatabaseAccounts>
     config: CosmosConfig,
     context: ProviderContext
   ): DatabaseAccounts {
+    // Import enum types
+    const { ConsistencyLevel, PublicNetworkAccess } = require('@atakora/cdk/documentdb');
+
+    // Map string values to enum types
+    let consistencyLevel = undefined;
+    if (config.consistency) {
+      // Consistency values like 'Session', 'Strong', etc.
+      const consistencyKey = config.consistency.toUpperCase().replace(/-/g, '_');
+      if (ConsistencyLevel[consistencyKey]) {
+        consistencyLevel = ConsistencyLevel[consistencyKey];
+      } else {
+        // Try without transformation
+        consistencyLevel = ConsistencyLevel[config.consistency];
+      }
+    }
+
+    let publicNetworkAccess = undefined;
+    if (config.publicNetworkAccess) {
+      // Values like 'Disabled', 'Enabled', 'SecuredByPerimeter'
+      const accessKey = config.publicNetworkAccess.toUpperCase().replace(/-/g, '_');
+      if (PublicNetworkAccess[accessKey]) {
+        publicNetworkAccess = PublicNetworkAccess[accessKey];
+      } else {
+        // Try without transformation
+        publicNetworkAccess = PublicNetworkAccess[config.publicNetworkAccess];
+      }
+    }
+
     const props: DatabaseAccountsProps = {
       databaseAccountName: id,
-      location: config.location,
-      consistencyLevel: config.consistency,
+      location: config.location || context.location,
+      consistencyLevel,
       enableServerless: config.enableServerless,
       enableFreeTier: config.enableFreeTier,
-      publicNetworkAccess: config.publicNetworkAccess,
+      publicNetworkAccess,
       kind: config.kind,
       additionalLocations: config.additionalLocations,
       tags: context.tags,

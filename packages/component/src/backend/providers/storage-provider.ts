@@ -1,6 +1,6 @@
 import type { Construct } from '@atakora/cdk';
 import { StorageAccounts } from '@atakora/cdk/storage';
-import type { StorageAccountsProps, StorageAccountSkuName } from '@atakora/cdk/storage';
+import type { StorageAccountsProps, StorageAccountSkuName, AccessTier } from '@atakora/cdk/storage';
 import { BaseProvider, type IResourceRequirement, type ProviderContext, type ValidationResult } from './base-provider';
 
 /**
@@ -17,7 +17,7 @@ export interface ContainerConfig {
  */
 export interface StorageConfig {
   readonly sku?: StorageAccountSkuName;
-  readonly accessTier?: 'Hot' | 'Cool';
+  readonly accessTier?: AccessTier;
   readonly containers?: ReadonlyArray<ContainerConfig>;
   readonly enableBlobPublicAccess?: boolean;
   readonly location?: string;
@@ -144,10 +144,10 @@ export class StorageProvider extends BaseProvider<StorageConfig, StorageAccounts
     }
 
     // Use most cost-effective access tier (Cool is cheaper for infrequent access)
-    const tiers = configs.map(c => c.accessTier).filter((tier): tier is 'Hot' | 'Cool' => tier !== undefined);
+    const tiers = configs.map(c => c.accessTier).filter((tier): tier is AccessTier => tier !== undefined);
     if (tiers.length > 0) {
       // If any requires Hot, use Hot (more expensive but faster access)
-      mergedConfig.accessTier = tiers.includes('Hot') ? 'Hot' : 'Cool';
+      mergedConfig.accessTier = tiers.includes('Hot' as AccessTier) ? 'Hot' as AccessTier : 'Cool' as AccessTier;
     }
 
     // Use most restrictive public access setting
@@ -280,15 +280,33 @@ export class StorageProvider extends BaseProvider<StorageConfig, StorageAccounts
     config: StorageConfig,
     context: ProviderContext
   ): StorageAccounts {
+    // Import enum types
+    const { StorageAccountSkuName } = require('@atakora/cdk/storage');
+
+    // Azure storage account names must be 3-24 characters, lowercase letters and numbers only
+    const storageAccountName = this.normalizeStorageAccountName(id);
+
+    // Map string SKU to enum value
+    // config.sku is a string like 'Standard_LRS', we need StorageAccountSkuName.STANDARD_LRS
+    let skuEnum = StorageAccountSkuName.STANDARD_LRS; // Default
+    if (config.sku) {
+      // Convert 'Standard_LRS' to 'STANDARD_LRS' for enum lookup
+      const skuKey = config.sku.toUpperCase().replace(/-/g, '_');
+      if (StorageAccountSkuName[skuKey]) {
+        skuEnum = StorageAccountSkuName[skuKey];
+      }
+    }
+
     const props: StorageAccountsProps = {
-      storageAccountName: id,
-      sku: config.sku,
+      storageAccountName,
+      sku: skuEnum,
       accessTier: config.accessTier,
       enableBlobPublicAccess: config.enableBlobPublicAccess,
-      location: config.location,
+      location: config.location || context.location,
       tags: context.tags,
     };
 
+    // Create the Storage Account
     const storageAccount = new StorageAccounts(scope, id, props);
 
     // Note: Container creation will be handled separately
@@ -296,6 +314,33 @@ export class StorageProvider extends BaseProvider<StorageConfig, StorageAccounts
     // are typically created through separate constructs or during component initialization
 
     return storageAccount;
+  }
+
+  /**
+   * Normalize a storage account name to meet Azure requirements.
+   * Azure storage account names must be:
+   * - 3-24 characters long
+   * - Lowercase letters and numbers only
+   * - Globally unique across Azure
+   *
+   * @param name - Original name
+   * @returns Normalized name
+   */
+  private normalizeStorageAccountName(name: string): string {
+    // Convert to lowercase and remove invalid characters
+    let normalized = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    // Truncate if too long
+    if (normalized.length > 24) {
+      normalized = normalized.substring(0, 24);
+    }
+
+    // Ensure minimum length
+    if (normalized.length < 3) {
+      normalized = normalized.padEnd(3, '0');
+    }
+
+    return normalized;
   }
 
   /**

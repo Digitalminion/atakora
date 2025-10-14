@@ -120,8 +120,8 @@ export class Backend extends Construct implements IBackend {
   /**
    * Get all registered components (read-only).
    */
-  public get components(): ReadonlyMap<string, IBackendComponent> {
-    return this._components;
+  public get components(): Record<string, IBackendComponent> {
+    return Object.fromEntries(this._components);
   }
 
   /**
@@ -340,6 +340,10 @@ export class Backend extends Construct implements IBackend {
   private createTemporaryComponent(definition: IComponentDefinition): IBackendComponent {
     // Create a temporary scope for requirement collection
     const tempScope = new Construct(this, `temp-${definition.componentId}`);
+
+    // Mark the temporary scope as backend-managed so components won't create resources
+    markAsBackendManaged(tempScope);
+    setBackendId(tempScope, this.backendId);
 
     // Create component instance with empty resources
     // Components should be able to declare requirements without resources

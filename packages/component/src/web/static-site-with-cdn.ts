@@ -101,44 +101,44 @@ export class StaticSiteWithCdn extends Construct implements IBackendComponent<St
   /**
    * Storage account hosting the static website
    */
-  public readonly storageAccount: IStorageAccount;
+  public readonly storageAccount!: IStorageAccount;
 
   /**
    * Storage account name
    */
-  public readonly storageAccountName: string;
+  public readonly storageAccountName!: string;
 
   /**
    * Storage web endpoint (direct access, not CDN)
    * Format: https://<account>.z13.web.core.windows.net
    */
-  public readonly storageWebEndpoint: string;
+  public readonly storageWebEndpoint!: string;
 
   /**
    * CDN Profile resource
    */
-  public readonly cdnProfile: ICdnProfile;
+  public readonly cdnProfile!: ICdnProfile;
 
   /**
    * CDN Endpoint resource
    */
-  public readonly cdnEndpointResource: ICdnEndpoint;
+  public readonly cdnEndpointResource!: ICdnEndpoint;
 
   /**
    * CDN endpoint URL
    * Format: https://<endpoint>.azureedge.net
    */
-  public readonly cdnEndpoint: string;
+  public readonly cdnEndpoint!: string;
 
   /**
    * CDN profile name
    */
-  public readonly cdnProfileName: string;
+  public readonly cdnProfileName!: string;
 
   /**
    * CDN endpoint name
    */
-  public readonly cdnEndpointName: string;
+  public readonly cdnEndpointName!: string;
 
   /**
    * DNS Zone (if custom domain configured)

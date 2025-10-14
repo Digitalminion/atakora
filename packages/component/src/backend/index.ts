@@ -98,7 +98,7 @@ export type {
   // Specific types
   CosmosConsistencyLevel,
   CosmosCapability,
-  FunctionRuntime,
+  // Note: FunctionRuntime not exported to avoid conflict with functions module
   FunctionAppSku,
   StorageSku,
   StorageKind,

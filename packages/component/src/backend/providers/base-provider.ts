@@ -53,6 +53,8 @@ export interface ProviderContext {
   readonly naming: NamingConvention;
   readonly tags: Record<string, string>;
   readonly existingResources: ReadonlyMap<string, any>;
+  readonly location?: string;
+  readonly environment?: string;
 }
 
 /**
@@ -237,6 +239,18 @@ export abstract class BaseProvider<TConfig = any, TResource = any> implements IR
   protected validate(config: TConfig): ValidationResult {
     // Default implementation - override in concrete providers for specific validation
     return { valid: true };
+  }
+
+  /**
+   * Validate a merged requirement before provisioning.
+   * This is called by the backend after requirements are merged.
+   *
+   * @param requirement - Merged requirement to validate
+   * @returns Validation result
+   */
+  validateMerged(requirement: IResourceRequirement): ValidationResult {
+    // Default implementation validates the config
+    return this.validate(requirement.config);
   }
 
   /**

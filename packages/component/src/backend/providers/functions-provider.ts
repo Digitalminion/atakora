@@ -350,10 +350,50 @@ export class FunctionsProvider extends BaseProvider<FunctionsConfig, FunctionApp
       }
     }
 
+    // Create App Service Plan if not provided
+    let plan = config.plan;
+    if (!plan) {
+      const { ServerFarms, ServerFarmSkuName } = require('@atakora/cdk/web');
+
+      // Map string SKU to actual enum value
+      // config.sku is a string like 'Y1', we need to access ServerFarmSkuName.Y1
+      let skuName = ServerFarmSkuName.Y1; // Default to Consumption
+      if (config.sku && ServerFarmSkuName[config.sku]) {
+        skuName = ServerFarmSkuName[config.sku];
+      }
+
+      plan = new ServerFarms(scope, `${id}-plan`, {
+        sku: skuName,
+        location: config.location || context.location,
+        tags: context.tags,
+      });
+    }
+
+    // Look up storage account from existing resources if not provided
+    let storageAccount = config.storageAccount;
+    if (!storageAccount) {
+      // Find storage resource in existingResources
+      // Storage resources are typically keyed as "storage:component-storage"
+      for (const [key, resource] of Array.from(context.existingResources.entries())) {
+        if (key.startsWith('storage:')) {
+          storageAccount = resource;
+          break;
+        }
+      }
+
+      if (!storageAccount) {
+        throw this.createError(
+          'MISSING_STORAGE',
+          'Function App requires a Storage Account. Either provide one in config or ensure a storage requirement is declared.',
+          { availableResources: Array.from(context.existingResources.keys()) }
+        );
+      }
+    }
+
     const props: FunctionAppProps = {
       functionAppName: id,
-      plan: config.plan,
-      storageAccount: config.storageAccount,
+      plan: plan,
+      storageAccount: storageAccount,
       runtime: config.runtime as any,
       runtimeVersion: config.version,
       environment,
@@ -361,6 +401,7 @@ export class FunctionsProvider extends BaseProvider<FunctionsConfig, FunctionApp
       location: config.location,
     };
 
+    // Create the Function App
     return new FunctionApp(scope, id, props);
   }
 
@@ -395,14 +436,8 @@ export class FunctionsProvider extends BaseProvider<FunctionsConfig, FunctionApp
       }
     }
 
-    // Validate required dependencies
-    if (!config.plan) {
-      errors.push('Function App requires an App Service Plan reference');
-    }
-
-    if (!config.storageAccount) {
-      errors.push('Function App requires a Storage Account reference');
-    }
+    // Note: plan and storageAccount validation moved to provision()
+    // because they may not be available at validation time
 
     // Warn about consumption plan with alwaysOn
     if (config.sku === 'Y1' && config.alwaysOn) {

@@ -521,7 +521,7 @@ export interface IBackend {
   readonly backendId: string;
 
   /** All registered components */
-  readonly components: ReadonlyMap<string, IBackendComponent>;
+  readonly components: Record<string, IBackendComponent>;
 
   /** Shared resources created by this backend */
   readonly resources: ResourceMap;

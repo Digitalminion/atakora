@@ -148,7 +148,7 @@ export function formatResourceKeyWithSuffix(
  * ```
  */
 export function isBackendManaged(scope: Construct): boolean {
-  return scope.node.tryGetContext('backend-managed') === true;
+  return scope.node.tryGetContext('atakora:backend-managed') === true;
 }
 
 /**
@@ -160,7 +160,7 @@ export function isBackendManaged(scope: Construct): boolean {
  * @internal
  */
 export function markAsBackendManaged(scope: Construct): void {
-  scope.node.setContext('backend-managed', true);
+  scope.node.setContext('atakora:backend-managed', true);
 }
 
 /**
@@ -171,7 +171,7 @@ export function markAsBackendManaged(scope: Construct): void {
  * @returns Backend ID or undefined
  */
 export function getBackendId(scope: Construct): string | undefined {
-  return scope.node.tryGetContext('backend-id') as string | undefined;
+  return scope.node.tryGetContext('atakora:backend-id') as string | undefined;
 }
 
 /**
@@ -183,7 +183,7 @@ export function getBackendId(scope: Construct): string | undefined {
  * @internal
  */
 export function setBackendId(scope: Construct, backendId: string): void {
-  scope.node.setContext('backend-id', backendId);
+  scope.node.setContext('atakora:backend-id', backendId);
 }
 
 // ============================================================================
