@@ -189,11 +189,11 @@ export class TemplateSplitter {
    * ```
    */
   assignResources(metadata: ResourceMetadata[], options?: TemplateAssignmentOptions): TemplateAssignments {
-    const opts: Required<TemplateAssignmentOptions> = {
+    const opts = {
       maxTemplateSize: options?.maxTemplateSize ?? this.maxTemplateSize,
-      groupingStrategy: options?.groupingStrategy ?? 'minimize-cross-refs',
+      groupingStrategy: options?.groupingStrategy ?? ('minimize-cross-refs' as const),
       preferLinkedTemplates: options?.preferLinkedTemplates ?? false,
-      customGrouping: options?.customGrouping ?? undefined,
+      customGrouping: options?.customGrouping,
     };
 
     // Step 1: Check if splitting is needed
@@ -558,7 +558,12 @@ export class TemplateSplitter {
   private createAssignmentsFromGroups(
     metadata: ResourceMetadata[],
     groups: ReadonlyMap<string, readonly string[]>,
-    options: Required<TemplateAssignmentOptions>
+    options: {
+      maxTemplateSize: number;
+      groupingStrategy: 'minimize-cross-refs' | 'resource-type' | 'dependency-chain';
+      preferLinkedTemplates: boolean;
+      customGrouping?: (metadata: readonly ResourceMetadata[]) => ReadonlyMap<string, readonly string[]>;
+    }
   ): TemplateAssignments {
     const assignments = new Map<string, string>();
     const templates = new Map<string, TemplateMetadata>();

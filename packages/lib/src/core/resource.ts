@@ -294,6 +294,17 @@ export abstract class Resource extends Construct {
    * - Identify dependency relationships
    * - Detect co-location requirements
    *
+   * **Default Implementation**:
+   * If a resource doesn't override this method, it falls back to generating
+   * metadata from the ARM template. This supports incremental migration where
+   * not all resources need to implement toMetadata() immediately.
+   *
+   * **Backwards Compatibility**:
+   * - Resources without toMetadata() will use fallback implementation
+   * - Fallback generates metadata by calling toArmTemplate() (slower)
+   * - Fallback extracts basic info: type, name, dependsOn, size estimate
+   * - For best performance, resources should implement custom toMetadata()
+   *
    * **Implementation Guidelines**:
    * - Return ResourceMetadata with accurate dependency list
    * - Estimate size conservatively (overestimate is better than underestimate)
@@ -311,7 +322,7 @@ export abstract class Resource extends Construct {
    * @see ResourceMetadata for metadata structure
    * @see docs/design/architecture/adr-018-synthesis-pipeline-refactoring.md
    *
-   * @example Basic resource metadata
+   * @example Basic resource metadata (recommended)
    * ```typescript
    * public toMetadata(): ResourceMetadata {
    *   return {
@@ -348,7 +359,42 @@ export abstract class Resource extends Construct {
    * }
    * ```
    */
-  public abstract toMetadata(): ResourceMetadata;
+  public toMetadata(): ResourceMetadata {
+    // Fallback implementation for backwards compatibility
+    // Resources should override this for better performance
+    const arm = this.toArmTemplate();
+
+    // Extract dependencies from ARM dependsOn array
+    const dependencies: string[] = [];
+    if (Array.isArray(arm.dependsOn)) {
+      // Parse ARM resource ID expressions to extract names
+      for (const dep of arm.dependsOn) {
+        if (typeof dep === 'string') {
+          // Extract resource name from ARM expression like "[resourceId('Microsoft.Storage/storageAccounts', 'name')]"
+          const match = dep.match(/,\s*'([^']+)'\s*\)/);
+          if (match && match[1]) {
+            dependencies.push(match[1]);
+          }
+        }
+      }
+    }
+
+    // Estimate size from JSON stringification
+    const armJson = JSON.stringify(arm);
+    const sizeEstimate = armJson.length;
+
+    return {
+      id: this.node.id,
+      type: this.resourceType,
+      name: this.name,
+      dependencies,
+      sizeEstimate,
+      templatePreference: 'application', // Default to application tier
+      metadata: {
+        generatedFromFallback: true, // Flag for debugging
+      },
+    };
+  }
 
   /**
    * Transforms this resource to ARM template JSON representation.

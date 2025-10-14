@@ -369,7 +369,7 @@ async function deployStack(
   client: ResourceManagementClient,
   assemblyPath: string,
   stackName: string,
-  stackManifest: StackManifest,
+  stackManifest: StackManifest | StackManifestV2,
   profile: ProfileConfig,
   resourceGroupName?: string,
   cloudAssembly?: CloudAssemblyV2,
