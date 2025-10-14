@@ -1,5 +1,5 @@
 import { Construct } from '@atakora/cdk';
-import type { IResourceGroup } from '@atakora/cdk';
+import type { IResourceGroup, ResourceMetadata, SynthesisContext } from '@atakora/cdk';
 import type { IGrantable, IGrantResult } from '@atakora/lib';
 import { WellKnownRoleIds, RoleAssignment, GrantResult } from '@atakora/lib';
 import { ArmStorageAccounts } from './storage-account-arm';
@@ -304,6 +304,60 @@ export class StorageAccounts extends Construct implements IStorageAccount {
    */
   private constructIdToPurpose(id: string): string {
     return id.toLowerCase();
+  }
+
+  /**
+   * Generates lightweight metadata for template assignment decisions.
+   *
+   * @returns ResourceMetadata object describing this Storage Account
+   *
+   * @remarks
+   * This method provides metadata for the context-aware synthesis pipeline.
+   * It delegates to the underlying L1 construct for consistency.
+   *
+   * The metadata includes:
+   * - No dependencies (storage accounts are foundational)
+   * - Base size estimate (~1.5KB)
+   * - Foundation tier preference (deployed early)
+   * - High reference flag (many resources depend on storage)
+   *
+   * @example
+   * ```typescript
+   * const metadata = storage.toMetadata();
+   * console.log(`Storage Account dependencies: ${metadata.dependencies.length}`);
+   * ```
+   */
+  public toMetadata(): ResourceMetadata {
+    // Delegate to underlying L1 construct
+    return this.armStorageAccount.toMetadata();
+  }
+
+  /**
+   * Transforms this resource to ARM template JSON representation.
+   *
+   * @param context - Optional synthesis context for cross-template reference generation
+   * @returns ARM template resource object
+   *
+   * @remarks
+   * This L2 construct delegates to the underlying L1 construct for ARM generation.
+   * The context parameter is passed through for context-aware synthesis.
+   *
+   * Storage accounts are foundation resources with no dependencies, so context
+   * is accepted but not currently used by the L1 implementation.
+   *
+   * @example Without context (backwards compatible)
+   * ```typescript
+   * const arm = storage.toArmTemplate();
+   * ```
+   *
+   * @example With context (context-aware)
+   * ```typescript
+   * const arm = storage.toArmTemplate(context);
+   * ```
+   */
+  public toArmTemplate(context?: SynthesisContext): any {
+    // Delegate to underlying L1 construct
+    return this.armStorageAccount.toArmTemplate(context);
   }
 
   /**

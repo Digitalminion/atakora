@@ -1,5 +1,5 @@
 import { Construct, constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/cdk';
-import type { IResourceGroup } from '@atakora/cdk';
+import type { IResourceGroup, ResourceMetadata, SynthesisContext } from '@atakora/cdk';
 import { ArmServerFarms } from './server-farm-arm';
 import type {
   ServerFarmsProps,
@@ -372,5 +372,59 @@ export class ServerFarms extends Construct implements IServerFarm {
 
     // Auto-detect from kind
     return kind === ('linux' as ServerFarmKind);
+  }
+
+  /**
+   * Generates lightweight metadata for template assignment decisions.
+   *
+   * @returns ResourceMetadata object describing this Server Farm
+   *
+   * @remarks
+   * This method provides metadata for the context-aware synthesis pipeline.
+   * It delegates to the underlying L1 construct for consistency.
+   *
+   * The metadata includes:
+   * - No dependencies (Server Farms are infrastructure)
+   * - Base size estimate (~1KB)
+   * - Compute tier preference (infrastructure layer)
+   * - High reference flag (Function Apps depend on plans)
+   *
+   * @example
+   * ```typescript
+   * const metadata = plan.toMetadata();
+   * console.log(`Plan dependencies: ${metadata.dependencies.length}`);
+   * ```
+   */
+  public toMetadata(): ResourceMetadata {
+    // Delegate to underlying L1 construct
+    return this.armServerFarms.toMetadata();
+  }
+
+  /**
+   * Transforms this resource to ARM template JSON representation.
+   *
+   * @param context - Optional synthesis context for cross-template reference generation
+   * @returns ARM template resource object
+   *
+   * @remarks
+   * This L2 construct delegates to the underlying L1 construct for ARM generation.
+   * The context parameter is passed through for context-aware synthesis.
+   *
+   * App Service Plans are compute infrastructure with no dependencies, so context
+   * is accepted but not currently used by the L1 implementation.
+   *
+   * @example Without context (backwards compatible)
+   * ```typescript
+   * const arm = plan.toArmTemplate();
+   * ```
+   *
+   * @example With context (context-aware)
+   * ```typescript
+   * const arm = plan.toArmTemplate(context);
+   * ```
+   */
+  public toArmTemplate(context?: SynthesisContext): any {
+    // Delegate to underlying L1 construct
+    return this.armServerFarms.toArmTemplate(context);
   }
 }

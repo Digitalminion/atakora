@@ -1,5 +1,5 @@
 import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder } from '@atakora/cdk';
-import type { ArmResource } from '@atakora/cdk';
+import type { ArmResource, ResourceMetadata, SynthesisContext } from '@atakora/cdk';
 import type {
   ArmStorageAccountsProps,
   StorageAccountSku,
@@ -205,6 +205,41 @@ export class ArmStorageAccounts extends Resource {
   }
 
   /**
+   * Generates lightweight metadata for template assignment decisions.
+   *
+   * @returns ResourceMetadata object describing this Storage Account
+   *
+   * @remarks
+   * This method provides metadata for the context-aware synthesis pipeline.
+   * Storage accounts typically have no dependencies and are foundation resources.
+   *
+   * The metadata includes:
+   * - No dependencies (storage accounts are foundational)
+   * - Base size estimate (~1.5KB)
+   * - Foundation tier preference (deployed early)
+   * - High reference flag (many resources depend on storage)
+   *
+   * @example
+   * ```typescript
+   * const metadata = storageAccount.toMetadata();
+   * console.log(`Storage Account template preference: ${metadata.templatePreference}`);
+   * ```
+   */
+  public toMetadata(): ResourceMetadata {
+    return {
+      id: this.node.id,
+      type: this.resourceType,
+      name: this.name,
+      dependencies: [], // Storage accounts typically have no dependencies
+      sizeEstimate: 1500, // Base size estimate (~1.5KB)
+      templatePreference: 'foundation', // Storage is a foundation resource
+      metadata: {
+        isHighlyReferenced: true, // Many resources depend on storage
+      },
+    };
+  }
+
+  /**
    * Validates ARM template structure before transformation.
    *
    * @remarks
@@ -263,12 +298,30 @@ export class ArmStorageAccounts extends Resource {
   /**
    * Generates ARM template representation of this resource.
    *
+   * @param context - Optional synthesis context for cross-template reference generation
+   * @returns ARM template resource object
+   *
    * @remarks
    * Called during synthesis to produce the ARM template JSON.
    *
-   * @returns ARM template resource object
+   * This is an L1 construct with no dependencies, so context is accepted
+   * but not currently used. Included for API consistency and future extensibility.
+   *
+   * Storage accounts are typically foundation resources that other resources
+   * depend on, rather than depending on other resources themselves.
+   *
+   * @example Without context (backwards compatible)
+   * ```typescript
+   * const arm = storageAccount.toArmTemplate();
+   * ```
+   *
+   * @example With context (context-aware)
+   * ```typescript
+   * const arm = storageAccount.toArmTemplate(context);
+   * // Currently behaves same as without context, but API is ready
+   * ```
    */
-  public toArmTemplate(): ArmResource {
+  public toArmTemplate(context?: SynthesisContext): ArmResource {
     const properties: any = {};
 
     // Add optional properties

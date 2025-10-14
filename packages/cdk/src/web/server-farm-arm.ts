@@ -1,5 +1,5 @@
 import { Construct, Resource, DeploymentScope } from '@atakora/cdk';
-import type { ArmResource } from '@atakora/cdk';
+import type { ArmResource, ResourceMetadata, SynthesisContext } from '@atakora/cdk';
 import type { ArmServerFarmsProps, ServerFarmSku, ServerFarmKind } from './server-farm-types';
 
 /**
@@ -182,15 +182,66 @@ export class ArmServerFarms extends Resource {
   }
 
   /**
+   * Generates lightweight metadata for template assignment decisions.
+   *
+   * @returns ResourceMetadata object describing this Server Farm
+   *
+   * @remarks
+   * This method provides metadata for the context-aware synthesis pipeline.
+   * App Service Plans typically have no dependencies and are compute infrastructure.
+   *
+   * The metadata includes:
+   * - No dependencies (Server Farms are infrastructure)
+   * - Base size estimate (~1KB)
+   * - Compute tier preference (infrastructure layer)
+   * - High reference flag (Function Apps depend on plans)
+   *
+   * @example
+   * ```typescript
+   * const metadata = plan.toMetadata();
+   * console.log(`Plan template preference: ${metadata.templatePreference}`);
+   * ```
+   */
+  public toMetadata(): ResourceMetadata {
+    return {
+      id: this.node.id,
+      type: this.resourceType,
+      name: this.name,
+      dependencies: [], // Server Farms have no dependencies
+      sizeEstimate: 1000, // Base size estimate (~1KB)
+      templatePreference: 'compute', // Compute infrastructure
+      metadata: {
+        isHighlyReferenced: true, // Function Apps depend on plans
+      },
+    };
+  }
+
+  /**
    * Generates ARM template representation of this resource.
+   *
+   * @param context - Optional synthesis context for cross-template reference generation
+   * @returns ARM template resource object
    *
    * @remarks
    * Called during synthesis to produce the ARM template JSON.
-   * This will be implemented by Grace's synthesis pipeline.
    *
-   * @returns ARM template resource object
+   * This is an L1 construct with no dependencies, so context is accepted
+   * but not currently used. Included for API consistency and future extensibility.
+   *
+   * App Service Plans are compute infrastructure that Function Apps depend on.
+   *
+   * @example Without context (backwards compatible)
+   * ```typescript
+   * const arm = plan.toArmTemplate();
+   * ```
+   *
+   * @example With context (context-aware)
+   * ```typescript
+   * const arm = plan.toArmTemplate(context);
+   * // Currently behaves same as without context, but API is ready
+   * ```
    */
-  public toArmTemplate(): ArmResource {
+  public toArmTemplate(context?: SynthesisContext): ArmResource {
     const properties: any = {};
 
     // Add reserved property

@@ -250,6 +250,8 @@ export {
 export type {
   CloudAssembly,
   StackManifest,
+  ResourceMetadata,
+  SynthesisContext,
   // ArmTemplate, ArmParameter, ArmOutput - not yet exported from lib
 } from '@atakora/lib';
 
