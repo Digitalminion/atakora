@@ -1,5 +1,6 @@
 import { Resource } from '../../core/resource';
 import { ArmResource } from '../types';
+import { SynthesisContext } from '../context/synthesis-context';
 
 /**
  * Transforms construct resources to ARM JSON format
@@ -68,6 +69,32 @@ export class ResourceTransformer {
    */
   transformAll(resources: Resource[]): ArmResource[] {
     return resources.map((resource) => this.transform(resource));
+  }
+
+  /**
+   * Transform a Resource construct to ARM JSON with synthesis context
+   *
+   * @param resource - Resource construct to transform
+   * @param context - Synthesis context with template assignment info
+   * @returns ARM resource JSON
+   */
+  transformWithContext(resource: Resource, context: SynthesisContext): ArmResource {
+    // Check if resource has toArmTemplate method
+    if (typeof (resource as any).toArmTemplate === 'function') {
+      const armTemplate = (resource as any).toArmTemplate(context);
+      const cleaned = this.cleanUndefined(armTemplate as ArmResource);
+      return this.replaceTokens(cleaned);
+    }
+
+    // Fallback to non-context version
+    return this.transform(resource);
+  }
+
+  /**
+   * Transform multiple resources with synthesis context
+   */
+  transformAllWithContext(resources: Resource[], context: SynthesisContext): ArmResource[] {
+    return resources.map((resource) => this.transformWithContext(resource, context));
   }
 
   /**

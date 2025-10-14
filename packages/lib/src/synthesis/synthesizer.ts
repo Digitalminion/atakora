@@ -160,29 +160,33 @@ export class Synthesizer {
       // Phase 1: Prepare - Traverse tree and collect resources
       const prepareResult = this.prepare(app);
 
-      // Phase 2: Transform - Convert to ARM JSON and resolve dependencies
-      const { templates, resourcesByStack } = await this.transform(prepareResult);
+      // Phase 2: Collect Metadata - Gather resource metadata for template assignment
+      const metadataByStack = this.collectMetadata(prepareResult);
 
-      // Phase 2.5: Split & Package - Split large templates and package functions
-      const { splitTemplates, functionPackages } = await this.splitAndPackage(
-        templates,
-        resourcesByStack,
+      // Phase 3: Assign Templates - Use metadata to assign resources to templates
+      const assignmentsByStack = this.assignTemplates(metadataByStack, opts);
+
+      // Phase 4: Generate ARM with Context - Convert to ARM JSON with template assignment context
+      const { templates, resourcesByStack } = await this.generateArmWithContext(
         prepareResult,
-        opts
+        assignmentsByStack
       );
 
-      // Phase 3: Validate - Check ARM templates (root templates only for now)
+      // Phase 5: Package Functions - Package functions for deployment
+      const functionPackages = await this.packageFunctions(resourcesByStack, opts);
+
+      // Phase 6: Validate - Check ARM templates
       if (!opts.skipValidation) {
-        // Extract root templates for validation
-        const rootTemplates = new Map<string, ArmTemplate>();
-        for (const [stackName, splitResult] of splitTemplates) {
-          rootTemplates.set(stackName, splitResult.root);
-        }
-        await this.validate(rootTemplates, resourcesByStack, opts.strict ?? false);
+        await this.validate(templates, resourcesByStack, opts.strict ?? false);
       }
 
-      // Phase 4: Assembly - Write templates and packages to disk
-      const assembly = await this.assembleV2(splitTemplates, functionPackages, opts);
+      // Phase 7: Assembly - Write templates and packages to disk
+      const assembly = await this.assembleV3(
+        templates,
+        assignmentsByStack,
+        functionPackages,
+        opts
+      );
 
       return assembly;
     } catch (error) {
@@ -227,6 +231,188 @@ export class Synthesizer {
   }
 
   /**
+   * Phase 2: Collect Metadata - Gather resource metadata for template assignment.
+   *
+   * @param prepareResult - Result from prepare phase
+   * @returns Resource metadata grouped by stack
+   *
+   * @remarks
+   * This phase calls toMetadata() on all resources to gather lightweight metadata
+   * before ARM generation. The metadata is used to make template assignment decisions.
+   *
+   * @internal
+   */
+  private collectMetadata(prepareResult: any): Map<string, ResourceMetadata[]> {
+    const { stackInfoMap } = prepareResult;
+    const metadataByStack = new Map<string, ResourceMetadata[]>();
+
+    for (const [stackId, stackInfo] of stackInfoMap.entries()) {
+      const metadata: ResourceMetadata[] = [];
+
+      for (const resource of stackInfo.resources) {
+        metadata.push(resource.toMetadata());
+      }
+
+      metadataByStack.set(stackInfo.name, metadata);
+    }
+
+    return metadataByStack;
+  }
+
+  /**
+   * Phase 3: Assign Templates - Use metadata to assign resources to templates.
+   *
+   * @param metadataByStack - Resource metadata by stack
+   * @param options - Synthesis options
+   * @returns Template assignments by stack
+   *
+   * @remarks
+   * This phase uses the TemplateSplitter V2 API to assign resources to templates
+   * based on their metadata. This happens BEFORE ARM generation so resources
+   * know their template assignment when generating ARM JSON.
+   *
+   * @internal
+   */
+  private assignTemplates(
+    metadataByStack: Map<string, ResourceMetadata[]>,
+    options: SynthesisOptions
+  ): Map<string, TemplateAssignments> {
+    const assignmentsByStack = new Map<string, TemplateAssignments>();
+
+    for (const [stackName, metadata] of metadataByStack) {
+      // Use TemplateSplitter V2 API for metadata-based assignment
+      const splitter = new TemplateSplitter({
+        stackName,
+        maxTemplateSize: options.maxTemplateSize,
+      });
+
+      const assignments = splitter.assignResources(metadata, {
+        maxTemplateSize: options.maxTemplateSize,
+        groupingStrategy: 'minimize-cross-refs',
+        preferLinkedTemplates: options.enableLinkedTemplates,
+      });
+
+      assignmentsByStack.set(stackName, assignments);
+    }
+
+    return assignmentsByStack;
+  }
+
+  /**
+   * Phase 4: Generate ARM with Context - Convert to ARM JSON with template assignment context.
+   *
+   * @param prepareResult - Result from prepare phase
+   * @param assignmentsByStack - Template assignments by stack
+   * @returns ARM templates and resources grouped by stack
+   *
+   * @remarks
+   * This phase generates ARM JSON for each resource, passing a SynthesisContext
+   * that contains template assignment information. Resources use this context
+   * to generate correct cross-template references.
+   *
+   * @internal
+   */
+  private async generateArmWithContext(
+    prepareResult: any,
+    assignmentsByStack: Map<string, TemplateAssignments>
+  ): Promise<{
+    templates: Map<string, ArmTemplate>;
+    resourcesByStack: Map<string, Resource[]>;
+  }> {
+    const { stackInfoMap } = prepareResult;
+    const templates = new Map<string, ArmTemplate>();
+    const resourcesByStack = new Map<string, Resource[]>();
+
+    for (const [stackId, stackInfo] of stackInfoMap.entries()) {
+      // Store resources for validation
+      resourcesByStack.set(stackInfo.name, stackInfo.resources);
+
+      // Get template assignments for this stack
+      const assignments = assignmentsByStack.get(stackInfo.name);
+      if (!assignments) {
+        throw new Error(`No template assignments found for stack: ${stackInfo.name}`);
+      }
+
+      // Create SynthesisContext for the main template
+      // For now, we use a single template per stack (main template)
+      // TODO: Support multiple templates per stack with context per resource
+      const mainTemplateName = `${stackInfo.name}.json`;
+      const context = new SynthesisContext(
+        mainTemplateName,
+        new Map(assignments.assignments), // Convert ReadonlyMap to Map
+        new Map(assignments.templates)    // Convert ReadonlyMap to Map
+      );
+
+      // Transform resources to ARM JSON with context
+      const transformer = new ResourceTransformer();
+      const armResources = transformer.transformAllWithContext(stackInfo.resources, context);
+
+      // Resolve dependencies
+      const dependencyResolver = new DependencyResolver();
+      const resourcesWithDeps = dependencyResolver.resolve(armResources, stackInfo.resources);
+
+      // Sort resources topologically
+      const sortedResources = dependencyResolver.topologicalSort(resourcesWithDeps);
+
+      // Determine schema based on deployment scope
+      const schema = this.getSchemaForScope(stackInfo.scope);
+
+      // Create ARM template
+      const template: ArmTemplate = {
+        $schema: schema,
+        contentVersion: '1.0.0.0',
+        resources: sortedResources,
+        parameters: {},
+        outputs: {},
+      };
+
+      templates.set(stackInfo.name, template);
+    }
+
+    return { templates, resourcesByStack };
+  }
+
+  /**
+   * Phase 5: Package Functions - Package functions for deployment.
+   *
+   * @param resourcesByStack - Resources by stack
+   * @param options - Synthesis options
+   * @returns Function packages by stack
+   *
+   * @internal
+   */
+  private async packageFunctions(
+    resourcesByStack: Map<string, Resource[]>,
+    options: SynthesisOptions
+  ): Promise<Map<string, FunctionPackage[]>> {
+    const functionPackages = new Map<string, FunctionPackage[]>();
+
+    if (!options.enableLinkedTemplates) {
+      return functionPackages; // Skip packaging if linked templates disabled
+    }
+
+    for (const [stackName, resources] of resourcesByStack) {
+      const functionApps = this.extractFunctionApps(resources);
+
+      if (functionApps.length > 0) {
+        const packager = new FunctionPackager({
+          outputDir: path.join(options.outdir, 'packages'),
+        });
+
+        const packages: FunctionPackage[] = [];
+        for (const functionApp of functionApps) {
+          const pkg = await packager.package(functionApp);
+          packages.push(pkg);
+        }
+
+        functionPackages.set(stackName, packages);
+      }
+    }
+
+    return functionPackages;
+  }
+
+  /**
    * Phase 2: Transform - Convert to ARM JSON and resolve dependencies.
    *
    * @param prepareResult - Result from prepare phase
@@ -245,6 +431,7 @@ export class Synthesizer {
    *
    * @throws {Error} If resource transformation fails or circular dependencies are detected
    *
+   * @deprecated Use generateArmWithContext() instead for context-aware synthesis
    * @internal
    */
   private async transform(prepareResult: any): Promise<{
@@ -708,5 +895,206 @@ export class Synthesizer {
   private writeJsonFile(filePath: string, data: any, prettyPrint: boolean): void {
     const json = prettyPrint ? JSON.stringify(data, null, 2) : JSON.stringify(data);
     fs.writeFileSync(filePath, json, { mode: 0o644, encoding: 'utf-8' });
+  }
+
+  /**
+   * Phase 7: Assembly V3 - Write templates with context-aware structure
+   *
+   * @param templates - Main ARM templates by stack (combined resources)
+   * @param assignmentsByStack - Template assignments by stack
+   * @param functionPackages - Function packages by stack
+   * @param options - Synthesis options
+   * @returns Cloud assembly V2
+   *
+   * @internal
+   */
+  private async assembleV3(
+    templates: Map<string, ArmTemplate>,
+    assignmentsByStack: Map<string, TemplateAssignments>,
+    functionPackages: Map<string, FunctionPackage[]>,
+    options: SynthesisOptions
+  ): Promise<CloudAssemblyV2> {
+    const outdir = options.outdir;
+    const prettyPrint = options.prettyPrint ?? true;
+
+    // Ensure output directory exists
+    if (!fs.existsSync(outdir)) {
+      fs.mkdirSync(outdir, { recursive: true });
+    }
+
+    // Ensure packages directory exists
+    const packagesDir = path.join(outdir, 'packages');
+    if (!fs.existsSync(packagesDir)) {
+      fs.mkdirSync(packagesDir, { recursive: true });
+    }
+
+    const stackManifests: Record<string, StackManifestV2> = {};
+
+    // Write templates and create manifests
+    for (const [stackName, template] of templates) {
+      const assignments = assignmentsByStack.get(stackName);
+
+      // If we have linked templates (multiple template assignments), write them separately
+      if (assignments && assignments.templates.size > 1) {
+        // Write linked templates
+        const linkedTemplatePaths: string[] = [];
+
+        for (const [templateName, templateMetadata] of assignments.templates) {
+          if (!templateMetadata.isMain) {
+            // Extract resources for this template
+            const resourcesForTemplate = template.resources.filter((resource) => {
+              const resourceKey = `${resource.type}/${resource.name}`;
+              return assignments.assignments.get(resourceKey) === templateName;
+            });
+
+            const linkedTemplate: ArmTemplate = {
+              $schema: template.$schema,
+              contentVersion: '1.0.0.0',
+              resources: resourcesForTemplate,
+              parameters: {},
+              outputs: {},
+            };
+
+            const linkedPath = path.join(outdir, templateName);
+            this.writeJsonFile(linkedPath, linkedTemplate, prettyPrint);
+            linkedTemplatePaths.push(templateName);
+          }
+        }
+
+        // Create root template with deployment resources
+        const rootTemplate = this.createRootTemplate(template, assignments);
+        const rootTemplatePath = path.join(outdir, `${stackName}.json`);
+        this.writeJsonFile(rootTemplatePath, rootTemplate, prettyPrint);
+
+        // Get function packages for this stack
+        const packages = functionPackages.get(stackName) || [];
+
+        // Create stack manifest with linked templates
+        stackManifests[stackName] = {
+          name: stackName,
+          templatePath: `${stackName}.json`,
+          linkedTemplates: linkedTemplatePaths,
+          resourceCount: template.resources.length,
+          parameterCount: Object.keys(template.parameters || {}).length,
+          outputCount: Object.keys(template.outputs || {}).length,
+          dependencies: [],
+          artifacts: {
+            functionPackages: packages.map((pkg) => ({
+              packagePath: path.relative(outdir, pkg.packagePath),
+              functionAppName: pkg.functionAppName,
+              functions: pkg.functions,
+              size: pkg.size,
+              hash: pkg.hash,
+              structure: pkg.structure,
+            })),
+          },
+        };
+      } else {
+        // Single template - write as-is
+        const rootTemplatePath = path.join(outdir, `${stackName}.json`);
+        this.writeJsonFile(rootTemplatePath, template, prettyPrint);
+
+        // Get function packages for this stack
+        const packages = functionPackages.get(stackName) || [];
+
+        // Create stack manifest
+        stackManifests[stackName] = {
+          name: stackName,
+          templatePath: `${stackName}.json`,
+          linkedTemplates: [],
+          resourceCount: template.resources.length,
+          parameterCount: Object.keys(template.parameters || {}).length,
+          outputCount: Object.keys(template.outputs || {}).length,
+          dependencies: [],
+          artifacts: {
+            functionPackages: packages.map((pkg) => ({
+              packagePath: path.relative(outdir, pkg.packagePath),
+              functionAppName: pkg.functionAppName,
+              functions: pkg.functions,
+              size: pkg.size,
+              hash: pkg.hash,
+              structure: pkg.structure,
+            })),
+          },
+        };
+      }
+    }
+
+    // Create cloud assembly v2
+    const assembly: CloudAssemblyV2 = {
+      version: '2.0.0',
+      stacks: stackManifests,
+      directory: path.resolve(outdir),
+    };
+
+    // Write manifest
+    const manifestPath = path.join(outdir, 'manifest.json');
+    this.writeJsonFile(manifestPath, assembly, prettyPrint);
+
+    return assembly;
+  }
+
+  /**
+   * Create root template with Microsoft.Resources/deployments for linked templates
+   *
+   * @internal
+   */
+  private createRootTemplate(
+    originalTemplate: ArmTemplate,
+    assignments: TemplateAssignments
+  ): ArmTemplate {
+    const deploymentResources: ArmResource[] = [];
+
+    for (const [templateName, templateMetadata] of assignments.templates) {
+      if (!templateMetadata.isMain) {
+        const deploymentResource: ArmResource = {
+          type: 'Microsoft.Resources/deployments',
+          apiVersion: '2022-09-01',
+          name: templateName.replace('.json', ''),
+          properties: {
+            mode: 'Incremental',
+            templateLink: {
+              uri: `[concat(parameters('_artifactsLocation'), '/', '${templateName}', parameters('_artifactsLocationSasToken'))]`,
+            },
+            parameters: {},
+          },
+        };
+
+        // Add dependsOn based on cross-template dependencies
+        const deps = assignments.crossTemplateDependencies
+          .filter((dep) => dep.sourceTemplate === templateName)
+          .map((dep) => `[resourceId('Microsoft.Resources/deployments', '${dep.targetTemplate.replace('.json', '')}')]`);
+
+        if (deps.length > 0) {
+          deploymentResource.dependsOn = deps;
+        }
+
+        deploymentResources.push(deploymentResource);
+      }
+    }
+
+    return {
+      $schema: originalTemplate.$schema,
+      contentVersion: '1.0.0.0',
+      parameters: {
+        _artifactsLocation: {
+          type: 'string',
+          metadata: {
+            description: 'Base URI where artifacts are stored',
+          },
+        },
+        _artifactsLocationSasToken: {
+          type: 'secureString',
+          defaultValue: '',
+          metadata: {
+            description: 'SAS token for accessing artifacts',
+          },
+        },
+        ...originalTemplate.parameters,
+      },
+      variables: originalTemplate.variables,
+      resources: deploymentResources,
+      outputs: originalTemplate.outputs,
+    };
   }
 }
