@@ -17,7 +17,12 @@ export class ResourceTransformer {
     if (typeof (resource as any).toArmTemplate === 'function') {
       const armTemplate = (resource as any).toArmTemplate();
       const cleaned = this.cleanUndefined(armTemplate as ArmResource);
-      return this.replaceTokens(cleaned);
+      const withTokens = this.replaceTokens(cleaned);
+
+      // Attach metadata for template splitting (will be removed before writing)
+      (withTokens as any).__nodeId = resource.node.id;
+
+      return withTokens;
     }
 
     // Fallback: Extract ARM properties manually from resource
@@ -61,7 +66,12 @@ export class ResourceTransformer {
     }
 
     // Clean up undefined values and replace tokens
-    return this.replaceTokens(this.cleanUndefined(armResource));
+    const result = this.replaceTokens(this.cleanUndefined(armResource));
+
+    // Attach metadata for template splitting (will be removed before writing)
+    (result as any).__nodeId = resource.node.id;
+
+    return result;
   }
 
   /**
@@ -83,7 +93,12 @@ export class ResourceTransformer {
     if (typeof (resource as any).toArmTemplate === 'function') {
       const armTemplate = (resource as any).toArmTemplate(context);
       const cleaned = this.cleanUndefined(armTemplate as ArmResource);
-      return this.replaceTokens(cleaned);
+      const withTokens = this.replaceTokens(cleaned);
+
+      // Attach metadata for template splitting (will be removed before writing)
+      (withTokens as any).__nodeId = resource.node.id;
+
+      return withTokens;
     }
 
     // Fallback to non-context version

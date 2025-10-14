@@ -333,19 +333,31 @@ export class Synthesizer {
         throw new Error(`No template assignments found for stack: ${stackInfo.name}`);
       }
 
-      // Create SynthesisContext for the main template
-      // For now, we use a single template per stack (main template)
-      // TODO: Support multiple templates per stack with context per resource
-      const mainTemplateName = `${stackInfo.name}.json`;
-      const context = new SynthesisContext(
-        mainTemplateName,
-        new Map(assignments.assignments), // Convert ReadonlyMap to Map
-        new Map(assignments.templates)    // Convert ReadonlyMap to Map
-      );
-
       // Transform resources to ARM JSON with context
+      // TODO: For now, only use context if we have a single template (no splitting)
+      // Multi-template context-aware synthesis requires per-resource context creation
       const transformer = new ResourceTransformer();
-      const armResources = transformer.transformAllWithContext(stackInfo.resources, context);
+      let armResources: any[];
+
+      if (assignments.templates.size <= 1) {
+        // Single template - create context
+        const templateName = assignments.templates.size === 1
+          ? Array.from(assignments.templates.keys())[0]
+          : `${stackInfo.name}.json`;
+
+        const context = new SynthesisContext(
+          templateName,
+          new Map(assignments.assignments),
+          new Map(assignments.templates)
+        );
+
+        armResources = transformer.transformAllWithContext(stackInfo.resources, context);
+      } else {
+        // Multiple templates - fall back to non-context transformation for now
+        // TODO: Implement per-resource context creation
+        console.warn(`Warning: Context-aware synthesis not yet supported for ${assignments.templates.size} linked templates in stack '${stackInfo.name}'. Using fallback transformation.`);
+        armResources = transformer.transformAll(stackInfo.resources);
+      }
 
       // Resolve dependencies
       const dependencyResolver = new DependencyResolver();
@@ -893,8 +905,35 @@ export class Synthesizer {
    * @internal
    */
   private writeJsonFile(filePath: string, data: any, prettyPrint: boolean): void {
-    const json = prettyPrint ? JSON.stringify(data, null, 2) : JSON.stringify(data);
+    // Clean metadata properties before writing
+    const cleanedData = this.cleanMetadata(data);
+    const json = prettyPrint ? JSON.stringify(cleanedData, null, 2) : JSON.stringify(cleanedData);
     fs.writeFileSync(filePath, json, { mode: 0o644, encoding: 'utf-8' });
+  }
+
+  /**
+   * Remove metadata properties (like __nodeId) from data before writing
+   *
+   * @internal
+   */
+  private cleanMetadata(data: any): any {
+    if (Array.isArray(data)) {
+      return data.map((item) => this.cleanMetadata(item));
+    }
+
+    if (data !== null && typeof data === 'object') {
+      const cleaned: any = {};
+      for (const [key, value] of Object.entries(data)) {
+        // Skip metadata properties
+        if (key.startsWith('__')) {
+          continue;
+        }
+        cleaned[key] = this.cleanMetadata(value);
+      }
+      return cleaned;
+    }
+
+    return data;
   }
 
   /**
@@ -941,10 +980,10 @@ export class Synthesizer {
 
         for (const [templateName, templateMetadata] of assignments.templates) {
           if (!templateMetadata.isMain) {
-            // Extract resources for this template
+            // Extract resources for this template using __nodeId metadata
             const resourcesForTemplate = template.resources.filter((resource) => {
-              const resourceKey = `${resource.type}/${resource.name}`;
-              return assignments.assignments.get(resourceKey) === templateName;
+              const nodeId = (resource as any).__nodeId;
+              return assignments.assignments.get(nodeId) === templateName;
             });
 
             const linkedTemplate: ArmTemplate = {
