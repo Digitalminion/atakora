@@ -994,9 +994,11 @@ export class Synthesizer {
               outputs: {},
             };
 
-            const linkedPath = path.join(outdir, templateName);
+            // Add .json extension if not present
+            const linkedFileName = templateName.endsWith('.json') ? templateName : `${templateName}.json`;
+            const linkedPath = path.join(outdir, linkedFileName);
             this.writeJsonFile(linkedPath, linkedTemplate, prettyPrint);
-            linkedTemplatePaths.push(templateName);
+            linkedTemplatePaths.push(linkedFileName);
           }
         }
 
@@ -1086,6 +1088,9 @@ export class Synthesizer {
 
     for (const [templateName, templateMetadata] of assignments.templates) {
       if (!templateMetadata.isMain) {
+        // Ensure .json extension for file name
+        const linkedFileName = templateName.endsWith('.json') ? templateName : `${templateName}.json`;
+
         const deploymentResource: ArmResource = {
           type: 'Microsoft.Resources/deployments',
           apiVersion: '2022-09-01',
@@ -1093,7 +1098,7 @@ export class Synthesizer {
           properties: {
             mode: 'Incremental',
             templateLink: {
-              uri: `[concat(parameters('_artifactsLocation'), '/', '${templateName}', parameters('_artifactsLocationSasToken'))]`,
+              uri: `[concat(parameters('_artifactsLocation'), '/', '${linkedFileName}', parameters('_artifactsLocationSasToken'))]`,
             },
             parameters: {},
           },
