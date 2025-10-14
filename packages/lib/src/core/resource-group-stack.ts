@@ -131,6 +131,8 @@ export class ResourceGroupStack extends Construct {
     // Mark this construct as a stack for synthesis
     this.node.addMetadata('azure:arm:stack', {
       scope: 'resourceGroup',
+      resourceGroupName: this.resourceGroupName,
+      location: this.location,
     });
   }
 

@@ -1,5 +1,5 @@
 import { App } from '../core/app';
-import { CloudAssembly, SynthesisOptions, ArmTemplate } from './types';
+import { CloudAssembly, SynthesisOptions, ArmTemplate, CloudAssemblyV2, StackManifestV2, FunctionPackage, ResourceMetadata, TemplateAssignments, TemplateMetadata, ArmResource } from './types';
 import { TreeTraverser } from './prepare/tree-traverser';
 import { ResourceCollector } from './prepare/resource-collector';
 import { ResourceTransformer } from './transform/resource-transformer';
@@ -13,6 +13,11 @@ import { LimitValidator } from './validate/limit-validator';
 import { ArmResourceValidator } from './validate/arm-resource-validator';
 import { DeploymentScope } from '../core/azure/scopes';
 import { Resource } from '../core/resource';
+import { TemplateSplitter, LinkedTemplateSet } from './assembly/template-splitter';
+import { FunctionPackager, FunctionAppMetadata } from './assembly/function-packager';
+import { SynthesisContext } from './context/synthesis-context';
+import * as path from 'path';
+import * as fs from 'fs';
 
 /**
  * Main orchestrator for the synthesis pipeline.
@@ -141,12 +146,14 @@ export class Synthesizer {
    * });
    * ```
    */
-  async synthesize(app: App, options?: Partial<SynthesisOptions>): Promise<CloudAssembly> {
+  async synthesize(app: App, options?: Partial<SynthesisOptions>): Promise<CloudAssemblyV2> {
     const opts: SynthesisOptions = {
       outdir: options?.outdir || app.outdir,
       skipValidation: options?.skipValidation || false,
       prettyPrint: options?.prettyPrint !== false,
       strict: options?.strict || false,
+      enableLinkedTemplates: options?.enableLinkedTemplates ?? true,
+      maxTemplateSize: options?.maxTemplateSize ?? 3 * 1024 * 1024, // 3MB default
     };
 
     try {
@@ -156,13 +163,26 @@ export class Synthesizer {
       // Phase 2: Transform - Convert to ARM JSON and resolve dependencies
       const { templates, resourcesByStack } = await this.transform(prepareResult);
 
-      // Phase 3: Validate - Check ARM templates
+      // Phase 2.5: Split & Package - Split large templates and package functions
+      const { splitTemplates, functionPackages } = await this.splitAndPackage(
+        templates,
+        resourcesByStack,
+        prepareResult,
+        opts
+      );
+
+      // Phase 3: Validate - Check ARM templates (root templates only for now)
       if (!opts.skipValidation) {
-        await this.validate(templates, resourcesByStack, opts.strict ?? false);
+        // Extract root templates for validation
+        const rootTemplates = new Map<string, ArmTemplate>();
+        for (const [stackName, splitResult] of splitTemplates) {
+          rootTemplates.set(stackName, splitResult.root);
+        }
+        await this.validate(rootTemplates, resourcesByStack, opts.strict ?? false);
       }
 
-      // Phase 4: Assembly - Write templates to disk
-      const assembly = this.assemble(templates, opts);
+      // Phase 4: Assembly - Write templates and packages to disk
+      const assembly = await this.assembleV2(splitTemplates, functionPackages, opts);
 
       return assembly;
     } catch (error) {
@@ -453,5 +473,240 @@ export class Synthesizer {
         // Default to resource group scope
         return 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#';
     }
+  }
+
+  /**
+   * Phase 2.5: Split & Package - Split large templates and package functions
+   *
+   * @param templates - ARM templates by stack
+   * @param resourcesByStack - Resources by stack
+   * @param prepareResult - Prepare phase result
+   * @param options - Synthesis options
+   * @returns Split templates and function packages
+   *
+   * @internal
+   */
+  private async splitAndPackage(
+    templates: Map<string, ArmTemplate>,
+    resourcesByStack: Map<string, Resource[]>,
+    prepareResult: any,
+    options: SynthesisOptions
+  ): Promise<{
+    splitTemplates: Map<string, LinkedTemplateSet>;
+    functionPackages: Map<string, FunctionPackage[]>;
+  }> {
+    const splitTemplates = new Map<string, LinkedTemplateSet>();
+    const functionPackages = new Map<string, FunctionPackage[]>();
+
+    for (const [stackName, template] of templates) {
+      const resources = resourcesByStack.get(stackName) || [];
+
+      // Extract function metadata from InlineFunction resources
+      const functionApps = this.extractFunctionApps(resources);
+
+      // Package functions if any exist
+      if (functionApps.length > 0 && options.enableLinkedTemplates) {
+        const packager = new FunctionPackager({
+          outputDir: path.join(options.outdir, 'packages'),
+        });
+
+        const packages: FunctionPackage[] = [];
+        for (const functionApp of functionApps) {
+          const pkg = await packager.package(functionApp);
+          packages.push(pkg);
+        }
+
+        functionPackages.set(stackName, packages);
+      }
+
+      // Split template if it's too large or linked templates are enabled
+      if (options.enableLinkedTemplates) {
+        const splitter = new TemplateSplitter({
+          stackName,
+          maxTemplateSize: options.maxTemplateSize,
+        });
+
+        const splitResult = splitter.split(template);
+        splitTemplates.set(stackName, splitResult);
+      } else {
+        // No splitting - use template as-is with empty linked set
+        splitTemplates.set(stackName, {
+          root: template,
+          linked: new Map(),
+          dependencies: new Map(),
+          deploymentOrder: [],
+        });
+      }
+    }
+
+    return { splitTemplates, functionPackages };
+  }
+
+  /**
+   * Extract function apps and their functions from resources
+   *
+   * @param resources - Resources to extract from
+   * @returns Function app metadata
+   *
+   * @internal
+   */
+  private extractFunctionApps(resources: Resource[]): FunctionAppMetadata[] {
+    const functionAppMap = new Map<string, FunctionAppMetadata>();
+
+    for (const resource of resources) {
+      // Check if resource has function metadata (set by InlineFunction in package mode)
+      const metadata = (resource.node as any).metadata;
+      if (metadata && metadata.functionMetadata) {
+        const funcMeta = metadata.functionMetadata;
+
+        // Find parent function app name
+        // Look for functionAppName in the resource hierarchy
+        const functionAppName = this.findFunctionAppName(resource);
+
+        if (functionAppName) {
+          // Get or create function app entry
+          if (!functionAppMap.has(functionAppName)) {
+            functionAppMap.set(functionAppName, {
+              functionAppName,
+              functions: [],
+            });
+          }
+
+          // Add function to app
+          const functionApp = functionAppMap.get(functionAppName)!;
+          functionApp.functions.push(funcMeta);
+        }
+      }
+    }
+
+    return Array.from(functionAppMap.values());
+  }
+
+  /**
+   * Find function app name from resource hierarchy
+   *
+   * @param resource - Resource to search from
+   * @returns Function app name or null
+   *
+   * @internal
+   */
+  private findFunctionAppName(resource: Resource): string | null {
+    // Check if resource has functionAppName property (InlineFunction stores this)
+    if ((resource as any).functionAppName) {
+      return (resource as any).functionAppName;
+    }
+
+    // Walk up to find FunctionApp
+    let current: any = resource.node.scope;
+    while (current) {
+      if (current.functionAppName) {
+        return current.functionAppName;
+      }
+      current = current.node?.scope;
+    }
+
+    return null;
+  }
+
+  /**
+   * Phase 4: Assembly V2 - Write templates and packages to disk
+   *
+   * @param splitTemplates - Split templates by stack
+   * @param functionPackages - Function packages by stack
+   * @param options - Synthesis options
+   * @returns Cloud assembly V2
+   *
+   * @internal
+   */
+  private async assembleV2(
+    splitTemplates: Map<string, LinkedTemplateSet>,
+    functionPackages: Map<string, FunctionPackage[]>,
+    options: SynthesisOptions
+  ): Promise<CloudAssemblyV2> {
+    const outdir = options.outdir;
+    const prettyPrint = options.prettyPrint ?? true;
+
+    // Ensure output directory exists
+    if (!fs.existsSync(outdir)) {
+      fs.mkdirSync(outdir, { recursive: true });
+    }
+
+    // Ensure packages directory exists
+    const packagesDir = path.join(outdir, 'packages');
+    if (!fs.existsSync(packagesDir)) {
+      fs.mkdirSync(packagesDir, { recursive: true });
+    }
+
+    const stackManifests: Record<string, StackManifestV2> = {};
+
+    // Write templates and create manifests
+    for (const [stackName, splitResult] of splitTemplates) {
+      const linkedTemplatePaths: string[] = [];
+
+      // Write root template
+      const rootTemplatePath = path.join(outdir, `${stackName}.json`);
+      this.writeJsonFile(rootTemplatePath, splitResult.root, prettyPrint);
+
+      // Write linked templates
+      for (const [linkedName, linkedTemplate] of splitResult.linked) {
+        const linkedPath = path.join(outdir, `${linkedName}.json`);
+        this.writeJsonFile(linkedPath, linkedTemplate, prettyPrint);
+        linkedTemplatePaths.push(`${linkedName}.json`);
+      }
+
+      // Get function packages for this stack
+      const packages = functionPackages.get(stackName) || [];
+
+      // Create stack manifest
+      const totalResourceCount =
+        splitResult.root.resources.length +
+        Array.from(splitResult.linked.values()).reduce(
+          (sum, t) => sum + t.resources.length,
+          0
+        );
+
+      stackManifests[stackName] = {
+        name: stackName,
+        templatePath: `${stackName}.json`,
+        linkedTemplates: linkedTemplatePaths,
+        resourceCount: totalResourceCount,
+        parameterCount: Object.keys(splitResult.root.parameters || {}).length,
+        outputCount: Object.keys(splitResult.root.outputs || {}).length,
+        dependencies: [],
+        artifacts: {
+          functionPackages: packages.map((pkg) => ({
+            packagePath: path.relative(outdir, pkg.packagePath),
+            functionAppName: pkg.functionAppName,
+            functions: pkg.functions,
+            size: pkg.size,
+            hash: pkg.hash,
+            structure: pkg.structure,
+          })),
+        },
+      };
+    }
+
+    // Create cloud assembly v2
+    const assembly: CloudAssemblyV2 = {
+      version: '2.0.0',
+      stacks: stackManifests,
+      directory: path.resolve(outdir),
+    };
+
+    // Write manifest
+    const manifestPath = path.join(outdir, 'manifest.json');
+    this.writeJsonFile(manifestPath, assembly, prettyPrint);
+
+    return assembly;
+  }
+
+  /**
+   * Write JSON file with proper formatting
+   *
+   * @internal
+   */
+  private writeJsonFile(filePath: string, data: any, prettyPrint: boolean): void {
+    const json = prettyPrint ? JSON.stringify(data, null, 2) : JSON.stringify(data);
+    fs.writeFileSync(filePath, json, { mode: 0o644, encoding: 'utf-8' });
   }
 }

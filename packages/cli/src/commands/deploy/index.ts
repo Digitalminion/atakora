@@ -7,16 +7,12 @@ import { ResourceManagementClient } from '@azure/arm-resources';
 import { ConfigManager, ProfileConfig } from '../../config/config-manager';
 import { authManager } from '../../auth/auth-manager';
 
-// Types for manifest
-interface StackManifest {
-  name: string;
-  templatePath: string;
-  resourceCount: number;
-  parameterCount: number;
-  outputCount: number;
-  dependencies?: string[];
-}
+// Import types from lib
+import type { CloudAssemblyV2, StackManifestV2, CloudAssembly, StackManifest } from '@atakora/lib/synthesis/types';
+import { ArtifactStorageManager } from '@atakora/lib/synthesis/storage';
+import { ArtifactUploader } from '../../deployment/artifact-uploader';
 
+// Legacy manifest type (v1.0.0)
 interface CloudAssemblyManifest {
   version: string;
   stacks: Record<string, StackManifest>;
@@ -234,9 +230,13 @@ ${chalk.bold('Related Commands:')}
           process.exit(1);
         }
 
-        const manifest = JSON.parse(
+        const manifestData = JSON.parse(
           fs.readFileSync(manifestPath, 'utf-8')
-        ) as CloudAssemblyManifest;
+        );
+
+        // Check manifest version
+        const isV2Manifest = manifestData.version === '2.0.0';
+        const manifest = manifestData as CloudAssemblyManifest | CloudAssemblyV2;
 
         // Determine which stacks to deploy
         const stacksToDeploy = stackName ? [stackName] : Object.keys(manifest.stacks);
@@ -258,6 +258,12 @@ ${chalk.bold('Related Commands:')}
           console.log(`  Parameters: ${stackManifest.parameterCount}`);
           console.log(`  Outputs: ${stackManifest.outputCount}`);
           console.log(`  Template: ${stackManifest.templatePath}`);
+
+          // Show linked template info for v2
+          if (isV2Manifest && (stackManifest as StackManifestV2).linkedTemplates) {
+            const v2Manifest = stackManifest as StackManifestV2;
+            console.log(`  Linked Templates: ${v2Manifest.linkedTemplates?.length || 0}`);
+          }
         }
         console.log(chalk.gray('─'.repeat(70)));
 
@@ -283,15 +289,19 @@ ${chalk.bold('Related Commands:')}
         const credential = authService.getCredential();
         const client = new ResourceManagementClient(credential, profile.subscriptionId);
 
-        // Extract resource group name from AuthR stack (if it exists)
+        // Extract resource group name by finding the stack that creates the resource group
+        // This is typically a subscription-scoped stack that contains Microsoft.Resources/resourceGroups
         let resourceGroupName: string | undefined;
-        if (manifest.stacks['AuthR']) {
-          const colorAIPath = path.join(assemblyPath, manifest.stacks['AuthR'].templatePath);
-          const colorAITemplate = JSON.parse(fs.readFileSync(colorAIPath, 'utf-8')) as ArmTemplate;
-          const rgResource = colorAITemplate.resources?.find(
+        for (const [stackName, stackManifest] of Object.entries(manifest.stacks)) {
+          const templatePath = path.join(assemblyPath, stackManifest.templatePath);
+          const template = JSON.parse(fs.readFileSync(templatePath, 'utf-8')) as ArmTemplate;
+          const rgResource = template.resources?.find(
             (r) => r.type === 'Microsoft.Resources/resourceGroups'
           );
-          resourceGroupName = rgResource?.name;
+          if (rgResource) {
+            resourceGroupName = rgResource.name;
+            break; // Found the resource group, no need to continue
+          }
         }
 
         // Deploy each stack
@@ -302,7 +312,9 @@ ${chalk.bold('Related Commands:')}
             stack,
             manifest.stacks[stack],
             profile,
-            resourceGroupName
+            resourceGroupName,
+            isV2Manifest ? (manifest as CloudAssemblyV2) : undefined,
+            credential
           );
         }
 
@@ -359,11 +371,53 @@ async function deployStack(
   stackName: string,
   stackManifest: StackManifest,
   profile: ProfileConfig,
-  resourceGroupName?: string
+  resourceGroupName?: string,
+  cloudAssembly?: CloudAssemblyV2,
+  credential?: any
 ): Promise<void> {
   const spinner = ora(`Deploying stack: ${stackName}...`).start();
 
   try {
+    // Check if this is a v2 manifest with linked templates
+    const isV2 = cloudAssembly && cloudAssembly.version === '2.0.0';
+    const v2Manifest = isV2 ? (stackManifest as StackManifestV2) : undefined;
+    const hasLinkedTemplates = v2Manifest?.linkedTemplates && v2Manifest.linkedTemplates.length > 0;
+
+    // Upload Phase: Upload templates and packages if using linked templates
+    let artifactBaseUri: string | undefined;
+    let artifactSasToken: string | undefined;
+    let storageManager: ArtifactStorageManager | undefined;
+
+    if (hasLinkedTemplates && cloudAssembly) {
+      spinner.text = `Uploading artifacts for ${stackName}...`;
+
+      // Initialize storage manager
+      storageManager = new ArtifactStorageManager({
+        subscriptionId: profile.subscriptionId,
+        resourceGroupName: resourceGroupName || `rg-${stackName.toLowerCase()}`,
+        location: profile.location || 'eastus2',
+        project: 'atakora',
+        environment: 'production',
+        credential: credential
+      });
+
+      // Provision storage
+      await storageManager.provisionStorage();
+
+      // Upload artifacts
+      const uploader = new ArtifactUploader((progress) => {
+        const percent = Math.round((progress.current / progress.total) * 100);
+        spinner.text = `Uploading ${progress.phase}: ${progress.currentFile} (${percent}%)`;
+      });
+
+      const uploadResult = await uploader.uploadAll(cloudAssembly, storageManager, stackName);
+
+      artifactBaseUri = uploadResult.baseUri;
+      artifactSasToken = uploadResult.sasToken;
+
+      spinner.text = `Artifacts uploaded for ${stackName}`;
+    }
+
     // Load template
     const templatePath = path.join(assemblyPath, stackManifest.templatePath);
     const template = JSON.parse(fs.readFileSync(templatePath, 'utf-8')) as ArmTemplate;
@@ -374,7 +428,7 @@ async function deployStack(
     // Validate resource group name for resource group scoped deployments
     if (!isSubscriptionScope && !resourceGroupName) {
       throw new Error(
-        `Resource group name not found. The AuthR stack must be deployed first to create the resource group.`
+        `Resource group name not found. A subscription-scoped stack with Microsoft.Resources/resourceGroups must be deployed first to create the resource group.`
       );
     }
 
@@ -384,12 +438,21 @@ async function deployStack(
     // Start deployment
     spinner.text = `Submitting deployment: ${deploymentName}...`;
 
+    // Build deployment parameters
+    const parameters: Record<string, any> = {};
+
+    // Add artifact parameters for linked templates
+    if (hasLinkedTemplates && artifactBaseUri && artifactSasToken) {
+      parameters._artifactsLocation = { value: artifactBaseUri };
+      parameters._artifactsLocationSasToken = { value: artifactSasToken };
+    }
+
     // Build deployment object - location only needed for subscription scope
     const deployment: Deployment = {
       properties: {
         mode: 'Incremental',
         template,
-        parameters: {},
+        parameters,
       },
     };
 
@@ -424,6 +487,16 @@ async function deployStack(
     if (result.properties?.provisioningState === 'Succeeded') {
       spinner.succeed(chalk.green(`✓ Stack '${stackName}' deployed successfully`));
 
+      // Update manifest with storage config if using linked templates
+      if (hasLinkedTemplates && cloudAssembly && storageManager) {
+        await updateManifestWithStorageConfig(
+          assemblyPath,
+          cloudAssembly,
+          storageManager,
+          deploymentName
+        );
+      }
+
       // Display outputs
       if (result.properties.outputs && Object.keys(result.properties.outputs).length > 0) {
         console.log(chalk.bold('\nOutputs:'));
@@ -446,5 +519,44 @@ async function deployStack(
   } catch (error) {
     spinner.fail(chalk.red(`✗ Stack '${stackName}' deployment failed`));
     throw error;
+  }
+}
+
+/**
+ * Update manifest with storage configuration after successful deployment
+ */
+async function updateManifestWithStorageConfig(
+  assemblyPath: string,
+  manifest: CloudAssemblyV2,
+  storageManager: ArtifactStorageManager,
+  deploymentId: string
+): Promise<void> {
+  try {
+    const storageConfig = storageManager.getStorageConfig();
+
+    // Create or update artifactStorage config
+    const existingDeployments = manifest.artifactStorage?.deployments || [];
+    const updatedDeployments = [...existingDeployments.slice(-9), deploymentId]; // Keep last 10
+
+    const updatedManifest: CloudAssemblyV2 = {
+      ...manifest,
+      artifactStorage: {
+        accountName: storageConfig.accountName,
+        resourceGroupName: storageConfig.resourceGroupName,
+        location: storageConfig.location,
+        containerName: storageConfig.containerName,
+        endpoint: storageConfig.endpoint,
+        provisionedAt: manifest.artifactStorage?.provisionedAt || new Date().toISOString(),
+        lastUsedAt: new Date().toISOString(),
+        deployments: updatedDeployments,
+      },
+    };
+
+    // Write updated manifest back to disk
+    const manifestPath = path.join(assemblyPath, 'manifest.json');
+    fs.writeFileSync(manifestPath, JSON.stringify(updatedManifest, null, 2), 'utf-8');
+  } catch (error) {
+    // Log error but don't fail deployment
+    console.warn(chalk.yellow(`Warning: Could not update manifest with storage config: ${error}`));
   }
 }

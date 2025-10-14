@@ -100,6 +100,7 @@ export {
   DataType,
   EventType,
   ResolverOperation,
+  SynthesisContext,
 } from './synthesis';
 export type {
   DataStackManifest,
@@ -115,6 +116,10 @@ export type {
   EventSynthesisResult,
   ResolverConfig,
   ResolverSynthesisResult,
+  ResourceMetadata,
+  TemplateMetadata,
+  TemplateAssignments,
+  CrossTemplateDependency,
 } from './synthesis';
 
 // Managed Identity constructs

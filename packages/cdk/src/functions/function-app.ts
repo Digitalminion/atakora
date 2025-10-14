@@ -1,5 +1,5 @@
 import { Construct, GrantableResource, ManagedIdentityType } from '@atakora/lib';
-import type { IGrantable, IGrantResult } from '@atakora/lib';
+import type { IGrantable, IGrantResult, ResourceMetadata, SynthesisContext } from '@atakora/lib';
 import type { IResourceGroup } from '@atakora/cdk';
 import type {
   FunctionAppProps,
@@ -255,21 +255,153 @@ export class FunctionApp extends GrantableResource implements IFunctionApp {
   }
 
   /**
+   * Generates lightweight metadata for template assignment decisions.
+   *
+   * @returns ResourceMetadata object describing this Function App
+   *
+   * @remarks
+   * This method provides metadata for the context-aware synthesis pipeline.
+   * It includes:
+   * - Dependencies on storage account and app service plan
+   * - Size estimate including base resource + inline function code
+   * - Requirement to keep child functions in same template
+   * - Preference for compute tier placement
+   * - Flag for large inline content if functions exist
+   *
+   * The size estimate is calculated as:
+   * - Base Function App resource: ~2KB
+   * - Each inline function: code.length + ~500 bytes overhead
+   *
+   * @example
+   * ```typescript
+   * const metadata = functionApp.toMetadata();
+   * console.log(`Function App has ${metadata.dependencies.length} dependencies`);
+   * console.log(`Estimated size: ${metadata.sizeEstimate} bytes`);
+   * ```
+   */
+  public toMetadata(): ResourceMetadata {
+    // Collect dependencies
+    const dependencies: string[] = [];
+
+    // Function app depends on storage account
+    if (this.storageAccountName) {
+      dependencies.push(this.storageAccountName);
+    }
+
+    // Function app depends on app service plan
+    if (this.serverFarmId) {
+      // Extract plan name from resource ID if it's an ARM expression
+      const planName = this.serverFarmId.includes('/')
+        ? this.serverFarmId.split('/').pop() || this.serverFarmId
+        : this.serverFarmId;
+      dependencies.push(planName);
+    }
+
+    // Estimate size
+    // Base Function App resource: ~2000 bytes
+    const baseSize = 2000;
+
+    // Estimate inline code size from child functions
+    let codeSize = 0;
+
+    // Walk child nodes to find inline functions
+    for (const child of this.node.children) {
+      // Check if child has function metadata (InlineFunction stores this)
+      const metadata = child.node.metadata.find(m => m.type === 'functionMetadata');
+      if (metadata && metadata.data) {
+        const funcData = metadata.data as { code?: string };
+        if (funcData.code) {
+          // Each function adds: code size + ~500 bytes for ARM structure
+          codeSize += funcData.code.length + 500;
+        }
+      }
+    }
+
+    // Collect child function IDs that must stay in same template
+    const requiresSameTemplate: string[] = [];
+    for (const child of this.node.children) {
+      if (child.node.id) {
+        requiresSameTemplate.push(child.node.id);
+      }
+    }
+
+    return {
+      id: this.node.id,
+      type: this.resourceType,
+      name: this.name,
+      dependencies,
+      sizeEstimate: baseSize + codeSize,
+      requiresSameTemplate: requiresSameTemplate.length > 0 ? requiresSameTemplate : undefined,
+      templatePreference: 'compute',
+      metadata: {
+        hasLargeInlineContent: codeSize > 10000,
+        isHighlyReferenced: false,
+      },
+    };
+  }
+
+  /**
    * Transforms this resource to ARM template JSON representation.
    *
+   * @param context - Optional synthesis context for cross-template reference generation
    * @returns ARM template resource object
    *
    * @remarks
-   * This is a stub implementation. Full ARM template generation
-   * will be implemented when synthesis is added.
+   * This method generates the ARM template for the Function App.
+   * When context is provided, it uses context-aware reference generation
+   * to handle cross-template dependencies correctly.
+   *
+   * **Bug Fixes Applied**:
+   * - Fix #2: Deduplicated app settings (no longer adds duplicate AzureWebJobsStorage, FUNCTIONS_WORKER_RUNTIME)
+   * - Fix #4: Changed API version from 2025-01-01 to 2023-01-01 in listKeys() call
+   *
+   * **Context-Aware Behavior**:
+   * - Uses context.isInSameTemplate() to check if storage account is co-located
+   * - Uses context.getResourceReference() for same-template storage references
+   * - Uses context.getCrossTemplateReference() for cross-template storage references
+   * - Only includes dependsOn for resources in the same template
+   *
+   * @example Without context (backwards compatible)
+   * ```typescript
+   * const arm = functionApp.toArmTemplate();
+   * ```
+   *
+   * @example With context (context-aware)
+   * ```typescript
+   * const arm = functionApp.toArmTemplate(context);
+   * // Generates correct references based on template assignment
+   * ```
    */
-  public toArmTemplate(): any {
+  public toArmTemplate(context?: SynthesisContext): any {
+    // Generate storage account reference - use context if available
+    let storageAccountRef: string;
+    let storageAccountKey: string;
+
+    if (context && this.storageAccountName) {
+      // Context-aware: Check if storage account is in same template
+      if (context.isInSameTemplate(this.storageAccountName)) {
+        // Same template - use direct reference
+        storageAccountRef = `[resourceId('Microsoft.Storage/storageAccounts', '${this.storageAccountName}')]`;
+        // Bug Fix #4: Changed API version from 2025-01-01 to 2023-01-01
+        storageAccountKey = `[listKeys(resourceId('Microsoft.Storage/storageAccounts', '${this.storageAccountName}'), '2023-01-01').keys[0].value]`;
+      } else {
+        // Cross-template - use deployment output reference
+        storageAccountRef = context.getCrossTemplateReference(this.storageAccountName, 'id');
+        storageAccountKey = context.getCrossTemplateReference(this.storageAccountName, 'key');
+      }
+    } else {
+      // Backwards compatibility: No context provided
+      storageAccountRef = `[resourceId('Microsoft.Storage/storageAccounts', '${this.storageAccountName}')]`;
+      // Bug Fix #4: Changed API version from 2025-01-01 to 2023-01-01
+      storageAccountKey = `[listKeys(resourceId('Microsoft.Storage/storageAccounts', '${this.storageAccountName}'), '2023-01-01').keys[0].value]`;
+    }
+
     // Build app settings with required Azure Functions settings
     const appSettings: Array<{ name: string; value: string }> = [
       // Required: Storage connection string for Azure Functions runtime
       {
         name: 'AzureWebJobsStorage',
-        value: `[concat('DefaultEndpointsProtocol=https;AccountName=${this.storageAccountName};AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', '${this.storageAccountName}'), '2025-01-01').keys[0].value)]`,
+        value: `[concat('DefaultEndpointsProtocol=https;AccountName=${this.storageAccountName};AccountKey=', ${storageAccountKey})]`,
       },
       // Required: Functions extension version
       {
@@ -283,15 +415,33 @@ export class FunctionApp extends GrantableResource implements IFunctionApp {
       },
     ];
 
-    // Add user-provided environment variables
+    // Bug Fix #2: Deduplicate app settings
+    // Define reserved keys that should not be overridden by user environment variables
+    const reservedKeys = new Set([
+      'AzureWebJobsStorage',
+      'FUNCTIONS_EXTENSION_VERSION',
+      'FUNCTIONS_WORKER_RUNTIME',
+    ]);
+
+    // Add user-provided environment variables (skip reserved keys to avoid duplicates)
     Object.entries(this.environment).forEach(([name, value]) => {
-      appSettings.push({ name, value });
+      if (!reservedKeys.has(name)) {
+        appSettings.push({ name, value });
+      }
     });
 
-    // Add dependsOn for storage account and server farm
-    const dependsOn: string[] = [
-      `[resourceId('Microsoft.Storage/storageAccounts', '${this.storageAccountName}')]`,
-    ];
+    // Build dependsOn array - only include same-template resources
+    const dependsOn: string[] = [];
+
+    // Add storage account dependency only if in same template
+    if (context) {
+      if (this.storageAccountName && context.isInSameTemplate(this.storageAccountName)) {
+        dependsOn.push(storageAccountRef);
+      }
+    } else {
+      // Backwards compatibility: No context, assume same template
+      dependsOn.push(storageAccountRef);
+    }
 
     // Ensure serverFarmId is an ARM expression
     let serverFarmIdValue = this.serverFarmId;
@@ -299,7 +449,16 @@ export class FunctionApp extends GrantableResource implements IFunctionApp {
       // If it's a literal ID, convert to ARM expression
       const planName = serverFarmIdValue.split('/').pop();
       serverFarmIdValue = `[resourceId('Microsoft.Web/serverfarms', '${planName}')]`;
-      dependsOn.push(serverFarmIdValue);
+
+      // Add plan dependency only if in same template
+      if (context) {
+        if (planName && context.isInSameTemplate(planName)) {
+          dependsOn.push(serverFarmIdValue);
+        }
+      } else {
+        // Backwards compatibility: No context, assume same template
+        dependsOn.push(serverFarmIdValue);
+      }
     }
 
     return {
@@ -316,7 +475,7 @@ export class FunctionApp extends GrantableResource implements IFunctionApp {
           appSettings,
         },
       },
-      dependsOn,
+      dependsOn: dependsOn.length > 0 ? dependsOn : undefined,
     };
   }
 

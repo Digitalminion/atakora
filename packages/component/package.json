@@ -96,7 +96,7 @@
   "devDependencies": {
     "@azure/cosmos": "^4.6.0",
     "@azure/functions": "^4.8.0",
-    "@azure/identity": "^4.13.0",
+    "@azure/identity": "^4.5.0",
     "@types/node": "^20.19.21",
     "esbuild": "^0.25.10"
   }

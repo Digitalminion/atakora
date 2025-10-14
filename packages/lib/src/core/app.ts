@@ -148,7 +148,7 @@ export class App extends Construct {
    * @remarks
    * Orchestrates the synthesis pipeline to generate ARM templates from the construct tree.
    */
-  public async synth(): Promise<CloudAssembly> {
+  public async synth(): Promise<CloudAssembly | any> {
     // Import synthesizer dynamically to avoid circular dependencies
     const { Synthesizer } = await import('../synthesis');
     const synthesizer = new Synthesizer();
