@@ -2,12 +2,14 @@
 
 **Date**: 2025-10-14
 **Session**: Context-Aware Synthesis Implementation
+**Latest Update**: Resource Migrations In Progress
 
 ## Executive Summary
 
 We are implementing a major refactoring of the ARM template synthesis pipeline to fix critical cross-template reference bugs. The refactoring introduces a **context-aware synthesis approach** where resources know their template assignment BEFORE generating ARM JSON.
 
-**Current Status**: Phase 1 and Phase 2 complete, Phase 3 partially complete (2 of 10+ resources migrated)
+**Current Status**: Phase 1 and Phase 2 complete, Phase 3 in progress (4 of 10+ resources migrated)
+**Latest Commit**: 8180eb5 - StorageAccount and AppServicePlan migrations complete
 
 ## What's Been Completed ✅
 
@@ -55,7 +57,7 @@ All foundation components for context-aware synthesis are implemented and tested
    - Backwards compatibility strategy documented
    - Legacy pipeline still functional
 
-### Phase 3: Resource Migrations (20% Complete - 2 of ~10 resources)
+### Phase 3: Resource Migrations (40% Complete - 4 of ~10 resources)
 
 1. **FunctionApp** (`packages/cdk/src/functions/function-app.ts`) ✅
    - Implemented `toMetadata()`: Collects dependencies, estimates size, identifies child functions
@@ -71,30 +73,51 @@ All foundation components for context-aware synthesis are implemented and tested
    - Parent-child dependencies now handled automatically by ARM
    - Both package mode and legacy mode fixed
 
+3. **StorageAccounts (L2)** (`packages/cdk/src/storage/storage-accounts.ts`) ✅
+   - Implemented `toMetadata()`: Delegates to L1 construct
+   - Updated `toArmTemplate(context?)`: Passes context through to L1
+   - Task 1211640720941924 completed
+
+4. **ArmStorageAccounts (L1)** (`packages/cdk/src/storage/storage-account-arm.ts`) ✅
+   - Implemented `toMetadata()`: Foundation tier, no dependencies, highly referenced
+   - Updated `toArmTemplate(context?)`: Context parameter for API consistency
+   - Size estimate: ~1.5KB
+
+5. **ServerFarms (L2)** (`packages/cdk/src/web/server-farms.ts`) ✅
+   - Implemented `toMetadata()`: Delegates to L1 construct
+   - Updated `toArmTemplate(context?)`: Passes context through to L1
+   - App Service Plan / Server Farm resource
+
+6. **ArmServerFarms (L1)** (`packages/cdk/src/web/server-farm-arm.ts`) ✅
+   - Implemented `toMetadata()`: Compute tier, no dependencies, highly referenced
+   - Updated `toArmTemplate(context?)`: Context parameter for API consistency
+   - Size estimate: ~1KB
+
 ## What's In Progress 🔄
 
-### StorageAccount Migration (Started)
-- File: `packages/cdk/src/storage/storage-accounts.ts`
-- Status: File located, migration not yet started
-- Needs: toMetadata() and toArmTemplate(context?) implementation
-- This is an L2 construct wrapping ArmStorageAccounts (L1)
+### CDK Package Exports
+- Added `ResourceMetadata` and `SynthesisContext` exports to `@atakora/cdk`
+- Located in: `packages/cdk/src/index.ts`
+- Allows CDK resources to use context-aware synthesis types
 
 ## What's Pending ⏳
 
 ### Remaining Resource Migrations
 
-Priority resources to migrate (estimated 8-10 resources):
+Priority resources to migrate (estimated 4-6 remaining):
 
-1. **AppServicePlan** - Used by FunctionApp, high priority
-2. **ArmStorageAccounts** (L1) - Foundation resource
-3. **CosmosDbAccount** - Foundation resource, used by FunctionApp
-4. **VirtualNetwork** - Foundation resource
-5. **NetworkSecurityGroup** - Foundation resource
-6. **KeyVault** - Security resource
-7. **ManagedIdentity** - Security resource
-8. **RoleAssignment** - Configuration resource
-9. **ResourceGroup** - May need special handling
-10. **Others** - Discover as needed during testing
+1. **DatabaseAccounts (L2)** - Cosmos DB account, used by FunctionApp, foundation resource
+2. **ArmDatabaseAccounts (L1)** - Cosmos DB L1 construct
+3. **VirtualNetwork** - Foundation resource
+4. **NetworkSecurityGroup** - Foundation resource
+5. **KeyVault** - Security resource
+6. **ManagedIdentity** - Security resource
+
+**Note on Backwards Compatibility**: The abstract `toMetadata()` method in Resource base class causes ~60 compilation errors. We have two options:
+1. Make it optional (not abstract) with fallback metadata generation
+2. Migrate all resources before the next build
+
+Recommended: Make `toMetadata()` optional with fallback to allow incremental migration.
 
 ### Integration & Testing
 
