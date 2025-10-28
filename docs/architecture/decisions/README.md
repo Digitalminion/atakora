@@ -70,7 +70,7 @@ This directory contains Architectural Decision Records (ADRs) documenting signif
 | [ADR-027](./adr-027-queue-processor-pattern.md) | Queue Processor Pattern | 2024-10 | Accepted |
 | [ADR-028](./adr-028-trigger-pattern-consistency.md) | Trigger Pattern Consistency | 2024-10 | Accepted |
 
-⭐ = Referenced in CLAUDE.md project documentation
+⭐ = Referenced in AGENT.md project documentation
 
 ### Supporting Documentation
 

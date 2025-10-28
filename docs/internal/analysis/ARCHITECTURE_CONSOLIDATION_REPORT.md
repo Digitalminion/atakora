@@ -53,10 +53,10 @@ Successfully consolidated architecture documentation scattered across two locati
 1. `/docs/architecture/decisions/ADR-001-define-backend-pattern.md` - Backend pattern
 2. `/docs/architecture/decisions/adr-001-validation-architecture.md` - Validation
 3. `/docs/design/architecture/adr-001-cdk-type-usage-standards.md` - CDK types
-4. `/docs/design/architecture/adr-001-functions-storage-separation.md` - ⭐ **Functions storage (CLAUDE.md reference)**
+4. `/docs/design/architecture/adr-001-functions-storage-separation.md` - ⭐ **Functions storage (AGENT.md reference)**
 5. `/docs/design/architecture/adr-001-schema-type-structure.md` - Schema types
 
-**Resolution**: Kept functions-storage-separation as ADR-001 (referenced in CLAUDE.md), renumbered others
+**Resolution**: Kept functions-storage-separation as ADR-001 (referenced in AGENT.md), renumbered others
 
 #### ADR-003 (2 different documents)
 
@@ -96,7 +96,7 @@ Successfully consolidated architecture documentation scattered across two locati
 | 017-019 | Synthesis Pipeline | 3 |
 | 020-026 | Networking, Security & Advanced | 7 |
 
-**Critical ADRs (referenced in CLAUDE.md):**
+**Critical ADRs (referenced in AGENT.md):**
 - ✅ ADR-001: Functions Storage Separation
 - ✅ ADR-017: Linked Templates Default (was ADR-016)
 - ✅ ADR-018: Backend API Redesign (was ADR-017)
@@ -248,7 +248,7 @@ All cross-references updated to reflect new locations:
 ✅ **All files preserved** - Zero data loss, all content moved
 ✅ **Links updated** - Navigation paths reflect new structure
 ✅ **README files created** - All new directories have navigation
-✅ **CLAUDE.md references intact** - ADR-001, ADR-017, ADR-018, ADR-019 maintained
+✅ **AGENT.md references intact** - ADR-001, ADR-017, ADR-018, ADR-019 maintained
 
 ### File Count Verification
 
@@ -268,7 +268,7 @@ All cross-references updated to reflect new locations:
 
 ### High Priority
 
-1. ⚠️ **Update CLAUDE.md** - ADR numbers have changed:
+1. ⚠️ **Update AGENT.md** - ADR numbers have changed:
    - ADR-016 → ADR-017 (Linked Templates)
    - ADR-017 → ADR-018 (Backend API Redesign)
    - ADR-018 → ADR-019 (Synthesis Pipeline Refactoring)
@@ -306,7 +306,7 @@ All cross-references updated to reflect new locations:
 
 ### Challenges Encountered
 
-- **Multiple ADR-001 files** - Required careful prioritization (kept CLAUDE.md reference)
+- **Multiple ADR-001 files** - Required careful prioritization (kept AGENT.md reference)
 - **Renumbering cascade** - Had to renumber sequentially to fill gaps
 - **Classification decisions** - Some docs could be either user-facing or internal
 
@@ -347,7 +347,7 @@ All cross-references updated to reflect new locations:
 
 | Original File | Original # | New # | Reason |
 |---------------|------------|-------|--------|
-| functions-storage-separation.md | adr-001 | ADR-001 | Keep (CLAUDE.md reference) |
+| functions-storage-separation.md | adr-001 | ADR-001 | Keep (AGENT.md reference) |
 | validation-architecture.md | adr-001 | ADR-002 | Conflict resolution |
 | manifest-schema.md | adr-002 | ADR-003 | Shift for conflict |
 | cdk-package-architecture.md | adr-003 | ADR-004 | Shift for conflict |
@@ -363,9 +363,9 @@ All cross-references updated to reflect new locations:
 | azure-rbac-grant-pattern.md | adr-013 | ADR-014 | Keep sequence |
 | rest-api-architecture.md | adr-014 | ADR-015 | Keep sequence |
 | rest-advanced-features.md | adr-015 | ADR-016 | Keep sequence |
-| linked-templates-default.md | adr-016 | ADR-017 | Keep (CLAUDE.md reference) |
-| backend-api-redesign.md | adr-017 | ADR-018 | Keep (CLAUDE.md reference) |
-| synthesis-pipeline-refactoring.md | adr-018 | ADR-019 | Keep (CLAUDE.md reference) |
+| linked-templates-default.md | adr-016 | ADR-017 | Keep (AGENT.md reference) |
+| backend-api-redesign.md | adr-017 | ADR-018 | Keep (AGENT.md reference) |
+| synthesis-pipeline-refactoring.md | adr-018 | ADR-019 | Keep (AGENT.md reference) |
 | networking-security-strategy.md | adr-020 | ADR-020 | Keep number |
 | define-backend-pattern.md | ADR-001 | ADR-021 | Conflict resolution |
 | cdk-type-usage-standards.md | adr-001 | ADR-022 | Conflict resolution |
