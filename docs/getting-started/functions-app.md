@@ -1,5 +1,9 @@
 # Getting Started with Azure Functions Apps
 
+**Navigation**: [Home](../README.md) > [Getting Started](./README.md) > Azure Functions Apps
+
+---
+
 ## Introduction
 
 Azure Functions Apps enable you to run serverless functions in Azure without managing infrastructure. The `FunctionsApp` construct in Atakora makes it easy to deploy Functions Apps by automatically handling all the required dependencies, including dedicated storage for the Functions runtime.
@@ -489,11 +493,28 @@ const storageAccountName = functionsApp.storage.storageAccountName;
 6. **Use Key Vault**: Store secrets in Key Vault, not environment variables directly
 7. **Don't Share Storage**: Each Functions App automatically gets its own storage - that's correct
 
-## Learn More
+## Related Reading
 
+### Core Concepts
+- [App and Stacks](../guides/fundamentals/app-and-stacks.md) - Understanding the construct tree
+- [Resources Guide](../guides/fundamentals/resources.md) - Working with Azure resources
+- [Synthesis Process](../guides/fundamentals/synthesis.md) - How TypeScript becomes ARM templates
+
+### Functions-Specific Guides
 - [Functions Storage Guide](../guides/functions-storage.md) - Deep dive into storage architecture
-- [Basic Usage Examples](../examples/functions-basic-usage.md) - Complete working examples
-- [Azure Functions Documentation](https://learn.microsoft.com/azure/azure-functions/)
+- [Functions Storage Quick Reference](../guides/functions-storage-quickref.md) - Quick decision trees and patterns
+- [Azure Functions Guide](../guides/azure-functions.md) - Type-safe handler interfaces and triggers
+
+### Deployment and Operations
+- [Deploying Environments](../guides/workflows/deploying-environments.md) - Multi-environment deployments
+- [Managing Secrets](../guides/workflows/managing-secrets.md) - Secure secret handling
+- [CI/CD Pipeline Tutorial](../guides/tutorials/ci-cd-pipeline.md) - Automate deployments
+
+## See Also
+
+- [CLI Commands Reference](../reference/cli/README.md) - Complete command documentation
+- [Web Resources API](../reference/api/cdk/web.md) - Function App API reference
+- [Error Code Reference](../reference/error-codes.md) - Troubleshooting help
 
 ## Getting Help
 
@@ -506,3 +527,7 @@ If you encounter issues:
 5. Review Application Insights logs
 
 Remember: The FunctionsApp construct handles complexity for you. Trust its defaults, especially around storage provisioning, and only customize when you have specific requirements.
+
+---
+
+← Previous: [Next Steps](./next-steps.md) | Back to: [Getting Started](./README.md)

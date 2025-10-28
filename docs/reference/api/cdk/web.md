@@ -1,5 +1,9 @@
 # Web & App Services API (@atakora/cdk/web)
 
+**Status:** Stable
+**Since:** v1.0.0
+**Package:** @atakora/cdk/web
+
 **Navigation**: [Docs Home](../../../README.md) > [Reference](../../README.md) > [API Reference](../README.md) > Web
 
 ---

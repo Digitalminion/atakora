@@ -111,7 +111,7 @@ The synthesis process transforms the construct tree into deployable ARM template
 
 **Critical**: Synthesis is async (`app.synth()` returns a Promise) due to bundling and artifact processing.
 
-### Linked Templates Strategy (ADR-016)
+### Linked Templates Strategy (ADR-017)
 
 Atakora uses linked templates as the default and only synthesis approach:
 
@@ -140,7 +140,7 @@ import { Construct, Resource, DeploymentScope } from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
 ```
 
-### Backend Component Pattern (ADR-017)
+### Backend Component Pattern (ADR-018)
 
 The `@atakora/component` package provides a resource pooling system for building backends:
 
@@ -153,7 +153,7 @@ Current implementation (~2500 lines) is sophisticated. File-based definition imp
 
 ## Code Generation
 
-Atakora includes codegen tools for ARM schema processing (see docs/contributor/codegen.md):
+Atakora includes codegen tools for ARM schema processing (see docs/contributing/technical/codegen.md):
 
 ```bash
 # Generate TypeScript types from ARM schema
@@ -309,11 +309,11 @@ No specific convention enforced, but be descriptive. Commits include:
 Important ADRs to review when working on related features:
 
 - **ADR-001**: Functions storage separation (runtime vs application storage)
-- **ADR-016**: Linked templates as default (solves 4MB ARM template limit)
-- **ADR-017**: Backend API redesign assessment (incremental improvements planned)
-- **ADR-018**: Synthesis pipeline refactoring
+- **ADR-017**: Linked templates as default (solves 4MB ARM template limit)
+- **ADR-018**: Backend API redesign assessment (incremental improvements planned)
+- **ADR-019**: Synthesis pipeline refactoring
 
-ADRs are located in: `docs/design/architecture/`
+ADRs are located in: `docs/architecture/decisions/`
 
 ## Troubleshooting
 
@@ -369,9 +369,12 @@ Key environment variables used:
 
 ## Additional Resources
 
-- **Getting Started**: `docs/usage/getting-started/`
-- **Usage Guides**: `docs/usage/guides/`
+- **Getting Started**: `docs/getting-started/`
+- **Guides**: `docs/guides/`
 - **API Reference**: `docs/reference/`
-- **Examples**: `docs/usage/examples/`
-- **Contributing**: `docs/contributor/`
-- **Architecture**: `docs/design/architecture/`
+- **Examples**: `docs/examples/`
+- **Contributing**: `docs/contributing/`
+- **Technical Deep Dives**: `docs/contributing/technical/`
+- **Architecture**: `docs/architecture/`
+- **Glossary**: `docs/GLOSSARY.md`
+- **Documentation Index**: `docs/INDEX.md`

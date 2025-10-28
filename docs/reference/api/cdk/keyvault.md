@@ -1,5 +1,9 @@
 # Key Vault Resources API (@atakora/cdk/keyvault)
 
+**Status:** Stable
+**Since:** v1.0.0
+**Package:** @atakora/cdk/keyvault
+
 **Navigation**: [Docs Home](../../../README.md) > [Reference](../../README.md) > [API Reference](../README.md) > Key Vault
 
 ---

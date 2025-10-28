@@ -1688,7 +1688,7 @@ Create comprehensive integration tests covering:
 
 **Deliverables**:
 
-1. **API Documentation** (`docs/api/rbac-grants.md`)
+1. **API Documentation** (`docs/reference/api/cdk/rbac-grants.md`)
    - All grant methods documented
    - Usage examples
    - Best practices

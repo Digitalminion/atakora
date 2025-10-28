@@ -189,6 +189,11 @@ Problem-solving guides:
 - Review [Troubleshooting](./troubleshooting/common-issues.md) for common problems
 - See [Examples](./examples/README.md) for working code samples
 
+## Quick Reference
+
+- **[Glossary](./GLOSSARY.md)** - Technical terms and definitions
+- **[Documentation Index](./INDEX.md)** - Alphabetical index of all documentation pages
+
 ## Version Information
 
 This documentation is for Atakora v1.x. For older versions, see the [version archive](./archive/README.md).

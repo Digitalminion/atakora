@@ -20,6 +20,8 @@ Comprehensive guides for using Atakora effectively.
 ## Core Concepts
 
 - **[Azure Functions](./azure-functions.md)** - Build serverless applications with type-safe handler interfaces for all 18 Azure Functions trigger types
+- **[Functions Storage Guide](./functions-storage.md)** - Deep dive into why Functions Apps need dedicated storage and how to use the FunctionsApp construct correctly
+- **[Functions Storage Quick Reference](./functions-storage-quickref.md)** - Quick reference with key concepts, decision trees, and common scenarios for Functions storage
 - **[REST APIs](./rest-api.md)** - Build type-safe REST APIs with OpenAPI support, backend integration, and reliability patterns
 - **[OpenAPI Integration](./openapi-integration.md)** - Import/export OpenAPI specs, generate TypeScript types, and validate at runtime
 

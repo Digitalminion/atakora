@@ -34,6 +34,7 @@ Azure service-specific constructs organized by namespace:
 - **[@atakora/cdk/resources](./cdk/resources.md)** - Resource Groups and management resources
 - **[@atakora/cdk/managedidentity](./cdk/managedidentity.md)** - Managed Identities for Azure resources
 - **[@atakora/cdk/authorization](./cdk/authorization.md)** - Role-Based Access Control (RBAC)
+- **[RBAC Grant Pattern](./cdk/rbac-grants.md)** - Type-safe permission grants between resources
 
 #### Networking
 - **[@atakora/cdk/network](./cdk/network.md)** - Virtual networks, subnets, NSGs, private endpoints, application gateways

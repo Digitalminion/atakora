@@ -1,5 +1,9 @@
 # Storage Resources API (@atakora/cdk/storage)
 
+**Status:** Stable
+**Since:** v1.0.0
+**Package:** @atakora/cdk/storage
+
 **Navigation**: [Docs Home](../../../README.md) > [Reference](../../README.md) > [API Reference](../README.md) > Storage
 
 ---

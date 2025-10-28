@@ -1,5 +1,9 @@
 # DocumentDB Resources API (@atakora/cdk/documentdb)
 
+**Status:** Stable
+**Since:** v1.0.0
+**Package:** @atakora/cdk/documentdb
+
 **Navigation**: [Docs Home](../../../README.md) > [Reference](../../README.md) > [API Reference](../README.md) > DocumentDB
 
 ---

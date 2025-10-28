@@ -1,12 +1,12 @@
 # Azure RBAC Grant Pattern - API Documentation
 
+**Status:** Stable
+**Since:** v1.0.0
+**Package:** @atakora/cdk/authorization
+
 ## Overview
 
 The Azure RBAC Grant Pattern provides a type-safe, declarative approach to managing role-based access control (RBAC) in Azure infrastructure. This API enables developers to grant permissions between Azure resources using intuitive grant methods rather than manually creating role assignments.
-
-**Version:** 1.0.0
-**Status:** Complete
-**Implementation:** Phases 1-7 Complete
 
 ## Core Concepts
 
@@ -733,13 +733,13 @@ it('should grant blob read access', () => {
 
 ## Related Documentation
 
-- [Migration Guide](../guides/rbac-migration.md) - Migrating from manual role assignments
-- [Architecture Design](../design/architecture/azure-rbac-implementation-plan.md) - Implementation details
-- [Examples](../../examples/rbac-grants/) - Complete working examples
+- [Migration Guide](../../../guides/rbac-migration.md) - Migrating from manual role assignments
+- [Architecture Design](../../../design/architecture/azure-rbac-implementation-plan.md) - Implementation details
+- [Examples](../../../examples/rbac-grants/) - Complete working examples
 
 ## Support
 
 For issues, questions, or feature requests related to the RBAC Grant Pattern:
-1. Check the [Migration Guide](../guides/rbac-migration.md)
-2. Review [Example Projects](../../examples/rbac-grants/)
-3. Consult the [Architecture Design](../design/architecture/azure-rbac-implementation-plan.md)
+1. Check the [Migration Guide](../../../guides/rbac-migration.md)
+2. Review [Example Projects](../../../examples/rbac-grants/)
+3. Consult the [Architecture Design](../../../design/architecture/azure-rbac-implementation-plan.md)

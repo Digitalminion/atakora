@@ -1,5 +1,9 @@
 # Core Library API (@atakora/lib)
 
+**Status:** Stable
+**Since:** v1.0.0
+**Package:** @atakora/lib
+
 **Navigation**: [Docs Home](../../../README.md) > [Reference](../../README.md) > [API Reference](../README.md) > Core Library
 
 ---

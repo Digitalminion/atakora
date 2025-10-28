@@ -1,5 +1,9 @@
 # REST API Reference
 
+**Status:** Beta
+**Since:** v1.2.0
+**Package:** @atakora/cdk/web
+
 Complete API reference for Atakora's REST API implementation.
 
 ## Table of Contents

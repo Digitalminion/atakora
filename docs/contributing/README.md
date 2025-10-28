@@ -72,6 +72,13 @@ Documentation improvements are always welcome:
 - **[PR Process](./pr-process.md)** - Submit pull requests
 - **[Release Process](./release-process.md)** - Release workflow
 
+## Technical Deep Dives
+
+For advanced contributors working on framework internals:
+
+- **[Code Generation](./technical/codegen.md)** - ARM schema processing and type generation
+- **[REST API Testing](./technical/testing/rest-api-testing.md)** - Internal testing utilities and patterns
+
 ## Code Standards
 
 ### TypeScript

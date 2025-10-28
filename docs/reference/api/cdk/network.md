@@ -1,5 +1,9 @@
 # Network Resources API (@atakora/cdk/network)
 
+**Status:** Stable
+**Since:** v1.0.0
+**Package:** @atakora/cdk/network
+
 **Navigation**: [Docs Home](../../../README.md) > [Reference](../../README.md) > [API Reference](../README.md) > Network
 
 ---

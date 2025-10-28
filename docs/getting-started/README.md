@@ -52,6 +52,20 @@ Discover what to learn next and where to find more information.
 - Where to find help and examples
 - How to contribute to Atakora
 
+## Feature-Specific Guides
+
+### Azure Functions Apps
+**[Getting Started with Functions Apps](./functions-app.md)** - 30 minutes
+
+Learn how to deploy serverless Azure Functions Apps using Atakora.
+
+**You'll learn:**
+- Creating Functions Apps with different runtimes (Node.js, Python, .NET, Java, PowerShell)
+- Understanding automatic storage provisioning
+- Choosing hosting plans (Consumption, Premium, Dedicated)
+- Environment variables and configuration
+- Monitoring and best practices
+
 ## Quick Reference
 
 Already familiar with infrastructure-as-code frameworks? Jump to:

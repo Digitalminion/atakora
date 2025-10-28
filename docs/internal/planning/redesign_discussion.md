@@ -293,8 +293,9 @@ export const data = defineData({
 8. [`atakora-gen2-secrets-config-management.md`](./docs/design/architecture/atakora-gen2-secrets-config-management.md) - Secrets & Config Management
 9. [`atakora-gen2-type-generation-intellisense.md`](./docs/design/architecture/atakora-gen2-type-generation-intellisense.md) - Type Generation & IntelliSense
 10. [`atakora-gen2-deployment-state-management.md`](./docs/design/architecture/atakora-gen2-deployment-state-management.md) - Deployment & State Management
+11. [`atakora-gen2-networking-security.md`](./docs/design/architecture/atakora-gen2-networking-security.md) - Networking & Security
 
-All documents are complete and comprehensive.
+All major architectural documents are complete.
 
 ---
 
@@ -455,24 +456,41 @@ const products = await inventoryService.models.Product.list({ inStock: true });
 
 ---
 
-### 🔲 5. Networking & Security (MEDIUM PRIORITY)
+### ✅ 5. Networking & Security
 
-**The Gap**: How to configure VNet, private endpoints, firewall?
+**Document**: [`docs/design/architecture/atakora-gen2-networking-security.md`](./docs/design/architecture/atakora-gen2-networking-security.md)
 
-**Questions:**
-- VNet integration patterns?
-- Private endpoints (when/how)?
-- Firewall rules?
-- Network isolation between environments?
-- DDoS protection?
-- WAF integration?
+**Environment-aware progressive security model with enterprise capabilities:**
 
-**Considerations:**
-- Defaults in production?
-- Optional in dev?
-- Configuration in `defineBackend()`?
+**Core Architecture:**
+- **Three-tier security model** - Edge (WAF/APIM) → Network (VNet/NSG) → Resource (RBAC/Identity)
+- **Environment-based defaults** - Public in dev, private endpoints in production
+- **Smart endpoint selection** - Service endpoints (free) vs private endpoints based on environment
+- **Progressive enhancement** - Start simple, add security layers as needed
 
-**Status**: Mentioned in default infrastructure but not fully designed
+**Key Features:**
+- **Zero-config networking** - Works out of the box for 80% of cases
+- **VNet architecture** - Automatic subnet allocation and NSG rules
+- **Private endpoints** - Automatic creation for all data services in production
+- **Cost-conscious tiers** - Basic ($0) → Standard ($50) → Enhanced ($300) → Enterprise ($4,000+)
+- **Zero Trust ready** - Conditional access, MFA, device compliance
+- **WAF & DDoS** - Optional but integrated when needed
+
+**Example:**
+```typescript
+// Zero config - smart defaults
+const backend = defineBackend({ api });
+// Dev: public access, Prod: VNet + private endpoints
+
+// Override for security
+const backend = defineBackend({ api }, {
+  networking: { forcePrivate: true }
+});
+```
+
+**ADR-020**: Documents the environment-aware networking strategy decision
+
+**Status**: Design complete
 
 ---
 
@@ -684,13 +702,11 @@ Here's what's designed:
 
 Here's what we haven't designed yet:
 1. 🔲 Local development & testing
-2. 🔲 Deployment & state management
-3. 🔲 Networking & security details
-4. 🔲 Performance & scaling
-5. 🔲 Resource lifecycle & cleanup
-6. 🔲 Migration tooling details
-7. 🔲 Error messages & DX polish
-8. 🔲 Observability deep dive
+2. 🔲 Performance & scaling
+3. 🔲 Resource lifecycle & cleanup
+4. 🔲 Migration tooling details
+5. 🔲 Error messages & DX polish
+6. 🔲 Observability deep dive
 
 I'd like to design [PICK ONE OR SAY "your recommendation"].
 
@@ -716,6 +732,8 @@ Please read redesign_discussion.md for full context.
 - `docs/design/architecture/atakora-gen2-secrets-config-management.md`
 - `docs/design/architecture/atakora-gen2-type-generation-intellisense.md`
 - `docs/design/architecture/atakora-gen2-deployment-state-management.md`
+- `docs/design/architecture/atakora-gen2-networking-security.md`
+- `docs/design/architecture/adr-020-networking-security-strategy.md`
 - `docs/design/architecture/README.md`
 - `redesign_discussion.md` (this file)
 

@@ -496,7 +496,7 @@ Use this checklist when migrating each resource:
 
 - [ ] Identify the resource type (Storage, KeyVault, Cosmos, etc.)
 - [ ] Identify the role being assigned
-- [ ] Find the equivalent grant method from the [API Documentation](../api/rbac-grants.md)
+- [ ] Find the equivalent grant method from the [API Documentation](../reference/api/cdk/rbac-grants.md)
 - [ ] Ensure the grantee has a managed identity configured
 - [ ] Replace `RoleAssignmentArm` with the grant method
 - [ ] Add a descriptive string explaining why the grant exists
@@ -671,7 +671,7 @@ After migration:
 
 If you encounter issues during migration:
 
-1. **Check the API Documentation:** [rbac-grants.md](../api/rbac-grants.md)
+1. **Check the API Documentation:** [rbac-grants.md](../reference/api/cdk/rbac-grants.md)
 2. **Review Examples:** [examples/rbac-grants/](../../examples/rbac-grants/)
 3. **Run Integration Tests:** `npm test -- rbac-grants.integration`
 4. **Check Architecture Design:** [azure-rbac-implementation-plan.md](../design/architecture/azure-rbac-implementation-plan.md)
