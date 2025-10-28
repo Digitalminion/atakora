@@ -290,6 +290,9 @@ export const data = defineData({
 5. [`atakora-gen2-dynamic-tagging-system.md`](./docs/design/architecture/atakora-gen2-dynamic-tagging-system.md) - Tagging system
 6. [`atakora-gen2-governance-compliance.md`](./docs/design/architecture/atakora-gen2-governance-compliance.md) - Governance
 7. [`atakora-gen2-authentication.md`](./docs/design/architecture/atakora-gen2-authentication.md) - Authentication
+8. [`atakora-gen2-secrets-config-management.md`](./docs/design/architecture/atakora-gen2-secrets-config-management.md) - Secrets & Config Management
+9. [`atakora-gen2-type-generation-intellisense.md`](./docs/design/architecture/atakora-gen2-type-generation-intellisense.md) - Type Generation & IntelliSense
+10. [`atakora-gen2-deployment-state-management.md`](./docs/design/architecture/atakora-gen2-deployment-state-management.md) - Deployment & State Management
 
 All documents are complete and comprehensive.
 
@@ -318,64 +321,137 @@ All documents are complete and comprehensive.
 
 ---
 
-### 🔲 2. Deployment & State Management (HIGH PRIORITY)
+### ✅ 2. Deployment & State Management
 
-**The Gap**: How does `atakora deploy` know what's already deployed?
+**Document**: [`docs/design/architecture/atakora-gen2-deployment-state-management.md`](./docs/design/architecture/atakora-gen2-deployment-state-management.md)
 
-**Questions:**
-- State tracking - what's deployed vs what's in code?
-- Incremental deployments - only deploy changed resources?
-- Rollback strategy - what if deployment fails halfway?
-- Resource drift - manual changes in Azure Portal?
-- CI/CD integration patterns?
+**Azure-native deployment with intelligent state tracking:**
 
-**Considerations:**
-- Azure deployment history
-- Synthesis run ID tracking (from tagging system)
-- Lock files or state files?
-- Terraform-style plan/apply workflow?
+**Core Features:**
+- **Three-layer state system** - Azure Deployment History + Synthesis Run ID tags + Storage cache
+- **Synthesis run ID** - Unique ID per deployment (`synth-20251014-153000-a8b2c4`)
+- **Per-function bundling** - esbuild bundles each function separately for optimal cold starts
+- **Output structure** - `arm.out/<backend-name>/<synth-run-id>/`
+- **Blob lease locking** - Prevents concurrent deployments safely
+- **Phased deployment** - Infrastructure → Functions → Configuration
 
-**Status**: Not yet designed
+**Deployment Flow:**
+```bash
+atakora deploy --env nonprod
+
+1. Pre-flight validation (auth, secrets, locks)
+2. Synthesis (templates, bundling, packaging)
+3. Change detection and diff preview
+4. Acquire deployment lock
+5. Deploy in phases (infra, functions, config)
+6. Tag resources, save outputs, release lock
+```
+
+**Commands:**
+```bash
+atakora deploy --env nonprod
+atakora diff --env nonprod
+atakora rollback --to <synth-run-id> --env nonprod
+atakora drift --env nonprod
+atakora deployments list --env nonprod
+```
+
+**Key Decisions:**
+- No external state files (uses Azure Deployment History)
+- v1: Full redeployment (ARM idempotency)
+- v2: Incremental deployment with resource hashing
+- Per-function bundling for optimal performance
+- Clear error messages with actionable resolution steps
 
 ---
 
-### 🔲 3. Secrets Management (HIGH PRIORITY)
+### ✅ 3. Secrets & Configuration Management
 
-**The Gap**: How do developers provide secrets during deployment?
+**Document**: [`docs/design/architecture/atakora-gen2-secrets-config-management.md`](./docs/design/architecture/atakora-gen2-secrets-config-management.md)
 
-**Questions:**
-- How to provide secrets during deployment?
-- Environment-specific secrets (dev vs prod)?
-- Secrets rotation strategy?
-- Developer workflow for adding new secrets?
-- Integration with `defineBackend()` pattern?
+**Key Vault-first approach with automatic provisioning:**
 
-**Considerations:**
-- Key Vault is provisioned automatically
-- Need a way to populate secrets
-- `.env` files for local, Key Vault for deployed?
-- CLI commands like `atakora secrets set CONNECTION_STRING "..."`?
+**Core Features:**
+- **Key Vault always provisioned** - Part of every backend
+- **Type-safe secret access** - `getSecret()` with autocomplete
+- **Local .env for development** - Simple workflow with `.env.local`
+- **CLI for production secrets** - `atakora secrets set/get/list/validate`
+- **Managed Identity first** - Minimize secrets through RBAC
+- **Automatic validation** - Check required secrets before deployment
 
-**Status**: Not yet designed
+**Example:**
+```typescript
+const backend = defineBackend({
+  feedbackApi,
+}, {
+  secrets: {
+    SENDGRID_API_KEY: { required: true },
+    STRIPE_SECRET_KEY: { required: true },
+    SLACK_WEBHOOK_URL: { required: false },
+  },
+  config: {
+    maxUploadSizeMb: 10,
+    allowedOrigins: ['https://app.colorai.com'],
+  },
+});
+```
+
+**CLI Commands:**
+```bash
+atakora secrets set SENDGRID_API_KEY --env nonprod
+atakora secrets list --env nonprod
+atakora secrets validate --env nonprod
+atakora secrets generate ENCRYPTION_KEY --type aes-256 --env nonprod
+```
+
+**Security:**
+- RBAC-based access (developers can't access prod secrets)
+- All operations audit logged
+- Soft delete and purge protection
+- Secrets never appear in command history
 
 ---
 
-### 🔲 4. Type Generation & IntelliSense (MEDIUM PRIORITY)
+### ✅ 4. Type Generation & IntelliSense
 
-**The Gap**: How do we get TypeScript types from schema?
+**Document**: [`docs/design/architecture/atakora-gen2-type-generation-intellisense.md`](./docs/design/architecture/atakora-gen2-type-generation-intellisense.md)
 
-**Questions:**
-- Auto-generate TypeScript types from `a.schema()`?
-- Type-safe environment variables?
-- Generated client SDK with autocomplete?
-- How does `backend.cosmos.endpoint` give IntelliSense?
+**Enterprise multi-backend type generation with full IntelliSense:**
 
-**Considerations:**
-- Code generation during synthesis?
-- Watch mode for development?
-- d.ts files committed to repo?
+**Core Innovation:**
+Unlike AWS Amplify (single backend only), Atakora supports **multiple independent backends from one frontend** with full type safety.
 
-**Status**: Not yet designed
+**Generated Per Backend:**
+- `outputs.json` - Runtime config (endpoints, auth, introspection)
+- `types.d.ts` - TypeScript interfaces for all models, functions, secrets, config
+- `client.ts` - Type-safe client with CRUD operations
+- `hooks.ts` - (Optional) React Query hooks
+
+**Multi-Backend Example:**
+```typescript
+// Frontend talks to 3 backends with full type safety
+import { userService } from '@my-org/user-service-client';
+import { orderService } from '@my-org/order-service-client';
+import { inventoryService } from '@my-org/inventory-service-client';
+
+// Single Entra ID token works for all backends
+const user = await userService.models.User.get('current');
+const orders = await orderService.models.Order.list({ userId: user.id });
+const products = await inventoryService.models.Product.list({ inStock: true });
+```
+
+**Key Features:**
+- **Auto-generation during synthesis** - No manual codegen commands
+- **Watch mode** - `atakora dev --watch` regenerates on changes
+- **IntelliSense everywhere** - Schemas, secrets, config, backend resources
+- **Committed to repo** - Types work immediately after `git clone`
+- **Framework agnostic** - Works with React, Vue, Angular, vanilla TS
+
+**Comparison to Amplify:**
+- ✅ Multi-backend support (Amplify: single backend only)
+- ✅ Shared authentication across backends
+- ✅ Monorepo-friendly (workspace protocol)
+- ✅ Independent deployment per backend
 
 ---
 
@@ -604,18 +680,17 @@ Here's what's designed:
 5. ✅ Dynamic tagging system
 6. ✅ Governance & compliance
 7. ✅ Authentication & authorization
+8. ✅ Secrets & configuration management
 
 Here's what we haven't designed yet:
 1. 🔲 Local development & testing
 2. 🔲 Deployment & state management
-3. 🔲 Secrets management
-4. 🔲 Type generation & IntelliSense
-5. 🔲 Networking & security details
-6. 🔲 Performance & scaling
-7. 🔲 Resource lifecycle & cleanup
-8. 🔲 Migration tooling details
-9. 🔲 Error messages & DX polish
-10. 🔲 Observability deep dive
+3. 🔲 Networking & security details
+4. 🔲 Performance & scaling
+5. 🔲 Resource lifecycle & cleanup
+6. 🔲 Migration tooling details
+7. 🔲 Error messages & DX polish
+8. 🔲 Observability deep dive
 
 I'd like to design [PICK ONE OR SAY "your recommendation"].
 
@@ -638,14 +713,18 @@ Please read redesign_discussion.md for full context.
 - `docs/design/architecture/atakora-gen2-governance-compliance.md`
 - `docs/design/architecture/atakora-gen2-dynamic-tagging-system.md`
 - `docs/design/architecture/atakora-gen2-authentication.md`
+- `docs/design/architecture/atakora-gen2-secrets-config-management.md`
+- `docs/design/architecture/atakora-gen2-type-generation-intellisense.md`
+- `docs/design/architecture/atakora-gen2-deployment-state-management.md`
 - `docs/design/architecture/README.md`
 - `redesign_discussion.md` (this file)
 
 ### Modified:
-- None (all new files)
+- `redesign_discussion.md` (updated with all design completions)
+- `docs/design/architecture/atakora-gen2-data-layer.md` (added TODO for enhanced validation)
 
 ---
 
 **Last Updated**: 2025-10-14
 **Session**: Atakora Gen 2 Architecture Design
-**Status**: Design Phase Complete - Ready for Implementation Planning
+**Status**: Design Phase Complete - 10 Major Documents
