@@ -185,6 +185,7 @@ export class Synthesizer {
         templates,
         assignmentsByStack,
         functionPackages,
+        prepareResult,
         opts
       );
 
@@ -942,6 +943,7 @@ export class Synthesizer {
    * @param templates - Main ARM templates by stack (combined resources)
    * @param assignmentsByStack - Template assignments by stack
    * @param functionPackages - Function packages by stack
+   * @param prepareResult - Prepare phase result with stack info
    * @param options - Synthesis options
    * @returns Cloud assembly V2
    *
@@ -951,6 +953,7 @@ export class Synthesizer {
     templates: Map<string, ArmTemplate>,
     assignmentsByStack: Map<string, TemplateAssignments>,
     functionPackages: Map<string, FunctionPackage[]>,
+    prepareResult: any,
     options: SynthesisOptions
   ): Promise<CloudAssemblyV2> {
     const outdir = options.outdir;
@@ -968,10 +971,20 @@ export class Synthesizer {
     }
 
     const stackManifests: Record<string, StackManifestV2> = {};
+    const { stackInfoMap } = prepareResult;
 
     // Write templates and create manifests
     for (const [stackName, template] of templates) {
       const assignments = assignmentsByStack.get(stackName);
+
+      // Get stack info for this stack
+      let stackInfo = null;
+      for (const [stackId, info] of stackInfoMap.entries()) {
+        if (info.name === stackName) {
+          stackInfo = info;
+          break;
+        }
+      }
 
       // If we have linked templates (multiple template assignments), write them separately
       if (assignments && assignments.templates.size > 1) {
@@ -1003,7 +1016,7 @@ export class Synthesizer {
         }
 
         // Create root template with deployment resources
-        const rootTemplate = this.createRootTemplate(template, assignments);
+        const rootTemplate = this.createRootTemplate(template, assignments, stackInfo);
         const rootTemplatePath = path.join(outdir, `${stackName}.json`);
         this.writeJsonFile(rootTemplatePath, rootTemplate, prettyPrint);
 
@@ -1082,9 +1095,22 @@ export class Synthesizer {
    */
   private createRootTemplate(
     originalTemplate: ArmTemplate,
-    assignments: TemplateAssignments
+    assignments: TemplateAssignments,
+    stackInfo: any
   ): ArmTemplate {
     const deploymentResources: ArmResource[] = [];
+
+    // Check if this is a ResourceGroupStack
+    const isResourceGroupStack = stackInfo && stackInfo.scope === DeploymentScope.ResourceGroup;
+    let resourceGroupName: string | undefined;
+
+    if (isResourceGroupStack) {
+      // Get resource group name from stack construct
+      const construct = stackInfo.construct;
+      if (construct && 'resourceGroupName' in construct) {
+        resourceGroupName = (construct as any).resourceGroupName;
+      }
+    }
 
     for (const [templateName, templateMetadata] of assignments.templates) {
       if (!templateMetadata.isMain) {
@@ -1104,6 +1130,11 @@ export class Synthesizer {
           },
         };
 
+        // Add resourceGroup property for ResourceGroupStack deployments
+        if (isResourceGroupStack && resourceGroupName) {
+          (deploymentResource as any).resourceGroup = resourceGroupName;
+        }
+
         // Add dependsOn based on cross-template dependencies
         const deps = assignments.crossTemplateDependencies
           .filter((dep) => dep.sourceTemplate === templateName)
@@ -1117,25 +1148,28 @@ export class Synthesizer {
       }
     }
 
+    // Build parameters object
+    const parameters: any = {
+      _artifactsLocation: {
+        type: 'string',
+        metadata: {
+          description: 'Base URI where artifacts are stored',
+        },
+      },
+      _artifactsLocationSasToken: {
+        type: 'secureString',
+        defaultValue: '',
+        metadata: {
+          description: 'SAS token for accessing artifacts',
+        },
+      },
+      ...originalTemplate.parameters,
+    };
+
     return {
       $schema: originalTemplate.$schema,
       contentVersion: '1.0.0.0',
-      parameters: {
-        _artifactsLocation: {
-          type: 'string',
-          metadata: {
-            description: 'Base URI where artifacts are stored',
-          },
-        },
-        _artifactsLocationSasToken: {
-          type: 'secureString',
-          defaultValue: '',
-          metadata: {
-            description: 'SAS token for accessing artifacts',
-          },
-        },
-        ...originalTemplate.parameters,
-      },
+      parameters,
       variables: originalTemplate.variables,
       resources: deploymentResources,
       outputs: originalTemplate.outputs,

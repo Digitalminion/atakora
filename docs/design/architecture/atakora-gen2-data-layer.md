@@ -162,6 +162,25 @@ a.id()                  // Auto-generated ID
 .regex(pattern)         // Regex validation
 ```
 
+> **TODO**: Expand field validation to include comprehensive client-side validation metadata (see discussion on enhanced `outputs.json` validation). This should include:
+> - Regex patterns with error messages
+> - Min/max constraints with custom messages
+> - Format validators (email, phone, URL with validation patterns)
+> - Field-level metadata (labels, placeholders, help text, UI hints)
+> - Sanitization rules (trim, lowercase, HTML stripping)
+> - Conditional validation (requiredIf, dependencies)
+> - File upload constraints (accept, maxSize, dimensions)
+> - Enum display metadata (labels, colors, icons, descriptions)
+> - Cross-field validation rules
+>
+> This metadata should be included in the generated `outputs.json` introspection to enable:
+> - Auto-generated forms with proper validation
+> - Client-side pre-validation before API calls
+> - Smart UI components that understand field constraints
+> - Better error messages for users
+>
+> **Related**: Enhanced validation design for `outputs.json` introspection (2025-10-14 discussion)
+
 ### Complex Types
 
 ```typescript
