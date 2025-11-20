@@ -157,8 +157,8 @@ export class ArmStorageAccounts extends Resource {
     this.networkAcls = props.properties?.networkAcls;
     this.tags = props.tags ?? {};
 
-    // Construct resource ID
-    this.resourceId = `/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/${this.storageAccountName}`;
+    // Construct resource ID using ARM template function
+    this.resourceId = `[resourceId('Microsoft.Storage/storageAccounts', '${this.storageAccountName}')]`;
     this.storageAccountId = this.resourceId;
   }
 

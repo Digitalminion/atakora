@@ -49,6 +49,9 @@
 // High-level patterns and components
 // ============================================================================
 
+// Common utilities - Fluent API helpers
+export * from './common';
+
 // Backend pattern - Resource sharing and orchestration
 export * from './backend';
 
@@ -66,6 +69,9 @@ export * from './web';
 
 // Messaging components
 export * from './messaging';
+
+// Events components - Unified event infrastructure
+export * from './events';
 
 // Microservice components (planned)
 // export * from './microservice';

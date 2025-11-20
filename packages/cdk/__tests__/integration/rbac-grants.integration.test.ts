@@ -18,36 +18,24 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { Construct, WellKnownRoleIds, PrincipalType, UserAssignedIdentity, CrossStackGrant } from '@atakora/lib';
+import { WellKnownRoleIds, PrincipalType, UserAssignedIdentity, CrossStackGrant, App } from '@atakora/lib';
 import { StorageAccounts } from '@atakora/cdk/storage';
 import { Vaults } from '@atakora/cdk/keyvault';
 import { DatabaseAccounts } from '@atakora/cdk/documentdb';
 import { FunctionApp, ManagedServiceIdentityType } from '@atakora/cdk/functions';
-
-// Mock ResourceGroup for testing
-class MockResourceGroup extends Construct {
-  public readonly resourceGroupName = 'test-rg';
-  public readonly location = 'eastus';
-  public readonly tags = { environment: 'test' };
-  public readonly resourceId = "[resourceId('Microsoft.Resources/resourceGroups', 'test-rg')]";
-}
+import { MockResourceGroup, createMockPlan, createMockStorage } from '../helpers/test-fixtures';
 
 // Mock plan and storage references for Function App
-const mockPlan = {
-  planId: '/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.Web/serverfarms/test-plan',
-  location: 'eastus',
-};
-
-const mockStorage = {
-  storageAccountId: '/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/teststorage',
-  storageAccountName: 'teststorage',
-};
+const mockPlan = createMockPlan();
+const mockStorage = createMockStorage();
 
 describe('RBAC Grant Pattern - Integration Tests', () => {
+  let app: App;
   let resourceGroup: MockResourceGroup;
 
   beforeEach(() => {
-    resourceGroup = new MockResourceGroup(undefined as any, 'TestRG');
+    app = new App();
+    resourceGroup = new MockResourceGroup(app, 'TestRG');
   });
 
   describe('Storage Account Grants', () => {
@@ -67,9 +55,9 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
       const grant = storage.grantBlobRead(functionApp);
 
       expect(grant.roleDefinitionId).toBe(WellKnownRoleIds.STORAGE_BLOB_DATA_READER);
-      expect(grant.scope).toBe(storage.resourceId);
-      expect(grant.principalId).toContain('[reference(');
-      expect(grant.principalId).toContain('Microsoft.Web/sites');
+      expect(grant.scope).toBe(storage.storageAccountId);
+      expect(grant.grantee.principalId).toContain('[reference(');
+      expect(grant.grantee.principalId).toContain('Microsoft.Web/sites');
     });
 
     it('should grant blob write access', () => {
@@ -105,7 +93,7 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
 
       const grant = storage.grantQueueProcess(functionApp);
 
-      expect(grant.roleDefinitionId).toBe(WellKnownRoleIds.STORAGE_QUEUE_DATA_CONTRIBUTOR);
+      expect(grant.roleDefinitionId).toBe(WellKnownRoleIds.STORAGE_QUEUE_DATA_MESSAGE_PROCESSOR);
     });
 
     it('should grant table read access', () => {
@@ -144,8 +132,8 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
       storage.grantTableWrite(functionApp, 'Table write access');
 
       // Verify all grants are created as child constructs
-      const children = Object.keys((storage as any).node.children);
-      const roleAssignments = children.filter((name) => name.startsWith('Grant'));
+      const children = storage.node.children;
+      const roleAssignments = children.filter((child) => child.node.id.startsWith('Grant'));
       expect(roleAssignments.length).toBeGreaterThanOrEqual(3);
     });
   });
@@ -154,6 +142,7 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
     it('should grant secret read access', () => {
       const vault = new Vaults(resourceGroup, 'Vault', {
         vaultName: 'test-vault',
+        tenantId: '87654321-4321-4321-4321-210987654321',
       });
 
       const functionApp = new FunctionApp(resourceGroup, 'Function', {
@@ -173,6 +162,7 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
     it('should grant certificate read access', () => {
       const vault = new Vaults(resourceGroup, 'Vault', {
         vaultName: 'test-vault',
+        tenantId: '87654321-4321-4321-4321-210987654321',
       });
 
       const functionApp = new FunctionApp(resourceGroup, 'Function', {
@@ -191,6 +181,7 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
     it('should grant crypto operations', () => {
       const vault = new Vaults(resourceGroup, 'Vault', {
         vaultName: 'test-vault',
+        tenantId: '87654321-4321-4321-4321-210987654321',
       });
 
       const functionApp = new FunctionApp(resourceGroup, 'Function', {
@@ -261,8 +252,8 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
 
       const grant = storage.grantBlobRead(identity);
 
-      expect(grant.principalId).toContain('[reference(');
-      expect(grant.principalId).toContain('Microsoft.ManagedIdentity/userAssignedIdentities');
+      expect(grant.grantee.principalId).toContain('[reference(');
+      expect(grant.grantee.principalId).toContain('Microsoft.ManagedIdentity/userAssignedIdentities');
       expect(grant.roleDefinitionId).toBe(WellKnownRoleIds.STORAGE_BLOB_DATA_READER);
     });
 
@@ -281,8 +272,9 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
 
   describe('Cross-Stack Grant Scenarios', () => {
     it('should create role assignment for cross-stack scenario', () => {
-      const resourceGroupA = new MockResourceGroup(undefined as any, 'StackA');
-      const resourceGroupB = new MockResourceGroup(undefined as any, 'StackB');
+      // Simulate two different stacks/resource groups
+      const resourceGroupA = new MockResourceGroup(app, 'StackA');
+      const resourceGroupB = new MockResourceGroup(app, 'StackB');
 
       const storage = new StorageAccounts(resourceGroupA, 'Storage', {
         storageAccountName: 'testsa',
@@ -305,12 +297,13 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
 
       expect(grant).toBeDefined();
       expect(grant.roleDefinitionId).toBe(WellKnownRoleIds.STORAGE_BLOB_DATA_READER);
-      expect(grant.scope).toBe(storage.resourceId);
+      expect(grant.scope).toBe(storage.storageAccountId);
     });
 
     it('should create multiple cross-stack grants', () => {
-      const resourceGroupA = new MockResourceGroup(undefined as any, 'StackA');
-      const resourceGroupB = new MockResourceGroup(undefined as any, 'StackB');
+      // Simulate two different stacks/resource groups
+      const resourceGroupA = new MockResourceGroup(app, 'StackAMulti');
+      const resourceGroupB = new MockResourceGroup(app, 'StackBMulti');
 
       const storage = new StorageAccounts(resourceGroupA, 'StorageA', {
         storageAccountName: 'testsa1',
@@ -318,6 +311,7 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
 
       const vault = new Vaults(resourceGroupA, 'VaultA', {
         vaultName: 'test-vault',
+        tenantId: '87654321-4321-4321-4321-210987654321',
       });
 
       const functionApp = new FunctionApp(resourceGroupB, 'Function', {
@@ -388,8 +382,8 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
       // Verify grant properties
       expect(grant.roleDefinitionId).toBeDefined();
       expect(grant.scope).toBeDefined();
-      expect(grant.principalId).toBeDefined();
-      expect(grant.roleAssignmentId).toBeDefined();
+      expect(grant.grantee.principalId).toBeDefined();
+      expect(grant.roleAssignment).toBeDefined();
     });
   });
 
@@ -401,6 +395,7 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
 
       const vault = new Vaults(resourceGroup, 'Vault', {
         vaultName: 'test-vault',
+        tenantId: '87654321-4321-4321-4321-210987654321',
       });
 
       const cosmos = new DatabaseAccounts(resourceGroup, 'Cosmos', {
@@ -483,21 +478,24 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
 
   describe('Well-Known Role IDs', () => {
     it('should have consistent role IDs for storage', () => {
-      expect(WellKnownRoleIds.STORAGE_BLOB_DATA_READER).toContain('/providers/Microsoft.Authorization/roleDefinitions/');
-      expect(WellKnownRoleIds.STORAGE_BLOB_DATA_CONTRIBUTOR).toContain('/providers/Microsoft.Authorization/roleDefinitions/');
-      expect(WellKnownRoleIds.STORAGE_QUEUE_DATA_CONTRIBUTOR).toContain('/providers/Microsoft.Authorization/roleDefinitions/');
-      expect(WellKnownRoleIds.STORAGE_TABLE_DATA_READER).toContain('/providers/Microsoft.Authorization/roleDefinitions/');
+      // Role IDs use ARM subscriptionResourceId function format
+      expect(WellKnownRoleIds.STORAGE_BLOB_DATA_READER).toContain('Microsoft.Authorization/roleDefinitions');
+      expect(WellKnownRoleIds.STORAGE_BLOB_DATA_CONTRIBUTOR).toContain('Microsoft.Authorization/roleDefinitions');
+      expect(WellKnownRoleIds.STORAGE_QUEUE_DATA_CONTRIBUTOR).toContain('Microsoft.Authorization/roleDefinitions');
+      expect(WellKnownRoleIds.STORAGE_TABLE_DATA_READER).toContain('Microsoft.Authorization/roleDefinitions');
     });
 
     it('should have consistent role IDs for KeyVault', () => {
-      expect(WellKnownRoleIds.KEY_VAULT_SECRETS_USER).toContain('/providers/Microsoft.Authorization/roleDefinitions/');
-      expect(WellKnownRoleIds.KEY_VAULT_CERTIFICATES_USER).toContain('/providers/Microsoft.Authorization/roleDefinitions/');
-      expect(WellKnownRoleIds.KEY_VAULT_CRYPTO_USER).toContain('/providers/Microsoft.Authorization/roleDefinitions/');
+      // Role IDs use ARM subscriptionResourceId function format
+      expect(WellKnownRoleIds.KEY_VAULT_SECRETS_USER).toContain('Microsoft.Authorization/roleDefinitions');
+      expect(WellKnownRoleIds.KEY_VAULT_CERTIFICATES_USER).toContain('Microsoft.Authorization/roleDefinitions');
+      expect(WellKnownRoleIds.KEY_VAULT_CRYPTO_USER).toContain('Microsoft.Authorization/roleDefinitions');
     });
 
     it('should have consistent role IDs for Cosmos DB', () => {
-      expect(WellKnownRoleIds.COSMOS_DB_DATA_READER).toContain('/providers/Microsoft.Authorization/roleDefinitions/');
-      expect(WellKnownRoleIds.COSMOS_DB_DATA_CONTRIBUTOR).toContain('/providers/Microsoft.Authorization/roleDefinitions/');
+      // Role IDs use ARM subscriptionResourceId function format
+      expect(WellKnownRoleIds.COSMOS_DB_DATA_READER).toContain('Microsoft.Authorization/roleDefinitions');
+      expect(WellKnownRoleIds.COSMOS_DB_DATA_CONTRIBUTOR).toContain('Microsoft.Authorization/roleDefinitions');
     });
   });
 });

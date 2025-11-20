@@ -80,6 +80,17 @@ export class StorageAccounts extends Construct implements IStorageAccount {
   public readonly storageAccountId: string;
 
   /**
+   * Generic resource ID (alias for storageAccountId).
+   *
+   * @remarks
+   * This property enables StorageAccounts to be used with generic
+   * grant utilities like CrossStackGrant that expect IResourceWithId.
+   */
+  public get resourceId(): string {
+    return this.storageAccountId;
+  }
+
+  /**
    * Tags applied to the storage account (merged with parent tags).
    */
   public readonly tags: Record<string, string>;

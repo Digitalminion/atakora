@@ -8,10 +8,10 @@ import {
   Project,
   Environment,
   Instance,
-  ResourceGroup,
 } from '@atakora/cdk';
 import { IGrantable, PrincipalType, WellKnownRoleIds } from '@atakora/lib';
 import { DatabaseAccounts } from '../cosmos-db';
+import { MockResourceGroup } from '../../../__tests__/helpers/test-fixtures';
 
 /**
  * Mock grantable identity for testing.
@@ -29,7 +29,7 @@ class MockGrantable implements IGrantable {
 describe('cdk/documentdb/DatabaseAccounts - Grant Methods', () => {
   let app: App;
   let stack: SubscriptionStack;
-  let resourceGroup: ResourceGroup;
+  let resourceGroup: MockResourceGroup;
   let cosmosAccount: DatabaseAccounts;
   let grantable: IGrantable;
 
@@ -43,7 +43,10 @@ describe('cdk/documentdb/DatabaseAccounts - Grant Methods', () => {
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
     });
-    resourceGroup = new ResourceGroup(stack, 'DataRG');
+    resourceGroup = new MockResourceGroup(stack, 'DataRG', {
+      resourceGroupName: 'test-rg',
+      location: 'eastus',
+    });
     cosmosAccount = new DatabaseAccounts(resourceGroup, 'AppDatabase', {
       location: 'eastus',
     });

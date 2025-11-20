@@ -2,34 +2,27 @@
  * Tests for FunctionApp IGrantable support.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { FunctionApp } from '../function-app';
-import { Construct, ManagedIdentityType } from '@atakora/lib';
-import { PrincipalType } from '@atakora/lib/src/core/grants/principal-type';
+import { ManagedIdentityType, PrincipalType, App } from '@atakora/lib';
 import { ManagedServiceIdentityType } from '../function-app-types';
-
-// Mock ResourceGroup for testing
-class MockResourceGroup extends Construct {
-  public readonly resourceGroupName = 'test-rg';
-  public readonly location = 'eastus';
-  public readonly tags = { environment: 'test' };
-}
+import { MockResourceGroup, createMockPlan, createMockStorage } from '../../../__tests__/helpers/test-fixtures';
 
 // Mock plan and storage references
-const mockPlan = {
-  planId: '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Web/serverfarms/test-plan',
-  location: 'eastus',
-};
-
-const mockStorage = {
-  storageAccountId: '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/teststorage',
-  storageAccountName: 'teststorage',
-};
+const mockPlan = createMockPlan();
+const mockStorage = createMockStorage();
 
 describe('FunctionApp - IGrantable support', () => {
+  let app: App;
+  let rg: MockResourceGroup;
+
+  beforeEach(() => {
+    app = new App();
+    rg = new MockResourceGroup(app, 'TestRG');
+  });
+
   describe('extends GrantableResource', () => {
     it('should extend GrantableResource', () => {
-      const rg = new MockResourceGroup(undefined as any, 'TestRG');
       const functionApp = new FunctionApp(rg, 'Api', {
         plan: mockPlan,
         storageAccount: mockStorage,
@@ -43,7 +36,6 @@ describe('FunctionApp - IGrantable support', () => {
     });
 
     it('should have toArmTemplate method', () => {
-      const rg = new MockResourceGroup(undefined as any, 'TestRG');
       const functionApp = new FunctionApp(rg, 'Api', {
         plan: mockPlan,
         storageAccount: mockStorage,
@@ -58,7 +50,6 @@ describe('FunctionApp - IGrantable support', () => {
 
   describe('IGrantable implementation', () => {
     it('should implement IGrantable when identity is provided', () => {
-      const rg = new MockResourceGroup(undefined as any, 'TestRG');
       const functionApp = new FunctionApp(rg, 'Api', {
         plan: mockPlan,
         storageAccount: mockStorage,
@@ -73,8 +64,8 @@ describe('FunctionApp - IGrantable support', () => {
     });
 
     it('should return ARM reference for principalId with system-assigned identity', () => {
-      const rg = new MockResourceGroup(undefined as any, 'TestRG');
-      const functionApp = new FunctionApp(rg, 'Api', {
+      const localRg = new MockResourceGroup(app, 'LocalTestRG');
+      const functionApp = new FunctionApp(localRg, 'Api', {
         plan: mockPlan,
         storageAccount: mockStorage,
         identity: {
@@ -88,8 +79,8 @@ describe('FunctionApp - IGrantable support', () => {
     });
 
     it('should throw error if principalId accessed without identity', () => {
-      const rg = new MockResourceGroup(undefined as any, 'TestRG');
-      const functionApp = new FunctionApp(rg, 'Api', {
+      const localRg = new MockResourceGroup(app, 'LocalTestRG');
+      const functionApp = new FunctionApp(localRg, 'Api', {
         plan: mockPlan,
         storageAccount: mockStorage,
       });
@@ -100,8 +91,8 @@ describe('FunctionApp - IGrantable support', () => {
     });
 
     it('should throw error if principalId accessed with user-assigned only identity', () => {
-      const rg = new MockResourceGroup(undefined as any, 'TestRG');
-      const functionApp = new FunctionApp(rg, 'Api', {
+      const localRg = new MockResourceGroup(app, 'LocalTestRG');
+      const functionApp = new FunctionApp(localRg, 'Api', {
         plan: mockPlan,
         storageAccount: mockStorage,
         identity: {
@@ -118,8 +109,8 @@ describe('FunctionApp - IGrantable support', () => {
     });
 
     it('should work with system-assigned and user-assigned combined', () => {
-      const rg = new MockResourceGroup(undefined as any, 'TestRG');
-      const functionApp = new FunctionApp(rg, 'Api', {
+      const localRg = new MockResourceGroup(app, 'LocalTestRG');
+      const functionApp = new FunctionApp(localRg, 'Api', {
         plan: mockPlan,
         storageAccount: mockStorage,
         identity: {
@@ -137,8 +128,8 @@ describe('FunctionApp - IGrantable support', () => {
 
   describe('identity type conversion', () => {
     it('should convert SYSTEM_ASSIGNED identity type', () => {
-      const rg = new MockResourceGroup(undefined as any, 'TestRG');
-      const functionApp = new FunctionApp(rg, 'Api', {
+      const localRg = new MockResourceGroup(app, 'LocalTestRG');
+      const functionApp = new FunctionApp(localRg, 'Api', {
         plan: mockPlan,
         storageAccount: mockStorage,
         identity: {
@@ -151,8 +142,8 @@ describe('FunctionApp - IGrantable support', () => {
     });
 
     it('should convert USER_ASSIGNED identity type', () => {
-      const rg = new MockResourceGroup(undefined as any, 'TestRG');
-      const functionApp = new FunctionApp(rg, 'Api', {
+      const localRg = new MockResourceGroup(app, 'LocalTestRG');
+      const functionApp = new FunctionApp(localRg, 'Api', {
         plan: mockPlan,
         storageAccount: mockStorage,
         identity: {
@@ -170,8 +161,8 @@ describe('FunctionApp - IGrantable support', () => {
 
   describe('auto-identity enablement', () => {
     it('should auto-enable system-assigned identity when used as grantee', () => {
-      const rg = new MockResourceGroup(undefined as any, 'TestRG');
-      const functionApp = new FunctionApp(rg, 'Api', {
+      const localRg = new MockResourceGroup(app, 'LocalTestRG');
+      const functionApp = new FunctionApp(localRg, 'Api', {
         plan: mockPlan,
         storageAccount: mockStorage,
         // No identity specified
@@ -186,8 +177,8 @@ describe('FunctionApp - IGrantable support', () => {
 
   describe('resourceId generation', () => {
     it('should generate correct resourceId format', () => {
-      const rg = new MockResourceGroup(undefined as any, 'TestRG');
-      const functionApp = new FunctionApp(rg, 'Api', {
+      const localRg = new MockResourceGroup(app, 'LocalTestRG');
+      const functionApp = new FunctionApp(localRg, 'Api', {
         plan: mockPlan,
         storageAccount: mockStorage,
         functionAppName: 'test-function-app',
@@ -201,8 +192,8 @@ describe('FunctionApp - IGrantable support', () => {
 
   describe('integration with grant pattern', () => {
     it('should be usable as a grantee with system-assigned identity', () => {
-      const rg = new MockResourceGroup(undefined as any, 'TestRG');
-      const functionApp = new FunctionApp(rg, 'Api', {
+      const localRg = new MockResourceGroup(app, 'LocalTestRG');
+      const functionApp = new FunctionApp(localRg, 'Api', {
         plan: mockPlan,
         storageAccount: mockStorage,
         identity: {
@@ -219,8 +210,8 @@ describe('FunctionApp - IGrantable support', () => {
     });
 
     it('should maintain identity configuration in ARM template', () => {
-      const rg = new MockResourceGroup(undefined as any, 'TestRG');
-      const functionApp = new FunctionApp(rg, 'Api', {
+      const localRg = new MockResourceGroup(app, 'LocalTestRG');
+      const functionApp = new FunctionApp(localRg, 'Api', {
         plan: mockPlan,
         storageAccount: mockStorage,
         identity: {

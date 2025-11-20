@@ -8,10 +8,10 @@ import {
   Project,
   Environment,
   Instance,
-  ResourceGroup,
 } from '@atakora/cdk';
 import { IGrantable, PrincipalType, WellKnownRoleIds } from '@atakora/lib';
 import { Vaults } from '../vaults';
+import { MockResourceGroup } from '../../../__tests__/helpers/test-fixtures';
 
 /**
  * Mock grantable identity for testing.
@@ -29,7 +29,7 @@ class MockGrantable implements IGrantable {
 describe('cdk/keyvault/Vaults - Grant Methods', () => {
   let app: App;
   let stack: SubscriptionStack;
-  let resourceGroup: ResourceGroup;
+  let resourceGroup: MockResourceGroup;
   let vault: Vaults;
   let grantable: IGrantable;
 
@@ -43,7 +43,10 @@ describe('cdk/keyvault/Vaults - Grant Methods', () => {
       environment: Environment.fromValue('nonprod'),
       instance: Instance.fromNumber(1),
     });
-    resourceGroup = new ResourceGroup(stack, 'SecurityRG');
+    resourceGroup = new MockResourceGroup(stack, 'SecurityRG', {
+      resourceGroupName: 'test-rg',
+      location: 'eastus',
+    });
     vault = new Vaults(resourceGroup, 'AppSecrets', {
       tenantId: '87654321-4321-4321-4321-210987654321',
     });

@@ -37,6 +37,11 @@
       "types": "./dist/web/index.d.ts",
       "import": "./dist/web/index.js",
       "require": "./dist/web/index.js"
+    },
+    "./common": {
+      "types": "./dist/common/index.d.ts",
+      "import": "./dist/common/index.js",
+      "require": "./dist/common/index.js"
     }
   },
   "typesVersions": {
@@ -46,7 +51,8 @@
       "functions": ["./dist/functions/index.d.ts"],
       "data": ["./dist/data/index.d.ts"],
       "data/crud": ["./dist/data/crud/index.d.ts"],
-      "web": ["./dist/web/index.d.ts"]
+      "web": ["./dist/web/index.d.ts"],
+      "common": ["./dist/common/index.d.ts"]
     }
   },
   "files": [

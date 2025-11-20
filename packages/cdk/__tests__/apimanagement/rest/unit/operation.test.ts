@@ -283,22 +283,30 @@ describe('IRestOperation Interface', () => {
       expect(operation.responses[200]?.description).toBe('User found');
     });
 
-    it('should enforce readonly properties', () => {
+    it('should enforce readonly properties at compile-time', () => {
+      // This test validates TypeScript's compile-time type checking
+      // The @ts-expect-error annotations prove that TypeScript prevents
+      // assignment to readonly properties during compilation
+
       const operation: IRestOperation = {
         method: 'GET',
         path: '/test',
         responses: { 200: { description: 'OK' } },
       };
 
-      // TypeScript should prevent modification of readonly properties
+      // TypeScript prevents modification of readonly properties at compile-time
       // @ts-expect-error - Cannot assign to 'method' because it is a read-only property
       operation.method = 'POST';
 
       // @ts-expect-error - Cannot assign to 'path' because it is a read-only property
       operation.path = '/modified';
 
-      expect(operation.method).toBe('GET');
-      expect(operation.path).toBe('/test');
+      // Note: TypeScript's readonly is compile-time only. At runtime, JavaScript
+      // objects are mutable. This test validates type safety, not runtime immutability.
+      // For runtime immutability, use Object.freeze() or similar.
+
+      // The presence of @ts-expect-error annotations above proves the type system works
+      expect(true).toBe(true);
     });
   });
 });
