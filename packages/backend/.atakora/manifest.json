@@ -1,0 +1,54 @@
+{
+  "project": "colorai",
+  "organization": "digital-products",
+  "displayName": "ColorAI Backend",
+  "environment": "nonprod",
+  "geography": "eastus2",
+  "instance": 6,
+  "subscriptionId": "00000000-0000-0000-0000-000000000000",
+  "tenantId": "00000000-0000-0000-0000-000000000000",
+
+  "purpose": "platform-infrastructure",
+  "team": "data-platform",
+  "support-tier": "premium",
+  "cost-center": "ENG-001",
+  "sla": "99.9",
+  "data-classification": "confidential",
+  "compliance-frameworks": ["SOC2", "HIPAA"],
+
+  "runtime": {
+    "nodeVersion": "20",
+    "framework": "azure-functions"
+  },
+
+  "networking": {
+    "vnet": {
+      "cidr": "10.0.0.0/16",
+      "subnets": {
+        "functions": "10.0.1.0/24",
+        "privateEndpoints": "10.0.2.0/24",
+        "default": "10.0.0.0/24"
+      }
+    },
+    "forcePrivate": false
+  },
+
+  "monitoring": {
+    "logRetentionDays": 90,
+    "enableApplicationInsights": true,
+    "enableDiagnosticLogs": true,
+    "alerting": {
+      "email": "team-colorai@company.com",
+      "severity": "warning"
+    }
+  },
+
+  "deployment": {
+    "strategy": "blue-green",
+    "autoRollback": true,
+    "preflightChecks": true,
+    "approvals": {
+      "prod": ["senior-engineers", "team-lead"]
+    }
+  }
+}
