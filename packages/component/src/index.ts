@@ -1,17 +1,17 @@
 /**
- * @atakora/component - Infrastructure Component Library
+ * @atakora/component - Schema-Centric Backend Framework
  *
  * @remarks
- * Higher-level, opinionated components and patterns built on Atakora CDK.
- * These components provide production-ready infrastructure patterns with
- * sensible defaults, reducing boilerplate and enforcing best practices.
+ * Schema-first backend framework that automatically generates production-ready
+ * Azure infrastructure from data models. Define your schema once, get REST APIs,
+ * database, authentication, and full infrastructure automatically.
  *
  * ## Philosophy
  *
- * - **Opinionated Defaults**: Smart defaults based on Azure best practices
- * - **Composable Patterns**: Components that work together seamlessly
- * - **Type Safety**: Full TypeScript support with intelligent inference
- * - **Production Ready**: Security, monitoring, and reliability built-in
+ * - **Schema-First**: Data models drive infrastructure provisioning
+ * - **Progressive Enhancement**: Start minimal, customize as needed
+ * - **Type-Safe**: Full TypeScript inference from schema definitions
+ * - **Production-Ready**: Smart defaults for development and production
  *
  * ## Installation
  *
@@ -19,83 +19,116 @@
  * npm install @atakora/component
  * ```
  *
- * ## Usage
+ * ## Quick Start
  *
  * ```typescript
- * import { CrudApi } from '@atakora/component/crud';
- * import { ResourceGroupStack } from '@atakora/cdk';
+ * import { defineSchema, defineAuth, defineBackend, a, c, auth } from '@atakora/component';
  *
- * const stack = new ResourceGroupStack(app, 'MyStack', {
- *   resourceGroupName: 'rg-myapp-prod',
- *   location: 'eastus'
+ * // Define your data schema
+ * export const schema = defineSchema({
+ *   schema: a.schema({
+ *     User: c.model({
+ *       id: a.id(),
+ *       email: a.string().required().email(),
+ *       name: a.string().required(),
+ *     })
+ *       .authorization(allow => [allow.owner('id')])
+ *   })
  * });
  *
- * const api = new CrudApi(stack, 'UserApi', {
- *   entityName: 'User',
- *   schema: {
- *     id: 'string',
- *     name: 'string',
- *     email: 'string'
- *   },
- *   partitionKey: '/id'
+ * // Configure authentication
+ * export const authentication = defineAuth({
+ *   Primary: auth.entra()
+ *     .tenant(process.env.AZURE_TENANT_ID!)
+ *     .clientId(process.env.AZURE_CLIENT_ID!)
+ * });
+ *
+ * // Assemble your backend
+ * export const backend = defineBackend({
+ *   schema,
+ *   authentication,
+ *   settings: { name: 'my-app' }
  * });
  * ```
+ *
+ * ## Architecture
+ *
+ * This package is being redesigned to support a schema-centric architecture:
+ *
+ * - **Phase 1** (Current): Core schema system, field types, validation
+ * - **Phase 2**: Model builders (CRUD, Event, Function)
+ * - **Phase 3**: Authentication system
+ * - **Phase 4**: Backend assembly and defaults
+ * - **Phase 5+**: Infrastructure builders, attachment pattern, context API
  *
  * @packageDocumentation
  */
 
 // ============================================================================
-// COMPONENT EXPORTS
-// High-level patterns and components
-// ============================================================================
-
-// Common utilities - Fluent API helpers
-export * from './common';
-
-// Backend pattern - Resource sharing and orchestration
-export * from './backend';
-
-// CRUD API components
-export * from './crud';
-
-// Functions App components
-export * from './functions';
-
-// Data components - Schema-driven GraphQL APIs
-export * from './data';
-
-// Web application components
-export * from './web';
-
-// Messaging components
-export * from './messaging';
-
-// Events components - Unified event infrastructure
-export * from './events';
-
-// Microservice components (planned)
-// export * from './microservice';
-
-// ============================================================================
-// VERSION INFORMATION
+// VERSION 2.0 - SCHEMA-CENTRIC API
 // ============================================================================
 
 /**
  * Package version
+ * @public
  */
-export const VERSION = '0.0.2';
+export const VERSION = '2.0.0-alpha.1';
+
+/**
+ * API version for schema system
+ * @public
+ */
+export const API_VERSION = '2.0';
 
 // ============================================================================
-// CDK IMPORTS
+// COMMON UTILITIES
+// Fluent API helpers (salvaged from v1, fully compatible with v2)
+// ============================================================================
+
+export * from './common';
+
+// ============================================================================
+// SCHEMA DEFINITION API
+// Phase 1: Core schema system (in development)
+// ============================================================================
+
+export * from './schema';
+
+// ============================================================================
+// VALIDATION SYSTEM
+// Phase 1: Runtime validation (in development)
+// ============================================================================
+
+export * from './validation';
+
+// ============================================================================
+// AUTHENTICATION API
+// Phase 3: Auth providers and configuration (planned)
+// ============================================================================
+
+export * from './auth';
+
+// ============================================================================
+// LEGACY COMPATIBILITY LAYER
+// v1 API is deprecated and will be removed in 3.0
+// Use the new schema-centric API above
 // ============================================================================
 
 /**
- * Note: CDK types are not re-exported to avoid naming conflicts.
- * Import CDK types directly from '@atakora/cdk' when needed.
- *
- * @example
- * ```typescript
- * import { ResourceGroupStack } from '@atakora/cdk';
- * import { CrudApi } from '@atakora/component';
- * ```
+ * @deprecated Use the new schema-centric API. Will be removed in v3.0.
+ * @legacy
  */
+export const LEGACY_MODE = true;
+
+/**
+ * @deprecated Import from '@atakora/component/common' instead
+ * @legacy
+ */
+export { duration, threshold, size, network } from './common';
+
+// Note: Legacy component exports (CrudApi, FunctionsApp, etc.) are temporarily
+// disabled during the migration to the schema-centric architecture.
+// They will be replaced with schema-driven equivalents in upcoming phases.
+
+// For legacy code that depends on these, please pin to @atakora/component@0.0.2
+// or use the git tag 'v0-legacy' until migration is complete.
