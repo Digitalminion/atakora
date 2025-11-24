@@ -107,7 +107,9 @@ export class ArmServiceBusQueue extends Resource implements IServiceBusQueue {
     }
 
     if (!/^[a-zA-Z0-9._\-]+$/.test(props.queueName)) {
-      throw new Error('Queue name can only contain alphanumeric characters, periods, hyphens, and underscores');
+      throw new Error(
+        'Queue name can only contain alphanumeric characters, periods, hyphens, and underscores'
+      );
     }
 
     // Validate max delivery count
@@ -165,9 +167,7 @@ export class ArmServiceBusQueue extends Resource implements IServiceBusQueue {
       name: this.name,
       properties,
       tags: Object.keys(this.tags).length > 0 ? this.tags : undefined,
-      dependsOn: [
-        `[resourceId('Microsoft.ServiceBus/namespaces', '${this.namespaceName}')]`,
-      ],
+      dependsOn: [`[resourceId('Microsoft.ServiceBus/namespaces', '${this.namespaceName}')]`],
     } as ArmResource;
   }
 }

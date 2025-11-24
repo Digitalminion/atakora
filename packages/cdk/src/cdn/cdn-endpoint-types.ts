@@ -11,13 +11,14 @@ import type { ICdnProfile } from './cdn-profile-types';
  * Query string caching behavior.
  */
 export const QueryStringCachingBehavior = schema.cdn.QueryStringCachingBehavior;
-export type QueryStringCachingBehavior = typeof QueryStringCachingBehavior[keyof typeof QueryStringCachingBehavior];
+export type QueryStringCachingBehavior =
+  (typeof QueryStringCachingBehavior)[keyof typeof QueryStringCachingBehavior];
 
 /**
  * Optimization type.
  */
 export const OptimizationType = schema.cdn.OptimizationType;
-export type OptimizationType = typeof OptimizationType[keyof typeof OptimizationType];
+export type OptimizationType = (typeof OptimizationType)[keyof typeof OptimizationType];
 
 /**
  * Default compressible content types for CDN endpoints.

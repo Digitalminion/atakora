@@ -20,7 +20,7 @@ import type { IVirtualNetwork } from './virtual-network-types';
  * Imported from schema for consistency with Azure ARM specifications.
  */
 export const DnsZoneType = schema.network.DnsZoneType;
-export type DnsZoneType = typeof DnsZoneType[keyof typeof DnsZoneType];
+export type DnsZoneType = (typeof DnsZoneType)[keyof typeof DnsZoneType];
 
 /**
  * DNS record type.
@@ -30,7 +30,7 @@ export type DnsZoneType = typeof DnsZoneType[keyof typeof DnsZoneType];
  * Used for DNS record set operations within private DNS zones.
  */
 export const DnsRecordType = schema.network.DnsRecordType;
-export type DnsRecordType = typeof DnsRecordType[keyof typeof DnsRecordType];
+export type DnsRecordType = (typeof DnsRecordType)[keyof typeof DnsRecordType];
 
 /**
  * Properties for L1 ArmPrivateDnsZone construct.

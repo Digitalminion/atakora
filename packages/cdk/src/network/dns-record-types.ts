@@ -20,7 +20,7 @@ import type { IPublicDnsZone } from './public-dns-zone-types';
  * DNS Record type enum.
  */
 export const DnsRecordType = schema.network.DnsRecordType;
-export type DnsRecordType = typeof DnsRecordType[keyof typeof DnsRecordType];
+export type DnsRecordType = (typeof DnsRecordType)[keyof typeof DnsRecordType];
 
 /**
  * Properties for DNS CNAME Record (L1).

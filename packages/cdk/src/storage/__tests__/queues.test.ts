@@ -126,7 +126,8 @@ describe('cdk/storage/StorageQueues', () => {
     });
 
     it('should truncate long names to 63 characters', () => {
-      const longId = 'VeryLongQueueNameThatExceedsTheMaximumAllowedLengthFor AzureStorageQueuesWhichIs63Characters';
+      const longId =
+        'VeryLongQueueNameThatExceedsTheMaximumAllowedLengthFor AzureStorageQueuesWhichIs63Characters';
       const queue = new StorageQueues(storageAccount, longId);
 
       expect(queue.queueName.length).toBeLessThanOrEqual(63);
@@ -200,7 +201,8 @@ describe('cdk/storage/StorageQueues', () => {
       functionApp = new FunctionApp(resourceGroup, 'Function', {
         plan: createMockPlan(),
         storageAccount: {
-          storageAccountId: '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
+          storageAccountId:
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
           storageAccountName: 'funcstore',
         },
         identity: {
@@ -334,7 +336,8 @@ describe('cdk/storage/StorageQueues', () => {
       const producer = new FunctionApp(resourceGroup, 'Producer', {
         plan: createMockPlan(),
         storageAccount: {
-          storageAccountId: '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
+          storageAccountId:
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
           storageAccountName: 'funcstore',
         },
         identity: {
@@ -345,7 +348,8 @@ describe('cdk/storage/StorageQueues', () => {
       const consumer = new FunctionApp(resourceGroup, 'Consumer', {
         plan: createMockPlan(),
         storageAccount: {
-          storageAccountId: '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
+          storageAccountId:
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
           storageAccountName: 'funcstore',
         },
         identity: {

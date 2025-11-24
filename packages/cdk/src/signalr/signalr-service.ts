@@ -11,16 +11,8 @@
 import { Construct } from '@atakora/cdk';
 import { constructIdToPurpose } from '@atakora/lib';
 import { ArmSignalRService } from './signalr-service-arm';
-import {
-  SignalRSku,
-  ServiceMode,
-  FeatureFlag,
-} from './signalr-service-types';
-import type {
-  SignalRServiceProps,
-  ISignalRService,
-  ServiceFeature,
-} from './signalr-service-types';
+import { SignalRSku, ServiceMode, FeatureFlag } from './signalr-service-types';
+import type { SignalRServiceProps, ISignalRService, ServiceFeature } from './signalr-service-types';
 
 /**
  * L2 construct for SignalR Service.
@@ -122,9 +114,10 @@ export class SignalRService extends Construct implements ISignalRService {
     const features = this.buildFeatures(props);
 
     // Build upstream configuration
-    const upstream = props.upstreamTemplates && props.upstreamTemplates.length > 0
-      ? { templates: props.upstreamTemplates }
-      : undefined;
+    const upstream =
+      props.upstreamTemplates && props.upstreamTemplates.length > 0
+        ? { templates: props.upstreamTemplates }
+        : undefined;
 
     this.armSignalR = new ArmSignalRService(scope, `${id}-Resource`, {
       signalRName: this.signalRName,
@@ -158,7 +151,10 @@ export class SignalRService extends Construct implements ISignalRService {
    */
   private generateSignalRName(id: string): string {
     const purpose = constructIdToPurpose(id, 'signalr', ['signalr', 'realtime', 'signalr-service']);
-    return `signalr-${purpose}`.toLowerCase().replace(/[^a-z0-9-]/g, '-').substring(0, 63);
+    return `signalr-${purpose}`
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, '-')
+      .substring(0, 63);
   }
 
   /**

@@ -16,7 +16,7 @@ import { schema } from '@atakora/lib';
  * DNS Zone type.
  */
 export const DnsZoneType = schema.network.DnsZoneType;
-export type DnsZoneType = typeof DnsZoneType[keyof typeof DnsZoneType];
+export type DnsZoneType = (typeof DnsZoneType)[keyof typeof DnsZoneType];
 
 /**
  * Properties for L1 ArmPublicDnsZone construct.

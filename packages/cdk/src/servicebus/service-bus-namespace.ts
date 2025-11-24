@@ -24,7 +24,11 @@ import { Construct, GrantableResource, ResourceGroupStack } from '@atakora/lib';
 import type { IGrantable, IGrantResult, ArmResource } from '@atakora/lib';
 import { WellKnownRoleIds } from '@atakora/lib';
 import { ArmServiceBusNamespace } from './service-bus-namespace-arm';
-import type { ServiceBusNamespaceProps, IServiceBusNamespace, ServiceBusSku } from './service-bus-namespace-types';
+import type {
+  ServiceBusNamespaceProps,
+  IServiceBusNamespace,
+  ServiceBusSku,
+} from './service-bus-namespace-types';
 
 /**
  * L2 Service Bus Namespace construct with grant capabilities.

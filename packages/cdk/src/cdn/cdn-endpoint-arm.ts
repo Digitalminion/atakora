@@ -4,7 +4,13 @@
  * @packageDocumentation
  */
 
-import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder } from '@atakora/cdk';
+import {
+  Construct,
+  Resource,
+  DeploymentScope,
+  ValidationResult,
+  ValidationResultBuilder,
+} from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
 import type { ArmCdnEndpointsProps, DeepCreatedOrigin } from './cdn-endpoint-types';
 
@@ -76,7 +82,9 @@ export class ArmCdnEndpoints extends Resource {
 
     // Endpoint name validation: 1-50 chars, alphanumeric and hyphens
     if (props.endpointName.length < 1 || props.endpointName.length > 50) {
-      throw new Error(`CDN endpoint name must be 1-50 characters (got ${props.endpointName.length})`);
+      throw new Error(
+        `CDN endpoint name must be 1-50 characters (got ${props.endpointName.length})`
+      );
     }
 
     const namePattern = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/;
@@ -116,7 +124,12 @@ export class ArmCdnEndpoints extends Resource {
     }
 
     if (!armTemplate.properties || !armTemplate.properties.origins) {
-      builder.addError('Endpoints must have at least one origin', '', '', 'armTemplate.properties.origins');
+      builder.addError(
+        'Endpoints must have at least one origin',
+        '',
+        '',
+        'armTemplate.properties.origins'
+      );
     }
 
     return builder.build();

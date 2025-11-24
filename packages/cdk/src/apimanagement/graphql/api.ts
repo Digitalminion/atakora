@@ -407,7 +407,7 @@ export class GraphQLApi extends Construct implements IGraphQLApi {
 
     // Add directives
     if (schema.directives && schema.directives.length > 0) {
-      schema.directives.forEach(directive => {
+      schema.directives.forEach((directive) => {
         sdlParts.push(this.generateDirectiveSDL(directive));
       });
       sdlParts.push('');
@@ -450,7 +450,7 @@ export class GraphQLApi extends Construct implements IGraphQLApi {
 
     // Add additional types
     if (schema.types && schema.types.length > 0) {
-      schema.types.forEach(type => {
+      schema.types.forEach((type) => {
         sdlParts.push(this.generateTypeSDL(type));
         sdlParts.push('');
       });

@@ -11,10 +11,7 @@ import { Construct } from '@atakora/cdk';
 import { constructIdToPurpose, IGrantable, IGrantResult, WellKnownRoleIds } from '@atakora/lib';
 import { ArmCosmosDBContainer } from './cosmos-db-container-arm';
 import { ThroughputMode, type ThroughputConfig } from './cosmos-db-database-types';
-import type {
-  CosmosDBContainerProps,
-  ICosmosDBContainer,
-} from './cosmos-db-container-types';
+import type { CosmosDBContainerProps, ICosmosDBContainer } from './cosmos-db-container-types';
 import { PartitionKeyVersion } from './cosmos-db-container-types';
 
 /**
@@ -144,7 +141,8 @@ export class CosmosDBContainer extends Construct implements ICosmosDBContainer {
    * @returns Sanitized container name
    */
   private generateContainerName(id: string): string {
-    const purpose = constructIdToPurpose(id, 'container', ['coll', 'collection']) || id.toLowerCase();
+    const purpose =
+      constructIdToPurpose(id, 'container', ['coll', 'collection']) || id.toLowerCase();
     return purpose.toLowerCase().replace(/[^a-z0-9-_]/g, '-');
   }
 

@@ -72,19 +72,12 @@ export { Servers } from './servers';
 /**
  * SQL Server types and interfaces
  */
-export type {
-  ArmServersProps,
-  ServersProps,
-  IServers,
-} from './server-types';
+export type { ArmServersProps, ServersProps, IServers } from './server-types';
 
 /**
  * SQL Server enums
  */
-export {
-  SqlServerVersion,
-  PublicNetworkAccess,
-} from './server-types';
+export { SqlServerVersion, PublicNetworkAccess } from './server-types';
 
 // ============================================================================
 // SQL DATABASE EXPORTS
@@ -98,16 +91,9 @@ export { ArmDatabases } from './databases-arm';
 /**
  * SQL Database types and interfaces
  */
-export type {
-  ArmDatabasesProps,
-  DatabasesProps,
-  IDatabases,
-  DatabaseSku,
-} from './database-types';
+export type { ArmDatabasesProps, DatabasesProps, IDatabases, DatabaseSku } from './database-types';
 
 /**
  * SQL Database enums
  */
-export {
-  DatabaseSkuTier,
-} from './database-types';
+export { DatabaseSkuTier } from './database-types';

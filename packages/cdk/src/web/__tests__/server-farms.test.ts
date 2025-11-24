@@ -613,7 +613,8 @@ describe('cdk/web/ServerFarms', () => {
 
   describe('naming conventions', () => {
     it('should respect maximum plan name length of 40 characters', () => {
-      const longId = 'VeryLongPlanIdentifierThatExceedsTheMaximumAllowedLengthForAzureAppServicePlans';
+      const longId =
+        'VeryLongPlanIdentifierThatExceedsTheMaximumAllowedLengthForAzureAppServicePlans';
       const plan = new ServerFarms(resourceGroup, longId);
 
       expect(plan.planName.length).toBeLessThanOrEqual(40);

@@ -14,7 +14,7 @@ import type { IServiceBusNamespace } from './service-bus-namespace-types';
  * Status of the Service Bus Topic
  */
 export const EntityStatus = schema.servicebus.EntityStatus;
-export type EntityStatus = typeof EntityStatus[keyof typeof EntityStatus];
+export type EntityStatus = (typeof EntityStatus)[keyof typeof EntityStatus];
 
 /**
  * Properties for ArmServiceBusTopic (L1 construct).
@@ -219,7 +219,7 @@ export interface IServiceBusTopic {
  * Filter type for Service Bus Subscription rules.
  */
 export const FilterType = schema.servicebus.FilterType;
-export type FilterType = typeof FilterType[keyof typeof FilterType];
+export type FilterType = (typeof FilterType)[keyof typeof FilterType];
 
 /**
  * SQL filter expression for subscription rules.

@@ -1,6 +1,17 @@
-import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder } from '@atakora/cdk';
+import {
+  Construct,
+  Resource,
+  DeploymentScope,
+  ValidationResult,
+  ValidationResultBuilder,
+} from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
-import type { ArmWafPolicyProps, PolicySettings, ManagedRules, CustomRule } from './waf-policy-types';
+import type {
+  ArmWafPolicyProps,
+  PolicySettings,
+  ManagedRules,
+  CustomRule,
+} from './waf-policy-types';
 
 /**
  * L1 construct for Azure WAF Policy.

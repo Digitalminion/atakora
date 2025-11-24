@@ -1,4 +1,12 @@
-import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder, ValidationError, isValidCIDR } from '@atakora/cdk';
+import {
+  Construct,
+  Resource,
+  DeploymentScope,
+  ValidationResult,
+  ValidationResultBuilder,
+  ValidationError,
+  isValidCIDR,
+} from '@atakora/cdk';
 import type {
   ArmSubnetProps,
   PrivateEndpointNetworkPolicies,

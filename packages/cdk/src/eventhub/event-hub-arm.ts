@@ -159,14 +159,18 @@ export class ArmEventHub extends Resource {
     // Validate partition count if provided
     if (props.partitionCount !== undefined) {
       if (props.partitionCount < 1 || props.partitionCount > 32) {
-        throw new Error(`Partition count must be 1-32 for Basic/Standard tiers (got ${props.partitionCount})`);
+        throw new Error(
+          `Partition count must be 1-32 for Basic/Standard tiers (got ${props.partitionCount})`
+        );
       }
     }
 
     // Validate message retention if provided
     if (props.messageRetentionInDays !== undefined) {
       if (props.messageRetentionInDays < 1 || props.messageRetentionInDays > 7) {
-        throw new Error(`Message retention must be 1-7 days for Basic/Standard tiers (got ${props.messageRetentionInDays})`);
+        throw new Error(
+          `Message retention must be 1-7 days for Basic/Standard tiers (got ${props.messageRetentionInDays})`
+        );
       }
     }
   }

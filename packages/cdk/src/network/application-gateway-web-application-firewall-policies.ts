@@ -51,7 +51,10 @@ import type {
  * });
  * ```
  */
-export class ApplicationGatewayWebApplicationFirewallPolicies extends Construct implements IWafPolicy {
+export class ApplicationGatewayWebApplicationFirewallPolicies
+  extends Construct
+  implements IWafPolicy
+{
   /**
    * Underlying L1 construct.
    */
@@ -170,7 +173,11 @@ export class ApplicationGatewayWebApplicationFirewallPolicies extends Construct 
    * });
    * ```
    */
-  constructor(scope: Construct, id: string, props?: ApplicationGatewayWebApplicationFirewallPoliciesProps) {
+  constructor(
+    scope: Construct,
+    id: string,
+    props?: ApplicationGatewayWebApplicationFirewallPoliciesProps
+  ) {
     super(scope, id);
 
     // Get parent resource group
@@ -334,7 +341,10 @@ export class ApplicationGatewayWebApplicationFirewallPolicies extends Construct 
    * - waf-{org}-{project}-{purpose}-{env}-{geo}-{instance}
    * - Example: waf-dp-authr-app-np-eus-01
    */
-  private resolvePolicyName(id: string, props?: ApplicationGatewayWebApplicationFirewallPoliciesProps): string {
+  private resolvePolicyName(
+    id: string,
+    props?: ApplicationGatewayWebApplicationFirewallPoliciesProps
+  ): string {
     // If name provided explicitly, use it
     if (props?.policyName) {
       return props.policyName;

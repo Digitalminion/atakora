@@ -171,9 +171,7 @@ export class ETagCache {
     algorithm: 'md5' | 'sha1' | 'sha256' = 'sha256'
   ): string {
     // Serialize content to string
-    const serialized = typeof content === 'string'
-      ? content
-      : JSON.stringify(content);
+    const serialized = typeof content === 'string' ? content : JSON.stringify(content);
 
     // In a real implementation, this would use crypto.createHash()
     // For now, we'll use a simple hash placeholder
@@ -212,7 +210,8 @@ export class ETagCache {
     if (ifNoneMatch) {
       // If-None-Match: Used for conditional GET (return 304 if match)
       const etags = this.parseETagList(ifNoneMatch);
-      const matches = etags.includes('*') || etags.some(etag => this.etagsMatch(etag, currentETag));
+      const matches =
+        etags.includes('*') || etags.some((etag) => this.etagsMatch(etag, currentETag));
 
       if (matches && (request.method === 'GET' || request.method === 'HEAD')) {
         return {
@@ -225,7 +224,8 @@ export class ETagCache {
     if (ifMatch) {
       // If-Match: Used for conditional updates (return 412 if no match)
       const etags = this.parseETagList(ifMatch);
-      const matches = etags.includes('*') || etags.some(etag => this.etagsMatch(etag, currentETag));
+      const matches =
+        etags.includes('*') || etags.some((etag) => this.etagsMatch(etag, currentETag));
 
       if (!matches) {
         return {
@@ -257,8 +257,8 @@ export class ETagCache {
   private static parseETagList(header: string): string[] {
     return header
       .split(',')
-      .map(etag => etag.trim())
-      .filter(etag => etag.length > 0);
+      .map((etag) => etag.trim())
+      .filter((etag) => etag.length > 0);
   }
 
   /**
@@ -279,7 +279,7 @@ export class ETagCache {
     let hash = 0;
     for (let i = 0; i < content.length; i++) {
       const char = content.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(16).padStart(8, '0');

@@ -148,9 +148,7 @@ export class ArmServerFarms extends Resource {
     }
 
     if (props.planName.length < 1 || props.planName.length > 40) {
-      throw new Error(
-        `Server Farm name must be 1-40 characters (got ${props.planName.length})`
-      );
+      throw new Error(`Server Farm name must be 1-40 characters (got ${props.planName.length})`);
     }
 
     // Validate name pattern: ^[a-zA-Z0-9-]+$ (alphanumeric and hyphens)

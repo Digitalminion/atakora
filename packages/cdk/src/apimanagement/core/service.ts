@@ -608,7 +608,7 @@ export class Service extends Construct implements IService {
       principalId: grantable.principalId,
       principalType: grantable.principalType,
       tenantId: grantable.tenantId,
-      description
+      description,
     });
 
     return new GrantResult(roleAssignment, roleDefinitionId, grantable, this.resourceId);

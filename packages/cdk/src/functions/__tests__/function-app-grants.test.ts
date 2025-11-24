@@ -6,7 +6,11 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { FunctionApp } from '../function-app';
 import { ManagedIdentityType, PrincipalType, App } from '@atakora/lib';
 import { ManagedServiceIdentityType } from '../function-app-types';
-import { MockResourceGroup, createMockPlan, createMockStorage } from '../../../__tests__/helpers/test-fixtures';
+import {
+  MockResourceGroup,
+  createMockPlan,
+  createMockStorage,
+} from '../../../__tests__/helpers/test-fixtures';
 
 // Mock plan and storage references
 const mockPlan = createMockPlan();
@@ -98,7 +102,8 @@ describe('FunctionApp - IGrantable support', () => {
         identity: {
           type: ManagedServiceIdentityType.USER_ASSIGNED,
           userAssignedIdentities: {
-            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-identity': {},
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-identity':
+              {},
           },
         },
       });
@@ -116,7 +121,8 @@ describe('FunctionApp - IGrantable support', () => {
         identity: {
           type: ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED,
           userAssignedIdentities: {
-            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-identity': {},
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-identity':
+              {},
           },
         },
       });
@@ -149,7 +155,8 @@ describe('FunctionApp - IGrantable support', () => {
         identity: {
           type: ManagedServiceIdentityType.USER_ASSIGNED,
           userAssignedIdentities: {
-            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-identity': {},
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-identity':
+              {},
           },
         },
       });

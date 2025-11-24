@@ -153,8 +153,7 @@ export class Function extends Construct {
     this.synthesizer = new FunctionSynthesizer();
 
     // Determine function name
-    this.functionName =
-      props.functionName || ArmFunctionBundler.getFunctionName(props.handlerPath);
+    this.functionName = props.functionName || ArmFunctionBundler.getFunctionName(props.handlerPath);
 
     // Bundle the handler
     const bundleResult = this.synthesizer.getBundleInfo(this.config);

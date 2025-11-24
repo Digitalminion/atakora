@@ -10,19 +10,20 @@ import { schema } from '@atakora/lib';
  * Network protocol for security rules.
  */
 export const SecurityRuleProtocol = schema.network.SecurityRuleProtocol;
-export type SecurityRuleProtocol = typeof SecurityRuleProtocol[keyof typeof SecurityRuleProtocol];
+export type SecurityRuleProtocol = (typeof SecurityRuleProtocol)[keyof typeof SecurityRuleProtocol];
 
 /**
  * Access type for security rules.
  */
 export const SecurityRuleAccess = schema.network.SecurityRuleAccess;
-export type SecurityRuleAccess = typeof SecurityRuleAccess[keyof typeof SecurityRuleAccess];
+export type SecurityRuleAccess = (typeof SecurityRuleAccess)[keyof typeof SecurityRuleAccess];
 
 /**
  * Direction for security rules.
  */
 export const SecurityRuleDirection = schema.network.SecurityRuleDirection;
-export type SecurityRuleDirection = typeof SecurityRuleDirection[keyof typeof SecurityRuleDirection];
+export type SecurityRuleDirection =
+  (typeof SecurityRuleDirection)[keyof typeof SecurityRuleDirection];
 
 /**
  * Security rule configuration.

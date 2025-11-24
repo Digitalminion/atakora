@@ -441,7 +441,9 @@ export class AzureADAuth {
    */
   static government(
     tenantId: string,
-    options?: Partial<Omit<AzureAdAuthConfig, 'scheme' | 'tenantId' | 'tenantType' | 'cloudInstance'>>
+    options?: Partial<
+      Omit<AzureAdAuthConfig, 'scheme' | 'tenantId' | 'tenantType' | 'cloudInstance'>
+    >
   ): AzureAdAuthConfig {
     return {
       scheme: 'azure-ad',
@@ -627,9 +629,7 @@ export class JwtAuth {
    * @param options - JWT configuration options
    * @returns JWT authentication config
    */
-  static configure(
-    options: Partial<Omit<JwtAuthConfig, 'scheme'>>
-  ): JwtAuthConfig {
+  static configure(options: Partial<Omit<JwtAuthConfig, 'scheme'>>): JwtAuthConfig {
     return {
       scheme: 'jwt',
       validation: {
@@ -801,10 +801,7 @@ export class AuthenticationHelper {
    * @param authorization - Optional authorization rules
    * @returns Complete authentication configuration
    */
-  static configure(
-    auth: AuthConfig,
-    authorization?: readonly AuthRule[]
-  ): AuthenticationConfig {
+  static configure(auth: AuthConfig, authorization?: readonly AuthRule[]): AuthenticationConfig {
     return {
       authentication: auth,
       authorization,
@@ -821,7 +818,7 @@ export class AuthenticationHelper {
   static withRoles(auth: AuthConfig, ...roles: string[]): AuthenticationConfig {
     return {
       authentication: auth,
-      authorization: roles.map(role => AuthorizationRules.requireRole(role)),
+      authorization: roles.map((role) => AuthorizationRules.requireRole(role)),
     };
   }
 
@@ -835,7 +832,7 @@ export class AuthenticationHelper {
   static withScopes(auth: AuthConfig, ...scopes: string[]): AuthenticationConfig {
     return {
       authentication: auth,
-      authorization: scopes.map(scope => AuthorizationRules.requireScope(scope)),
+      authorization: scopes.map((scope) => AuthorizationRules.requireScope(scope)),
     };
   }
 

@@ -7,7 +7,11 @@ import { App, Construct } from '@atakora/cdk';
 import { FunctionApp } from '../function-app';
 import { FunctionRuntime } from '../types';
 import { ManagedServiceIdentityType } from '../function-app-types';
-import { MockResourceGroup, createMockPlan, createMockStorage } from '../../../__tests__/helpers/test-fixtures';
+import {
+  MockResourceGroup,
+  createMockPlan,
+  createMockStorage,
+} from '../../../__tests__/helpers/test-fixtures';
 
 describe('cdk/functions/FunctionApp', () => {
   let app: App;
@@ -732,7 +736,8 @@ describe('cdk/functions/FunctionApp', () => {
           supportCredentials: true,
         },
         vnetConfig: {
-          subnetId: '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/app-subnet',
+          subnetId:
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/app-subnet',
           swiftSupported: true,
         },
         tags: {

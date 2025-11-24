@@ -201,7 +201,8 @@ describe('cdk/servicebus/ServiceBusNamespace', () => {
       functionApp = new FunctionApp(resourceGroup, 'Consumer', {
         plan: createMockPlan(),
         storageAccount: {
-          storageAccountId: '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
+          storageAccountId:
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
           storageAccountName: 'funcstore',
         },
         identity: {
@@ -300,7 +301,8 @@ describe('cdk/servicebus/ServiceBusNamespace', () => {
       const producer = new FunctionApp(resourceGroup, 'Producer', {
         plan: createMockPlan(),
         storageAccount: {
-          storageAccountId: '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
+          storageAccountId:
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
           storageAccountName: 'funcstore',
         },
         identity: {
@@ -311,7 +313,8 @@ describe('cdk/servicebus/ServiceBusNamespace', () => {
       const consumer = new FunctionApp(resourceGroup, 'Consumer', {
         plan: createMockPlan(),
         storageAccount: {
-          storageAccountId: '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
+          storageAccountId:
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
           storageAccountName: 'funcstore',
         },
         identity: {

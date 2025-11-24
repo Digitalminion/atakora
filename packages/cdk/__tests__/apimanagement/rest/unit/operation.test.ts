@@ -22,7 +22,12 @@ import {
 } from '../utils';
 
 // Import actual implementation from Devon's Phase 1
-import type { IRestOperation, HttpMethod, JsonSchema, ErrorResponse } from '../../../../src/api/rest/operation';
+import type {
+  IRestOperation,
+  HttpMethod,
+  JsonSchema,
+  ErrorResponse,
+} from '../../../../src/api/rest/operation';
 
 describe('IRestOperation Interface', () => {
   describe('Basic Structure', () => {
@@ -381,7 +386,9 @@ describe('Path Parameter Definition', () => {
     });
 
     expect(operation.pathParameters?.description).toBe('Path parameters for user operations');
-    expect(operation.pathParameters?.schema.properties?.userId.description).toBe('User unique identifier');
+    expect(operation.pathParameters?.schema.properties?.userId.description).toBe(
+      'User unique identifier'
+    );
   });
 
   it('should support parameter examples', () => {
@@ -494,7 +501,11 @@ describe('Query Parameter Definition', () => {
       },
     });
 
-    expect(operation.queryParameters?.schema.properties?.role.enum).toEqual(['admin', 'user', 'guest']);
+    expect(operation.queryParameters?.schema.properties?.role.enum).toEqual([
+      'admin',
+      'user',
+      'guest',
+    ]);
   });
 
   it('should support array parameters', () => {

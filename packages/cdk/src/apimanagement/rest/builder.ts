@@ -254,9 +254,7 @@ export class RestOperationBuilder<TParams = {}, TQuery = {}, TBody = unknown, TR
    * })
    * ```
    */
-  responses<T>(
-    definition: ResponseDefinition<T>
-  ): RestOperationBuilder<TParams, TQuery, TBody, T> {
+  responses<T>(definition: ResponseDefinition<T>): RestOperationBuilder<TParams, TQuery, TBody, T> {
     this.operation.responses = definition;
     return this as any;
   }

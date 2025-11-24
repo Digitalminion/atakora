@@ -10,19 +10,19 @@ import { schema } from '@atakora/lib';
  * SKU name for API Management service.
  */
 export const ApiManagementSkuName = schema.apimanagement.ApiManagementSkuName;
-export type ApiManagementSkuName = typeof ApiManagementSkuName[keyof typeof ApiManagementSkuName];
+export type ApiManagementSkuName = (typeof ApiManagementSkuName)[keyof typeof ApiManagementSkuName];
 
 /**
  * Virtual network type for API Management.
  */
 export const VirtualNetworkType = schema.apimanagement.VirtualNetworkType;
-export type VirtualNetworkType = typeof VirtualNetworkType[keyof typeof VirtualNetworkType];
+export type VirtualNetworkType = (typeof VirtualNetworkType)[keyof typeof VirtualNetworkType];
 
 /**
  * Hostname type for API Management.
  */
 export const HostnameType = schema.apimanagement.HostnameType;
-export type HostnameType = typeof HostnameType[keyof typeof HostnameType];
+export type HostnameType = (typeof HostnameType)[keyof typeof HostnameType];
 
 /**
  * SKU configuration for API Management.
@@ -444,13 +444,13 @@ export interface IService {
  * API protocol.
  */
 export const ApiProtocol = schema.apimanagement.ApiProtocol;
-export type ApiProtocol = typeof ApiProtocol[keyof typeof ApiProtocol];
+export type ApiProtocol = (typeof ApiProtocol)[keyof typeof ApiProtocol];
 
 /**
  * API type.
  */
 export const ApiType = schema.apimanagement.ApiType;
-export type ApiType = typeof ApiType[keyof typeof ApiType];
+export type ApiType = (typeof ApiType)[keyof typeof ApiType];
 
 /**
  * Subscription key parameter names.
@@ -635,7 +635,7 @@ export interface IServiceApi {
  * Product state.
  */
 export const ProductState = schema.apimanagement.ProductState;
-export type ProductState = typeof ProductState[keyof typeof ProductState];
+export type ProductState = (typeof ProductState)[keyof typeof ProductState];
 
 /**
  * Properties for ArmApiManagementProduct (L1 construct).
@@ -780,7 +780,7 @@ export interface IServiceProduct {
  * Subscription state.
  */
 export const SubscriptionState = schema.apimanagement.SubscriptionState;
-export type SubscriptionState = typeof SubscriptionState[keyof typeof SubscriptionState];
+export type SubscriptionState = (typeof SubscriptionState)[keyof typeof SubscriptionState];
 
 /**
  * Properties for ArmApiManagementSubscription (L1 construct).
@@ -910,7 +910,7 @@ export interface IServiceSubscription {
  * Policy format.
  */
 export const PolicyFormat = schema.apimanagement.PolicyFormat;
-export type PolicyFormat = typeof PolicyFormat[keyof typeof PolicyFormat];
+export type PolicyFormat = (typeof PolicyFormat)[keyof typeof PolicyFormat];
 
 /**
  * Properties for ArmApiManagementPolicy (L1 construct).

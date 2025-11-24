@@ -15,8 +15,8 @@ export const WorkspaceSku = schema.operationalinsights.WorkspaceSku;
 export const PublicNetworkAccess = schema.operationalinsights.PublicNetworkAccess;
 
 // Re-export types for TypeScript
-export type WorkspaceSku = typeof WorkspaceSku[keyof typeof WorkspaceSku];
-export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
+export type WorkspaceSku = (typeof WorkspaceSku)[keyof typeof WorkspaceSku];
+export type PublicNetworkAccess = (typeof PublicNetworkAccess)[keyof typeof PublicNetworkAccess];
 
 /**
  * SKU configuration for the workspace.

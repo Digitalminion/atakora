@@ -53,7 +53,11 @@ export type {
   INetworkSecurityGroup,
   SecurityRule,
 } from './network-security-group-types';
-export { SecurityRuleProtocol, SecurityRuleAccess, SecurityRuleDirection } from './network-security-group-types';
+export {
+  SecurityRuleProtocol,
+  SecurityRuleAccess,
+  SecurityRuleDirection,
+} from './network-security-group-types';
 
 // Public IP Address exports
 export { ArmPublicIpAddress } from './public-ip-address-arm';
@@ -69,12 +73,20 @@ export { PublicIPAddressSku, PublicIPAllocationMethod, IpVersion } from './publi
 // Private DNS Zone exports
 export { ArmPrivateDnsZone } from './private-dns-zone-arm';
 export { PrivateDnsZones } from './private-dns-zones';
-export type { ArmPrivateDnsZoneProps, PrivateDnsZonesProps, IPrivateDnsZone } from './private-dns-zone-types';
+export type {
+  ArmPrivateDnsZoneProps,
+  PrivateDnsZonesProps,
+  IPrivateDnsZone,
+} from './private-dns-zone-types';
 
 // Public DNS Zone exports
 export { ArmPublicDnsZone } from './public-dns-zone-arm';
 export { PublicDnsZones } from './public-dns-zones';
-export type { ArmPublicDnsZoneProps, PublicDnsZonesProps, IPublicDnsZone } from './public-dns-zone-types';
+export type {
+  ArmPublicDnsZoneProps,
+  PublicDnsZonesProps,
+  IPublicDnsZone,
+} from './public-dns-zone-types';
 export { DnsZoneType } from './public-dns-zone-types';
 
 // DNS Record exports

@@ -10,43 +10,45 @@ import { schema } from '@atakora/lib';
  * SKU name for storage account.
  */
 export const StorageAccountSkuName = schema.storage.StorageAccountSkuName;
-export type StorageAccountSkuName = typeof StorageAccountSkuName[keyof typeof StorageAccountSkuName];
+export type StorageAccountSkuName =
+  (typeof StorageAccountSkuName)[keyof typeof StorageAccountSkuName];
 
 /**
  * Storage account kind.
  */
 export const StorageAccountKind = schema.storage.StorageAccountKind;
-export type StorageAccountKind = typeof StorageAccountKind[keyof typeof StorageAccountKind];
+export type StorageAccountKind = (typeof StorageAccountKind)[keyof typeof StorageAccountKind];
 
 /**
  * Access tier for storage account.
  */
 export const AccessTier = schema.storage.AccessTier;
-export type AccessTier = typeof AccessTier[keyof typeof AccessTier];
+export type AccessTier = (typeof AccessTier)[keyof typeof AccessTier];
 
 /**
  * Minimum TLS version.
  */
 export const TlsVersion = schema.storage.TlsVersion;
-export type TlsVersion = typeof TlsVersion[keyof typeof TlsVersion];
+export type TlsVersion = (typeof TlsVersion)[keyof typeof TlsVersion];
 
 /**
  * Public network access setting.
  */
 export const PublicNetworkAccess = schema.storage.PublicNetworkAccess;
-export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
+export type PublicNetworkAccess = (typeof PublicNetworkAccess)[keyof typeof PublicNetworkAccess];
 
 /**
  * Network ACL default action.
  */
 export const NetworkAclDefaultAction = schema.storage.NetworkAclDefaultAction;
-export type NetworkAclDefaultAction = typeof NetworkAclDefaultAction[keyof typeof NetworkAclDefaultAction];
+export type NetworkAclDefaultAction =
+  (typeof NetworkAclDefaultAction)[keyof typeof NetworkAclDefaultAction];
 
 /**
  * Network ACL bypass setting.
  */
 export const NetworkAclBypass = schema.storage.NetworkAclBypass;
-export type NetworkAclBypass = typeof NetworkAclBypass[keyof typeof NetworkAclBypass];
+export type NetworkAclBypass = (typeof NetworkAclBypass)[keyof typeof NetworkAclBypass];
 
 /**
  * SKU configuration.

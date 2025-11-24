@@ -9,10 +9,7 @@
 
 import { Resource, Construct, DeploymentScope } from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
-import type {
-  ArmSignalRServiceProps,
-  ISignalRService,
-} from './signalr-service-types';
+import type { ArmSignalRServiceProps, ISignalRService } from './signalr-service-types';
 
 /**
  * L1 construct for SignalR Service.
@@ -224,7 +221,9 @@ export class ArmSignalRService extends Resource implements ISignalRService {
     // Build identity object
     const identity: any = {};
     if (this.enableSystemIdentity) {
-      identity.type = this.userAssignedIdentities ? 'SystemAssigned,UserAssigned' : 'SystemAssigned';
+      identity.type = this.userAssignedIdentities
+        ? 'SystemAssigned,UserAssigned'
+        : 'SystemAssigned';
     } else if (this.userAssignedIdentities) {
       identity.type = 'UserAssigned';
     }

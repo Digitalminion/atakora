@@ -148,7 +148,9 @@ export class ArmServiceBusNamespace extends Resource {
     }
 
     if (props.namespaceName.length < 6 || props.namespaceName.length > 50) {
-      throw new Error(`Service Bus namespace name must be 6-50 characters (got ${props.namespaceName.length})`);
+      throw new Error(
+        `Service Bus namespace name must be 6-50 characters (got ${props.namespaceName.length})`
+      );
     }
 
     // Validate name pattern: alphanumeric and hyphens

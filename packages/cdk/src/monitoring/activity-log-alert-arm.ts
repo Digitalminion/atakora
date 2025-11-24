@@ -79,9 +79,7 @@ export class ActivityLogAlertArm extends Resource {
     // Category is required as first condition
     const categoryCondition = props.conditions.find((c) => c.field === 'category');
     if (!categoryCondition) {
-      throw new Error(
-        'Activity log alert requires a condition with field="category"'
-      );
+      throw new Error('Activity log alert requires a condition with field="category"');
     }
 
     // Validate each condition

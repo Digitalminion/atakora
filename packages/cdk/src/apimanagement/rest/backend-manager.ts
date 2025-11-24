@@ -98,7 +98,11 @@ export class BackendManager {
    * @returns Backend resource
    */
   private createAzureFunctionBackend(config: AzureFunctionBackend): IBackend {
-    const functionUrl = this.buildFunctionUrl(config.functionApp, config.functionName, config.routePrefix);
+    const functionUrl = this.buildFunctionUrl(
+      config.functionApp,
+      config.functionName,
+      config.routePrefix
+    );
 
     return {
       id: `backend-${config.functionApp.name}-${config.functionName}`,
@@ -149,7 +153,8 @@ export class BackendManager {
    */
   private createContainerAppBackend(config: ContainerAppBackend): IBackend {
     const fqdn = config.containerApp.configuration.ingress.fqdn;
-    const port = config.port || config.targetPort || config.containerApp.configuration.ingress.targetPort;
+    const port =
+      config.port || config.targetPort || config.containerApp.configuration.ingress.targetPort;
     const url = port && port !== 443 ? `https://${fqdn}:${port}` : `https://${fqdn}`;
 
     return {
@@ -333,7 +338,10 @@ export class BackendManager {
       errors.push('Healthy threshold must be at least 1');
     }
 
-    if (config.expectedStatusCode && (config.expectedStatusCode < 100 || config.expectedStatusCode > 599)) {
+    if (
+      config.expectedStatusCode &&
+      (config.expectedStatusCode < 100 || config.expectedStatusCode > 599)
+    ) {
       errors.push('Expected status code must be between 100 and 599');
     }
 
@@ -353,7 +361,11 @@ export class BackendManager {
     switch (config.type) {
       case 'azureFunction': {
         const funcConfig = config as AzureFunctionBackend;
-        return this.buildFunctionUrl(funcConfig.functionApp, funcConfig.functionName, funcConfig.routePrefix);
+        return this.buildFunctionUrl(
+          funcConfig.functionApp,
+          funcConfig.functionName,
+          funcConfig.routePrefix
+        );
       }
       case 'appService': {
         const appConfig = config as AppServiceBackend;

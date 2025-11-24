@@ -10,31 +10,31 @@ import { schema } from '@atakora/lib';
  * Application type for Application Insights.
  */
 export const ApplicationType = schema.insights.ApplicationType;
-export type ApplicationType = typeof ApplicationType[keyof typeof ApplicationType];
+export type ApplicationType = (typeof ApplicationType)[keyof typeof ApplicationType];
 
 /**
  * Request source for Application Insights.
  */
 export const RequestSource = schema.insights.RequestSource;
-export type RequestSource = typeof RequestSource[keyof typeof RequestSource];
+export type RequestSource = (typeof RequestSource)[keyof typeof RequestSource];
 
 /**
  * Flow type for Application Insights.
  */
 export const FlowType = schema.insights.FlowType;
-export type FlowType = typeof FlowType[keyof typeof FlowType];
+export type FlowType = (typeof FlowType)[keyof typeof FlowType];
 
 /**
  * Public network access options.
  */
 export const PublicNetworkAccess = schema.insights.PublicNetworkAccess;
-export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
+export type PublicNetworkAccess = (typeof PublicNetworkAccess)[keyof typeof PublicNetworkAccess];
 
 /**
  * Ingestion mode for Application Insights.
  */
 export const IngestionMode = schema.insights.IngestionMode;
-export type IngestionMode = typeof IngestionMode[keyof typeof IngestionMode];
+export type IngestionMode = (typeof IngestionMode)[keyof typeof IngestionMode];
 
 /**
  * Properties for ArmComponents (L1 construct).

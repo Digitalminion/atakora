@@ -119,10 +119,7 @@ export {
 /**
  * Naming types and interfaces
  */
-export type {
-  INamingComponent,
-  NamingComponentOptions,
-} from '@atakora/lib';
+export type { INamingComponent, NamingComponentOptions } from '@atakora/lib';
 
 // ============================================================================
 // AZURE SCOPE UTILITIES
@@ -188,9 +185,7 @@ export {
 /**
  * Validation types
  */
-export type {
-  ResourceValidator,
-} from '@atakora/lib';
+export type { ResourceValidator } from '@atakora/lib';
 
 // ============================================================================
 // RBAC AND GRANT SYSTEM EXPORTS
@@ -200,10 +195,7 @@ export type {
 /**
  * Grant system interfaces and types
  */
-export type {
-  IGrantable,
-  IGrantResult,
-} from '@atakora/lib';
+export type { IGrantable, IGrantResult } from '@atakora/lib';
 
 /**
  * Grant system classes and utilities
@@ -219,11 +211,7 @@ export {
 /**
  * Grant error classes
  */
-export {
-  GrantError,
-  MissingIdentityError,
-  InvalidRoleAssignmentError,
-} from '@atakora/lib';
+export { GrantError, MissingIdentityError, InvalidRoleAssignmentError } from '@atakora/lib';
 
 // ============================================================================
 // UTILITY FUNCTION EXPORTS
@@ -258,9 +246,7 @@ export type {
 /**
  * Resource reference types (for cross-resource references)
  */
-export type {
-  IResourceGroup,
-} from '@atakora/lib';
+export type { IResourceGroup } from '@atakora/lib';
 
 // ============================================================================
 // TESTING UTILITIES (if needed by users)

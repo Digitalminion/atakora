@@ -14,7 +14,7 @@ import { schema } from '@atakora/lib';
 export const ServiceBusSku = schema.servicebus.ServiceBusSku;
 
 // Re-export type for TypeScript
-export type ServiceBusSku = typeof ServiceBusSku[keyof typeof ServiceBusSku];
+export type ServiceBusSku = (typeof ServiceBusSku)[keyof typeof ServiceBusSku];
 
 /**
  * Properties for ArmServiceBusNamespace (L1 construct).

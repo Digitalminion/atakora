@@ -36,7 +36,13 @@ describe('Bundle Size Budget Compliance', () => {
   let analyses: BundleAnalysis[] = [];
 
   try {
-    const reportPath = path.join(__dirname, '..', '..', 'bundle-analysis-results', 'bundle-analysis-report.json');
+    const reportPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'bundle-analysis-results',
+      'bundle-analysis-report.json'
+    );
     if (fs.existsSync(reportPath)) {
       const reportData = fs.readFileSync(reportPath, 'utf-8');
       analyses = JSON.parse(reportData);
@@ -47,7 +53,9 @@ describe('Bundle Size Budget Compliance', () => {
 
   it('should have bundle analysis data available', () => {
     if (analyses.length === 0) {
-      console.warn('⚠️  Bundle analysis data not available. Run `npm run bundle:analyze` to generate bundle analysis report.');
+      console.warn(
+        '⚠️  Bundle analysis data not available. Run `npm run bundle:analyze` to generate bundle analysis report.'
+      );
       // Skip this test if data doesn't exist - it's not a test failure, just missing optional data
       return;
     }
@@ -63,7 +71,9 @@ describe('Bundle Size Budget Compliance', () => {
     analyses.forEach((analysis) => {
       const sizeMB = analysis.size.minified / (1024 * 1024);
       expect(analysis.size.minified).toBeLessThan(BUNDLE_SIZE_BUDGET_BYTES);
-      console.log(`✓ ${analysis.importPattern}: ${sizeMB.toFixed(2)} MB / ${BUNDLE_SIZE_BUDGET_MB} MB`);
+      console.log(
+        `✓ ${analysis.importPattern}: ${sizeMB.toFixed(2)} MB / ${BUNDLE_SIZE_BUDGET_MB} MB`
+      );
     });
   });
 
@@ -83,7 +93,13 @@ describe('Tree-Shaking Validation', () => {
   let analyses: BundleAnalysis[] = [];
 
   try {
-    const reportPath = path.join(__dirname, '..', '..', 'bundle-analysis-results', 'bundle-analysis-report.json');
+    const reportPath = path.join(
+      __dirname,
+      '..',
+      '..',
+      'bundle-analysis-results',
+      'bundle-analysis-report.json'
+    );
     if (fs.existsSync(reportPath)) {
       const reportData = fs.readFileSync(reportPath, 'utf-8');
       analyses = JSON.parse(reportData);
@@ -159,7 +175,13 @@ describe('Tree-Shaking Validation', () => {
 describe('Bundle Analysis Freshness', () => {
   it('should have recent bundle analysis data', () => {
     try {
-      const reportPath = path.join(__dirname, '..', '..', 'bundle-analysis-results', 'bundle-analysis-report.json');
+      const reportPath = path.join(
+        __dirname,
+        '..',
+        '..',
+        'bundle-analysis-results',
+        'bundle-analysis-report.json'
+      );
       if (!fs.existsSync(reportPath)) {
         console.warn('Bundle analysis report not found. Run `npm run bundle:analyze`');
         return;
@@ -176,7 +198,9 @@ describe('Bundle Analysis Freshness', () => {
 
       // Warn if analysis is > 7 days old
       if (daysSinceAnalysis > 7) {
-        console.warn(`⚠️  Bundle analysis is ${daysSinceAnalysis.toFixed(1)} days old. Consider running \`npm run bundle:analyze\``);
+        console.warn(
+          `⚠️  Bundle analysis is ${daysSinceAnalysis.toFixed(1)} days old. Consider running \`npm run bundle:analyze\``
+        );
       } else {
         console.log(`✓ Bundle analysis is fresh (${daysSinceAnalysis.toFixed(1)} days old)`);
       }

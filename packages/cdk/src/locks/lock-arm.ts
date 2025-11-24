@@ -13,7 +13,7 @@ import { LockLevel } from './lock-types';
  * @internal
  */
 export const LockScope = schema.resources.LockScope;
-export type LockScope = typeof LockScope[keyof typeof LockScope];
+export type LockScope = (typeof LockScope)[keyof typeof LockScope];
 
 /**
  * ARM-level properties for resource locks.

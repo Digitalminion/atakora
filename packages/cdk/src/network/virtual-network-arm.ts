@@ -1,5 +1,19 @@
-import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder, ValidationError, isValidCIDR, isWithinCIDR, cidrsOverlap } from '@atakora/cdk';
-import type { ArmVirtualNetworkProps, AddressSpace, InlineSubnetProps } from './virtual-network-types';
+import {
+  Construct,
+  Resource,
+  DeploymentScope,
+  ValidationResult,
+  ValidationResultBuilder,
+  ValidationError,
+  isValidCIDR,
+  isWithinCIDR,
+  cidrsOverlap,
+} from '@atakora/cdk';
+import type {
+  ArmVirtualNetworkProps,
+  AddressSpace,
+  InlineSubnetProps,
+} from './virtual-network-types';
 import type { ArmResource } from '@atakora/cdk';
 
 /**

@@ -329,10 +329,7 @@ export class JsonSchemaValidator {
    * }
    * ```
    */
-  static validateData(
-    data: unknown,
-    config: ValidationConfig
-  ): ValidationResult {
+  static validateData(data: unknown, config: ValidationConfig): ValidationResult {
     const errors: ValidationError[] = [];
     const schema = config.schema;
 
@@ -346,11 +343,7 @@ export class JsonSchemaValidator {
     }
 
     // Object property validation
-    if (
-      schema.type === 'object' &&
-      typeof data === 'object' &&
-      data !== null
-    ) {
+    if (schema.type === 'object' && typeof data === 'object' && data !== null) {
       const obj = data as Record<string, unknown>;
 
       // Check required properties
@@ -371,11 +364,7 @@ export class JsonSchemaValidator {
       if (schema.properties) {
         for (const [key, propSchema] of Object.entries(schema.properties)) {
           if (key in obj) {
-            const propErrors = this.validateProperty(
-              obj[key],
-              propSchema,
-              key
-            );
+            const propErrors = this.validateProperty(obj[key], propSchema, key);
             errors.push(...propErrors);
           }
         }
@@ -517,10 +506,7 @@ export class JsonSchemaValidator {
     }
 
     // Number validations
-    if (
-      (schema.type === 'number' || schema.type === 'integer') &&
-      typeof value === 'number'
-    ) {
+    if ((schema.type === 'number' || schema.type === 'integer') && typeof value === 'number') {
       if (schema.minimum !== undefined && value < schema.minimum) {
         errors.push({
           field,
@@ -584,11 +570,7 @@ export class JsonSchemaValidator {
         break;
 
       case 'uuid':
-        if (
-          !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-            value
-          )
-        ) {
+        if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) {
           return {
             field,
             message: 'Invalid UUID format',
@@ -706,17 +688,12 @@ export class ContentTypeValidator {
    * );
    * ```
    */
-  static validate(
-    contentType: string | undefined,
-    config: ContentTypeConfig
-  ): ValidationResult {
+  static validate(contentType: string | undefined, config: ContentTypeConfig): ValidationResult {
     // Check if required but missing
     if (config.required && !contentType) {
       return {
         valid: false,
-        problemDetails: ProblemDetailsFactory.badRequest(
-          'Content-Type header is required'
-        ),
+        problemDetails: ProblemDetailsFactory.badRequest('Content-Type header is required'),
       };
     }
 
@@ -747,8 +724,7 @@ export class ContentTypeValidator {
           415,
           'https://httpstatuses.io/415',
           'Unsupported Media Type',
-          config.errorMessage ||
-            `Content-Type must be one of: ${config.allowed.join(', ')}`,
+          config.errorMessage || `Content-Type must be one of: ${config.allowed.join(', ')}`,
           { receivedContentType: mediaType }
         ),
       };
@@ -758,9 +734,7 @@ export class ContentTypeValidator {
     if (config.charset && charset !== config.charset.toLowerCase()) {
       return {
         valid: false,
-        problemDetails: ProblemDetailsFactory.badRequest(
-          `Charset must be ${config.charset}`
-        ),
+        problemDetails: ProblemDetailsFactory.badRequest(`Charset must be ${config.charset}`),
       };
     }
 
@@ -1128,9 +1102,7 @@ export class Sanitizer {
    * ]);
    * ```
    */
-  static combine(
-    configs: readonly SanitizationConfig[]
-  ): SanitizationConfig {
+  static combine(configs: readonly SanitizationConfig[]): SanitizationConfig {
     const allPatterns: SanitizationPattern[] = [];
 
     for (const config of configs) {

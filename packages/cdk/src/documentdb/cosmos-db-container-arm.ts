@@ -9,10 +9,7 @@
 
 import { Resource, Construct, DeploymentScope } from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
-import type {
-  ArmCosmosDBContainerProps,
-  ICosmosDBContainer,
-} from './cosmos-db-container-types';
+import type { ArmCosmosDBContainerProps, ICosmosDBContainer } from './cosmos-db-container-types';
 import { PartitionKeyVersion } from './cosmos-db-container-types';
 import { ThroughputMode } from './cosmos-db-database-types';
 
@@ -31,7 +28,8 @@ export class ArmCosmosDBContainer extends Resource implements ICosmosDBContainer
   /**
    * ARM resource type.
    */
-  public readonly resourceType: string = 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers';
+  public readonly resourceType: string =
+    'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers';
 
   /**
    * API version for the resource.
@@ -228,7 +226,10 @@ export class ArmCosmosDBContainer extends Resource implements ICosmosDBContainer
 
       if (this.throughput.mode === ThroughputMode.MANUAL && this.throughput.throughput) {
         properties.options.throughput = this.throughput.throughput;
-      } else if (this.throughput.mode === ThroughputMode.AUTOSCALE && this.throughput.maxThroughput) {
+      } else if (
+        this.throughput.mode === ThroughputMode.AUTOSCALE &&
+        this.throughput.maxThroughput
+      ) {
         properties.options.autoscaleSettings = {
           maxThroughput: this.throughput.maxThroughput,
         };
@@ -241,7 +242,8 @@ export class ArmCosmosDBContainer extends Resource implements ICosmosDBContainer
       name: `${this.database.account.databaseAccountName}/${this.database.databaseName}/${this.containerName}`,
       properties,
       dependsOn: [this.database.databaseId],
-      ...(this.resourceTags && Object.keys(this.resourceTags).length > 0 && { tags: this.resourceTags }),
+      ...(this.resourceTags &&
+        Object.keys(this.resourceTags).length > 0 && { tags: this.resourceTags }),
     } as ArmResource;
   }
 }

@@ -10,9 +10,7 @@
 import { Resource, Construct, DeploymentScope } from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
 import { constructIdToPurpose } from '@atakora/lib';
-import {
-  FilterType,
-} from './service-bus-topic-types';
+import { FilterType } from './service-bus-topic-types';
 import type {
   ArmServiceBusRuleProps,
   ServiceBusRuleProps,
@@ -31,7 +29,8 @@ import type {
  * **API Version**: `2021-11-01`
  */
 export class ArmServiceBusRule extends Resource implements IServiceBusRule {
-  public readonly resourceType: string = 'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules';
+  public readonly resourceType: string =
+    'Microsoft.ServiceBus/namespaces/topics/subscriptions/rules';
   public readonly apiVersion: string = '2021-11-01';
   public readonly scope: DeploymentScope.ResourceGroup = DeploymentScope.ResourceGroup;
 

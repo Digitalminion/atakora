@@ -77,9 +77,7 @@ export class SubscriptionDiagnosticSettingsArm extends Resource {
 
     // Event Hub name is required if using Event Hub
     if (props.eventHubAuthorizationRuleId && !props.eventHubName) {
-      throw new Error(
-        'eventHubName is required when eventHubAuthorizationRuleId is specified'
-      );
+      throw new Error('eventHubName is required when eventHubAuthorizationRuleId is specified');
     }
 
     // At least one log must be enabled
@@ -89,9 +87,7 @@ export class SubscriptionDiagnosticSettingsArm extends Resource {
 
     const enabledLogs = props.logs.filter((log) => log.enabled);
     if (enabledLogs.length === 0) {
-      throw new Error(
-        'Subscription diagnostic settings require at least one enabled log category'
-      );
+      throw new Error('Subscription diagnostic settings require at least one enabled log category');
     }
 
     // Validate each log setting
@@ -114,9 +110,7 @@ export class SubscriptionDiagnosticSettingsArm extends Resource {
     // Validate retention policy if specified
     if (log.retentionPolicy) {
       if (log.retentionPolicy.enabled && log.retentionPolicy.days < 0) {
-        throw new Error(
-          `Log retention days must be >= 0 (current: ${log.retentionPolicy.days})`
-        );
+        throw new Error(`Log retention days must be >= 0 (current: ${log.retentionPolicy.days})`);
       }
 
       if (log.retentionPolicy.days > 365) {

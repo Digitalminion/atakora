@@ -371,11 +371,7 @@ export class TraceContext {
    * // Returns: '00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01'
    * ```
    */
-  static generateTraceparent(
-    traceId?: string,
-    parentId?: string,
-    sampled: boolean = true
-  ): string {
+  static generateTraceparent(traceId?: string, parentId?: string, sampled: boolean = true): string {
     const tid = traceId || this.generateTraceId();
     const pid = parentId || this.generateSpanId();
     const flags = sampled ? '01' : '00';
@@ -411,8 +407,7 @@ export class TraceContext {
     if (version !== '00') return null;
     if (traceId.length !== 32 || !/^[0-9a-f]{32}$/.test(traceId)) return null;
     if (parentId.length !== 16 || !/^[0-9a-f]{16}$/.test(parentId)) return null;
-    if (traceFlags.length !== 2 || !/^[0-9a-f]{2}$/.test(traceFlags))
-      return null;
+    if (traceFlags.length !== 2 || !/^[0-9a-f]{2}$/.test(traceFlags)) return null;
 
     return { version, traceId, parentId, traceFlags };
   }
@@ -503,11 +498,7 @@ export class RequestLogger {
         logBody: options.logBody ?? false,
         maskSensitiveData: options.maskSensitiveData ?? true,
         sensitiveFields: options.sensitiveFields ?? [],
-        sensitiveHeaders: options.sensitiveHeaders ?? [
-          'authorization',
-          'cookie',
-          'x-api-key',
-        ],
+        sensitiveHeaders: options.sensitiveHeaders ?? ['authorization', 'cookie', 'x-api-key'],
         maxBodySize: options.maxBodySize ?? 10000,
       },
       maskPatterns,
@@ -587,24 +578,12 @@ export class RequestLogger {
 
     for (const pattern of config.maskPatterns) {
       // Match JSON field: "field":"value"
-      const regex = new RegExp(
-        `"${pattern.field}"\\s*:\\s*"[^"]*"`,
-        'gi'
-      );
-      masked = masked.replace(
-        regex,
-        `"${pattern.field}":"${pattern.replacement}"`
-      );
+      const regex = new RegExp(`"${pattern.field}"\\s*:\\s*"[^"]*"`, 'gi');
+      masked = masked.replace(regex, `"${pattern.field}":"${pattern.replacement}"`);
 
       // Match JSON field with any value type: "field":value
-      const regex2 = new RegExp(
-        `"${pattern.field}"\\s*:\\s*[^,}]*`,
-        'gi'
-      );
-      masked = masked.replace(
-        regex2,
-        `"${pattern.field}":"${pattern.replacement}"`
-      );
+      const regex2 = new RegExp(`"${pattern.field}"\\s*:\\s*[^,}]*`, 'gi');
+      masked = masked.replace(regex2, `"${pattern.field}":"${pattern.replacement}"`);
     }
 
     return masked;
@@ -688,10 +667,7 @@ export class Metrics {
    * );
    * ```
    */
-  static counter(
-    name: string,
-    dimensions?: readonly string[]
-  ): MetricConfig {
+  static counter(name: string, dimensions?: readonly string[]): MetricConfig {
     return {
       name,
       type: 'counter',
@@ -902,14 +878,11 @@ export class CorrelationId {
     }
 
     // Fallback UUID generation
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
-      /[xy]/g,
-      (c) => {
-        const r = (Math.random() * 16) | 0;
-        const v = c === 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-      }
-    );
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
   }
 
   /**
@@ -927,8 +900,7 @@ export class CorrelationId {
    * ```
    */
   static validate(id: string): boolean {
-    const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     return uuidRegex.test(id);
   }
 

@@ -18,7 +18,16 @@ export interface QueueCorsRule {
   /**
    * Allowed HTTP methods.
    */
-  readonly allowedMethods: ('DELETE' | 'GET' | 'HEAD' | 'MERGE' | 'POST' | 'OPTIONS' | 'PUT' | 'PATCH')[];
+  readonly allowedMethods: (
+    | 'DELETE'
+    | 'GET'
+    | 'HEAD'
+    | 'MERGE'
+    | 'POST'
+    | 'OPTIONS'
+    | 'PUT'
+    | 'PATCH'
+  )[];
 
   /**
    * Allowed headers.

@@ -161,7 +161,7 @@ export class Servers extends GrantableResource implements IServers {
       administratorLogin: props.administratorLogin,
       administratorLoginPassword: props.administratorLoginPassword,
       version: props.version,
-      publicNetworkAccess: props.publicNetworkAccess ?? 'Disabled' as PublicNetworkAccess,
+      publicNetworkAccess: props.publicNetworkAccess ?? ('Disabled' as PublicNetworkAccess),
       minimalTlsVersion: props.minimalTlsVersion ?? '1.2',
       tags,
     });

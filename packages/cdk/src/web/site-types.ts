@@ -12,7 +12,7 @@ import { ManagedIdentityType, schema } from '@atakora/lib';
  * Kind of App Service.
  */
 export const AppServiceKind = schema.web.AppServiceKind;
-export type AppServiceKind = typeof AppServiceKind[keyof typeof AppServiceKind];
+export type AppServiceKind = (typeof AppServiceKind)[keyof typeof AppServiceKind];
 
 /**
  * Managed service identity type.
@@ -24,19 +24,19 @@ export { ManagedIdentityType };
  * FTPS state for the App Service.
  */
 export const FtpsState = schema.web.FtpsState;
-export type FtpsState = typeof FtpsState[keyof typeof FtpsState];
+export type FtpsState = (typeof FtpsState)[keyof typeof FtpsState];
 
 /**
  * Minimum TLS version.
  */
 export const MinTlsVersion = schema.web.MinTlsVersion;
-export type MinTlsVersion = typeof MinTlsVersion[keyof typeof MinTlsVersion];
+export type MinTlsVersion = (typeof MinTlsVersion)[keyof typeof MinTlsVersion];
 
 /**
  * Connection string type.
  */
 export const ConnectionStringType = schema.web.ConnectionStringType;
-export type ConnectionStringType = typeof ConnectionStringType[keyof typeof ConnectionStringType];
+export type ConnectionStringType = (typeof ConnectionStringType)[keyof typeof ConnectionStringType];
 
 /**
  * Managed service identity configuration.

@@ -9,10 +9,7 @@
 
 import { Resource, Construct, DeploymentScope } from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
-import type {
-  ArmCosmosDBDatabaseProps,
-  ICosmosDBDatabase,
-} from './cosmos-db-database-types';
+import type { ArmCosmosDBDatabaseProps, ICosmosDBDatabase } from './cosmos-db-database-types';
 import { ThroughputMode } from './cosmos-db-database-types';
 
 /**
@@ -134,7 +131,10 @@ export class ArmCosmosDBDatabase extends Resource implements ICosmosDBDatabase {
 
       if (this.throughput.mode === ThroughputMode.MANUAL && this.throughput.throughput) {
         properties.options.throughput = this.throughput.throughput;
-      } else if (this.throughput.mode === ThroughputMode.AUTOSCALE && this.throughput.maxThroughput) {
+      } else if (
+        this.throughput.mode === ThroughputMode.AUTOSCALE &&
+        this.throughput.maxThroughput
+      ) {
         properties.options.autoscaleSettings = {
           maxThroughput: this.throughput.maxThroughput,
         };
@@ -147,7 +147,8 @@ export class ArmCosmosDBDatabase extends Resource implements ICosmosDBDatabase {
       name: `${this.account.databaseAccountName}/${this.databaseName}`,
       properties,
       dependsOn: [this.account.accountId],
-      ...(this.resourceTags && Object.keys(this.resourceTags).length > 0 && { tags: this.resourceTags }),
+      ...(this.resourceTags &&
+        Object.keys(this.resourceTags).length > 0 && { tags: this.resourceTags }),
     } as ArmResource;
   }
 }

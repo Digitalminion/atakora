@@ -22,14 +22,14 @@ export enum GraphQLApiType {
   /**
    * Synthetic GraphQL API (resolvers executed in API Management)
    */
-  GRAPHQL_SYNTHETIC = 'graphql-synthetic'
+  GRAPHQL_SYNTHETIC = 'graphql-synthetic',
 }
 
 /**
  * GraphQL resolver type enum
  */
 export const GraphQLResolverType = schema.apimanagement.GraphQLResolverType;
-export type GraphQLResolverType = typeof GraphQLResolverType[keyof typeof GraphQLResolverType];
+export type GraphQLResolverType = (typeof GraphQLResolverType)[keyof typeof GraphQLResolverType];
 
 /**
  * ARM properties for GraphQL API

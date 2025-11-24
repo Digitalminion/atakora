@@ -66,8 +66,12 @@ export class ServiceBusQueue extends Construct implements IServiceBusQueue {
 
     // Convert seconds to ISO 8601 duration format
     const lockDuration = props.lockDuration ? `PT${props.lockDuration}S` : undefined;
-    const duplicateDetectionWindow = props.duplicateDetectionWindow ? `PT${props.duplicateDetectionWindow}S` : undefined;
-    const defaultTtl = props.defaultMessageTimeToLive ? `PT${props.defaultMessageTimeToLive}S` : undefined;
+    const duplicateDetectionWindow = props.duplicateDetectionWindow
+      ? `PT${props.duplicateDetectionWindow}S`
+      : undefined;
+    const defaultTtl = props.defaultMessageTimeToLive
+      ? `PT${props.defaultMessageTimeToLive}S`
+      : undefined;
 
     // Create underlying L1 resource
     this.armQueue = new ArmServiceBusQueue(scope, `${id}Queue`, {

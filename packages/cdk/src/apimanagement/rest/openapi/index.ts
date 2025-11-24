@@ -88,7 +88,4 @@ export {
 } from './importer';
 
 // Export exporter
-export {
-  OpenApiExporter,
-  type OpenApiExporterOptions,
-} from './exporter';
+export { OpenApiExporter, type OpenApiExporterOptions } from './exporter';

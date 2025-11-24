@@ -111,9 +111,7 @@ export class CdnProfiles extends Construct implements ICdnProfile {
       current = current.node.scope;
     }
 
-    throw new Error(
-      'CdnProfiles must be created within or under a ResourceGroup'
-    );
+    throw new Error('CdnProfiles must be created within or under a ResourceGroup');
   }
 
   /**
@@ -164,10 +162,7 @@ export class CdnProfiles extends Construct implements ICdnProfile {
     let current: Construct | undefined = this.node.scope;
 
     while (current) {
-      if (
-        current &&
-        typeof (current as any).generateResourceName === 'function'
-      ) {
+      if (current && typeof (current as any).generateResourceName === 'function') {
         return current;
       }
       current = current.node.scope;

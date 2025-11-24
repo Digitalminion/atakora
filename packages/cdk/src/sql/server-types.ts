@@ -15,8 +15,8 @@ export const SqlServerVersion = schema.sql.SqlServerVersion;
 export const PublicNetworkAccess = schema.sql.PublicNetworkAccess;
 
 // Re-export types for TypeScript
-export type SqlServerVersion = typeof SqlServerVersion[keyof typeof SqlServerVersion];
-export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
+export type SqlServerVersion = (typeof SqlServerVersion)[keyof typeof SqlServerVersion];
+export type PublicNetworkAccess = (typeof PublicNetworkAccess)[keyof typeof PublicNetworkAccess];
 
 /**
  * Properties for ArmServers (L1 construct).

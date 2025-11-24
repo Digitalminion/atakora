@@ -174,7 +174,8 @@ export class PolicyAssignmentArm extends Resource {
       };
 
       if (this.props.identity.userAssignedIdentities) {
-        (resource as any).identity.userAssignedIdentities = this.props.identity.userAssignedIdentities;
+        (resource as any).identity.userAssignedIdentities =
+          this.props.identity.userAssignedIdentities;
       }
     }
 

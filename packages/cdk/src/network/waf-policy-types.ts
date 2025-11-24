@@ -10,49 +10,49 @@ import { schema } from '@atakora/lib';
  * WAF policy mode.
  */
 export const WafPolicyMode = schema.network.WafPolicyMode;
-export type WafPolicyMode = typeof WafPolicyMode[keyof typeof WafPolicyMode];
+export type WafPolicyMode = (typeof WafPolicyMode)[keyof typeof WafPolicyMode];
 
 /**
  * WAF rule set type.
  */
 export const WafRuleSetType = schema.network.WafRuleSetType;
-export type WafRuleSetType = typeof WafRuleSetType[keyof typeof WafRuleSetType];
+export type WafRuleSetType = (typeof WafRuleSetType)[keyof typeof WafRuleSetType];
 
 /**
  * WAF rule set version.
  */
 export const WafRuleSetVersion = schema.network.WafRuleSetVersion;
-export type WafRuleSetVersion = typeof WafRuleSetVersion[keyof typeof WafRuleSetVersion];
+export type WafRuleSetVersion = (typeof WafRuleSetVersion)[keyof typeof WafRuleSetVersion];
 
 /**
  * WAF state.
  */
 export const WafState = schema.network.WafState;
-export type WafState = typeof WafState[keyof typeof WafState];
+export type WafState = (typeof WafState)[keyof typeof WafState];
 
 /**
  * WAF custom rule action.
  */
 export const WafCustomRuleAction = schema.network.WafCustomRuleAction;
-export type WafCustomRuleAction = typeof WafCustomRuleAction[keyof typeof WafCustomRuleAction];
+export type WafCustomRuleAction = (typeof WafCustomRuleAction)[keyof typeof WafCustomRuleAction];
 
 /**
  * WAF custom rule type.
  */
 export const WafCustomRuleType = schema.network.WafCustomRuleType;
-export type WafCustomRuleType = typeof WafCustomRuleType[keyof typeof WafCustomRuleType];
+export type WafCustomRuleType = (typeof WafCustomRuleType)[keyof typeof WafCustomRuleType];
 
 /**
  * WAF match variable.
  */
 export const WafMatchVariable = schema.network.WafMatchVariable;
-export type WafMatchVariable = typeof WafMatchVariable[keyof typeof WafMatchVariable];
+export type WafMatchVariable = (typeof WafMatchVariable)[keyof typeof WafMatchVariable];
 
 /**
  * WAF operator.
  */
 export const WafOperator = schema.network.WafOperator;
-export type WafOperator = typeof WafOperator[keyof typeof WafOperator];
+export type WafOperator = (typeof WafOperator)[keyof typeof WafOperator];
 
 /**
  * Policy settings configuration.

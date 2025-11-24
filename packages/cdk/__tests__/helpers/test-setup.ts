@@ -36,10 +36,7 @@ export const testContext = {
  * @param template - ARM template to validate
  * @param resourceType - Expected resource type
  */
-export function verifyArmTemplate(
-  template: any,
-  resourceType: string
-): void {
+export function verifyArmTemplate(template: any, resourceType: string): void {
   expect(template).toBeDefined();
   expect(template.type).toBe(resourceType);
   expect(template.apiVersion).toBeDefined();

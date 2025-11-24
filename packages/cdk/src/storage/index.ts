@@ -33,7 +33,12 @@ export {
 // Queue Service exports
 export { ArmQueueServices } from './queue-service-arm';
 export { QueueServices } from './queue-services';
-export type { ArmQueueServicesProps, QueueServicesProps, IQueueService, QueueCorsRule } from './queue-service-types';
+export type {
+  ArmQueueServicesProps,
+  QueueServicesProps,
+  IQueueService,
+  QueueCorsRule,
+} from './queue-service-types';
 
 // Storage Queue exports
 export { ArmStorageQueues } from './queue-arm';

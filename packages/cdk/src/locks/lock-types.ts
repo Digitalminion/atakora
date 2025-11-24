@@ -12,7 +12,7 @@ import { schema } from '@atakora/lib';
  * @public
  */
 export const LockLevel = schema.resources.LockLevel;
-export type LockLevel = typeof LockLevel[keyof typeof LockLevel];
+export type LockLevel = (typeof LockLevel)[keyof typeof LockLevel];
 
 /**
  * Properties for Resource Lock construct.

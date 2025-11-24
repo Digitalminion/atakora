@@ -18,7 +18,13 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { WellKnownRoleIds, PrincipalType, UserAssignedIdentity, CrossStackGrant, App } from '@atakora/lib';
+import {
+  WellKnownRoleIds,
+  PrincipalType,
+  UserAssignedIdentity,
+  CrossStackGrant,
+  App,
+} from '@atakora/lib';
 import { StorageAccounts } from '@atakora/cdk/storage';
 import { Vaults } from '@atakora/cdk/keyvault';
 import { DatabaseAccounts } from '@atakora/cdk/documentdb';
@@ -253,7 +259,9 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
       const grant = storage.grantBlobRead(identity);
 
       expect(grant.grantee.principalId).toContain('[reference(');
-      expect(grant.grantee.principalId).toContain('Microsoft.ManagedIdentity/userAssignedIdentities');
+      expect(grant.grantee.principalId).toContain(
+        'Microsoft.ManagedIdentity/userAssignedIdentities'
+      );
       expect(grant.roleDefinitionId).toBe(WellKnownRoleIds.STORAGE_BLOB_DATA_READER);
     });
 
@@ -443,7 +451,8 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
         identity: {
           type: ManagedServiceIdentityType.USER_ASSIGNED,
           userAssignedIdentities: {
-            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-identity': {},
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-identity':
+              {},
           },
         },
       });
@@ -479,23 +488,41 @@ describe('RBAC Grant Pattern - Integration Tests', () => {
   describe('Well-Known Role IDs', () => {
     it('should have consistent role IDs for storage', () => {
       // Role IDs use ARM subscriptionResourceId function format
-      expect(WellKnownRoleIds.STORAGE_BLOB_DATA_READER).toContain('Microsoft.Authorization/roleDefinitions');
-      expect(WellKnownRoleIds.STORAGE_BLOB_DATA_CONTRIBUTOR).toContain('Microsoft.Authorization/roleDefinitions');
-      expect(WellKnownRoleIds.STORAGE_QUEUE_DATA_CONTRIBUTOR).toContain('Microsoft.Authorization/roleDefinitions');
-      expect(WellKnownRoleIds.STORAGE_TABLE_DATA_READER).toContain('Microsoft.Authorization/roleDefinitions');
+      expect(WellKnownRoleIds.STORAGE_BLOB_DATA_READER).toContain(
+        'Microsoft.Authorization/roleDefinitions'
+      );
+      expect(WellKnownRoleIds.STORAGE_BLOB_DATA_CONTRIBUTOR).toContain(
+        'Microsoft.Authorization/roleDefinitions'
+      );
+      expect(WellKnownRoleIds.STORAGE_QUEUE_DATA_CONTRIBUTOR).toContain(
+        'Microsoft.Authorization/roleDefinitions'
+      );
+      expect(WellKnownRoleIds.STORAGE_TABLE_DATA_READER).toContain(
+        'Microsoft.Authorization/roleDefinitions'
+      );
     });
 
     it('should have consistent role IDs for KeyVault', () => {
       // Role IDs use ARM subscriptionResourceId function format
-      expect(WellKnownRoleIds.KEY_VAULT_SECRETS_USER).toContain('Microsoft.Authorization/roleDefinitions');
-      expect(WellKnownRoleIds.KEY_VAULT_CERTIFICATES_USER).toContain('Microsoft.Authorization/roleDefinitions');
-      expect(WellKnownRoleIds.KEY_VAULT_CRYPTO_USER).toContain('Microsoft.Authorization/roleDefinitions');
+      expect(WellKnownRoleIds.KEY_VAULT_SECRETS_USER).toContain(
+        'Microsoft.Authorization/roleDefinitions'
+      );
+      expect(WellKnownRoleIds.KEY_VAULT_CERTIFICATES_USER).toContain(
+        'Microsoft.Authorization/roleDefinitions'
+      );
+      expect(WellKnownRoleIds.KEY_VAULT_CRYPTO_USER).toContain(
+        'Microsoft.Authorization/roleDefinitions'
+      );
     });
 
     it('should have consistent role IDs for Cosmos DB', () => {
       // Role IDs use ARM subscriptionResourceId function format
-      expect(WellKnownRoleIds.COSMOS_DB_DATA_READER).toContain('Microsoft.Authorization/roleDefinitions');
-      expect(WellKnownRoleIds.COSMOS_DB_DATA_CONTRIBUTOR).toContain('Microsoft.Authorization/roleDefinitions');
+      expect(WellKnownRoleIds.COSMOS_DB_DATA_READER).toContain(
+        'Microsoft.Authorization/roleDefinitions'
+      );
+      expect(WellKnownRoleIds.COSMOS_DB_DATA_CONTRIBUTOR).toContain(
+        'Microsoft.Authorization/roleDefinitions'
+      );
     });
   });
 });

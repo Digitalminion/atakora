@@ -10,19 +10,19 @@ import { schema } from '@atakora/lib';
  * SKU name for Server Farm.
  */
 export const ServerFarmSkuName = schema.web.ServerFarmSkuName;
-export type ServerFarmSkuName = typeof ServerFarmSkuName[keyof typeof ServerFarmSkuName];
+export type ServerFarmSkuName = (typeof ServerFarmSkuName)[keyof typeof ServerFarmSkuName];
 
 /**
  * SKU tier for Server Farm.
  */
 export const ServerFarmSkuTier = schema.web.ServerFarmSkuTier;
-export type ServerFarmSkuTier = typeof ServerFarmSkuTier[keyof typeof ServerFarmSkuTier];
+export type ServerFarmSkuTier = (typeof ServerFarmSkuTier)[keyof typeof ServerFarmSkuTier];
 
 /**
  * Kind of Server Farm.
  */
 export const ServerFarmKind = schema.web.ServerFarmKind;
-export type ServerFarmKind = typeof ServerFarmKind[keyof typeof ServerFarmKind];
+export type ServerFarmKind = (typeof ServerFarmKind)[keyof typeof ServerFarmKind];
 
 /**
  * SKU configuration for Server Farm.

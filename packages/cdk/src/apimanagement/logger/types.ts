@@ -11,7 +11,7 @@ import type { IService } from '../core/types';
  * Logger type for API Management.
  */
 export const LoggerType = schema.apimanagement.LoggerType;
-export type LoggerType = typeof LoggerType[keyof typeof LoggerType];
+export type LoggerType = (typeof LoggerType)[keyof typeof LoggerType];
 
 /**
  * Logger credentials for Application Insights.

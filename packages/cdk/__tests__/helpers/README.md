@@ -13,6 +13,7 @@ This directory contains reusable test fixtures and helpers to maintain consisten
 A lightweight implementation of `IResourceGroup` interface for testing resources that require a resource group parent.
 
 **Why use this?**
+
 - The actual `ResourceGroups` class is in `@atakora/cdk/resources` and not exported from main package
 - Implementation uses duck-typing for `IResourceGroup` interface
 - Tests don't need the full ResourceGroup implementation
@@ -153,6 +154,7 @@ private isResourceGroup(construct: any): construct is IResourceGroup {
 ```
 
 **Benefits:**
+
 - ✅ Tests don't need the actual ResourceGroups class
 - ✅ Decouples tests from implementation details
 - ✅ Makes mocking easier
@@ -175,7 +177,7 @@ When adding new fixtures to this file:
 
 ### Example Template:
 
-```typescript
+````typescript
 /**
  * Mock for XYZ resource.
  *
@@ -210,12 +212,10 @@ export class MockXYZ extends Construct {
  * @param options - Optional overrides for default values
  * @returns MockXYZ instance
  */
-export function createMockXYZ(options?: {
-  someProperty?: string;
-}): MockXYZ {
+export function createMockXYZ(options?: { someProperty?: string }): MockXYZ {
   return new MockXYZ(undefined, 'MockXYZ', options);
 }
-```
+````
 
 ## Migration Guide
 
@@ -265,6 +265,7 @@ describe('MyResource', () => {
 ```
 
 **Key Changes:**
+
 1. ✅ Import MockResourceGroup from test-fixtures
 2. ✅ Create App instance in beforeEach
 3. ✅ Pass app as parent to MockResourceGroup

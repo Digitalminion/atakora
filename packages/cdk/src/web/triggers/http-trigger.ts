@@ -203,7 +203,9 @@ export class HttpTrigger {
  * });
  * ```
  */
-export function httpTrigger(config: Partial<Omit<HttpTriggerConfig, 'type'>> = {}): HttpTriggerConfig {
+export function httpTrigger(
+  config: Partial<Omit<HttpTriggerConfig, 'type'>> = {}
+): HttpTriggerConfig {
   return {
     type: 'http',
     ...config,
@@ -273,10 +275,10 @@ export function validateRoute(route: string): boolean {
 
   // Check for invalid patterns
   const invalidPatterns = [
-    /\/\//,           // Double slashes
-    /^\//,            // Leading slash
-    /\/$/,            // Trailing slash
-    /[^\w\-\/{}]/,    // Invalid characters (only alphanumeric, hyphens, slashes, braces)
+    /\/\//, // Double slashes
+    /^\//, // Leading slash
+    /\/$/, // Trailing slash
+    /[^\w\-\/{}]/, // Invalid characters (only alphanumeric, hyphens, slashes, braces)
   ];
 
   return !invalidPatterns.some((pattern) => pattern.test(route));

@@ -1,4 +1,10 @@
-import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder } from '@atakora/cdk';
+import {
+  Construct,
+  Resource,
+  DeploymentScope,
+  ValidationResult,
+  ValidationResultBuilder,
+} from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
 import type {
   ArmPrivateEndpointProps,
@@ -335,7 +341,6 @@ export class ArmPrivateEndpoint extends Resource {
     // Basic ARM structure validation - constructor already validates props
     return builder.build();
   }
-
 
   /**
    * Generates ARM template representation of this resource.

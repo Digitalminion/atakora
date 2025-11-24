@@ -1,6 +1,10 @@
 import { Construct } from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
-import type { AzureFunctionProps, IAzureFunction, IResourceReference } from './azure-function-types';
+import type {
+  AzureFunctionProps,
+  IAzureFunction,
+  IResourceReference,
+} from './azure-function-types';
 import type { FunctionConfig, TriggerConfig } from './types';
 
 /**
@@ -317,14 +321,14 @@ export class AzureFunction extends Construct implements IAzureFunction {
 
     // Add input bindings
     if (this.config.inputBindings) {
-      this.config.inputBindings.forEach(binding => {
+      this.config.inputBindings.forEach((binding) => {
         bindings.push(binding);
       });
     }
 
     // Add output bindings
     if (this.config.outputBindings) {
-      this.config.outputBindings.forEach(binding => {
+      this.config.outputBindings.forEach((binding) => {
         bindings.push(binding);
       });
     }

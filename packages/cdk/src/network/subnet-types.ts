@@ -10,19 +10,21 @@ import { schema } from '@atakora/lib';
  * Network policies for private endpoints.
  */
 export const PrivateEndpointNetworkPolicies = schema.network.PrivateEndpointNetworkPolicies;
-export type PrivateEndpointNetworkPolicies = typeof PrivateEndpointNetworkPolicies[keyof typeof PrivateEndpointNetworkPolicies];
+export type PrivateEndpointNetworkPolicies =
+  (typeof PrivateEndpointNetworkPolicies)[keyof typeof PrivateEndpointNetworkPolicies];
 
 /**
  * Network policies for private link service.
  */
 export const PrivateLinkServiceNetworkPolicies = schema.network.PrivateLinkServiceNetworkPolicies;
-export type PrivateLinkServiceNetworkPolicies = typeof PrivateLinkServiceNetworkPolicies[keyof typeof PrivateLinkServiceNetworkPolicies];
+export type PrivateLinkServiceNetworkPolicies =
+  (typeof PrivateLinkServiceNetworkPolicies)[keyof typeof PrivateLinkServiceNetworkPolicies];
 
 /**
  * Sharing scope for the subnet.
  */
 export const SharingScope = schema.network.SharingScope;
-export type SharingScope = typeof SharingScope[keyof typeof SharingScope];
+export type SharingScope = (typeof SharingScope)[keyof typeof SharingScope];
 
 /**
  * Service endpoint configuration.

@@ -9,10 +9,7 @@
 
 import { Resource, Construct, DeploymentScope } from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
-import type {
-  ArmRedisCacheProps,
-  IRedisCache,
-} from './redis-cache-types';
+import type { ArmRedisCacheProps, IRedisCache } from './redis-cache-types';
 import { RedisCacheSku, SkuFamily } from './redis-cache-types';
 
 /**
@@ -277,7 +274,8 @@ export class ArmRedisCache extends Resource implements IRedisCache {
       location: this.location,
       properties,
       ...(this.zones && this.zones.length > 0 && { zones: this.zones }),
-      ...(this.resourceTags && Object.keys(this.resourceTags).length > 0 && { tags: this.resourceTags }),
+      ...(this.resourceTags &&
+        Object.keys(this.resourceTags).length > 0 && { tags: this.resourceTags }),
     } as ArmResource;
   }
 }

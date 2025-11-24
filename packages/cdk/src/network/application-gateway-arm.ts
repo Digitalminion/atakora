@@ -1,6 +1,15 @@
-import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder } from '@atakora/cdk';
+import {
+  Construct,
+  Resource,
+  DeploymentScope,
+  ValidationResult,
+  ValidationResultBuilder,
+} from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
-import type { ArmApplicationGatewayProps, ApplicationGatewaySku } from './application-gateway-types';
+import type {
+  ArmApplicationGatewayProps,
+  ApplicationGatewaySku,
+} from './application-gateway-types';
 
 /**
  * L1 construct for Azure Application Gateway.

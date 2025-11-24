@@ -279,7 +279,8 @@ describe('cdk/storage/StorageAccounts', () => {
       functionApp = new FunctionApp(resourceGroup, 'Function', {
         plan: createMockPlan(),
         storageAccount: {
-          storageAccountId: '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
+          storageAccountId:
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
           storageAccountName: 'funcstore',
         },
         identity: {

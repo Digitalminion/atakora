@@ -16,13 +16,13 @@ import { schema } from '@atakora/lib';
  * Key Vault SKU names.
  */
 export const KeyVaultSkuName = schema.keyvault.KeyVaultSkuName;
-export type KeyVaultSkuName = typeof KeyVaultSkuName[keyof typeof KeyVaultSkuName];
+export type KeyVaultSkuName = (typeof KeyVaultSkuName)[keyof typeof KeyVaultSkuName];
 
 /**
  * Public network access options.
  */
 export const PublicNetworkAccess = schema.keyvault.PublicNetworkAccess;
-export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
+export type PublicNetworkAccess = (typeof PublicNetworkAccess)[keyof typeof PublicNetworkAccess];
 
 /**
  * Key Vault SKU details.
@@ -43,13 +43,14 @@ export interface KeyVaultSku {
  * Network ACL bypass options.
  */
 export const NetworkAclBypass = schema.keyvault.NetworkAclBypass;
-export type NetworkAclBypass = typeof NetworkAclBypass[keyof typeof NetworkAclBypass];
+export type NetworkAclBypass = (typeof NetworkAclBypass)[keyof typeof NetworkAclBypass];
 
 /**
  * Network ACL default action.
  */
 export const NetworkAclDefaultAction = schema.keyvault.NetworkAclDefaultAction;
-export type NetworkAclDefaultAction = typeof NetworkAclDefaultAction[keyof typeof NetworkAclDefaultAction];
+export type NetworkAclDefaultAction =
+  (typeof NetworkAclDefaultAction)[keyof typeof NetworkAclDefaultAction];
 
 /**
  * IP rule for network ACLs.

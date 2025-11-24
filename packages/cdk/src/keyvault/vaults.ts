@@ -1,6 +1,13 @@
 import { Construct } from '@atakora/cdk';
 import type { IResourceGroup } from '@atakora/cdk';
-import { GrantableResource, ManagedServiceIdentity, ManagedIdentityType, IGrantable, IGrantResult, WellKnownRoleIds } from '@atakora/lib';
+import {
+  GrantableResource,
+  ManagedServiceIdentity,
+  ManagedIdentityType,
+  IGrantable,
+  IGrantResult,
+  WellKnownRoleIds,
+} from '@atakora/lib';
 import { ArmVaults } from './vaults-arm';
 import type {
   VaultsProps,
@@ -674,7 +681,7 @@ export class Vaults extends Construct implements IVault {
       principalId: grantable.principalId,
       principalType: grantable.principalType,
       tenantId: grantable.tenantId,
-      description
+      description,
     });
 
     return new GrantResult(roleAssignment, roleDefinitionId, grantable, this.resourceId);

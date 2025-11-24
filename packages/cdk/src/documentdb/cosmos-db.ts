@@ -1,5 +1,12 @@
 import { Construct, constructIdToPurpose as utilConstructIdToPurpose } from '@atakora/cdk';
-import { GrantableResource, ManagedServiceIdentity, ManagedIdentityType, IGrantable, IGrantResult, WellKnownRoleIds } from '@atakora/lib';
+import {
+  GrantableResource,
+  ManagedServiceIdentity,
+  ManagedIdentityType,
+  IGrantable,
+  IGrantResult,
+  WellKnownRoleIds,
+} from '@atakora/lib';
 import { ArmDatabaseAccounts } from './cosmos-db-arm';
 import type {
   DatabaseAccountsProps,
@@ -493,7 +500,7 @@ export class DatabaseAccounts extends Construct implements IDatabaseAccount {
       principalId: grantable.principalId,
       principalType: grantable.principalType,
       tenantId: grantable.tenantId,
-      description
+      description,
     });
 
     return new GrantResult(roleAssignment, roleDefinitionId, grantable, this.resourceId);

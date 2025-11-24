@@ -220,10 +220,7 @@ export class ApiManagementSubscription extends Construct implements IServiceSubs
     return id.toLowerCase().replace(/[^a-z0-9-]/g, '-');
   }
 
-  private buildScopePath(
-    scopeProduct?: IServiceProduct,
-    scopeApi?: IServiceApi
-  ): string {
+  private buildScopePath(scopeProduct?: IServiceProduct, scopeApi?: IServiceApi): string {
     if (scopeProduct) {
       return `/products/${scopeProduct.productName}`;
     } else if (scopeApi) {

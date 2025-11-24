@@ -10,7 +10,7 @@ import { schema } from '@atakora/lib';
  * CDN SKU name.
  */
 export const CdnSkuName = schema.cdn.CdnSkuName;
-export type CdnSkuName = typeof CdnSkuName[keyof typeof CdnSkuName];
+export type CdnSkuName = (typeof CdnSkuName)[keyof typeof CdnSkuName];
 
 /**
  * CDN SKU configuration.

@@ -5,12 +5,7 @@
  */
 
 import { Resource, ArmResource, ResourceProps, Construct } from '@atakora/lib';
-import {
-  BudgetTimeGrain,
-  BudgetCategory,
-  BudgetFilter,
-  BudgetNotification,
-} from './budget-types';
+import { BudgetTimeGrain, BudgetCategory, BudgetFilter, BudgetNotification } from './budget-types';
 
 /**
  * ARM-level properties for budgets.
@@ -111,9 +106,7 @@ export class BudgetArm extends Resource {
     if (props.timeGrain === BudgetTimeGrain.MONTHLY) {
       const startDate = new Date(props.timePeriod.startDate);
       if (startDate.getDate() !== 1) {
-        throw new Error(
-          'Monthly budget start date must be the first day of the month'
-        );
+        throw new Error('Monthly budget start date must be the first day of the month');
       }
 
       if (props.timePeriod.endDate) {
@@ -122,9 +115,7 @@ export class BudgetArm extends Resource {
         const nextDay = new Date(endDate);
         nextDay.setDate(endDate.getDate() + 1);
         if (nextDay.getDate() !== 1) {
-          throw new Error(
-            'Monthly budget end date must be the last day of the month'
-          );
+          throw new Error('Monthly budget end date must be the last day of the month');
         }
       }
     }
@@ -154,9 +145,7 @@ export class BudgetArm extends Resource {
   private validateNotification(name: string, notification: BudgetNotification): void {
     // Validate notification name
     if (name.length === 0 || name.length > 260) {
-      throw new Error(
-        `Notification name must be 1-260 characters (current: ${name.length})`
-      );
+      throw new Error(`Notification name must be 1-260 characters (current: ${name.length})`);
     }
 
     const namePattern = /^[a-zA-Z0-9_.-]+$/;

@@ -368,10 +368,7 @@ export interface BlobItem {
  * };
  * ```
  */
-export type BlobHandler = (
-  context: AzureFunctionContext,
-  blob: BlobItem
-) => Promise<void> | void;
+export type BlobHandler = (context: AzureFunctionContext, blob: BlobItem) => Promise<void> | void;
 
 // ----------------------------------------------------------------------------
 // Service Bus Queue Trigger

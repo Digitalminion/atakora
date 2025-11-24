@@ -136,7 +136,7 @@ const testCases = [
   },
 ];
 
-async function analyzeBundle(testCase: typeof testCases[0]): Promise<BundleAnalysis | null> {
+async function analyzeBundle(testCase: (typeof testCases)[0]): Promise<BundleAnalysis | null> {
   const entryFile = path.join(TEMP_DIR, `${testCase.name}.ts`);
   const outfile = path.join(OUTPUT_DIR, `${testCase.name}.bundle.js`);
   const metafile = path.join(OUTPUT_DIR, `${testCase.name}.meta.json`);
@@ -164,33 +164,33 @@ async function analyzeBundle(testCase: typeof testCases[0]): Promise<BundleAnaly
       logLevel: 'silent', // Suppress warnings
     });
 
-  // Write metafile for analysis
-  fs.writeFileSync(metafile, JSON.stringify(result.metafile, null, 2));
+    // Write metafile for analysis
+    fs.writeFileSync(metafile, JSON.stringify(result.metafile, null, 2));
 
-  // Get bundle size
-  const bundleContent = fs.readFileSync(outfile, 'utf-8');
-  const bundleSize = Buffer.byteLength(bundleContent);
+    // Get bundle size
+    const bundleContent = fs.readFileSync(outfile, 'utf-8');
+    const bundleSize = Buffer.byteLength(bundleContent);
 
-  // Calculate gzipped size
-  const zlib = await import('zlib');
-  const gzippedSize = zlib.gzipSync(bundleContent).length;
+    // Calculate gzipped size
+    const zlib = await import('zlib');
+    const gzippedSize = zlib.gzipSync(bundleContent).length;
 
-  // Analyze modules from metafile
-  const outputs = result.metafile?.outputs || {};
-  const outputKey = Object.keys(outputs)[0];
-  const inputs = outputs[outputKey]?.inputs || {};
+    // Analyze modules from metafile
+    const outputs = result.metafile?.outputs || {};
+    const outputKey = Object.keys(outputs)[0];
+    const inputs = outputs[outputKey]?.inputs || {};
 
-  let fromCdk = 0;
-  let fromLib = 0;
-  const totalModules = Object.keys(inputs).length;
+    let fromCdk = 0;
+    let fromLib = 0;
+    const totalModules = Object.keys(inputs).length;
 
-  Object.keys(inputs).forEach((input) => {
-    if (input.includes('packages/cdk/')) {
-      fromCdk++;
-    } else if (input.includes('packages/lib/') || input.includes('@atakora/lib')) {
-      fromLib++;
-    }
-  });
+    Object.keys(inputs).forEach((input) => {
+      if (input.includes('packages/cdk/')) {
+        fromCdk++;
+      } else if (input.includes('packages/lib/') || input.includes('@atakora/lib')) {
+        fromLib++;
+      }
+    });
 
     return {
       name: testCase.name,
@@ -297,7 +297,10 @@ For total bundle size including @atakora/lib, add approximately the lib package 
   }
 
   if (networkSingle && networkNamespace) {
-    const savings = ((1 - networkSingle.size.gzipped / networkNamespace.size.gzipped) * 100).toFixed(1);
+    const savings = (
+      (1 - networkSingle.size.gzipped / networkNamespace.size.gzipped) *
+      100
+    ).toFixed(1);
     markdown += `### Single Resource vs Full Namespace (Network)\n\n`;
     markdown += `Importing a single network resource reduces bundle size by **${savings}%** compared to importing the entire namespace.\n`;
     markdown += `- Full Namespace: ${(networkNamespace.size.gzipped / 1024).toFixed(2)} KB\n`;
@@ -305,7 +308,10 @@ For total bundle size including @atakora/lib, add approximately the lib package 
   }
 
   if (storageSingle && storageNamespace) {
-    const savings = ((1 - storageSingle.size.gzipped / storageNamespace.size.gzipped) * 100).toFixed(1);
+    const savings = (
+      (1 - storageSingle.size.gzipped / storageNamespace.size.gzipped) *
+      100
+    ).toFixed(1);
     markdown += `### Single Resource vs Full Namespace (Storage)\n\n`;
     markdown += `Importing a single storage resource reduces bundle size by **${savings}%** compared to importing the entire namespace.\n`;
     markdown += `- Full Namespace: ${(storageNamespace.size.gzipped / 1024).toFixed(2)} KB\n`;

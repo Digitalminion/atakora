@@ -22,7 +22,13 @@ export type RateLimitStrategy = 'fixed-window' | 'sliding-window' | 'token-bucke
 /**
  * Rate limit scope types
  */
-export type RateLimitScope = 'global' | 'per-ip' | 'per-user' | 'per-api-key' | 'per-operation' | 'per-tenant';
+export type RateLimitScope =
+  | 'global'
+  | 'per-ip'
+  | 'per-user'
+  | 'per-api-key'
+  | 'per-operation'
+  | 'per-tenant';
 
 /**
  * Time period for rate limits
@@ -193,9 +199,7 @@ export class RateLimiter {
    * @param config - Fixed window configuration
    * @returns Rate limit configuration
    */
-  static fixedWindow(
-    config: Omit<FixedWindowConfig, 'strategy'>
-  ): FixedWindowConfig {
+  static fixedWindow(config: Omit<FixedWindowConfig, 'strategy'>): FixedWindowConfig {
     return {
       strategy: 'fixed-window',
       includeHeaders: true,
@@ -212,9 +216,7 @@ export class RateLimiter {
    * @param config - Sliding window configuration
    * @returns Rate limit configuration
    */
-  static slidingWindow(
-    config: Omit<SlidingWindowConfig, 'strategy'>
-  ): SlidingWindowConfig {
+  static slidingWindow(config: Omit<SlidingWindowConfig, 'strategy'>): SlidingWindowConfig {
     return {
       strategy: 'sliding-window',
       windowSize: 10,
@@ -232,9 +234,7 @@ export class RateLimiter {
    * @param config - Token bucket configuration
    * @returns Rate limit configuration
    */
-  static tokenBucket(
-    config: Omit<TokenBucketConfig, 'strategy'>
-  ): TokenBucketConfig {
+  static tokenBucket(config: Omit<TokenBucketConfig, 'strategy'>): TokenBucketConfig {
     return {
       strategy: 'token-bucket',
       includeHeaders: true,
@@ -251,9 +251,7 @@ export class RateLimiter {
    * @param config - Leaky bucket configuration
    * @returns Rate limit configuration
    */
-  static leakyBucket(
-    config: Omit<LeakyBucketConfig, 'strategy'>
-  ): LeakyBucketConfig {
+  static leakyBucket(config: Omit<LeakyBucketConfig, 'strategy'>): LeakyBucketConfig {
     return {
       strategy: 'leaky-bucket',
       includeHeaders: true,
@@ -549,7 +547,11 @@ export class RateLimitResponse {
 
     return {
       description: 'Rate limit exceeded',
-      headers: RateLimitHeaderBuilder.tooManyRequests(retryAfter, config.limit, Date.now() + retryAfter * 1000),
+      headers: RateLimitHeaderBuilder.tooManyRequests(
+        retryAfter,
+        config.limit,
+        Date.now() + retryAfter * 1000
+      ),
       content: {
         'application/json': {
           schema: {

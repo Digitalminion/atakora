@@ -235,12 +235,12 @@ export function validateCronExpression(schedule: string): boolean {
 
   // Validate each field (basic validation)
   const fieldPatterns = [
-    /^(\*|(\d+)|(\d+-\d+)|(\d+(,\d+)*)|(\*\/\d+))$/,  // second
-    /^(\*|(\d+)|(\d+-\d+)|(\d+(,\d+)*)|(\*\/\d+))$/,  // minute
-    /^(\*|(\d+)|(\d+-\d+)|(\d+(,\d+)*)|(\*\/\d+))$/,  // hour
-    /^(\*|(\d+)|(\d+-\d+)|(\d+(,\d+)*)|(\*\/\d+)|(\?))$/,  // day
-    /^(\*|(\d+)|(\d+-\d+)|(\d+(,\d+)*)|(\*\/\d+))$/,  // month
-    /^(\*|(\d+)|(\d+-\d+)|(\d+(,\d+)*)|(\*\/\d+)|(\?))$/,  // day-of-week
+    /^(\*|(\d+)|(\d+-\d+)|(\d+(,\d+)*)|(\*\/\d+))$/, // second
+    /^(\*|(\d+)|(\d+-\d+)|(\d+(,\d+)*)|(\*\/\d+))$/, // minute
+    /^(\*|(\d+)|(\d+-\d+)|(\d+(,\d+)*)|(\*\/\d+))$/, // hour
+    /^(\*|(\d+)|(\d+-\d+)|(\d+(,\d+)*)|(\*\/\d+)|(\?))$/, // day
+    /^(\*|(\d+)|(\d+-\d+)|(\d+(,\d+)*)|(\*\/\d+))$/, // month
+    /^(\*|(\d+)|(\d+-\d+)|(\d+(,\d+)*)|(\*\/\d+)|(\?))$/, // day-of-week
   ];
 
   return parts.every((part, index) => {

@@ -20,7 +20,7 @@ export type { IServiceBusNamespace } from './service-bus-namespace-types';
 
 // Re-export EntityStatus enum from schema
 export const EntityStatus = schema.servicebus.EntityStatus;
-export type EntityStatus = typeof EntityStatus[keyof typeof EntityStatus];
+export type EntityStatus = (typeof EntityStatus)[keyof typeof EntityStatus];
 
 /**
  * Properties for ArmServiceBusQueue (L1 construct).

@@ -67,9 +67,7 @@ export type {
 /**
  * Service Bus enums
  */
-export {
-  ServiceBusSku,
-} from './service-bus-namespace-types';
+export { ServiceBusSku } from './service-bus-namespace-types';
 
 // ============================================================================
 // SERVICE BUS TOPIC EXPORTS
@@ -97,10 +95,7 @@ export type {
 /**
  * Service Bus Topic enums
  */
-export {
-  EntityStatus,
-  FilterType,
-} from './service-bus-topic-types';
+export { EntityStatus, FilterType } from './service-bus-topic-types';
 
 // ============================================================================
 // SERVICE BUS SUBSCRIPTION EXPORTS

@@ -227,7 +227,7 @@ describe('cdk/keyvault/Vaults - Grant Methods', () => {
 
       // Each grant should create a unique child construct
       const children = vault.node.children;
-      const grantChildren = children.filter(c => c.node.id.startsWith('Grant'));
+      const grantChildren = children.filter((c) => c.node.id.startsWith('Grant'));
       expect(grantChildren.length).toBeGreaterThanOrEqual(3);
     });
   });

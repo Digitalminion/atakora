@@ -1,7 +1,11 @@
 import { Construct } from '@atakora/cdk';
 import type { IResourceGroup } from '@atakora/cdk';
 import { ArmAutoscaleSettings } from './autoscale-setting-arm';
-import type { AutoscaleSettingsProps, IAutoscaleSetting, AutoscaleProfile } from './autoscale-setting-types';
+import type {
+  AutoscaleSettingsProps,
+  IAutoscaleSetting,
+  AutoscaleProfile,
+} from './autoscale-setting-types';
 
 /**
  * L2 construct for Azure Autoscale Setting.

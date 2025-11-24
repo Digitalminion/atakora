@@ -1,4 +1,12 @@
-import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder, ValidationError, isValidPortRange } from '@atakora/cdk';
+import {
+  Construct,
+  Resource,
+  DeploymentScope,
+  ValidationResult,
+  ValidationResultBuilder,
+  ValidationError,
+  isValidPortRange,
+} from '@atakora/cdk';
 import type { ArmNetworkSecurityGroupProps, SecurityRule } from './network-security-group-types';
 import type { ArmResource } from '@atakora/cdk';
 

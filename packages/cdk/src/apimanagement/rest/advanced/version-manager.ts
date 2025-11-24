@@ -29,20 +29,20 @@ export interface ApiVersioningConfig {
  * Versioning strategy types
  */
 export type VersioningStrategy =
-  | 'path'                // /v1/users, /v2/users
-  | 'header'              // Api-Version: 2023-01-01
-  | 'queryParameter'      // ?api-version=2
-  | 'contentNegotiation'  // Accept: application/vnd.api.v2+json
-  | 'custom';             // Custom extraction logic
+  | 'path' // /v1/users, /v2/users
+  | 'header' // Api-Version: 2023-01-01
+  | 'queryParameter' // ?api-version=2
+  | 'contentNegotiation' // Accept: application/vnd.api.v2+json
+  | 'custom'; // Custom extraction logic
 
 /**
  * Version format types
  */
 export type VersionFormat =
-  | 'numeric'       // 1, 2, 3
-  | 'semver'        // 1.0.0, 2.1.0
-  | 'date'          // 2023-01-01
-  | 'prefixed';     // v1, v2
+  | 'numeric' // 1, 2, 3
+  | 'semver' // 1.0.0, 2.1.0
+  | 'date' // 2023-01-01
+  | 'prefixed'; // v1, v2
 
 /**
  * Deprecated version configuration
@@ -358,9 +358,7 @@ export class ApiVersionManager {
     versions: readonly string[],
     strategy: VersioningStrategy = 'path'
   ): readonly IRestOperation[] {
-    return versions.map(version =>
-      this.applyVersionToOperation(operation, version, strategy)
-    );
+    return versions.map((version) => this.applyVersionToOperation(operation, version, strategy));
   }
 }
 
@@ -393,7 +391,7 @@ export class VersionDeprecationManager {
    * @returns True if version is deprecated
    */
   isDeprecated(version: string): boolean {
-    return this.config.deprecatedVersions?.some(v => v.version === version) || false;
+    return this.config.deprecatedVersions?.some((v) => v.version === version) || false;
   }
 
   /**
@@ -403,7 +401,7 @@ export class VersionDeprecationManager {
    * @returns Deprecation info or undefined if not deprecated
    */
   getDeprecationInfo(version: string): DeprecatedVersion | undefined {
-    return this.config.deprecatedVersions?.find(v => v.version === version);
+    return this.config.deprecatedVersions?.find((v) => v.version === version);
   }
 
   /**
@@ -448,7 +446,7 @@ export class VersionDeprecationManager {
     if (!info) return {};
 
     const headers: Record<string, string> = {
-      'Deprecation': 'true',
+      Deprecation: 'true',
       'X-API-Deprecation-Date': info.deprecatedAt.toISOString(),
     };
 
@@ -494,7 +492,7 @@ export class VersionDeprecationManager {
     const existingDeprecated = this.config.deprecatedVersions || [];
 
     // Remove existing deprecation for this version if present
-    const filtered = existingDeprecated.filter(d => d.version !== version);
+    const filtered = existingDeprecated.filter((d) => d.version !== version);
 
     // This is a limitation of readonly config - in practice you'd need
     // to create a new manager with updated config

@@ -83,12 +83,11 @@ export interface MockPlan {
  * @param options - Optional overrides
  * @returns Mock plan object
  */
-export function createMockPlan(options?: {
-  planId?: string;
-  location?: string;
-}): MockPlan {
+export function createMockPlan(options?: { planId?: string; location?: string }): MockPlan {
   return {
-    planId: options?.planId ?? '/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.Web/serverfarms/test-plan',
+    planId:
+      options?.planId ??
+      '/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.Web/serverfarms/test-plan',
     location: options?.location ?? 'eastus',
   };
 }
@@ -112,7 +111,9 @@ export function createMockStorage(options?: {
   storageAccountName?: string;
 }): MockStorage {
   return {
-    storageAccountId: options?.storageAccountId ?? '/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/teststorage',
+    storageAccountId:
+      options?.storageAccountId ??
+      '/subscriptions/test-sub/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/teststorage',
     storageAccountName: options?.storageAccountName ?? 'teststorage',
   };
 }

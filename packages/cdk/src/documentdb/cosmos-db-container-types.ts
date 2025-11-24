@@ -15,37 +15,38 @@ import type { ThroughputConfig } from './cosmos-db-database-types';
  * Partition key version.
  */
 export const PartitionKeyVersion = schema.documentdb.PartitionKeyVersion;
-export type PartitionKeyVersion = typeof PartitionKeyVersion[keyof typeof PartitionKeyVersion];
+export type PartitionKeyVersion = (typeof PartitionKeyVersion)[keyof typeof PartitionKeyVersion];
 
 /**
  * Indexing mode.
  */
 export const IndexingMode = schema.documentdb.IndexingMode;
-export type IndexingMode = typeof IndexingMode[keyof typeof IndexingMode];
+export type IndexingMode = (typeof IndexingMode)[keyof typeof IndexingMode];
 
 /**
  * Index kind.
  */
 export const IndexKind = schema.documentdb.IndexKind;
-export type IndexKind = typeof IndexKind[keyof typeof IndexKind];
+export type IndexKind = (typeof IndexKind)[keyof typeof IndexKind];
 
 /**
  * Data type for indexes.
  */
 export const DataType = schema.documentdb.DataType;
-export type DataType = typeof DataType[keyof typeof DataType];
+export type DataType = (typeof DataType)[keyof typeof DataType];
 
 /**
  * Spatial index type.
  */
 export const SpatialType = schema.documentdb.SpatialType;
-export type SpatialType = typeof SpatialType[keyof typeof SpatialType];
+export type SpatialType = (typeof SpatialType)[keyof typeof SpatialType];
 
 /**
  * Conflict resolution mode.
  */
 export const ConflictResolutionMode = schema.documentdb.ConflictResolutionMode;
-export type ConflictResolutionMode = typeof ConflictResolutionMode[keyof typeof ConflictResolutionMode];
+export type ConflictResolutionMode =
+  (typeof ConflictResolutionMode)[keyof typeof ConflictResolutionMode];
 
 /**
  * Composite index path.

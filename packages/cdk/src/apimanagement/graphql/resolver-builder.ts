@@ -370,9 +370,7 @@ export class GraphQLResolverBuilder {
       }
     }
 
-    return Object.keys(fields).length > 0
-      ? { name: 'Subscription', fields }
-      : undefined;
+    return Object.keys(fields).length > 0 ? { name: 'Subscription', fields } : undefined;
   }
 
   /**

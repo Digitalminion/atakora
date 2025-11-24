@@ -74,7 +74,8 @@ export class CdnEndpoints extends Construct implements ICdnEndpoint {
       contentTypesToCompress: props.contentTypesToCompress ?? DEFAULT_COMPRESSIBLE_CONTENT_TYPES,
       isHttpAllowed: props.isHttpAllowed ?? false, // Default to HTTPS only for security
       isHttpsAllowed: props.isHttpsAllowed ?? true,
-      queryStringCachingBehavior: props.queryStringCachingBehavior ?? ('IgnoreQueryString' as QueryStringCachingBehavior),
+      queryStringCachingBehavior:
+        props.queryStringCachingBehavior ?? ('IgnoreQueryString' as QueryStringCachingBehavior),
       optimizationType: props.optimizationType ?? ('GeneralWebDelivery' as OptimizationType),
       isCompressionEnabled: props.isCompressionEnabled ?? true,
       tags: this.tags,
@@ -133,10 +134,7 @@ export class CdnEndpoints extends Construct implements ICdnEndpoint {
     let current: Construct | undefined = this.node.scope;
 
     while (current) {
-      if (
-        current &&
-        typeof (current as any).generateResourceName === 'function'
-      ) {
+      if (current && typeof (current as any).generateResourceName === 'function') {
         return current;
       }
       current = current.node.scope;

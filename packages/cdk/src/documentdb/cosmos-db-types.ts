@@ -21,10 +21,11 @@ export const ConsistencyLevel = schema.documentdb.ConsistencyLevel;
 export const PublicNetworkAccess = schema.documentdb.PublicNetworkAccess;
 
 // Re-export types for TypeScript
-export type CosmosDbKind = typeof CosmosDbKind[keyof typeof CosmosDbKind];
-export type DatabaseAccountOfferType = typeof DatabaseAccountOfferType[keyof typeof DatabaseAccountOfferType];
-export type ConsistencyLevel = typeof ConsistencyLevel[keyof typeof ConsistencyLevel];
-export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
+export type CosmosDbKind = (typeof CosmosDbKind)[keyof typeof CosmosDbKind];
+export type DatabaseAccountOfferType =
+  (typeof DatabaseAccountOfferType)[keyof typeof DatabaseAccountOfferType];
+export type ConsistencyLevel = (typeof ConsistencyLevel)[keyof typeof ConsistencyLevel];
+export type PublicNetworkAccess = (typeof PublicNetworkAccess)[keyof typeof PublicNetworkAccess];
 
 /**
  * Consistency policy configuration.

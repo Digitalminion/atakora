@@ -160,7 +160,7 @@ export class OpenApiImporter {
    */
   static async fromFile(
     filePath: string,
-    options: OpenApiImporterOptions = {},
+    options: OpenApiImporterOptions = {}
   ): Promise<OpenApiImporter> {
     const absolutePath = path.resolve(filePath);
     const content = await fs.readFile(absolutePath, 'utf-8');
@@ -173,9 +173,7 @@ export class OpenApiImporter {
     } else if (filePath.endsWith('.json')) {
       spec = JSON.parse(content) as OpenApiDefinition;
     } else {
-      throw new Error(
-        `Unsupported file format: ${filePath}. Use .yaml, .yml, or .json`,
-      );
+      throw new Error(`Unsupported file format: ${filePath}. Use .yaml, .yml, or .json`);
     }
 
     return new OpenApiImporter(spec, {
@@ -198,7 +196,7 @@ export class OpenApiImporter {
    */
   static fromObject(
     spec: OpenApiDefinition | string,
-    options: OpenApiImporterOptions = {},
+    options: OpenApiImporterOptions = {}
   ): OpenApiImporter {
     const parsedSpec = typeof spec === 'string' ? JSON.parse(spec) : spec;
     return new OpenApiImporter(parsedSpec, options);
@@ -223,10 +221,7 @@ export class OpenApiImporter {
     if (this.options.validate) {
       const validation = this.validate();
       if (!validation.valid) {
-        throw new OpenApiValidationError(
-          'Invalid OpenAPI specification',
-          validation.errors,
-        );
+        throw new OpenApiValidationError('Invalid OpenAPI specification', validation.errors);
       }
     }
 
@@ -236,24 +231,16 @@ export class OpenApiImporter {
     for (const [pathTemplate, pathItem] of Object.entries(this.spec.paths)) {
       if (!pathItem) continue;
 
-      const pathOperations = await this.convertPathItem(
-        pathTemplate,
-        pathItem,
-      );
+      const pathOperations = await this.convertPathItem(pathTemplate, pathItem);
       operations.push(...pathOperations);
     }
 
     // Handle Azure x-ms-paths if present
     if (this.spec['x-ms-paths']) {
-      for (const [pathTemplate, pathItem] of Object.entries(
-        this.spec['x-ms-paths'],
-      )) {
+      for (const [pathTemplate, pathItem] of Object.entries(this.spec['x-ms-paths'])) {
         if (!pathItem) continue;
 
-        const pathOperations = await this.convertPathItem(
-          pathTemplate,
-          pathItem,
-        );
+        const pathOperations = await this.convertPathItem(pathTemplate, pathItem);
         operations.push(...pathOperations);
       }
     }
@@ -344,20 +331,19 @@ export class OpenApiImporter {
    */
   private async convertPathItem(
     pathTemplate: string,
-    pathItem: OpenApiPathItem,
+    pathItem: OpenApiPathItem
   ): Promise<IRestOperation[]> {
     const operations: IRestOperation[] = [];
-    const methods: Array<{ key: keyof OpenApiPathItem; method: HttpMethod }> =
-      [
-        { key: 'get', method: 'GET' },
-        { key: 'put', method: 'PUT' },
-        { key: 'post', method: 'POST' },
-        { key: 'delete', method: 'DELETE' },
-        { key: 'options', method: 'OPTIONS' },
-        { key: 'head', method: 'HEAD' },
-        { key: 'patch', method: 'PATCH' },
-        { key: 'trace', method: 'TRACE' },
-      ];
+    const methods: Array<{ key: keyof OpenApiPathItem; method: HttpMethod }> = [
+      { key: 'get', method: 'GET' },
+      { key: 'put', method: 'PUT' },
+      { key: 'post', method: 'POST' },
+      { key: 'delete', method: 'DELETE' },
+      { key: 'options', method: 'OPTIONS' },
+      { key: 'head', method: 'HEAD' },
+      { key: 'patch', method: 'PATCH' },
+      { key: 'trace', method: 'TRACE' },
+    ];
 
     for (const { key, method } of methods) {
       const operation = pathItem[key] as OpenApiOperation | undefined;
@@ -367,7 +353,7 @@ export class OpenApiImporter {
         method,
         pathTemplate,
         operation,
-        pathItem,
+        pathItem
       );
       operations.push(convertedOperation);
     }
@@ -382,17 +368,14 @@ export class OpenApiImporter {
     method: HttpMethod,
     pathTemplate: string,
     operation: OpenApiOperation,
-    pathItem: OpenApiPathItem,
+    pathItem: OpenApiPathItem
   ): Promise<IRestOperation> {
     // Merge path-level and operation-level parameters
-    const allParameters = [
-      ...(pathItem.parameters || []),
-      ...(operation.parameters || []),
-    ];
+    const allParameters = [...(pathItem.parameters || []), ...(operation.parameters || [])];
 
     // Resolve references in parameters
     const resolvedParameters = await Promise.all(
-      allParameters.map((param) => this.resolveReference(param)),
+      allParameters.map((param) => this.resolveReference(param))
     );
 
     return {
@@ -419,7 +402,7 @@ export class OpenApiImporter {
    * Extract path parameters from parameter list
    */
   private async extractPathParameters(
-    parameters: ParameterObject[],
+    parameters: ParameterObject[]
   ): Promise<PathParameterDefinition | undefined> {
     const pathParams = parameters.filter((p) => p.in === 'path');
     if (pathParams.length === 0) return undefined;
@@ -451,7 +434,7 @@ export class OpenApiImporter {
    * Extract query parameters from parameter list
    */
   private async extractQueryParameters(
-    parameters: ParameterObject[],
+    parameters: ParameterObject[]
   ): Promise<QueryParameterDefinition | undefined> {
     const queryParams = parameters.filter((p) => p.in === 'query');
     if (queryParams.length === 0) return undefined;
@@ -484,7 +467,7 @@ export class OpenApiImporter {
    * Extract header parameters from parameter list
    */
   private async extractHeaderParameters(
-    parameters: ParameterObject[],
+    parameters: ParameterObject[]
   ): Promise<HeaderParameterDefinition | undefined> {
     const headerParams = parameters.filter((p) => p.in === 'header');
     if (headerParams.length === 0) return undefined;
@@ -511,7 +494,7 @@ export class OpenApiImporter {
    * Convert OpenAPI schema to ParameterSchema
    */
   private async convertToParameterSchema(
-    schema: SchemaObject | ReferenceObject | undefined,
+    schema: SchemaObject | ReferenceObject | undefined
   ): Promise<ParameterSchema> {
     if (!schema) {
       return { type: 'string' };
@@ -529,9 +512,7 @@ export class OpenApiImporter {
       minLength: resolved.minLength,
       maxLength: resolved.maxLength,
       pattern: resolved.pattern,
-      items: resolved.items
-        ? await this.convertToParameterSchema(resolved.items)
-        : undefined,
+      items: resolved.items ? await this.convertToParameterSchema(resolved.items) : undefined,
       properties: resolved.properties
         ? await this.convertPropertiesMap(resolved.properties)
         : undefined,
@@ -545,7 +526,7 @@ export class OpenApiImporter {
    * Convert properties map recursively
    */
   private async convertPropertiesMap(
-    properties: Record<string, SchemaObject | ReferenceObject>,
+    properties: Record<string, SchemaObject | ReferenceObject>
   ): Promise<Record<string, ParameterSchema>> {
     const result: Record<string, ParameterSchema> = {};
 
@@ -560,14 +541,12 @@ export class OpenApiImporter {
    * Convert OpenAPI request body to RequestBodyDefinition
    */
   private async convertRequestBody(
-    requestBody: RequestBodyObject | ReferenceObject,
+    requestBody: RequestBodyObject | ReferenceObject
   ): Promise<RequestBodyDefinition> {
     const resolved = await this.resolveReference(requestBody);
     const contentEntries: Array<[string, MediaTypeSchema]> = [];
 
-    for (const [mediaType, mediaTypeObject] of Object.entries(
-      resolved.content,
-    )) {
+    for (const [mediaType, mediaTypeObject] of Object.entries(resolved.content)) {
       const schema = mediaTypeObject.schema
         ? await this.convertToJsonSchema(mediaTypeObject.schema)
         : undefined;
@@ -592,9 +571,7 @@ export class OpenApiImporter {
   /**
    * Convert OpenAPI schema to JsonSchema
    */
-  private async convertToJsonSchema(
-    schema: SchemaObject | ReferenceObject,
-  ): Promise<JsonSchema> {
+  private async convertToJsonSchema(schema: SchemaObject | ReferenceObject): Promise<JsonSchema> {
     const resolved = await this.resolveReference(schema);
 
     return {
@@ -606,14 +583,10 @@ export class OpenApiImporter {
       multipleOf: resolved.multipleOf,
       maximum: resolved.maximum,
       exclusiveMaximum:
-        typeof resolved.exclusiveMaximum === 'boolean'
-          ? resolved.exclusiveMaximum
-          : undefined,
+        typeof resolved.exclusiveMaximum === 'boolean' ? resolved.exclusiveMaximum : undefined,
       minimum: resolved.minimum,
       exclusiveMinimum:
-        typeof resolved.exclusiveMinimum === 'boolean'
-          ? resolved.exclusiveMinimum
-          : undefined,
+        typeof resolved.exclusiveMinimum === 'boolean' ? resolved.exclusiveMinimum : undefined,
       maxLength: resolved.maxLength,
       minLength: resolved.minLength,
       pattern: resolved.pattern,
@@ -633,9 +606,7 @@ export class OpenApiImporter {
           : resolved.additionalProperties
             ? await this.convertToJsonSchema(resolved.additionalProperties)
             : undefined,
-      items: resolved.items
-        ? await this.convertToJsonSchema(resolved.items)
-        : undefined,
+      items: resolved.items ? await this.convertToJsonSchema(resolved.items) : undefined,
       oneOf: resolved.oneOf
         ? await Promise.all(resolved.oneOf.map((s) => this.convertToJsonSchema(s)))
         : undefined,
@@ -645,9 +616,7 @@ export class OpenApiImporter {
       allOf: resolved.allOf
         ? await Promise.all(resolved.allOf.map((s) => this.convertToJsonSchema(s)))
         : undefined,
-      not: resolved.not
-        ? await this.convertToJsonSchema(resolved.not)
-        : undefined,
+      not: resolved.not ? await this.convertToJsonSchema(resolved.not) : undefined,
       nullable: resolved.nullable,
       discriminator: resolved.discriminator,
       readOnly: resolved.readOnly,
@@ -664,7 +633,7 @@ export class OpenApiImporter {
    * Convert JSON Schema properties map recursively
    */
   private async convertJsonSchemaPropertiesMap(
-    properties: Record<string, SchemaObject | ReferenceObject>,
+    properties: Record<string, SchemaObject | ReferenceObject>
   ): Promise<Record<string, JsonSchema>> {
     const result: Record<string, JsonSchema> = {};
 
@@ -678,9 +647,7 @@ export class OpenApiImporter {
   /**
    * Convert OpenAPI responses to ResponseDefinition
    */
-  private async convertResponses(
-    responses: ResponsesObject,
-  ): Promise<ResponseDefinition> {
+  private async convertResponses(responses: ResponsesObject): Promise<ResponseDefinition> {
     const convertedEntries: Array<[string | number, ResponseSchema]> = [];
 
     for (const [statusCode, response] of Object.entries(responses)) {
@@ -690,9 +657,7 @@ export class OpenApiImporter {
       const contentEntries: Array<[string, MediaTypeSchema]> = [];
 
       if (resolved.content) {
-        for (const [mediaType, mediaTypeObject] of Object.entries(
-          resolved.content,
-        )) {
+        for (const [mediaType, mediaTypeObject] of Object.entries(resolved.content)) {
           const schema = mediaTypeObject.schema
             ? await this.convertToJsonSchema(mediaTypeObject.schema)
             : undefined;
@@ -709,7 +674,10 @@ export class OpenApiImporter {
 
       const responseSchema: ResponseSchema = {
         description: resolved.description,
-        content: contentEntries.length > 0 ? (Object.fromEntries(contentEntries) as ContentTypeDefinition) : undefined,
+        content:
+          contentEntries.length > 0
+            ? (Object.fromEntries(contentEntries) as ContentTypeDefinition)
+            : undefined,
         headers: resolved.headers as Record<string, HeaderDefinition> | undefined,
         links: resolved.links,
       };
@@ -748,9 +716,7 @@ export class OpenApiImporter {
     // Handle external references
     if (ref.startsWith('http://') || ref.startsWith('https://')) {
       if (!this.options.allowExternalReferences) {
-        throw new Error(
-          `External references are disabled for Government cloud safety: ${ref}`,
-        );
+        throw new Error(`External references are disabled for Government cloud safety: ${ref}`);
       }
       throw new Error(`HTTP/HTTPS reference resolution not implemented: ${ref}`);
     }
@@ -794,7 +760,7 @@ export class OpenApiImporter {
 export class OpenApiValidationError extends Error {
   constructor(
     message: string,
-    public readonly errors: readonly ValidationError[],
+    public readonly errors: readonly ValidationError[]
   ) {
     super(message);
     this.name = 'OpenApiValidationError';

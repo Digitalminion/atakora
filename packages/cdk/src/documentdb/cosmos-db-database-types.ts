@@ -14,7 +14,7 @@ import type { IDatabaseAccount } from './cosmos-db-types';
  * Throughput mode for database.
  */
 export const ThroughputMode = schema.documentdb.ThroughputMode;
-export type ThroughputMode = typeof ThroughputMode[keyof typeof ThroughputMode];
+export type ThroughputMode = (typeof ThroughputMode)[keyof typeof ThroughputMode];
 
 /**
  * Throughput configuration for database.

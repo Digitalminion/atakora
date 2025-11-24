@@ -1,4 +1,10 @@
-import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder } from '@atakora/cdk';
+import {
+  Construct,
+  Resource,
+  DeploymentScope,
+  ValidationResult,
+  ValidationResultBuilder,
+} from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
 import type { ArmPublicDnsZoneProps } from './public-dns-zone-types';
 import { DnsZoneType } from './public-dns-zone-types';
@@ -112,7 +118,8 @@ export class ArmPublicDnsZone extends Resource {
     }
 
     // Validate DNS zone name format
-    const dnsNamePattern = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    const dnsNamePattern =
+      /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     if (!dnsNamePattern.test(props.zoneName)) {
       throw new Error(
         `Invalid DNS zone name '${props.zoneName}'. ` +

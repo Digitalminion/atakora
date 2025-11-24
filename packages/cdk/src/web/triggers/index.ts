@@ -33,7 +33,14 @@
  */
 
 // HTTP Trigger
-export { HttpTrigger, httpTrigger, anonymousGet, anonymousPost, validateRoute, extractRouteParams } from './http-trigger';
+export {
+  HttpTrigger,
+  httpTrigger,
+  anonymousGet,
+  anonymousPost,
+  validateRoute,
+  extractRouteParams,
+} from './http-trigger';
 
 // Timer Trigger
 export {
@@ -83,7 +90,10 @@ export { RabbitMQTrigger, rabbitMQTrigger } from './rabbitmq-trigger';
 export { RedisStreamTrigger, redisStreamTrigger } from './redis-stream-trigger';
 
 // Durable Orchestrator Trigger
-export { DurableOrchestratorTrigger, durableOrchestratorTrigger } from './durable-orchestrator-trigger';
+export {
+  DurableOrchestratorTrigger,
+  durableOrchestratorTrigger,
+} from './durable-orchestrator-trigger';
 
 // Durable Activity Trigger
 export { DurableActivityTrigger, durableActivityTrigger } from './durable-activity-trigger';

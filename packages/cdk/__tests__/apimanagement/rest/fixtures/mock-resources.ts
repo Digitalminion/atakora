@@ -5,12 +5,7 @@
  * to support testing without actual Azure dependencies.
  */
 
-import type {
-  IApiManagement,
-  IFunctionApp,
-  IWebApp,
-  IContainerApp,
-} from '../utils';
+import type { IApiManagement, IFunctionApp, IWebApp, IContainerApp } from '../utils';
 
 // ============================================================================
 // Mock API Management Services

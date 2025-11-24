@@ -14,7 +14,8 @@ import { schema } from '@atakora/lib';
  * Controls whether network policies are applied to private endpoints in a subnet.
  */
 export const PrivateEndpointNetworkPolicies = schema.network.PrivateEndpointNetworkPolicies;
-export type PrivateEndpointNetworkPolicies = typeof PrivateEndpointNetworkPolicies[keyof typeof PrivateEndpointNetworkPolicies];
+export type PrivateEndpointNetworkPolicies =
+  (typeof PrivateEndpointNetworkPolicies)[keyof typeof PrivateEndpointNetworkPolicies];
 
 /**
  * Private link service network policies.
@@ -24,7 +25,8 @@ export type PrivateEndpointNetworkPolicies = typeof PrivateEndpointNetworkPolici
  * Controls whether network policies are applied to private link services in a subnet.
  */
 export const PrivateLinkServiceNetworkPolicies = schema.network.PrivateLinkServiceNetworkPolicies;
-export type PrivateLinkServiceNetworkPolicies = typeof PrivateLinkServiceNetworkPolicies[keyof typeof PrivateLinkServiceNetworkPolicies];
+export type PrivateLinkServiceNetworkPolicies =
+  (typeof PrivateLinkServiceNetworkPolicies)[keyof typeof PrivateLinkServiceNetworkPolicies];
 
 /**
  * Private Link Service Connection configuration.

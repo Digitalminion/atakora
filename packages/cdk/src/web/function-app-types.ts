@@ -12,31 +12,31 @@ import type { ManagedServiceIdentity } from '@atakora/lib';
  * Function runtime for Azure Functions.
  */
 export const FunctionRuntime = schema.web.FunctionRuntime;
-export type FunctionRuntime = typeof FunctionRuntime[keyof typeof FunctionRuntime];
+export type FunctionRuntime = (typeof FunctionRuntime)[keyof typeof FunctionRuntime];
 
 /**
  * Authentication level for HTTP triggers.
  */
 export const AuthLevel = schema.web.AuthLevel;
-export type AuthLevel = typeof AuthLevel[keyof typeof AuthLevel];
+export type AuthLevel = (typeof AuthLevel)[keyof typeof AuthLevel];
 
 /**
  * HTTP methods.
  */
 export const HttpMethod = schema.web.HttpMethod;
-export type HttpMethod = typeof HttpMethod[keyof typeof HttpMethod];
+export type HttpMethod = (typeof HttpMethod)[keyof typeof HttpMethod];
 
 /**
  * FTPS state for the Function App.
  */
 export const FtpsState = schema.web.FtpsState;
-export type FtpsState = typeof FtpsState[keyof typeof FtpsState];
+export type FtpsState = (typeof FtpsState)[keyof typeof FtpsState];
 
 /**
  * Minimum TLS version.
  */
 export const MinTlsVersion = schema.web.MinTlsVersion;
-export type MinTlsVersion = typeof MinTlsVersion[keyof typeof MinTlsVersion];
+export type MinTlsVersion = (typeof MinTlsVersion)[keyof typeof MinTlsVersion];
 
 /**
  * CORS configuration.

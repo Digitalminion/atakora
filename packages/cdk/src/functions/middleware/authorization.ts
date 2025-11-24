@@ -188,7 +188,7 @@ export class Allow {
       if (!context.user?.roles) {
         return false;
       }
-      return roles.some(role => context.user!.roles!.includes(role));
+      return roles.some((role) => context.user!.roles!.includes(role));
     };
   }
 
@@ -231,7 +231,7 @@ export class Allow {
       if (!groups) {
         return false;
       }
-      return groupIds.some(groupId => groups.includes(groupId));
+      return groupIds.some((groupId) => groups.includes(groupId));
     };
   }
 
@@ -339,7 +339,7 @@ export class AuthRule<TRecord = any> {
 
 // Extend Allow methods to return AuthRule for chaining
 const originalAllow = { ...Allow };
-Object.keys(originalAllow).forEach(key => {
+Object.keys(originalAllow).forEach((key) => {
   const method = (originalAllow as any)[key];
   if (typeof method === 'function') {
     (Allow as any)[key] = (...args: any[]) => {
@@ -429,7 +429,8 @@ export async function applyFieldAuthorization<TRecord = any>(
     if (rule) {
       // Type assertion since Object.entries loses the type information
       const typedRule = rule as AuthorizationRule<TRecord> | AuthRule<TRecord>;
-      const authRule: AuthorizationRule<TRecord> = typedRule instanceof AuthRule ? typedRule.toRule() : typedRule;
+      const authRule: AuthorizationRule<TRecord> =
+        typedRule instanceof AuthRule ? typedRule.toRule() : typedRule;
       const authorized = await authRule(context, record);
 
       if (!authorized) {

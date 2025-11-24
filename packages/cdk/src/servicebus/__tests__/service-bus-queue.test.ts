@@ -285,7 +285,8 @@ describe('cdk/servicebus/ServiceBusQueue', () => {
       functionApp = new FunctionApp(resourceGroup, 'Consumer', {
         plan: createMockPlan(),
         storageAccount: {
-          storageAccountId: '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
+          storageAccountId:
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
           storageAccountName: 'funcstore',
         },
         identity: {
@@ -331,8 +332,12 @@ describe('cdk/servicebus/ServiceBusQueue', () => {
       it('should create separate role assignments for send and receive', () => {
         queue.grantSendReceive(functionApp);
 
-        const sendGrant = queue.node.children.find((child) => child.node.id.startsWith('GrantSend'));
-        const receiveGrant = queue.node.children.find((child) => child.node.id.startsWith('GrantReceive'));
+        const sendGrant = queue.node.children.find((child) =>
+          child.node.id.startsWith('GrantSend')
+        );
+        const receiveGrant = queue.node.children.find((child) =>
+          child.node.id.startsWith('GrantReceive')
+        );
 
         expect(sendGrant).toBeDefined();
         expect(receiveGrant).toBeDefined();
@@ -383,7 +388,8 @@ describe('cdk/servicebus/ServiceBusQueue', () => {
       const producer = new FunctionApp(resourceGroup, 'Producer', {
         plan: createMockPlan(),
         storageAccount: {
-          storageAccountId: '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
+          storageAccountId:
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
           storageAccountName: 'funcstore',
         },
         identity: {
@@ -394,7 +400,8 @@ describe('cdk/servicebus/ServiceBusQueue', () => {
       const consumer = new FunctionApp(resourceGroup, 'Consumer', {
         plan: createMockPlan(),
         storageAccount: {
-          storageAccountId: '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
+          storageAccountId:
+            '/subscriptions/test/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/funcstore',
           storageAccountName: 'funcstore',
         },
         identity: {

@@ -9,10 +9,7 @@
 
 import { Resource, Construct, DeploymentScope } from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
-import type {
-  ArmServiceBusTopicProps,
-  IServiceBusTopic,
-} from './service-bus-topic-types';
+import type { ArmServiceBusTopicProps, IServiceBusTopic } from './service-bus-topic-types';
 
 /**
  * L1 construct for Service Bus Topic.
@@ -153,9 +150,7 @@ export class ArmServiceBusTopic extends Resource implements IServiceBusTopic {
     if (props.maxSizeInMegabytes) {
       const validSizes = [1024, 2048, 3072, 4096, 5120, 10240, 20480, 40960, 81920];
       if (!validSizes.includes(props.maxSizeInMegabytes)) {
-        throw new Error(
-          `Max size must be one of: ${validSizes.join(', ')} MB`
-        );
+        throw new Error(`Max size must be one of: ${validSizes.join(', ')} MB`);
       }
     }
   }

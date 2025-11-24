@@ -229,7 +229,11 @@ export class StorageQueues extends Construct implements IStorageQueue {
    *
    * @internal
    */
-  protected grant(grantable: IGrantable, roleDefinitionId: string, description?: string): IGrantResult {
+  protected grant(
+    grantable: IGrantable,
+    roleDefinitionId: string,
+    description?: string
+  ): IGrantResult {
     // Create role assignment at the parent storage account's scope
     // Note: Queue-level RBAC is not supported; permissions are granted at the storage account level
     const roleAssignment = new RoleAssignment(this, `Grant${this.generateGrantId()}`, {

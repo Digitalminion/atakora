@@ -10,7 +10,8 @@ import { schema } from '@atakora/lib';
  * Log category for subscription-level diagnostic settings.
  */
 export const SubscriptionLogCategory = schema.insights.SubscriptionLogCategory;
-export type SubscriptionLogCategory = typeof SubscriptionLogCategory[keyof typeof SubscriptionLogCategory];
+export type SubscriptionLogCategory =
+  (typeof SubscriptionLogCategory)[keyof typeof SubscriptionLogCategory];
 
 /**
  * Retention policy for diagnostic logs.

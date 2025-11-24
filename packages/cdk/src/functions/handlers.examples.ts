@@ -146,9 +146,7 @@ export const eventHubExample: EventHubHandler<{ temperature: number; humidity: n
   context.log.info(`Processing ${events.length} telemetry events`);
 
   for (const event of events) {
-    context.log.info(
-      `Temperature: ${event.body.temperature}°C, Humidity: ${event.body.humidity}%`
-    );
+    context.log.info(`Temperature: ${event.body.temperature}°C, Humidity: ${event.body.humidity}%`);
   }
 };
 
@@ -278,44 +276,45 @@ export const redisStreamExample: RedisStreamHandler = async (context, entries) =
 /**
  * Example orchestrator for order fulfillment workflow.
  */
-export const orchestratorExample: DurableOrchestratorHandler<
-  { orderId: string },
-  string
-> = function* (context) {
-  const { orderId } = context.input;
+export const orchestratorExample: DurableOrchestratorHandler<{ orderId: string }, string> =
+  function* (context) {
+    const { orderId } = context.input;
 
-  // Step 1: Reserve inventory
-  const inventoryReserved = yield context.callActivity<string, boolean>(
-    'ReserveInventory',
-    orderId
-  );
+    // Step 1: Reserve inventory
+    const inventoryReserved = yield context.callActivity<string, boolean>(
+      'ReserveInventory',
+      orderId
+    );
 
-  if (!inventoryReserved) {
-    return 'Order failed: Inventory unavailable';
-  }
+    if (!inventoryReserved) {
+      return 'Order failed: Inventory unavailable';
+    }
 
-  // Step 2: Process payment
-  const paymentResult = yield context.callActivity<string, { success: boolean }>(
-    'ProcessPayment',
-    orderId
-  );
+    // Step 2: Process payment
+    const paymentResult = yield context.callActivity<string, { success: boolean }>(
+      'ProcessPayment',
+      orderId
+    );
 
-  if (!paymentResult.success) {
-    // Rollback inventory
-    yield context.callActivity('ReleaseInventory', orderId);
-    return 'Order failed: Payment declined';
-  }
+    if (!paymentResult.success) {
+      // Rollback inventory
+      yield context.callActivity('ReleaseInventory', orderId);
+      return 'Order failed: Payment declined';
+    }
 
-  // Step 3: Ship order
-  yield context.callActivity('ShipOrder', orderId);
+    // Step 3: Ship order
+    yield context.callActivity('ShipOrder', orderId);
 
-  return 'Order completed successfully';
-};
+    return 'Order completed successfully';
+  };
 
 /**
  * Example activity for inventory reservation.
  */
-export const activityExample: DurableActivityHandler<string, boolean> = async (context, orderId) => {
+export const activityExample: DurableActivityHandler<string, boolean> = async (
+  context,
+  orderId
+) => {
   context.log.info(`Reserving inventory for order ${orderId}`);
 
   // Simulate inventory check

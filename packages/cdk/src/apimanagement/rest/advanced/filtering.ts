@@ -24,18 +24,18 @@ export type FilterSyntax = 'rsql' | 'odata' | 'mongo' | 'simple';
  * Filter operators
  */
 export type FilterOperator =
-  | 'eq'          // Equal
-  | 'ne'          // Not equal
-  | 'gt'          // Greater than
-  | 'gte'         // Greater than or equal
-  | 'lt'          // Less than
-  | 'lte'         // Less than or equal
-  | 'in'          // In array
-  | 'nin'         // Not in array
-  | 'like'        // Pattern match
-  | 'contains'    // Contains substring
-  | 'startsWith'  // Starts with
-  | 'endsWith';   // Ends with
+  | 'eq' // Equal
+  | 'ne' // Not equal
+  | 'gt' // Greater than
+  | 'gte' // Greater than or equal
+  | 'lt' // Less than
+  | 'lte' // Less than or equal
+  | 'in' // In array
+  | 'nin' // Not in array
+  | 'like' // Pattern match
+  | 'contains' // Contains substring
+  | 'startsWith' // Starts with
+  | 'endsWith'; // Ends with
 
 /**
  * Filtering configuration
@@ -295,27 +295,27 @@ export class FilterParser {
 
   private static odataOperatorToStandard(op: string): FilterOperator {
     const map: Record<string, FilterOperator> = {
-      'eq': 'eq',
-      'ne': 'ne',
-      'gt': 'gt',
-      'ge': 'gte',
-      'lt': 'lt',
-      'le': 'lte',
-      'in': 'in',
+      eq: 'eq',
+      ne: 'ne',
+      gt: 'gt',
+      ge: 'gte',
+      lt: 'lt',
+      le: 'lte',
+      in: 'in',
     };
     return map[op] || 'eq';
   }
 
   private static mongoOperatorToStandard(op: string): FilterOperator {
     const map: Record<string, FilterOperator> = {
-      '$eq': 'eq',
-      '$ne': 'ne',
-      '$gt': 'gt',
-      '$gte': 'gte',
-      '$lt': 'lt',
-      '$lte': 'lte',
-      '$in': 'in',
-      '$nin': 'nin',
+      $eq: 'eq',
+      $ne: 'ne',
+      $gt: 'gt',
+      $gte: 'gte',
+      $lt: 'lt',
+      $lte: 'lte',
+      $in: 'in',
+      $nin: 'nin',
     };
     return map[op] || 'eq';
   }
@@ -373,14 +373,16 @@ export class FilteringHelper {
       case 'odata':
         queryProperties.$filter = {
           type: 'string',
-          description: "OData filter expression (e.g., status eq 'active' and category eq 'electronics')",
+          description:
+            "OData filter expression (e.g., status eq 'active' and category eq 'electronics')",
         };
         break;
 
       case 'mongo':
         queryProperties.filter = {
           type: 'string',
-          description: 'MongoDB-style filter JSON (e.g., {"status":"active","category":"electronics"})',
+          description:
+            'MongoDB-style filter JSON (e.g., {"status":"active","category":"electronics"})',
         };
         break;
     }
@@ -498,7 +500,7 @@ export class SortingHelper {
 
     const queryProperties = { ...operation.queryParameters?.schema.properties };
     const defaultSort = this.config.defaultSort
-      ? this.config.defaultSort.map(s => `${s.field}:${s.direction}`).join(',')
+      ? this.config.defaultSort.map((s) => `${s.field}:${s.direction}`).join(',')
       : undefined;
 
     queryProperties.sort = {
@@ -527,7 +529,7 @@ export class SortingHelper {
    * @returns Array of sort fields
    */
   parseSort(sort: string): readonly SortField[] {
-    return sort.split(',').map(part => {
+    return sort.split(',').map((part) => {
       const [field, direction = 'asc'] = part.trim().split(':');
       return {
         field: field.trim(),
@@ -649,7 +651,10 @@ export class FieldSelectionHelper {
    */
   parseFields(fields: string): readonly string[] {
     const separator = this.config.separator || ',';
-    const parsed = fields.split(separator).map(f => f.trim()).filter(Boolean);
+    const parsed = fields
+      .split(separator)
+      .map((f) => f.trim())
+      .filter(Boolean);
 
     // Always include required fields
     if (this.config.alwaysInclude) {

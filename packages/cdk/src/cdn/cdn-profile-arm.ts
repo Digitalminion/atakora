@@ -4,7 +4,13 @@
  * @packageDocumentation
  */
 
-import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder } from '@atakora/cdk';
+import {
+  Construct,
+  Resource,
+  DeploymentScope,
+  ValidationResult,
+  ValidationResultBuilder,
+} from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
 import type { ArmCdnProfilesProps, CdnSku } from './cdn-profile-types';
 
@@ -106,7 +112,9 @@ export class ArmCdnProfiles extends Resource {
     }
 
     if (props.profileName.length < 1 || props.profileName.length > 260) {
-      throw new Error(`CDN profile name must be 1-260 characters (got ${props.profileName.length})`);
+      throw new Error(
+        `CDN profile name must be 1-260 characters (got ${props.profileName.length})`
+      );
     }
 
     // Validate name pattern: alphanumeric and hyphens, cannot start/end with hyphen

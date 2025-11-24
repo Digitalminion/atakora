@@ -171,10 +171,7 @@ export class ProblemDetailsFactory {
    * );
    * ```
    */
-  static badRequest(
-    detail: string,
-    errors?: readonly ValidationError[]
-  ): ProblemDetails {
+  static badRequest(detail: string, errors?: readonly ValidationError[]): ProblemDetails {
     return {
       type: 'https://httpstatuses.io/400',
       title: 'Bad Request',
@@ -300,10 +297,7 @@ export class ProblemDetailsFactory {
    * );
    * ```
    */
-  static unprocessableEntity(
-    detail: string,
-    errors?: readonly ValidationError[]
-  ): ProblemDetails {
+  static unprocessableEntity(detail: string, errors?: readonly ValidationError[]): ProblemDetails {
     return {
       type: 'https://httpstatuses.io/422',
       title: 'Unprocessable Entity',
@@ -405,10 +399,7 @@ export class ProblemDetailsFactory {
    * );
    * ```
    */
-  static serviceUnavailable(
-    detail: string,
-    retryAfter?: number
-  ): ProblemDetails {
+  static serviceUnavailable(detail: string, retryAfter?: number): ProblemDetails {
     return {
       type: 'https://httpstatuses.io/503',
       title: 'Service Unavailable',
@@ -496,10 +487,7 @@ export class ProblemDetailsFactory {
    * const withTrace = ProblemDetailsFactory.withTraceId(problem, 'abc-123-def');
    * ```
    */
-  static withTraceId(
-    problem: ProblemDetails,
-    traceId: string
-  ): ProblemDetails {
+  static withTraceId(problem: ProblemDetails, traceId: string): ProblemDetails {
     return {
       ...problem,
       traceId,
@@ -524,10 +512,7 @@ export class ProblemDetailsFactory {
    * );
    * ```
    */
-  static withInstance(
-    problem: ProblemDetails,
-    instance: string
-  ): ProblemDetails {
+  static withInstance(problem: ProblemDetails, instance: string): ProblemDetails {
     return {
       ...problem,
       instance,
@@ -552,10 +537,7 @@ export class ProblemDetailsFactory {
    * });
    * ```
    */
-  static withExtensions(
-    problem: ProblemDetails,
-    extensions: Record<string, any>
-  ): ProblemDetails {
+  static withExtensions(problem: ProblemDetails, extensions: Record<string, any>): ProblemDetails {
     return {
       ...problem,
       ...extensions,
@@ -637,8 +619,7 @@ export class ProblemDetailsValidator {
 
     // Optional fields type checks
     if (p.detail !== undefined && typeof p.detail !== 'string') return false;
-    if (p.instance !== undefined && typeof p.instance !== 'string')
-      return false;
+    if (p.instance !== undefined && typeof p.instance !== 'string') return false;
     if (p.traceId !== undefined && typeof p.traceId !== 'string') return false;
 
     // Validate errors array if present

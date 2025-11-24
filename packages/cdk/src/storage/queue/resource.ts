@@ -63,7 +63,16 @@ export function createQueues(
     cors?: {
       corsRules: Array<{
         allowedOrigins: string[];
-        allowedMethods: ('DELETE' | 'GET' | 'HEAD' | 'MERGE' | 'POST' | 'OPTIONS' | 'PUT' | 'PATCH')[];
+        allowedMethods: (
+          | 'DELETE'
+          | 'GET'
+          | 'HEAD'
+          | 'MERGE'
+          | 'POST'
+          | 'OPTIONS'
+          | 'PUT'
+          | 'PATCH'
+        )[];
         allowedHeaders: string[];
         exposedHeaders: string[];
         maxAgeInSeconds: number;
@@ -105,7 +114,10 @@ export function createQueues(
  * const eventQueue = queueStack.getQueue('events');
  * ```
  */
-export function createStandardQueues(scope: Construct, storageAccount: IStorageAccount): QueueStack {
+export function createStandardQueues(
+  scope: Construct,
+  storageAccount: IStorageAccount
+): QueueStack {
   return createQueues(scope, storageAccount, [
     { name: 'commands', metadata: { purpose: 'command-messages' } },
     { name: 'events', metadata: { purpose: 'event-messages' } },

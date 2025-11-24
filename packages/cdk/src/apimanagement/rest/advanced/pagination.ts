@@ -590,16 +590,17 @@ class PagePaginationHelper<T> implements PaginationHelper<T> {
     // In practice, page and pageSize would come from request context
     const currentPage = 1;
     const pageSize = items.length;
-    const totalPages = totalCount
-      ? Math.ceil(totalCount / this.config.defaultPageSize)
-      : undefined;
+    const totalPages = totalCount ? Math.ceil(totalCount / this.config.defaultPageSize) : undefined;
 
     return {
       currentPage,
       pageSize,
       totalCount: this.config.includeTotalCount ? totalCount : undefined,
       totalPages: this.config.includeTotalCount ? totalPages : undefined,
-      hasNextPage: totalPages !== undefined ? currentPage < totalPages : pageSize === this.config.defaultPageSize,
+      hasNextPage:
+        totalPages !== undefined
+          ? currentPage < totalPages
+          : pageSize === this.config.defaultPageSize,
       hasPreviousPage: currentPage > 1,
     };
   }
@@ -684,7 +685,7 @@ export class LinkHeaderBuilder {
    */
   build(): string {
     return this.links
-      .map(link => {
+      .map((link) => {
         let result = `<${link.url}>; rel="${link.rel}"`;
         if (link.params) {
           for (const [key, value] of Object.entries(link.params)) {

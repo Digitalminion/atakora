@@ -12,10 +12,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import {
-  expectValidOperation,
-  HTTP_STATUS,
-} from '../utils';
+import { expectValidOperation, HTTP_STATUS } from '../utils';
 
 // ============================================================================
 // TODO: Replace with actual imports once devon completes implementation

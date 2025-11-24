@@ -307,7 +307,7 @@ export class FunctionApp extends GrantableResource implements IFunctionApp {
     // Walk child nodes to find inline functions
     for (const child of this.node.children) {
       // Check if child has function metadata (InlineFunction stores this)
-      const metadata = child.node.metadata.find(m => m.type === 'functionMetadata');
+      const metadata = child.node.metadata.find((m) => m.type === 'functionMetadata');
       if (metadata && metadata.data) {
         const funcData = metadata.data as { code?: string };
         if (funcData.code) {
@@ -747,10 +747,7 @@ export class FunctionApp extends GrantableResource implements IFunctionApp {
     let resourceGroupName = 'imported';
 
     while (current) {
-      if (
-        current &&
-        typeof (current as any).resourceGroupName === 'string'
-      ) {
+      if (current && typeof (current as any).resourceGroupName === 'string') {
         resourceGroupName = (current as any).resourceGroupName;
         break;
       }

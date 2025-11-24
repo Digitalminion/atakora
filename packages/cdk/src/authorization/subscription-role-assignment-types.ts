@@ -139,4 +139,4 @@ export interface SubscriptionRoleAssignmentProps {
  * @public
  */
 export const RoleAssignmentScope = schema.authorization.RoleAssignmentScope;
-export type RoleAssignmentScope = typeof RoleAssignmentScope[keyof typeof RoleAssignmentScope];
+export type RoleAssignmentScope = (typeof RoleAssignmentScope)[keyof typeof RoleAssignmentScope];

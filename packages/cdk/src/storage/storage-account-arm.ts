@@ -1,4 +1,10 @@
-import { Construct, Resource, DeploymentScope, ValidationResult, ValidationResultBuilder } from '@atakora/cdk';
+import {
+  Construct,
+  Resource,
+  DeploymentScope,
+  ValidationResult,
+  ValidationResultBuilder,
+} from '@atakora/cdk';
 import type { ArmResource, ResourceMetadata, SynthesisContext } from '@atakora/cdk';
 import type {
   ArmStorageAccountsProps,

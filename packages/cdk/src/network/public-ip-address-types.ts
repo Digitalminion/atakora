@@ -10,19 +10,20 @@ import { schema } from '@atakora/lib';
  * SKU name for public IP address.
  */
 export const PublicIPAddressSku = schema.network.PublicIPAddressSku;
-export type PublicIPAddressSku = typeof PublicIPAddressSku[keyof typeof PublicIPAddressSku];
+export type PublicIPAddressSku = (typeof PublicIPAddressSku)[keyof typeof PublicIPAddressSku];
 
 /**
  * Public IP address allocation method.
  */
 export const PublicIPAllocationMethod = schema.network.PublicIPAllocationMethod;
-export type PublicIPAllocationMethod = typeof PublicIPAllocationMethod[keyof typeof PublicIPAllocationMethod];
+export type PublicIPAllocationMethod =
+  (typeof PublicIPAllocationMethod)[keyof typeof PublicIPAllocationMethod];
 
 /**
  * IP address version.
  */
 export const IpVersion = schema.network.IpVersion;
-export type IpVersion = typeof IpVersion[keyof typeof IpVersion];
+export type IpVersion = (typeof IpVersion)[keyof typeof IpVersion];
 
 /**
  * SKU configuration.

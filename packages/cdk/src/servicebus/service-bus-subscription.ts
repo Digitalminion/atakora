@@ -107,7 +107,8 @@ export class ServiceBusSubscription extends Construct implements IServiceBusSubs
       defaultMessageTimeToLive: props.defaultMessageTimeToLive ?? 'P14D', // 14 days default
       autoDeleteOnIdle: props.autoDeleteOnIdle,
       deadLetteringOnMessageExpiration: props.deadLetteringOnMessageExpiration ?? false,
-      deadLetteringOnFilterEvaluationExceptions: props.deadLetteringOnFilterEvaluationExceptions ?? true,
+      deadLetteringOnFilterEvaluationExceptions:
+        props.deadLetteringOnFilterEvaluationExceptions ?? true,
       maxDeliveryCount: props.maxDeliveryCount ?? 10,
       requiresSession: props.requiresSession ?? false,
       forwardTo: props.forwardTo,
@@ -140,10 +141,7 @@ export class ServiceBusSubscription extends Construct implements IServiceBusSubs
    * @param filter - SQL or correlation filter
    * @param action - Optional rule action
    */
-  private createDefaultRule(
-    filter?: SqlFilter | CorrelationFilter,
-    action?: any
-  ): void {
+  private createDefaultRule(filter?: SqlFilter | CorrelationFilter, action?: any): void {
     if (!filter) {
       return;
     }

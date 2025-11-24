@@ -10,37 +10,42 @@ import { schema } from '@atakora/lib';
  * Activity log alert condition field.
  */
 export const ActivityLogAlertField = schema.insights.ActivityLogAlertField;
-export type ActivityLogAlertField = typeof ActivityLogAlertField[keyof typeof ActivityLogAlertField];
+export type ActivityLogAlertField =
+  (typeof ActivityLogAlertField)[keyof typeof ActivityLogAlertField];
 
 /**
  * Activity log alert category.
  */
 export const ActivityLogAlertCategory = schema.insights.ActivityLogAlertCategory;
-export type ActivityLogAlertCategory = typeof ActivityLogAlertCategory[keyof typeof ActivityLogAlertCategory];
+export type ActivityLogAlertCategory =
+  (typeof ActivityLogAlertCategory)[keyof typeof ActivityLogAlertCategory];
 
 /**
  * Activity log alert level.
  */
 export const ActivityLogAlertLevel = schema.insights.ActivityLogAlertLevel;
-export type ActivityLogAlertLevel = typeof ActivityLogAlertLevel[keyof typeof ActivityLogAlertLevel];
+export type ActivityLogAlertLevel =
+  (typeof ActivityLogAlertLevel)[keyof typeof ActivityLogAlertLevel];
 
 /**
  * Activity log alert status.
  */
 export const ActivityLogAlertStatus = schema.insights.ActivityLogAlertStatus;
-export type ActivityLogAlertStatus = typeof ActivityLogAlertStatus[keyof typeof ActivityLogAlertStatus];
+export type ActivityLogAlertStatus =
+  (typeof ActivityLogAlertStatus)[keyof typeof ActivityLogAlertStatus];
 
 /**
  * Service health event types.
  */
 export const ServiceHealthEventType = schema.insights.ServiceHealthEventType;
-export type ServiceHealthEventType = typeof ServiceHealthEventType[keyof typeof ServiceHealthEventType];
+export type ServiceHealthEventType =
+  (typeof ServiceHealthEventType)[keyof typeof ServiceHealthEventType];
 
 /**
  * Resource health status.
  */
 export const ResourceHealthStatus = schema.insights.ResourceHealthStatus;
-export type ResourceHealthStatus = typeof ResourceHealthStatus[keyof typeof ResourceHealthStatus];
+export type ResourceHealthStatus = (typeof ResourceHealthStatus)[keyof typeof ResourceHealthStatus];
 
 /**
  * Activity log alert condition.

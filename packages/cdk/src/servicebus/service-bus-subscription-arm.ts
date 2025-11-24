@@ -134,7 +134,8 @@ export class ArmServiceBusSubscription extends Resource implements IServiceBusSu
     this.defaultMessageTimeToLive = props.defaultMessageTimeToLive;
     this.autoDeleteOnIdle = props.autoDeleteOnIdle;
     this.deadLetteringOnMessageExpiration = props.deadLetteringOnMessageExpiration;
-    this.deadLetteringOnFilterEvaluationExceptions = props.deadLetteringOnFilterEvaluationExceptions;
+    this.deadLetteringOnFilterEvaluationExceptions =
+      props.deadLetteringOnFilterEvaluationExceptions;
     this.maxDeliveryCount = props.maxDeliveryCount;
     this.requiresSession = props.requiresSession;
     this.forwardTo = props.forwardTo;
@@ -155,10 +156,15 @@ export class ArmServiceBusSubscription extends Resource implements IServiceBusSu
     }
 
     if (!/^[a-zA-Z0-9-_]+$/.test(props.subscriptionName)) {
-      throw new Error('Subscription name can only contain alphanumeric characters, hyphens, and underscores');
+      throw new Error(
+        'Subscription name can only contain alphanumeric characters, hyphens, and underscores'
+      );
     }
 
-    if (props.maxDeliveryCount !== undefined && (props.maxDeliveryCount < 1 || props.maxDeliveryCount > 2000)) {
+    if (
+      props.maxDeliveryCount !== undefined &&
+      (props.maxDeliveryCount < 1 || props.maxDeliveryCount > 2000)
+    ) {
       throw new Error('Max delivery count must be between 1 and 2000');
     }
   }
@@ -187,7 +193,8 @@ export class ArmServiceBusSubscription extends Resource implements IServiceBusSu
     }
 
     if (this.deadLetteringOnFilterEvaluationExceptions !== undefined) {
-      properties.deadLetteringOnFilterEvaluationExceptions = this.deadLetteringOnFilterEvaluationExceptions;
+      properties.deadLetteringOnFilterEvaluationExceptions =
+        this.deadLetteringOnFilterEvaluationExceptions;
     }
 
     if (this.maxDeliveryCount !== undefined) {

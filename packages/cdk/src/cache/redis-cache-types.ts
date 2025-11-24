@@ -13,25 +13,25 @@ import { schema } from '@atakora/lib';
  * SKU name for Redis Cache.
  */
 export const RedisCacheSku = schema.cache.RedisCacheSku;
-export type RedisCacheSku = typeof RedisCacheSku[keyof typeof RedisCacheSku];
+export type RedisCacheSku = (typeof RedisCacheSku)[keyof typeof RedisCacheSku];
 
 /**
  * SKU family.
  */
 export const SkuFamily = schema.cache.SkuFamily;
-export type SkuFamily = typeof SkuFamily[keyof typeof SkuFamily];
+export type SkuFamily = (typeof SkuFamily)[keyof typeof SkuFamily];
 
 /**
  * Minimum TLS version.
  */
 export const TlsVersion = schema.cache.TlsVersion;
-export type TlsVersion = typeof TlsVersion[keyof typeof TlsVersion];
+export type TlsVersion = (typeof TlsVersion)[keyof typeof TlsVersion];
 
 /**
  * Public network access setting.
  */
 export const PublicNetworkAccess = schema.cache.PublicNetworkAccess;
-export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
+export type PublicNetworkAccess = (typeof PublicNetworkAccess)[keyof typeof PublicNetworkAccess];
 
 /**
  * Redis configuration options.

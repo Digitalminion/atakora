@@ -10,19 +10,19 @@ import { schema } from '@atakora/lib';
  * SKU name for AI Search service.
  */
 export const SearchServiceSku = schema.search.SearchServiceSku;
-export type SearchServiceSku = typeof SearchServiceSku[keyof typeof SearchServiceSku];
+export type SearchServiceSku = (typeof SearchServiceSku)[keyof typeof SearchServiceSku];
 
 /**
  * Hosting mode for search service.
  */
 export const HostingMode = schema.search.HostingMode;
-export type HostingMode = typeof HostingMode[keyof typeof HostingMode];
+export type HostingMode = (typeof HostingMode)[keyof typeof HostingMode];
 
 /**
  * Public network access setting.
  */
 export const PublicNetworkAccess = schema.search.PublicNetworkAccess;
-export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
+export type PublicNetworkAccess = (typeof PublicNetworkAccess)[keyof typeof PublicNetworkAccess];
 
 /**
  * SKU configuration.

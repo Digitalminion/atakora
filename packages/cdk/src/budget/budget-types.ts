@@ -36,7 +36,7 @@ export interface BudgetTimePeriod {
  * @public
  */
 export const BudgetTimeGrain = schema.consumption.BudgetTimeGrain;
-export type BudgetTimeGrain = typeof BudgetTimeGrain[keyof typeof BudgetTimeGrain];
+export type BudgetTimeGrain = (typeof BudgetTimeGrain)[keyof typeof BudgetTimeGrain];
 
 /**
  * Budget category type.
@@ -44,7 +44,7 @@ export type BudgetTimeGrain = typeof BudgetTimeGrain[keyof typeof BudgetTimeGrai
  * @public
  */
 export const BudgetCategory = schema.consumption.BudgetCategory;
-export type BudgetCategory = typeof BudgetCategory[keyof typeof BudgetCategory];
+export type BudgetCategory = (typeof BudgetCategory)[keyof typeof BudgetCategory];
 
 /**
  * Budget filter operator.
@@ -52,7 +52,7 @@ export type BudgetCategory = typeof BudgetCategory[keyof typeof BudgetCategory];
  * @public
  */
 export const BudgetFilterOperator = schema.consumption.BudgetFilterOperator;
-export type BudgetFilterOperator = typeof BudgetFilterOperator[keyof typeof BudgetFilterOperator];
+export type BudgetFilterOperator = (typeof BudgetFilterOperator)[keyof typeof BudgetFilterOperator];
 
 /**
  * Budget filter for scoping costs.
@@ -124,7 +124,7 @@ export interface BudgetFilter {
  * @public
  */
 export const BudgetThresholdType = schema.consumption.BudgetThresholdType;
-export type BudgetThresholdType = typeof BudgetThresholdType[keyof typeof BudgetThresholdType];
+export type BudgetThresholdType = (typeof BudgetThresholdType)[keyof typeof BudgetThresholdType];
 
 /**
  * Operator for threshold comparison.
@@ -132,7 +132,7 @@ export type BudgetThresholdType = typeof BudgetThresholdType[keyof typeof Budget
  * @public
  */
 export const BudgetOperator = schema.consumption.BudgetOperator;
-export type BudgetOperator = typeof BudgetOperator[keyof typeof BudgetOperator];
+export type BudgetOperator = (typeof BudgetOperator)[keyof typeof BudgetOperator];
 
 /**
  * Notification recipient.

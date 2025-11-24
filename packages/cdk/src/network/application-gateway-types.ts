@@ -10,37 +10,45 @@ import { schema } from '@atakora/lib';
  * Application Gateway SKU name.
  */
 export const ApplicationGatewaySkuName = schema.network.ApplicationGatewaySkuName;
-export type ApplicationGatewaySkuName = typeof ApplicationGatewaySkuName[keyof typeof ApplicationGatewaySkuName];
+export type ApplicationGatewaySkuName =
+  (typeof ApplicationGatewaySkuName)[keyof typeof ApplicationGatewaySkuName];
 
 /**
  * Application Gateway SKU tier.
  */
 export const ApplicationGatewayTier = schema.network.ApplicationGatewayTier;
-export type ApplicationGatewayTier = typeof ApplicationGatewayTier[keyof typeof ApplicationGatewayTier];
+export type ApplicationGatewayTier =
+  (typeof ApplicationGatewayTier)[keyof typeof ApplicationGatewayTier];
 
 /**
  * Application Gateway protocol.
  */
 export const ApplicationGatewayProtocol = schema.network.ApplicationGatewayProtocol;
-export type ApplicationGatewayProtocol = typeof ApplicationGatewayProtocol[keyof typeof ApplicationGatewayProtocol];
+export type ApplicationGatewayProtocol =
+  (typeof ApplicationGatewayProtocol)[keyof typeof ApplicationGatewayProtocol];
 
 /**
  * Application Gateway request routing rule type.
  */
-export const ApplicationGatewayRequestRoutingRuleType = schema.network.ApplicationGatewayRequestRoutingRuleType;
-export type ApplicationGatewayRequestRoutingRuleType = typeof ApplicationGatewayRequestRoutingRuleType[keyof typeof ApplicationGatewayRequestRoutingRuleType];
+export const ApplicationGatewayRequestRoutingRuleType =
+  schema.network.ApplicationGatewayRequestRoutingRuleType;
+export type ApplicationGatewayRequestRoutingRuleType =
+  (typeof ApplicationGatewayRequestRoutingRuleType)[keyof typeof ApplicationGatewayRequestRoutingRuleType];
 
 /**
  * Application Gateway redirect type.
  */
 export const ApplicationGatewayRedirectType = schema.network.ApplicationGatewayRedirectType;
-export type ApplicationGatewayRedirectType = typeof ApplicationGatewayRedirectType[keyof typeof ApplicationGatewayRedirectType];
+export type ApplicationGatewayRedirectType =
+  (typeof ApplicationGatewayRedirectType)[keyof typeof ApplicationGatewayRedirectType];
 
 /**
  * Application Gateway cookie based affinity.
  */
-export const ApplicationGatewayCookieBasedAffinity = schema.network.ApplicationGatewayCookieBasedAffinity;
-export type ApplicationGatewayCookieBasedAffinity = typeof ApplicationGatewayCookieBasedAffinity[keyof typeof ApplicationGatewayCookieBasedAffinity];
+export const ApplicationGatewayCookieBasedAffinity =
+  schema.network.ApplicationGatewayCookieBasedAffinity;
+export type ApplicationGatewayCookieBasedAffinity =
+  (typeof ApplicationGatewayCookieBasedAffinity)[keyof typeof ApplicationGatewayCookieBasedAffinity];
 
 /**
  * Application Gateway SKU configuration.

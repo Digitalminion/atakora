@@ -102,9 +102,7 @@ export interface ValidationResult {
 /**
  * Creates a mock API Management service for testing.
  */
-export function mockApiManagementService(
-  props?: Partial<IApiManagement>
-): IApiManagement {
+export function mockApiManagementService(props?: Partial<IApiManagement>): IApiManagement {
   return {
     name: props?.name || 'mock-apim-service',
     resourceGroup: props?.resourceGroup || 'mock-rg',
@@ -115,9 +113,7 @@ export function mockApiManagementService(
 /**
  * Creates a mock Azure Function App for testing.
  */
-export function mockFunctionApp(
-  props?: Partial<IFunctionApp>
-): IFunctionApp {
+export function mockFunctionApp(props?: Partial<IFunctionApp>): IFunctionApp {
   return {
     name: props?.name || 'mock-function-app',
     defaultHostName: props?.defaultHostName || 'mock-function-app.azurewebsites.net',
@@ -128,9 +124,7 @@ export function mockFunctionApp(
 /**
  * Creates a mock App Service for testing.
  */
-export function mockAppService(
-  props?: Partial<IWebApp>
-): IWebApp {
+export function mockAppService(props?: Partial<IWebApp>): IWebApp {
   return {
     name: props?.name || 'mock-app-service',
     defaultHostName: props?.defaultHostName || 'mock-app-service.azurewebsites.net',
@@ -141,9 +135,7 @@ export function mockAppService(
 /**
  * Creates a mock Container App for testing.
  */
-export function mockContainerApp(
-  props?: Partial<IContainerApp>
-): IContainerApp {
+export function mockContainerApp(props?: Partial<IContainerApp>): IContainerApp {
   return {
     name: props?.name || 'mock-container-app',
     configuration: {
@@ -163,9 +155,7 @@ export function mockContainerApp(
 /**
  * Creates a sample REST operation for testing.
  */
-export function createSampleOperation(
-  overrides?: Partial<IRestOperation>
-): IRestOperation {
+export function createSampleOperation(overrides?: Partial<IRestOperation>): IRestOperation {
   return {
     method: 'GET',
     path: '/test',
@@ -433,7 +423,16 @@ export function expectValidOperation(operation: IRestOperation): void {
   expect(operation.path).toBeDefined();
 
   // Validate HTTP method
-  const validMethods: HttpMethod[] = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE'];
+  const validMethods: HttpMethod[] = [
+    'GET',
+    'POST',
+    'PUT',
+    'DELETE',
+    'PATCH',
+    'HEAD',
+    'OPTIONS',
+    'TRACE',
+  ];
   expect(validMethods).toContain(operation.method);
 
   // Validate path format

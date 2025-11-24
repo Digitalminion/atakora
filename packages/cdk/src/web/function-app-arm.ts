@@ -210,9 +210,7 @@ export class ArmFunctionApp extends Resource {
     }
 
     if (props.siteName.length < 2 || props.siteName.length > 60) {
-      throw new Error(
-        `Function App name must be 2-60 characters (got ${props.siteName.length})`
-      );
+      throw new Error(`Function App name must be 2-60 characters (got ${props.siteName.length})`);
     }
 
     // Validate name pattern: ^[a-zA-Z0-9][a-zA-Z0-9-]{0,58}[a-zA-Z0-9]$
@@ -234,7 +232,10 @@ export class ArmFunctionApp extends Resource {
     }
 
     // Validate storage account connection string
-    if (!props.storageAccountConnectionString || props.storageAccountConnectionString.trim() === '') {
+    if (
+      !props.storageAccountConnectionString ||
+      props.storageAccountConnectionString.trim() === ''
+    ) {
       throw new Error('Storage account connection string cannot be empty');
     }
   }

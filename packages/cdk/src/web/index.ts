@@ -40,11 +40,7 @@ export type {
   IServerFarm,
   ServerFarmSku,
 } from './server-farm-types';
-export {
-  ServerFarmSkuName,
-  ServerFarmSkuTier,
-  ServerFarmKind,
-} from './server-farm-types';
+export { ServerFarmSkuName, ServerFarmSkuTier, ServerFarmKind } from './server-farm-types';
 
 // Azure Functions exports
 export { ArmFunctionApp } from './function-app-arm';
@@ -76,11 +72,7 @@ export type {
   DurableEntityTriggerConfig,
   TriggerConfig,
 } from './function-app-types';
-export {
-  FunctionRuntime,
-  AuthLevel,
-  HttpMethod,
-} from './function-app-types';
+export { FunctionRuntime, AuthLevel, HttpMethod } from './function-app-types';
 
 // Function trigger builders - Core Triggers
 export {
@@ -104,8 +96,14 @@ export {
 
 export { QueueTrigger, queueTrigger } from './triggers/queue-trigger';
 export { BlobTrigger, blobTrigger } from './triggers/blob-trigger';
-export { ServiceBusQueueTrigger, serviceBusQueueTrigger } from './triggers/service-bus-queue-trigger';
-export { ServiceBusTopicTrigger, serviceBusTopicTrigger } from './triggers/service-bus-topic-trigger';
+export {
+  ServiceBusQueueTrigger,
+  serviceBusQueueTrigger,
+} from './triggers/service-bus-queue-trigger';
+export {
+  ServiceBusTopicTrigger,
+  serviceBusTopicTrigger,
+} from './triggers/service-bus-topic-trigger';
 export { EventHubTrigger, eventHubTrigger } from './triggers/event-hub-trigger';
 export { CosmosDBTrigger, cosmosDBTrigger } from './triggers/cosmos-db-trigger';
 export { EventGridTrigger, eventGridTrigger } from './triggers/event-grid-trigger';
@@ -120,8 +118,14 @@ export { RabbitMQTrigger, rabbitMQTrigger } from './triggers/rabbitmq-trigger';
 export { RedisStreamTrigger, redisStreamTrigger } from './triggers/redis-stream-trigger';
 
 // Function trigger builders - Durable Functions
-export { DurableOrchestratorTrigger, durableOrchestratorTrigger } from './triggers/durable-orchestrator-trigger';
-export { DurableActivityTrigger, durableActivityTrigger } from './triggers/durable-activity-trigger';
+export {
+  DurableOrchestratorTrigger,
+  durableOrchestratorTrigger,
+} from './triggers/durable-orchestrator-trigger';
+export {
+  DurableActivityTrigger,
+  durableActivityTrigger,
+} from './triggers/durable-activity-trigger';
 export { DurableEntityTrigger, durableEntityTrigger } from './triggers/durable-entity-trigger';
 
 // Function packaging

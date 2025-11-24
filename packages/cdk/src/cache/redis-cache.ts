@@ -10,16 +10,8 @@
 import { Construct } from '@atakora/cdk';
 import { constructIdToPurpose, IGrantable, IGrantResult } from '@atakora/lib';
 import { ArmRedisCache } from './redis-cache-arm';
-import type {
-  RedisCacheProps,
-  IRedisCache,
-} from './redis-cache-types';
-import {
-  RedisCacheSku,
-  SkuFamily,
-  TlsVersion,
-  PublicNetworkAccess,
-} from './redis-cache-types';
+import type { RedisCacheProps, IRedisCache } from './redis-cache-types';
+import { RedisCacheSku, SkuFamily, TlsVersion, PublicNetworkAccess } from './redis-cache-types';
 
 /**
  * L2 construct for Azure Cache for Redis.

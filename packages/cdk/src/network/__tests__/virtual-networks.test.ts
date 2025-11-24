@@ -1,5 +1,15 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { App, SubscriptionStack, Subscription, Geography, Organization, Project, Environment, Instance, Construct } from '@atakora/cdk';
+import {
+  App,
+  SubscriptionStack,
+  Subscription,
+  Geography,
+  Organization,
+  Project,
+  Environment,
+  Instance,
+  Construct,
+} from '@atakora/cdk';
 import { VirtualNetworks } from '../index';
 import { MockResourceGroup } from '../../../__tests__/helpers/test-fixtures';
 

@@ -17,19 +17,20 @@ import { schema } from '@atakora/lib';
  * Cognitive Services SKU names for OpenAI.
  */
 export const CognitiveServicesSkuName = schema.cognitiveservices.CognitiveServicesSkuName;
-export type CognitiveServicesSkuName = typeof CognitiveServicesSkuName[keyof typeof CognitiveServicesSkuName];
+export type CognitiveServicesSkuName =
+  (typeof CognitiveServicesSkuName)[keyof typeof CognitiveServicesSkuName];
 
 /**
  * Public network access options.
  */
 export const PublicNetworkAccess = schema.cognitiveservices.PublicNetworkAccess;
-export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
+export type PublicNetworkAccess = (typeof PublicNetworkAccess)[keyof typeof PublicNetworkAccess];
 
 /**
  * Network rule action.
  */
 export const NetworkRuleAction = schema.cognitiveservices.NetworkRuleAction;
-export type NetworkRuleAction = typeof NetworkRuleAction[keyof typeof NetworkRuleAction];
+export type NetworkRuleAction = (typeof NetworkRuleAction)[keyof typeof NetworkRuleAction];
 
 /**
  * SKU details for Cognitive Services.

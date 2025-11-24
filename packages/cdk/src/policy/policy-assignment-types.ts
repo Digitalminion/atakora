@@ -10,13 +10,14 @@ import { schema } from '@atakora/lib';
  * Policy enforcement mode.
  */
 export const PolicyEnforcementMode = schema.authorization.PolicyEnforcementMode;
-export type PolicyEnforcementMode = typeof PolicyEnforcementMode[keyof typeof PolicyEnforcementMode];
+export type PolicyEnforcementMode =
+  (typeof PolicyEnforcementMode)[keyof typeof PolicyEnforcementMode];
 
 /**
  * Policy assignment identity type.
  */
 export const PolicyIdentityType = schema.authorization.PolicyIdentityType;
-export type PolicyIdentityType = typeof PolicyIdentityType[keyof typeof PolicyIdentityType];
+export type PolicyIdentityType = (typeof PolicyIdentityType)[keyof typeof PolicyIdentityType];
 
 /**
  * Properties for Policy Assignments.

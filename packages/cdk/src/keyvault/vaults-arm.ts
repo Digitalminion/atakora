@@ -1,6 +1,11 @@
 import { Construct, Resource, DeploymentScope } from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
-import type { ArmVaultsProps, KeyVaultSku, PublicNetworkAccess, NetworkRuleSet } from './vault-types';
+import type {
+  ArmVaultsProps,
+  KeyVaultSku,
+  PublicNetworkAccess,
+  NetworkRuleSet,
+} from './vault-types';
 
 /**
  * L1 construct for Azure Key Vault.

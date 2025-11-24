@@ -13,19 +13,19 @@ import { schema } from '@atakora/lib';
  * SignalR Service SKU tiers.
  */
 export const SignalRSku = schema.signalr.SignalRSku;
-export type SignalRSku = typeof SignalRSku[keyof typeof SignalRSku];
+export type SignalRSku = (typeof SignalRSku)[keyof typeof SignalRSku];
 
 /**
  * SignalR Service mode.
  */
 export const ServiceMode = schema.signalr.ServiceMode;
-export type ServiceMode = typeof ServiceMode[keyof typeof ServiceMode];
+export type ServiceMode = (typeof ServiceMode)[keyof typeof ServiceMode];
 
 /**
  * Feature flags for SignalR Service.
  */
 export const FeatureFlag = schema.signalr.FeatureFlag;
-export type FeatureFlag = typeof FeatureFlag[keyof typeof FeatureFlag];
+export type FeatureFlag = (typeof FeatureFlag)[keyof typeof FeatureFlag];
 
 /**
  * CORS settings for SignalR Service.
@@ -125,13 +125,13 @@ export interface UpstreamTemplate {
  * Network ACL action.
  */
 export const AclAction = schema.signalr.AclAction;
-export type AclAction = typeof AclAction[keyof typeof AclAction];
+export type AclAction = (typeof AclAction)[keyof typeof AclAction];
 
 /**
  * Public network access.
  */
 export const PublicNetworkAccess = schema.signalr.PublicNetworkAccess;
-export type PublicNetworkAccess = typeof PublicNetworkAccess[keyof typeof PublicNetworkAccess];
+export type PublicNetworkAccess = (typeof PublicNetworkAccess)[keyof typeof PublicNetworkAccess];
 
 /**
  * Private endpoint ACL.

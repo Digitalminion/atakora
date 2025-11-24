@@ -14,7 +14,7 @@ import { schema } from '@atakora/lib';
 export const DatabaseSkuTier = schema.sql.DatabaseSkuTier;
 
 // Re-export type for TypeScript
-export type DatabaseSkuTier = typeof DatabaseSkuTier[keyof typeof DatabaseSkuTier];
+export type DatabaseSkuTier = (typeof DatabaseSkuTier)[keyof typeof DatabaseSkuTier];
 
 /**
  * Database SKU configuration.

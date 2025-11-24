@@ -347,10 +347,8 @@ export class ServerFarms extends Construct implements IServerFarm {
     if (skuStr === 'F1') return 'Free' as ServerFarmSkuTier;
     if (skuStr.startsWith('B')) return 'Basic' as ServerFarmSkuTier;
     if (skuStr.startsWith('S')) return 'Standard' as ServerFarmSkuTier;
-    if (skuStr.startsWith('P') && skuStr.includes('v3'))
-      return 'PremiumV3' as ServerFarmSkuTier;
-    if (skuStr.startsWith('P') && skuStr.includes('v2'))
-      return 'PremiumV2' as ServerFarmSkuTier;
+    if (skuStr.startsWith('P') && skuStr.includes('v3')) return 'PremiumV3' as ServerFarmSkuTier;
+    if (skuStr.startsWith('P') && skuStr.includes('v2')) return 'PremiumV2' as ServerFarmSkuTier;
     if (skuStr.startsWith('P')) return 'Premium' as ServerFarmSkuTier;
 
     // Default to Basic

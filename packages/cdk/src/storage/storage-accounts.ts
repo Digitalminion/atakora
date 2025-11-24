@@ -381,7 +381,11 @@ export class StorageAccounts extends Construct implements IStorageAccount {
    *
    * @internal
    */
-  protected grant(grantable: IGrantable, roleDefinitionId: string, description?: string): IGrantResult {
+  protected grant(
+    grantable: IGrantable,
+    roleDefinitionId: string,
+    description?: string
+  ): IGrantResult {
     // Create role assignment at this storage account's scope
     const roleAssignment = new RoleAssignment(this, `Grant${this.generateGrantId()}`, {
       scope: this.storageAccountId,

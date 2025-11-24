@@ -31,17 +31,18 @@ The Azure API Management Developer Portal is a **fully customizable, automatical
 
 ### Key Benefits
 
-| Benefit | Without Portal | With Portal |
-|---------|----------------|-------------|
-| **Onboarding Time** | Hours to days | 15-30 minutes |
-| **Documentation** | Manual, often outdated | Auto-generated, always current |
-| **API Key Management** | Manual provisioning | Self-service |
-| **Support Burden** | High (constant "how do I?" questions) | Low (self-documenting) |
-| **Developer Experience** | Fragmented (docs, keys, testing separate) | Unified platform |
+| Benefit                  | Without Portal                            | With Portal                    |
+| ------------------------ | ----------------------------------------- | ------------------------------ |
+| **Onboarding Time**      | Hours to days                             | 15-30 minutes                  |
+| **Documentation**        | Manual, often outdated                    | Auto-generated, always current |
+| **API Key Management**   | Manual provisioning                       | Self-service                   |
+| **Support Burden**       | High (constant "how do I?" questions)     | Low (self-documenting)         |
+| **Developer Experience** | Fragmented (docs, keys, testing separate) | Unified platform               |
 
 ### When to Use the Developer Portal
 
 ✅ **Use it when**:
+
 - You have 5+ APIs with multiple consumers
 - You want to offer APIs to external partners or the public
 - You need to reduce API onboarding friction
@@ -50,6 +51,7 @@ The Azure API Management Developer Portal is a **fully customizable, automatical
 - You have compliance requirements for API access tracking
 
 ❌ **Skip it when**:
+
 - You have 1-2 internal APIs with very few consumers
 - APIs are purely machine-to-machine with no human interaction
 - You have a custom developer portal already built
@@ -277,7 +279,7 @@ export interface UserIdentity {
 
 #### Construct Class
 
-```typescript
+````typescript
 import { Construct } from '@atakora/cdk/core';
 import { generateUserArm } from './arm';
 import type { UserProps } from './types';
@@ -330,7 +332,7 @@ export class User extends Construct {
     this.addResource(armResource);
   }
 }
-```
+````
 
 #### Usage Examples
 
@@ -342,7 +344,7 @@ const partnerDev = new User(this, 'PartnerDev', {
   lastName: 'Developer',
   state: 'active',
   note: 'Partner integration team lead',
-  confirmation: 'invite' // Send invitation email
+  confirmation: 'invite', // Send invitation email
 });
 
 // Example 2: Create internal developer with Azure AD
@@ -350,10 +352,12 @@ const internalDev = new User(this, 'InternalDev', {
   email: 'jane@company.com',
   firstName: 'Jane',
   lastName: 'Engineer',
-  identities: [{
-    provider: 'aad',
-    id: 'jane@company.onmicrosoft.com'
-  }]
+  identities: [
+    {
+      provider: 'aad',
+      id: 'jane@company.onmicrosoft.com',
+    },
+  ],
 });
 
 // Example 3: Create blocked user (temporarily suspended)
@@ -362,7 +366,7 @@ const suspendedUser = new User(this, 'SuspendedDev', {
   firstName: 'Suspended',
   lastName: 'User',
   state: 'blocked',
-  note: 'Violated API usage terms'
+  note: 'Violated API usage terms',
 });
 ```
 
@@ -378,11 +382,11 @@ const suspendedUser = new User(this, 'SuspendedDev', {
 
 Azure APIM includes three built-in groups:
 
-| Group | ID | Description |
-|-------|-----|-------------|
+| Group              | ID               | Description                            |
+| ------------------ | ---------------- | -------------------------------------- |
 | **Administrators** | `administrators` | Azure subscription admins, full access |
-| **Developers** | `developers` | All authenticated portal users |
-| **Guests** | `guests` | Unauthenticated portal visitors |
+| **Developers**     | `developers`     | All authenticated portal users         |
+| **Guests**         | `guests`         | Unauthenticated portal visitors        |
 
 #### TypeScript Interface
 
@@ -445,7 +449,7 @@ export interface GroupProps {
 
 #### Construct Class
 
-```typescript
+````typescript
 /**
  * Represents a group of users in API Management
  *
@@ -486,7 +490,7 @@ export class Group extends Construct {
     this.addResource(armResource);
   }
 }
-```
+````
 
 #### Usage Examples
 
@@ -494,19 +498,19 @@ export class Group extends Construct {
 // Example 1: Partner developers group
 const partnersGroup = new Group(this, 'Partners', {
   displayName: 'Partner Developers',
-  description: 'External partner organizations with API access'
+  description: 'External partner organizations with API access',
 });
 
 // Example 2: Internal developers group
 const internalGroup = new Group(this, 'Internal', {
   displayName: 'Internal Developers',
-  description: 'Company employees'
+  description: 'Company employees',
 });
 
 // Example 3: Premium tier customers
 const premiumGroup = new Group(this, 'Premium', {
   displayName: 'Premium Customers',
-  description: 'Customers on premium subscription tier'
+  description: 'Customers on premium subscription tier',
 });
 
 // Example 4: Azure AD group synchronization
@@ -514,7 +518,7 @@ const engineeringTeam = new Group(this, 'EngineeringTeam', {
   displayName: 'Engineering Team',
   description: 'Synced from Azure AD Engineering group',
   type: 'external',
-  externalId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'
+  externalId: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
 });
 ```
 
@@ -557,7 +561,7 @@ export interface GroupUserProps {
 
 #### Construct Class
 
-```typescript
+````typescript
 /**
  * Assigns a user to a group
  *
@@ -580,7 +584,7 @@ export class GroupUser extends Construct {
     this.addResource(armResource);
   }
 }
-```
+````
 
 ---
 
@@ -621,7 +625,7 @@ export interface ProductGroupProps {
 
 #### Construct Class
 
-```typescript
+````typescript
 /**
  * Grants a group access to a product
  *
@@ -648,7 +652,7 @@ export class ProductGroup extends Construct {
     this.addResource(armResource);
   }
 }
-```
+````
 
 ---
 
@@ -660,14 +664,14 @@ export class ProductGroup extends Construct {
 
 #### Supported Providers
 
-| Provider | ID | Description |
-|----------|-----|-------------|
-| **Azure Active Directory** | `aad` | Microsoft work/school accounts |
-| **Azure AD B2C** | `aadB2C` | Microsoft consumer identities |
-| **Facebook** | `facebook` | Facebook login |
-| **Google** | `google` | Google login |
-| **Microsoft Account** | `microsoft` | Outlook.com, Live.com |
-| **Twitter** | `twitter` | Twitter login |
+| Provider                   | ID          | Description                    |
+| -------------------------- | ----------- | ------------------------------ |
+| **Azure Active Directory** | `aad`       | Microsoft work/school accounts |
+| **Azure AD B2C**           | `aadB2C`    | Microsoft consumer identities  |
+| **Facebook**               | `facebook`  | Facebook login                 |
+| **Google**                 | `google`    | Google login                   |
+| **Microsoft Account**      | `microsoft` | Outlook.com, Live.com          |
+| **Twitter**                | `twitter`   | Twitter login                  |
 
 #### TypeScript Interface
 
@@ -756,16 +760,14 @@ export interface IdentityProviderProps {
     "type": "aad",
     "clientId": "your-client-id",
     "clientSecret": "your-client-secret",
-    "allowedTenants": [
-      "contoso.onmicrosoft.com"
-    ]
+    "allowedTenants": ["contoso.onmicrosoft.com"]
   }
 }
 ```
 
 #### Construct Class
 
-```typescript
+````typescript
 /**
  * Configures an identity provider for Developer Portal sign-in
  *
@@ -802,7 +804,7 @@ export class IdentityProvider extends Construct {
     this.addResource(armResource);
   }
 }
-```
+````
 
 #### Usage Examples
 
@@ -812,14 +814,14 @@ new IdentityProvider(this, 'AzureAD', {
   type: 'aad',
   clientId: 'your-aad-app-id',
   clientSecret: 'your-secret',
-  allowedTenants: ['company.onmicrosoft.com']
+  allowedTenants: ['company.onmicrosoft.com'],
 });
 
 // Example 2: Google sign-in
 new IdentityProvider(this, 'Google', {
   type: 'google',
   clientId: 'your-app.apps.googleusercontent.com',
-  clientSecret: 'your-google-secret'
+  clientSecret: 'your-google-secret',
 });
 
 // Example 3: Azure AD B2C (consumer accounts)
@@ -831,14 +833,14 @@ new IdentityProvider(this, 'B2C', {
   signupPolicyName: 'B2C_1_signup',
   signinPolicyName: 'B2C_1_signin',
   profileEditingPolicyName: 'B2C_1_edit_profile',
-  passwordResetPolicyName: 'B2C_1_password_reset'
+  passwordResetPolicyName: 'B2C_1_password_reset',
 });
 
 // Example 4: Facebook
 new IdentityProvider(this, 'Facebook', {
   type: 'facebook',
   clientId: 'your-facebook-app-id',
-  clientSecret: 'your-facebook-secret'
+  clientSecret: 'your-facebook-secret',
 });
 ```
 
@@ -906,10 +908,7 @@ export interface AuthorizationServerProps {
    * @example ["authorizationCode", "clientCredentials"]
    */
   grantTypes: Array<
-    'authorizationCode' |
-    'implicit' |
-    'resourceOwnerPassword' |
-    'clientCredentials'
+    'authorizationCode' | 'implicit' | 'resourceOwnerPassword' | 'clientCredentials'
   >;
 
   /**
@@ -988,10 +987,7 @@ export interface AuthorizationServerProps {
     "tokenEndpoint": "https://auth.company.com/token",
     "clientId": "api-client-id",
     "clientSecret": "api-client-secret",
-    "grantTypes": [
-      "authorizationCode",
-      "clientCredentials"
-    ],
+    "grantTypes": ["authorizationCode", "clientCredentials"],
     "authorizationMethods": ["POST"],
     "bearerTokenSendingMethods": ["authorizationHeader"],
     "supportState": true
@@ -1001,7 +997,7 @@ export interface AuthorizationServerProps {
 
 #### Construct Class
 
-```typescript
+````typescript
 /**
  * Configures an OAuth 2.0 authorization server
  *
@@ -1035,7 +1031,7 @@ export class AuthorizationServer extends Construct {
     this.addResource(armResource);
   }
 }
-```
+````
 
 #### Usage Examples
 
@@ -1049,7 +1045,7 @@ new AuthorizationServer(this, 'AzureADOAuth', {
   clientSecret: 'your-secret',
   grantTypes: ['authorizationCode'],
   defaultScope: 'api://your-api-id/.default',
-  supportState: true
+  supportState: true,
 });
 
 // Example 2: Custom OAuth server
@@ -1063,7 +1059,7 @@ new AuthorizationServer(this, 'CustomOAuth', {
   grantTypes: ['authorizationCode', 'clientCredentials'],
   authorizationMethods: ['POST'],
   bearerTokenSendingMethods: ['authorizationHeader'],
-  defaultScope: 'read write'
+  defaultScope: 'read write',
 });
 
 // Example 3: Client credentials flow (machine-to-machine)
@@ -1074,7 +1070,7 @@ new AuthorizationServer(this, 'M2MOAuth', {
   clientSecret: 'm2m-secret',
   grantTypes: ['clientCredentials'],
   clientAuthenticationMethods: ['Basic'],
-  defaultScope: 'api.read api.write'
+  defaultScope: 'api.read api.write',
 });
 ```
 
@@ -1135,7 +1131,7 @@ export interface ApiIssueProps {
 
 #### Construct Class
 
-```typescript
+````typescript
 /**
  * Represents an issue reported on an API
  *
@@ -1162,7 +1158,7 @@ export class ApiIssue extends Construct {
     this.addResource(armResource);
   }
 }
-```
+````
 
 ---
 
@@ -1219,7 +1215,7 @@ export interface WikiDocument {
 
 #### Construct Class
 
-```typescript
+````typescript
 /**
  * Represents a wiki for an API
  *
@@ -1247,7 +1243,7 @@ export class ApiWiki extends Construct {
     this.addResource(armResource);
   }
 }
-```
+````
 
 ---
 
@@ -1259,18 +1255,18 @@ export class ApiWiki extends Construct {
 
 #### Available Templates
 
-| Template Name | Purpose |
-|---------------|---------|
-| `ApplicationApprovedNotificationMessage` | Application subscription approved |
-| `NewDeveloperNotificationMessage` | New developer account created |
-| `EmailChangeIdentityDefault` | Email address change confirmation |
-| `InviteUserNotificationMessage` | User invitation |
-| `NewCommentNotificationMessage` | New comment on issue |
-| `NewIssueNotificationMessage` | New issue submitted |
-| `PasswordResetIdentityDefault` | Password reset |
-| `PasswordResetByAdminNotificationMessage` | Admin reset password |
-| `RejectDeveloperNotificationMessage` | Developer account rejected |
-| `RequestDeveloperNotificationMessage` | Developer account approval request |
+| Template Name                             | Purpose                            |
+| ----------------------------------------- | ---------------------------------- |
+| `ApplicationApprovedNotificationMessage`  | Application subscription approved  |
+| `NewDeveloperNotificationMessage`         | New developer account created      |
+| `EmailChangeIdentityDefault`              | Email address change confirmation  |
+| `InviteUserNotificationMessage`           | User invitation                    |
+| `NewCommentNotificationMessage`           | New comment on issue               |
+| `NewIssueNotificationMessage`             | New issue submitted                |
+| `PasswordResetIdentityDefault`            | Password reset                     |
+| `PasswordResetByAdminNotificationMessage` | Admin reset password               |
+| `RejectDeveloperNotificationMessage`      | Developer account rejected         |
+| `RequestDeveloperNotificationMessage`     | Developer account approval request |
 
 #### TypeScript Interface
 
@@ -1324,7 +1320,7 @@ export interface EmailTemplateProps {
 
 #### Construct Class
 
-```typescript
+````typescript
 /**
  * Customizes an email template
  *
@@ -1355,7 +1351,7 @@ export class EmailTemplate extends Construct {
     this.addResource(armResource);
   }
 }
-```
+````
 
 ---
 
@@ -1409,6 +1405,7 @@ packages/cdk/src/apimanagement/
 **Priority**: Highest - enables basic portal functionality
 
 **Resources to Implement**:
+
 1. Users (`packages/cdk/src/apimanagement/users/`)
 2. Groups (`packages/cdk/src/apimanagement/groups/`)
 3. Group Users (`packages/cdk/src/apimanagement/groups/group-user.ts`)
@@ -1417,6 +1414,7 @@ packages/cdk/src/apimanagement/
 **Estimated Effort**: 2-3 days
 
 **Testing Checklist**:
+
 - [ ] Create user programmatically
 - [ ] User appears in Developer Portal
 - [ ] Create custom group
@@ -1429,12 +1427,14 @@ packages/cdk/src/apimanagement/
 **Priority**: High - enables SSO and modern auth
 
 **Resources to Implement**:
+
 1. Identity Providers (`packages/cdk/src/apimanagement/identity/`)
 2. Authorization Servers (`packages/cdk/src/apimanagement/identity/`)
 
 **Estimated Effort**: 2-3 days
 
 **Testing Checklist**:
+
 - [ ] Configure Azure AD identity provider
 - [ ] Sign in to portal with Azure AD
 - [ ] Configure OAuth 2.0 authorization server
@@ -1446,12 +1446,14 @@ packages/cdk/src/apimanagement/
 **Priority**: Medium - nice-to-have for engagement
 
 **Resources to Implement**:
+
 1. API Issues (`packages/cdk/src/apimanagement/community/`)
 2. API Wikis (`packages/cdk/src/apimanagement/community/`)
 
 **Estimated Effort**: 1-2 days
 
 **Testing Checklist**:
+
 - [ ] Create API wiki with Markdown content
 - [ ] Wiki appears on API page in portal
 - [ ] Developer submits API issue
@@ -1463,11 +1465,13 @@ packages/cdk/src/apimanagement/
 **Priority**: Low - polish and branding
 
 **Resources to Implement**:
+
 1. Email Templates (`packages/cdk/src/apimanagement/templates/`)
 
 **Estimated Effort**: 1-2 days
 
 **Testing Checklist**:
+
 - [ ] Customize welcome email
 - [ ] New user receives custom email
 - [ ] Customize invitation email
@@ -1482,6 +1486,7 @@ packages/cdk/src/apimanagement/
 **Scenario**: Company with 50 microservices, 200 internal developers across 10 teams.
 
 **Requirements**:
+
 - Internal developers need self-service access
 - Sign-in with company Azure AD
 - Different teams have access to different API sets
@@ -1509,7 +1514,7 @@ export class InternalApisStack extends Stack {
       name: 'internal-apis',
       sku: 'Developer',
       publisherEmail: 'api-team@company.com',
-      publisherName: 'Company API Team'
+      publisherName: 'Company API Team',
     });
 
     // 2. Create APIs (microservices)
@@ -1518,7 +1523,7 @@ export class InternalApisStack extends Stack {
       name: 'customer-api',
       path: 'customers',
       displayName: 'Customer Service API',
-      protocols: ['https']
+      protocols: ['https'],
     });
 
     const orderApi = new Api(this, 'OrderAPI', {
@@ -1526,7 +1531,7 @@ export class InternalApisStack extends Stack {
       name: 'order-api',
       path: 'orders',
       displayName: 'Order Management API',
-      protocols: ['https']
+      protocols: ['https'],
     });
 
     const inventoryApi = new Api(this, 'InventoryAPI', {
@@ -1534,7 +1539,7 @@ export class InternalApisStack extends Stack {
       name: 'inventory-api',
       path: 'inventory',
       displayName: 'Inventory Service API',
-      protocols: ['https']
+      protocols: ['https'],
     });
 
     // 3. Create products by team
@@ -1545,7 +1550,7 @@ export class InternalApisStack extends Stack {
       description: 'APIs for frontend applications',
       subscriptionRequired: true,
       approvalRequired: false,
-      state: 'published'
+      state: 'published',
     });
 
     const backofficeProduct = new Product(this, 'BackofficeAPIs', {
@@ -1555,29 +1560,29 @@ export class InternalApisStack extends Stack {
       description: 'APIs for internal backoffice applications',
       subscriptionRequired: true,
       approvalRequired: false,
-      state: 'published'
+      state: 'published',
     });
 
     // 4. Create groups by team
     const frontendTeam = new Group(this, 'FrontendTeam', {
       displayName: 'Frontend Team',
-      description: 'Frontend application developers'
+      description: 'Frontend application developers',
     });
 
     const backofficeTeam = new Group(this, 'BackofficeTeam', {
       displayName: 'Backoffice Team',
-      description: 'Backoffice application developers'
+      description: 'Backoffice application developers',
     });
 
     // 5. Grant products to groups
     new ProductGroup(this, 'FrontendAccess', {
       productId: frontendProduct.productId,
-      groupId: frontendTeam.groupId
+      groupId: frontendTeam.groupId,
     });
 
     new ProductGroup(this, 'BackofficeAccess', {
       productId: backofficeProduct.productId,
-      groupId: backofficeTeam.groupId
+      groupId: backofficeTeam.groupId,
     });
 
     // 6. Enable Azure AD SSO
@@ -1585,19 +1590,19 @@ export class InternalApisStack extends Stack {
       type: 'aad',
       clientId: 'your-aad-app-id',
       clientSecret: 'your-secret',
-      allowedTenants: ['company.onmicrosoft.com']
+      allowedTenants: ['company.onmicrosoft.com'],
     });
 
     // 7. Sync Azure AD groups (optional)
     const engineeringADGroup = new Group(this, 'EngineeringAD', {
       displayName: 'Engineering (from Azure AD)',
       type: 'external',
-      externalId: 'azure-ad-group-object-id'
+      externalId: 'azure-ad-group-object-id',
     });
 
     new ProductGroup(this, 'EngineeringGetsFrontend', {
       productId: frontendProduct.productId,
-      groupId: engineeringADGroup.groupId
+      groupId: engineeringADGroup.groupId,
     });
   }
 }
@@ -1615,6 +1620,7 @@ export class InternalApisStack extends Stack {
 8. Copies C# code sample and integrates
 
 **Benefits**:
+
 - ✅ Onboarding time: 5 minutes (vs. hours of manual provisioning)
 - ✅ Zero manual API key distribution
 - ✅ Automatic access control via AD groups
@@ -1628,6 +1634,7 @@ export class InternalApisStack extends Stack {
 **Scenario**: SaaS company offering integration APIs to partners (resellers, ISVs).
 
 **Requirements**:
+
 - Partners can sign up themselves
 - Legal/business team approves access
 - Different tiers (Bronze, Silver, Gold) with different rate limits
@@ -1644,7 +1651,7 @@ export class PartnerApisStack extends Stack {
       name: 'partner-apis',
       sku: 'Standard',
       publisherEmail: 'partners@company.com',
-      publisherName: 'Company Partner Team'
+      publisherName: 'Company Partner Team',
     });
 
     // Create partner-facing APIs
@@ -1653,7 +1660,7 @@ export class PartnerApisStack extends Stack {
       name: 'partner-integration',
       path: 'integration/v1',
       displayName: 'Partner Integration API',
-      protocols: ['https']
+      protocols: ['https'],
     });
 
     const webhooksApi = new Api(this, 'WebhooksAPI', {
@@ -1661,7 +1668,7 @@ export class PartnerApisStack extends Stack {
       name: 'partner-webhooks',
       path: 'webhooks/v1',
       displayName: 'Partner Webhooks API',
-      protocols: ['https']
+      protocols: ['https'],
     });
 
     // Create tiered products
@@ -1673,7 +1680,7 @@ export class PartnerApisStack extends Stack {
       subscriptionRequired: true,
       approvalRequired: false, // Auto-approve sandbox
       state: 'published',
-      subscriptionsLimit: 10 // Each partner can have max 10 sandbox keys
+      subscriptionsLimit: 10, // Each partner can have max 10 sandbox keys
     });
 
     const bronzeProduct = new Product(this, 'Bronze', {
@@ -1683,7 +1690,7 @@ export class PartnerApisStack extends Stack {
       description: '10,000 requests/month, community support',
       subscriptionRequired: true,
       approvalRequired: true, // Requires approval
-      state: 'published'
+      state: 'published',
     });
 
     const silverProduct = new Product(this, 'Silver', {
@@ -1693,7 +1700,7 @@ export class PartnerApisStack extends Stack {
       description: '100,000 requests/month, email support, SLA',
       subscriptionRequired: true,
       approvalRequired: true,
-      state: 'published'
+      state: 'published',
     });
 
     const goldProduct = new Product(this, 'Gold', {
@@ -1703,61 +1710,62 @@ export class PartnerApisStack extends Stack {
       description: 'Unlimited requests, phone support, dedicated success manager',
       subscriptionRequired: true,
       approvalRequired: true,
-      state: 'published'
+      state: 'published',
     });
 
     // Create partner groups
     const allPartners = new Group(this, 'AllPartners', {
       displayName: 'All Partners',
-      description: 'All verified partner organizations'
+      description: 'All verified partner organizations',
     });
 
     const premiumPartners = new Group(this, 'PremiumPartners', {
       displayName: 'Premium Partners',
-      description: 'Gold tier partners'
+      description: 'Gold tier partners',
     });
 
     // Grant access
     new ProductGroup(this, 'AllGetSandbox', {
       productId: sandboxProduct.productId,
-      groupId: allPartners.groupId
+      groupId: allPartners.groupId,
     });
 
     new ProductGroup(this, 'AllGetBronze', {
       productId: bronzeProduct.productId,
-      groupId: allPartners.groupId
+      groupId: allPartners.groupId,
     });
 
     new ProductGroup(this, 'AllGetSilver', {
       productId: silverProduct.productId,
-      groupId: allPartners.groupId
+      groupId: allPartners.groupId,
     });
 
     new ProductGroup(this, 'PremiumGetGold', {
       productId: goldProduct.productId,
-      groupId: premiumPartners.groupId
+      groupId: premiumPartners.groupId,
     });
 
     // Enable Google/Microsoft account sign-in (for partners)
     new IdentityProvider(this, 'Google', {
       type: 'google',
       clientId: 'your-google-client-id.apps.googleusercontent.com',
-      clientSecret: 'your-google-secret'
+      clientSecret: 'your-google-secret',
     });
 
     new IdentityProvider(this, 'Microsoft', {
       type: 'microsoft',
       clientId: 'your-microsoft-client-id',
-      clientSecret: 'your-microsoft-secret'
+      clientSecret: 'your-microsoft-secret',
     });
 
     // Add comprehensive wiki for partners
     new ApiWiki(this, 'IntegrationGuide', {
       apiId: integrationApi.id,
-      documents: [{
-        documentId: 'getting-started',
-        title: 'Getting Started',
-        content: `
+      documents: [
+        {
+          documentId: 'getting-started',
+          title: 'Getting Started',
+          content: `
 # Getting Started with Partner Integration API
 
 ## Prerequisites
@@ -1782,11 +1790,12 @@ Ocp-Apim-Subscription-Key: your-subscription-key
 - Bronze: Community forum
 - Silver: Email support (24h response)
 - Gold: Phone + dedicated Slack channel (4h response)
-        `
-      }, {
-        documentId: 'best-practices',
-        title: 'Best Practices',
-        content: `
+        `,
+        },
+        {
+          documentId: 'best-practices',
+          title: 'Best Practices',
+          content: `
 # Integration Best Practices
 
 ## 1. Use Webhooks
@@ -1800,8 +1809,9 @@ Many endpoints support ETags for efficient caching.
 
 ## 4. Monitor Your Usage
 Check the developer portal for usage analytics.
-        `
-      }]
+        `,
+        },
+      ],
     });
 
     // Customize welcome email for partners
@@ -1835,7 +1845,7 @@ Check the developer portal for usage analytics.
             </div>
           </body>
         </html>
-      `
+      `,
     });
   }
 }
@@ -1853,6 +1863,7 @@ Check the developer portal for usage analytics.
 8. **Scale**: Later upgrades to Silver tier for higher limits
 
 **Business Benefits**:
+
 - ✅ Self-service onboarding reduces sales overhead
 - ✅ Sandbox environment reduces support tickets
 - ✅ Approval workflow ensures partner vetting
@@ -1866,6 +1877,7 @@ Check the developer portal for usage analytics.
 **Scenario**: Public API service (e.g., weather data, geocoding, payment processing).
 
 **Requirements**:
+
 - Anyone can sign up
 - Free tier to trial
 - Paid tiers with automatic billing
@@ -1885,8 +1897,8 @@ export class PublicApiStack extends Stack {
       publisherEmail: 'support@weatherapi.com',
       publisherName: 'Weather API Inc.',
       customProperties: {
-        'Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2': 'true'
-      }
+        'Microsoft.WindowsAzure.ApiManagement.Gateway.Protocols.Server.Http2': 'true',
+      },
     });
 
     // Public API
@@ -1897,7 +1909,7 @@ export class PublicApiStack extends Stack {
       displayName: 'Weather API v2',
       description: 'Global weather data and forecasts',
       protocols: ['https'],
-      subscriptionRequired: true
+      subscriptionRequired: true,
     });
 
     // Free tier with strict limits
@@ -1909,7 +1921,7 @@ export class PublicApiStack extends Stack {
       subscriptionRequired: true,
       approvalRequired: false, // Auto-approve
       state: 'published',
-      subscriptionsLimit: 1 // One subscription per user
+      subscriptionsLimit: 1, // One subscription per user
     });
 
     // Pro tier
@@ -1920,7 +1932,7 @@ export class PublicApiStack extends Stack {
       description: '100,000 requests/month • Email support • Rate limit: 100 req/min',
       subscriptionRequired: true,
       approvalRequired: false,
-      state: 'published'
+      state: 'published',
     });
 
     // Enterprise tier
@@ -1931,57 +1943,58 @@ export class PublicApiStack extends Stack {
       description: 'Unlimited requests • Phone support • Custom rate limits • SLA',
       subscriptionRequired: true,
       approvalRequired: true, // Contact sales first
-      state: 'published'
+      state: 'published',
     });
 
     // Public developers group (everyone)
     const publicDevs = new Group(this, 'PublicDevelopers', {
       displayName: 'Public Developers',
-      description: 'All registered developers'
+      description: 'All registered developers',
     });
 
     // Grant all tiers to public developers
     new ProductGroup(this, 'PublicGetsFree', {
       productId: freeTier.productId,
-      groupId: publicDevs.groupId
+      groupId: publicDevs.groupId,
     });
 
     new ProductGroup(this, 'PublicGetsPro', {
       productId: proTier.productId,
-      groupId: publicDevs.groupId
+      groupId: publicDevs.groupId,
     });
 
     new ProductGroup(this, 'PublicGetsEnterprise', {
       productId: enterpriseTier.productId,
-      groupId: publicDevs.groupId
+      groupId: publicDevs.groupId,
     });
 
     // Enable multiple sign-in options
     new IdentityProvider(this, 'Google', {
       type: 'google',
       clientId: 'your-google-client-id',
-      clientSecret: 'your-google-secret'
+      clientSecret: 'your-google-secret',
     });
 
     new IdentityProvider(this, 'Microsoft', {
       type: 'microsoft',
       clientId: 'your-microsoft-client-id',
-      clientSecret: 'your-microsoft-secret'
+      clientSecret: 'your-microsoft-secret',
     });
 
     new IdentityProvider(this, 'Facebook', {
       type: 'facebook',
       clientId: 'your-facebook-app-id',
-      clientSecret: 'your-facebook-secret'
+      clientSecret: 'your-facebook-secret',
     });
 
     // Comprehensive documentation
     new ApiWiki(this, 'WeatherDocs', {
       apiId: weatherApi.id,
-      documents: [{
-        documentId: 'quickstart',
-        title: 'Quickstart',
-        content: `
+      documents: [
+        {
+          documentId: 'quickstart',
+          title: 'Quickstart',
+          content: `
 # Quickstart Guide
 
 Get weather data in 5 minutes.
@@ -2009,11 +2022,12 @@ curl -X GET "https://weather-api.azure-api.net/v2/current?q=London" \\
 
 ## 4. Check Your Usage
 Visit the portal to see remaining quota.
-        `
-      }, {
-        documentId: 'pricing',
-        title: 'Pricing',
-        content: `
+        `,
+        },
+        {
+          documentId: 'pricing',
+          title: 'Pricing',
+          content: `
 # Pricing
 
 ## Free Tier - $0/month
@@ -2039,8 +2053,9 @@ Visit the portal to see remaining quota.
 - Free tier: No overages (requests blocked)
 - Pro tier: $0.0005 per additional request
 - Enterprise: No overages (unlimited)
-        `
-      }]
+        `,
+        },
+      ],
     });
 
     // Custom emails
@@ -2066,7 +2081,7 @@ Visit the portal to see remaining quota.
             <p>Questions? Reply to this email or check our <a href="$DevPortalUrl/docs">documentation</a>.</p>
           </body>
         </html>
-      `
+      `,
     });
   }
 }
@@ -2085,6 +2100,7 @@ Visit the portal to see remaining quota.
 9. **Scale**: App grows, upgrades to Enterprise for unlimited access
 
 **Business Model**:
+
 - ✅ Viral free tier drives signups
 - ✅ Low friction (no credit card) for trial
 - ✅ Natural upgrade path as usage grows
@@ -2136,7 +2152,7 @@ new ProductGroup(this, 'FinanceAccess', {
 const engineeringAD = new Group(this, 'Engineering', {
   displayName: 'Engineering (synced from Azure AD)',
   type: 'external',
-  externalId: 'azure-ad-engineering-group-object-id'
+  externalId: 'azure-ad-engineering-group-object-id',
 });
 
 // Users automatically added/removed based on AD membership
@@ -2164,12 +2180,12 @@ const orderApiProduct = new Product(this, 'OrderAPI', { ... });
 ```typescript
 // ✅ Good: Auto-approve for internal/sandbox
 const sandboxProduct = new Product(this, 'Sandbox', {
-  approvalRequired: false // Instant access
+  approvalRequired: false, // Instant access
 });
 
 // ✅ Good: Require approval for production/paid
 const productionProduct = new Product(this, 'Production', {
-  approvalRequired: true // Business team approves
+  approvalRequired: true, // Business team approves
 });
 ```
 
@@ -2228,7 +2244,7 @@ new EmailTemplate(this, 'Welcome', {
       <li>Subscribe to product</li>
       <li>Test API</li>
     </ol>
-  `
+  `,
 });
 
 // ❌ Bad: Long marketing copy
@@ -2243,6 +2259,7 @@ body: `
 **Use template variables**:
 
 Available variables:
+
 - `$DevFirstName` - User first name
 - `$DevLastName` - User last name
 - `$DevEmail` - User email
@@ -2257,15 +2274,18 @@ Available variables:
 // ✅ Good: Supplementary guides
 new ApiWiki(this, 'Guides', {
   apiId: api.id,
-  documents: [{
-    documentId: 'getting-started',
-    title: 'Getting Started',
-    content: '# How to integrate in 5 minutes...'
-  }, {
-    documentId: 'best-practices',
-    title: 'Best Practices',
-    content: '# Performance tips...'
-  }]
+  documents: [
+    {
+      documentId: 'getting-started',
+      title: 'Getting Started',
+      content: '# How to integrate in 5 minutes...',
+    },
+    {
+      documentId: 'best-practices',
+      title: 'Best Practices',
+      content: '# Performance tips...',
+    },
+  ],
 });
 
 // ❌ Bad: Duplicating OpenAPI docs
@@ -2302,7 +2322,7 @@ new IdentityProvider(this, 'Google', {
 ```typescript
 // ✅ Good: HTTPS only
 const api = new Api(this, 'API', {
-  protocols: ['https'] // Never 'http'
+  protocols: ['https'], // Never 'http'
 });
 ```
 
@@ -2352,7 +2372,7 @@ const user = new User(this, 'User', {
   email: 'user@example.com',
   firstName: 'John',
   lastName: 'Doe',
-  state: 'active'
+  state: 'active',
 });
 
 // Later, to delete:
@@ -2443,7 +2463,7 @@ export class CompleteDeveloperPortalStack extends Stack {
       sku: 'Standard',
       publisherEmail: 'api-team@contoso.com',
       publisherName: 'Contoso API Team',
-      publisherUrl: 'https://www.contoso.com'
+      publisherUrl: 'https://www.contoso.com',
     });
 
     // ========================================
@@ -2456,7 +2476,7 @@ export class CompleteDeveloperPortalStack extends Stack {
       displayName: 'Customer API',
       description: 'Customer management operations',
       protocols: ['https'],
-      subscriptionRequired: true
+      subscriptionRequired: true,
     });
 
     const orderApi = new Api(this, 'OrderAPI', {
@@ -2466,7 +2486,7 @@ export class CompleteDeveloperPortalStack extends Stack {
       displayName: 'Order API',
       description: 'Order management operations',
       protocols: ['https'],
-      subscriptionRequired: true
+      subscriptionRequired: true,
     });
 
     const analyticsApi = new Api(this, 'AnalyticsAPI', {
@@ -2476,7 +2496,7 @@ export class CompleteDeveloperPortalStack extends Stack {
       displayName: 'Analytics API',
       description: 'Usage analytics and reporting',
       protocols: ['https'],
-      subscriptionRequired: true
+      subscriptionRequired: true,
     });
 
     // ========================================
@@ -2490,7 +2510,7 @@ export class CompleteDeveloperPortalStack extends Stack {
       subscriptionRequired: true,
       approvalRequired: false,
       state: 'published',
-      subscriptionsLimit: 1
+      subscriptionsLimit: 1,
     });
 
     const proProduct = new Product(this, 'ProTier', {
@@ -2500,7 +2520,7 @@ export class CompleteDeveloperPortalStack extends Stack {
       description: '100,000 requests/month • Email support • SLA',
       subscriptionRequired: true,
       approvalRequired: false,
-      state: 'published'
+      state: 'published',
     });
 
     const enterpriseProduct = new Product(this, 'EnterpriseTier', {
@@ -2510,7 +2530,7 @@ export class CompleteDeveloperPortalStack extends Stack {
       description: 'Unlimited requests • Phone support • Dedicated success manager',
       subscriptionRequired: true,
       approvalRequired: true,
-      state: 'published'
+      state: 'published',
     });
 
     // ========================================
@@ -2518,19 +2538,19 @@ export class CompleteDeveloperPortalStack extends Stack {
     // ========================================
     const publicDevelopers = new Group(this, 'PublicDevelopers', {
       displayName: 'Public Developers',
-      description: 'All registered public developers'
+      description: 'All registered public developers',
     });
 
     const partnerDevelopers = new Group(this, 'PartnerDevelopers', {
       displayName: 'Partner Developers',
-      description: 'Verified partner organizations'
+      description: 'Verified partner organizations',
     });
 
     const internalDevelopers = new Group(this, 'InternalDevelopers', {
       displayName: 'Internal Developers',
       type: 'external',
       externalId: 'azure-ad-developers-group-id', // Synced from Azure AD
-      description: 'Contoso employees (synced from Azure AD)'
+      description: 'Contoso employees (synced from Azure AD)',
     });
 
     // ========================================
@@ -2540,39 +2560,39 @@ export class CompleteDeveloperPortalStack extends Stack {
     // Public developers get Free tier
     new ProductGroup(this, 'PublicGetsFree', {
       productId: freeProduct.productId,
-      groupId: publicDevelopers.groupId
+      groupId: publicDevelopers.groupId,
     });
 
     new ProductGroup(this, 'PublicGetsPro', {
       productId: proProduct.productId,
-      groupId: publicDevelopers.groupId
+      groupId: publicDevelopers.groupId,
     });
 
     // Partners get Pro + Enterprise
     new ProductGroup(this, 'PartnersGetPro', {
       productId: proProduct.productId,
-      groupId: partnerDevelopers.groupId
+      groupId: partnerDevelopers.groupId,
     });
 
     new ProductGroup(this, 'PartnersGetEnterprise', {
       productId: enterpriseProduct.productId,
-      groupId: partnerDevelopers.groupId
+      groupId: partnerDevelopers.groupId,
     });
 
     // Internal developers get all tiers
     new ProductGroup(this, 'InternalGetsFree', {
       productId: freeProduct.productId,
-      groupId: internalDevelopers.groupId
+      groupId: internalDevelopers.groupId,
     });
 
     new ProductGroup(this, 'InternalGetsPro', {
       productId: proProduct.productId,
-      groupId: internalDevelopers.groupId
+      groupId: internalDevelopers.groupId,
     });
 
     new ProductGroup(this, 'InternalGetsEnterprise', {
       productId: enterpriseProduct.productId,
-      groupId: internalDevelopers.groupId
+      groupId: internalDevelopers.groupId,
     });
 
     // ========================================
@@ -2584,21 +2604,21 @@ export class CompleteDeveloperPortalStack extends Stack {
       type: 'aad',
       clientId: 'your-azure-ad-app-id',
       clientSecret: 'your-azure-ad-secret',
-      allowedTenants: ['contoso.onmicrosoft.com']
+      allowedTenants: ['contoso.onmicrosoft.com'],
     });
 
     // Google for public/partner developers
     new IdentityProvider(this, 'Google', {
       type: 'google',
       clientId: 'your-app.apps.googleusercontent.com',
-      clientSecret: 'your-google-secret'
+      clientSecret: 'your-google-secret',
     });
 
     // Microsoft Account
     new IdentityProvider(this, 'Microsoft', {
       type: 'microsoft',
       clientId: 'your-microsoft-app-id',
-      clientSecret: 'your-microsoft-secret'
+      clientSecret: 'your-microsoft-secret',
     });
 
     // ========================================
@@ -2615,7 +2635,7 @@ export class CompleteDeveloperPortalStack extends Stack {
       authorizationMethods: ['POST'],
       bearerTokenSendingMethods: ['authorizationHeader'],
       supportState: true,
-      defaultScope: 'api://contoso-api/.default'
+      defaultScope: 'api://contoso-api/.default',
     });
 
     // ========================================
@@ -2628,13 +2648,13 @@ export class CompleteDeveloperPortalStack extends Stack {
       lastName: 'Partner',
       state: 'active',
       note: 'Sample partner user',
-      confirmation: 'invite'
+      confirmation: 'invite',
     });
 
     // Add partner user to partner group
     new GroupUser(this, 'AliceInPartners', {
       groupId: partnerDevelopers.groupId,
-      userId: partnerUser.userId
+      userId: partnerUser.userId,
     });
 
     // ========================================
@@ -2643,10 +2663,11 @@ export class CompleteDeveloperPortalStack extends Stack {
 
     new ApiWiki(this, 'CustomerAPIWiki', {
       apiId: customerApi.id,
-      documents: [{
-        documentId: 'getting-started',
-        title: 'Getting Started',
-        content: `
+      documents: [
+        {
+          documentId: 'getting-started',
+          title: 'Getting Started',
+          content: `
 # Getting Started with Customer API
 
 ## Authentication
@@ -2672,11 +2693,12 @@ curl -X GET "https://contoso-apis.azure-api.net/customers/v1/123" \\
   "industry": "Technology"
 }
 \`\`\`
-        `
-      }, {
-        documentId: 'best-practices',
-        title: 'Best Practices',
-        content: `
+        `,
+        },
+        {
+          documentId: 'best-practices',
+          title: 'Best Practices',
+          content: `
 # Best Practices
 
 ## 1. Cache Responses
@@ -2687,8 +2709,9 @@ Implement exponential backoff.
 
 ## 3. Use Webhooks
 Subscribe to customer.updated events.
-        `
-      }]
+        `,
+        },
+      ],
     });
 
     // ========================================
@@ -2734,7 +2757,7 @@ Subscribe to customer.updated events.
             </div>
           </body>
         </html>
-      `
+      `,
     });
 
     new EmailTemplate(this, 'InvitationEmail', {
@@ -2750,7 +2773,7 @@ Subscribe to customer.updated events.
             <p><a href="$ConfirmUrl">Accept Invitation</a></p>
           </body>
         </html>
-      `
+      `,
     });
   }
 }
@@ -2769,6 +2792,7 @@ Subscribe to customer.updated events.
 **Estimated Total Effort**: 6-10 days for full Developer Portal implementation
 
 **Business Impact**:
+
 - 80-90% reduction in API onboarding time
 - 70-80% reduction in API support tickets
 - Self-service enables scaling to 100s-1000s of developers

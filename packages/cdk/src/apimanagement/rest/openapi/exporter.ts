@@ -130,7 +130,7 @@ export class OpenApiExporter {
     operations: readonly IRestOperation[],
     info: OpenApiInfo,
     servers?: readonly OpenApiServer[],
-    options: OpenApiExporterOptions = {},
+    options: OpenApiExporterOptions = {}
   ) {
     this.operations = operations;
     this.info = info;
@@ -172,8 +172,7 @@ export class OpenApiExporter {
       servers: this.servers,
       paths: paths as OpenApiPaths,
       components:
-        this.options.extractComponents &&
-        Object.keys(this.components.schemas || {}).length > 0
+        this.options.extractComponents && Object.keys(this.components.schemas || {}).length > 0
           ? this.components
           : undefined,
     };
@@ -191,9 +190,7 @@ export class OpenApiExporter {
    */
   toJson(): string {
     const spec = this.export();
-    return this.options.prettyPrint
-      ? JSON.stringify(spec, null, 2)
-      : JSON.stringify(spec);
+    return this.options.prettyPrint ? JSON.stringify(spec, null, 2) : JSON.stringify(spec);
   }
 
   /**
@@ -226,10 +223,7 @@ export class OpenApiExporter {
    * await exporter.writeToFile('./openapi.yaml', 'yaml');
    * ```
    */
-  async writeToFile(
-    filePath: string,
-    format: 'yaml' | 'json' = 'yaml',
-  ): Promise<void> {
+  async writeToFile(filePath: string, format: 'yaml' | 'json' = 'yaml'): Promise<void> {
     const content = format === 'yaml' ? this.toYaml() : this.toJson();
     await fs.writeFile(filePath, content, 'utf-8');
   }
@@ -269,9 +263,16 @@ export class OpenApiExporter {
     // Add each operation
     for (const operation of operations) {
       const method = operation.method.toLowerCase() as keyof OpenApiPathItem;
-      if (method === 'get' || method === 'put' || method === 'post' ||
-          method === 'delete' || method === 'options' || method === 'head' ||
-          method === 'patch' || method === 'trace') {
+      if (
+        method === 'get' ||
+        method === 'put' ||
+        method === 'post' ||
+        method === 'delete' ||
+        method === 'options' ||
+        method === 'head' ||
+        method === 'patch' ||
+        method === 'trace'
+      ) {
         pathItem[method] = this.buildOperation(operation);
       }
     }
@@ -282,9 +283,7 @@ export class OpenApiExporter {
   /**
    * Extract parameters common to all operations on a path
    */
-  private extractCommonParameters(
-    operations: IRestOperation[],
-  ): ParameterObject[] {
+  private extractCommonParameters(operations: IRestOperation[]): ParameterObject[] {
     // For simplicity, we don't extract common parameters yet
     // Could be enhanced to detect common path/header parameters
     return [];
@@ -301,9 +300,7 @@ export class OpenApiExporter {
       tags: operation.tags,
       externalDocs: operation.externalDocs,
       parameters: this.buildParameters(operation),
-      requestBody: operation.requestBody
-        ? this.buildRequestBody(operation.requestBody)
-        : undefined,
+      requestBody: operation.requestBody ? this.buildRequestBody(operation.requestBody) : undefined,
       responses: this.buildResponses(operation.responses),
       deprecated: operation.deprecated,
       security: operation.security,
@@ -314,9 +311,7 @@ export class OpenApiExporter {
   /**
    * Build parameters array from operation
    */
-  private buildParameters(
-    operation: IRestOperation,
-  ): ParameterObject[] | undefined {
+  private buildParameters(operation: IRestOperation): ParameterObject[] | undefined {
     const parameters: ParameterObject[] = [];
 
     // Path parameters
@@ -331,9 +326,7 @@ export class OpenApiExporter {
 
     // Header parameters
     if (operation.headerParameters) {
-      parameters.push(
-        ...this.buildHeaderParameters(operation.headerParameters),
-      );
+      parameters.push(...this.buildHeaderParameters(operation.headerParameters));
     }
 
     return parameters.length > 0 ? parameters : undefined;
@@ -342,9 +335,7 @@ export class OpenApiExporter {
   /**
    * Build path parameters
    */
-  private buildPathParameters(
-    definition: PathParameterDefinition,
-  ): ParameterObject[] {
+  private buildPathParameters(definition: PathParameterDefinition): ParameterObject[] {
     const parameters: ParameterObject[] = [];
     const properties = definition.schema.properties || {};
 
@@ -366,9 +357,7 @@ export class OpenApiExporter {
   /**
    * Build query parameters
    */
-  private buildQueryParameters(
-    definition: QueryParameterDefinition,
-  ): ParameterObject[] {
+  private buildQueryParameters(definition: QueryParameterDefinition): ParameterObject[] {
     const parameters: ParameterObject[] = [];
     const properties = definition.schema.properties || {};
     const required = definition.schema.required || [];
@@ -393,9 +382,7 @@ export class OpenApiExporter {
   /**
    * Build header parameters
    */
-  private buildHeaderParameters(
-    definition: HeaderParameterDefinition,
-  ): ParameterObject[] {
+  private buildHeaderParameters(definition: HeaderParameterDefinition): ParameterObject[] {
     const parameters: ParameterObject[] = [];
     const properties = definition.schema.properties || {};
 
@@ -416,9 +403,7 @@ export class OpenApiExporter {
   /**
    * Convert ParameterSchema to OpenAPI SchemaObject
    */
-  private convertParameterSchemaToOpenApi(
-    schema: ParameterSchema,
-  ): SchemaObject {
+  private convertParameterSchemaToOpenApi(schema: ParameterSchema): SchemaObject {
     return {
       type: schema.type,
       format: schema.format,
@@ -429,9 +414,7 @@ export class OpenApiExporter {
       minLength: schema.minLength,
       maxLength: schema.maxLength,
       pattern: schema.pattern,
-      items: schema.items
-        ? this.convertParameterSchemaToOpenApi(schema.items)
-        : undefined,
+      items: schema.items ? this.convertParameterSchemaToOpenApi(schema.items) : undefined,
       properties: schema.properties
         ? this.convertParameterPropertiesMap(schema.properties)
         : undefined,
@@ -445,7 +428,7 @@ export class OpenApiExporter {
    * Convert parameter properties map
    */
   private convertParameterPropertiesMap(
-    properties: Record<string, ParameterSchema>,
+    properties: Record<string, ParameterSchema>
   ): Record<string, SchemaObject> {
     const result: Record<string, SchemaObject> = {};
 
@@ -459,14 +442,10 @@ export class OpenApiExporter {
   /**
    * Build request body from definition
    */
-  private buildRequestBody(
-    definition: RequestBodyDefinition,
-  ): RequestBodyObject {
+  private buildRequestBody(definition: RequestBodyDefinition): RequestBodyObject {
     const content: Record<string, MediaTypeObject> = {};
 
-    for (const [mediaType, mediaTypeSchema] of Object.entries(
-      definition.content,
-    )) {
+    for (const [mediaType, mediaTypeSchema] of Object.entries(definition.content)) {
       if (!mediaTypeSchema) continue;
 
       content[mediaType] = this.buildMediaTypeObject(mediaTypeSchema);
@@ -482,9 +461,7 @@ export class OpenApiExporter {
   /**
    * Build media type object
    */
-  private buildMediaTypeObject(
-    mediaTypeSchema: MediaTypeSchema,
-  ): MediaTypeObject {
+  private buildMediaTypeObject(mediaTypeSchema: MediaTypeSchema): MediaTypeObject {
     return {
       schema: this.convertJsonSchemaToOpenApi(mediaTypeSchema.schema),
       examples: mediaTypeSchema.examples,
@@ -527,9 +504,7 @@ export class OpenApiExporter {
           : schema.additionalProperties
             ? this.convertJsonSchemaToOpenApi(schema.additionalProperties)
             : undefined,
-      items: schema.items
-        ? this.convertJsonSchemaToOpenApi(schema.items)
-        : undefined,
+      items: schema.items ? this.convertJsonSchemaToOpenApi(schema.items) : undefined,
       oneOf: schema.oneOf?.map((s) => this.convertJsonSchemaToOpenApi(s)),
       anyOf: schema.anyOf?.map((s) => this.convertJsonSchemaToOpenApi(s)),
       allOf: schema.allOf?.map((s) => this.convertJsonSchemaToOpenApi(s)),
@@ -549,7 +524,7 @@ export class OpenApiExporter {
    * Convert JSON Schema properties map
    */
   private convertJsonSchemaPropertiesMap(
-    properties: Record<string, JsonSchema>,
+    properties: Record<string, JsonSchema>
   ): Record<string, SchemaObject> {
     const result: Record<string, SchemaObject> = {};
 
@@ -573,9 +548,7 @@ export class OpenApiExporter {
       const content: Record<string, MediaTypeObject> = {};
 
       if (response.content) {
-        for (const [mediaType, mediaTypeSchema] of Object.entries(
-          response.content,
-        )) {
+        for (const [mediaType, mediaTypeSchema] of Object.entries(response.content)) {
           // Type narrowing: mediaTypeSchema could be undefined from the index signature
           if (!mediaTypeSchema) continue;
           // Type assertion: after the check, we know mediaTypeSchema is not undefined

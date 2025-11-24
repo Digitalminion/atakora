@@ -12,13 +12,13 @@ import type { FunctionRuntime } from './types';
  */
 export const ManagedServiceIdentityType = schema.web.ManagedServiceIdentityType;
 export type ManagedServiceIdentityType =
-  typeof ManagedServiceIdentityType[keyof typeof ManagedServiceIdentityType];
+  (typeof ManagedServiceIdentityType)[keyof typeof ManagedServiceIdentityType];
 
 /**
  * FTPS state for Function App.
  */
 export const FtpsState = schema.web.FtpsState;
-export type FtpsState = typeof FtpsState[keyof typeof FtpsState];
+export type FtpsState = (typeof FtpsState)[keyof typeof FtpsState];
 
 /**
  * Managed service identity configuration.
@@ -231,7 +231,10 @@ export interface FunctionAppProps {
    * @remarks
    * Required for Azure Functions. Used for state management and logging.
    */
-  readonly storageAccount: { readonly storageAccountId: string; readonly storageAccountName: string };
+  readonly storageAccount: {
+    readonly storageAccountId: string;
+    readonly storageAccountName: string;
+  };
 
   /**
    * Runtime.

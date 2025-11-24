@@ -10,10 +10,7 @@
 import { Construct } from '@atakora/cdk';
 import { constructIdToPurpose } from '@atakora/lib';
 import { ArmServiceBusTopic } from './service-bus-topic-arm';
-import type {
-  ServiceBusTopicProps,
-  IServiceBusTopic,
-} from './service-bus-topic-types';
+import type { ServiceBusTopicProps, IServiceBusTopic } from './service-bus-topic-types';
 
 /**
  * L2 construct for Service Bus Topic.
