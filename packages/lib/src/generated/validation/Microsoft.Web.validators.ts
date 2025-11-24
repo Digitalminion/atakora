@@ -44,7 +44,7 @@ export function validateCertificates(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -54,13 +54,13 @@ export function validateCertificates(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -79,7 +79,7 @@ export function validateHostingEnvironments(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -89,13 +89,13 @@ export function validateHostingEnvironments(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -110,7 +110,7 @@ export function validateHostingEnvironmentsConfigurations(props: any): Validatio
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -129,7 +129,7 @@ export function validateHostingEnvironmentsMultiRolePools(props: any): Validatio
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -139,13 +139,13 @@ export function validateHostingEnvironmentsMultiRolePools(props: any): Validatio
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -155,7 +155,9 @@ export function validateHostingEnvironmentsMultiRolePools(props: any): Validatio
  * @param props - Resource properties to validate
  * @returns Validation result
  */
-export function validateHostingEnvironmentsPrivateEndpointConnections(props: any): ValidationResult {
+export function validateHostingEnvironmentsPrivateEndpointConnections(
+  props: any
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Validate required property: name
@@ -164,7 +166,7 @@ export function validateHostingEnvironmentsPrivateEndpointConnections(props: any
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -174,13 +176,13 @@ export function validateHostingEnvironmentsPrivateEndpointConnections(props: any
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -199,7 +201,7 @@ export function validateHostingEnvironmentsWorkerPools(props: any): ValidationRe
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -209,13 +211,13 @@ export function validateHostingEnvironmentsWorkerPools(props: any): ValidationRe
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -234,7 +236,7 @@ export function validateKubeEnvironments(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -244,13 +246,13 @@ export function validateKubeEnvironments(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -269,7 +271,7 @@ export function validateServerfarms(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -279,13 +281,13 @@ export function validateServerfarms(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -304,7 +306,7 @@ export function validateServerfarmsVirtualNetworkConnectionsGateways(props: any)
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -314,13 +316,13 @@ export function validateServerfarmsVirtualNetworkConnectionsGateways(props: any)
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -339,7 +341,7 @@ export function validateServerfarmsVirtualNetworkConnectionsRoutes(props: any): 
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -349,13 +351,13 @@ export function validateServerfarmsVirtualNetworkConnectionsRoutes(props: any): 
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -374,7 +376,7 @@ export function validateSites(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -384,13 +386,13 @@ export function validateSites(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -405,7 +407,7 @@ export function validateSitesBasicPublishingCredentialsPolicies(props: any): Val
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -424,7 +426,7 @@ export function validateSitesCertificates(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -434,13 +436,13 @@ export function validateSitesCertificates(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -455,7 +457,7 @@ export function validateSitesConfig(props: any): ValidationResult {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -474,7 +476,7 @@ export function validateSitesDeployments(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -484,13 +486,13 @@ export function validateSitesDeployments(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -509,7 +511,7 @@ export function validateSitesDomainOwnershipIdentifiers(props: any): ValidationR
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -519,13 +521,13 @@ export function validateSitesDomainOwnershipIdentifiers(props: any): ValidationR
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -540,7 +542,7 @@ export function validateSitesExtensions(props: any): ValidationResult {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -559,7 +561,7 @@ export function validateSitesFunctions(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -569,13 +571,13 @@ export function validateSitesFunctions(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -594,13 +596,13 @@ export function validateSitesFunctionsKeys(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -619,7 +621,7 @@ export function validateSitesHostNameBindings(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -629,13 +631,13 @@ export function validateSitesHostNameBindings(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -654,7 +656,7 @@ export function validateSitesHybridConnectionNamespacesRelays(props: any): Valid
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -664,13 +666,13 @@ export function validateSitesHybridConnectionNamespacesRelays(props: any): Valid
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -689,7 +691,7 @@ export function validateSitesHybridconnection(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -699,13 +701,13 @@ export function validateSitesHybridconnection(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -724,7 +726,7 @@ export function validateSitesInstancesExtensions(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -734,13 +736,13 @@ export function validateSitesInstancesExtensions(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -759,7 +761,7 @@ export function validateSitesNetworkConfig(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -769,13 +771,13 @@ export function validateSitesNetworkConfig(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -794,7 +796,7 @@ export function validateSitesPremieraddons(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -804,13 +806,13 @@ export function validateSitesPremieraddons(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -829,7 +831,7 @@ export function validateSitesPrivateAccess(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -839,13 +841,13 @@ export function validateSitesPrivateAccess(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -864,7 +866,7 @@ export function validateSitesPrivateEndpointConnections(props: any): ValidationR
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -874,13 +876,13 @@ export function validateSitesPrivateEndpointConnections(props: any): ValidationR
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -899,7 +901,7 @@ export function validateSitesPublicCertificates(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -909,13 +911,13 @@ export function validateSitesPublicCertificates(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -934,7 +936,7 @@ export function validateSitesSitecontainers(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -944,13 +946,13 @@ export function validateSitesSitecontainers(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -969,13 +971,13 @@ export function validateSitesSiteextensions(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -994,7 +996,7 @@ export function validateSitesSlots(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1004,13 +1006,13 @@ export function validateSitesSlots(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1025,7 +1027,7 @@ export function validateSitesSlotsBasicPublishingCredentialsPolicies(props: any)
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1044,7 +1046,7 @@ export function validateSitesSlotsCertificates(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1054,13 +1056,13 @@ export function validateSitesSlotsCertificates(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1075,7 +1077,7 @@ export function validateSitesSlotsConfig(props: any): ValidationResult {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1094,7 +1096,7 @@ export function validateSitesSlotsDeployments(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1104,13 +1106,13 @@ export function validateSitesSlotsDeployments(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1129,7 +1131,7 @@ export function validateSitesSlotsDomainOwnershipIdentifiers(props: any): Valida
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1139,13 +1141,13 @@ export function validateSitesSlotsDomainOwnershipIdentifiers(props: any): Valida
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1164,7 +1166,7 @@ export function validateSitesSlotsExtensions(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1174,13 +1176,13 @@ export function validateSitesSlotsExtensions(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1199,7 +1201,7 @@ export function validateSitesSlotsFunctions(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1209,13 +1211,13 @@ export function validateSitesSlotsFunctions(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1234,13 +1236,13 @@ export function validateSitesSlotsFunctionsKeys(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1259,7 +1261,7 @@ export function validateSitesSlotsHostNameBindings(props: any): ValidationResult
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1269,13 +1271,13 @@ export function validateSitesSlotsHostNameBindings(props: any): ValidationResult
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1294,7 +1296,7 @@ export function validateSitesSlotsHybridConnectionNamespacesRelays(props: any): 
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1304,13 +1306,13 @@ export function validateSitesSlotsHybridConnectionNamespacesRelays(props: any): 
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1329,7 +1331,7 @@ export function validateSitesSlotsHybridconnection(props: any): ValidationResult
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1339,13 +1341,13 @@ export function validateSitesSlotsHybridconnection(props: any): ValidationResult
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1364,7 +1366,7 @@ export function validateSitesSlotsInstancesExtensions(props: any): ValidationRes
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1374,13 +1376,13 @@ export function validateSitesSlotsInstancesExtensions(props: any): ValidationRes
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1399,7 +1401,7 @@ export function validateSitesSlotsNetworkConfig(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1409,13 +1411,13 @@ export function validateSitesSlotsNetworkConfig(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1434,7 +1436,7 @@ export function validateSitesSlotsPremieraddons(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1444,13 +1446,13 @@ export function validateSitesSlotsPremieraddons(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1469,7 +1471,7 @@ export function validateSitesSlotsPrivateAccess(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1479,13 +1481,13 @@ export function validateSitesSlotsPrivateAccess(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1504,7 +1506,7 @@ export function validateSitesSlotsPrivateEndpointConnections(props: any): Valida
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1514,13 +1516,13 @@ export function validateSitesSlotsPrivateEndpointConnections(props: any): Valida
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1539,7 +1541,7 @@ export function validateSitesSlotsPublicCertificates(props: any): ValidationResu
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1549,13 +1551,13 @@ export function validateSitesSlotsPublicCertificates(props: any): ValidationResu
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1574,7 +1576,7 @@ export function validateSitesSlotsSitecontainers(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1584,13 +1586,13 @@ export function validateSitesSlotsSitecontainers(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1609,13 +1611,13 @@ export function validateSitesSlotsSiteextensions(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1634,7 +1636,7 @@ export function validateSitesSlotsSourcecontrols(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1644,13 +1646,13 @@ export function validateSitesSlotsSourcecontrols(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1669,7 +1671,7 @@ export function validateSitesSlotsVirtualNetworkConnections(props: any): Validat
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1679,13 +1681,13 @@ export function validateSitesSlotsVirtualNetworkConnections(props: any): Validat
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1704,7 +1706,7 @@ export function validateSitesSlotsVirtualNetworkConnectionsGateways(props: any):
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1714,13 +1716,13 @@ export function validateSitesSlotsVirtualNetworkConnectionsGateways(props: any):
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1739,7 +1741,7 @@ export function validateSitesSourcecontrols(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1749,13 +1751,13 @@ export function validateSitesSourcecontrols(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1774,7 +1776,7 @@ export function validateSitesVirtualNetworkConnections(props: any): ValidationRe
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1784,13 +1786,13 @@ export function validateSitesVirtualNetworkConnections(props: any): ValidationRe
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1809,7 +1811,7 @@ export function validateSitesVirtualNetworkConnectionsGateways(props: any): Vali
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1819,13 +1821,13 @@ export function validateSitesVirtualNetworkConnectionsGateways(props: any): Vali
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1844,7 +1846,7 @@ export function validateStaticSites(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1854,13 +1856,13 @@ export function validateStaticSites(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1879,7 +1881,7 @@ export function validateStaticSitesBasicAuth(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1889,13 +1891,13 @@ export function validateStaticSitesBasicAuth(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1910,7 +1912,7 @@ export function validateStaticSitesBuildsConfig(props: any): ValidationResult {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1929,7 +1931,7 @@ export function validateStaticSitesBuildsDatabaseConnections(props: any): Valida
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1939,13 +1941,13 @@ export function validateStaticSitesBuildsDatabaseConnections(props: any): Valida
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1964,7 +1966,7 @@ export function validateStaticSitesBuildsLinkedBackends(props: any): ValidationR
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -1974,13 +1976,13 @@ export function validateStaticSitesBuildsLinkedBackends(props: any): ValidationR
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -1999,7 +2001,7 @@ export function validateStaticSitesBuildsUserProvidedFunctionApps(props: any): V
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2009,13 +2011,13 @@ export function validateStaticSitesBuildsUserProvidedFunctionApps(props: any): V
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2030,7 +2032,7 @@ export function validateStaticSitesConfig(props: any): ValidationResult {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2049,7 +2051,7 @@ export function validateStaticSitesCustomDomains(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2059,13 +2061,13 @@ export function validateStaticSitesCustomDomains(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2084,7 +2086,7 @@ export function validateStaticSitesDatabaseConnections(props: any): ValidationRe
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2094,13 +2096,13 @@ export function validateStaticSitesDatabaseConnections(props: any): ValidationRe
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2119,7 +2121,7 @@ export function validateStaticSitesLinkedBackends(props: any): ValidationResult 
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2129,13 +2131,13 @@ export function validateStaticSitesLinkedBackends(props: any): ValidationResult 
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2154,7 +2156,7 @@ export function validateStaticSitesPrivateEndpointConnections(props: any): Valid
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2164,13 +2166,13 @@ export function validateStaticSitesPrivateEndpointConnections(props: any): Valid
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -2189,7 +2191,7 @@ export function validateStaticSitesUserProvidedFunctionApps(props: any): Validat
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -2199,12 +2201,12 @@ export function validateStaticSitesUserProvidedFunctionApps(props: any): Validat
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }

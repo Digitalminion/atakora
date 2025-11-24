@@ -1005,7 +1005,7 @@ export interface MySqlConfiguration {
     /**
      * Current value.
      *
-   * @remarks
+     * @remarks
      * The current value of the configuration parameter.
      *
      * @example '151'

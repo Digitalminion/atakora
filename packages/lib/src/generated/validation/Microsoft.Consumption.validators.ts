@@ -555,9 +555,11 @@ export function validateBudget(props: any): ValidationResult {
               fix: 'Provide contact emails as an array of strings',
             });
           } else {
-            if (notification.contactEmails.length === 0 &&
-                (!notification.contactRoles || notification.contactRoles.length === 0) &&
-                (!notification.contactGroups || notification.contactGroups.length === 0)) {
+            if (
+              notification.contactEmails.length === 0 &&
+              (!notification.contactRoles || notification.contactRoles.length === 0) &&
+              (!notification.contactGroups || notification.contactGroups.length === 0)
+            ) {
               errors.push({
                 path: `${basePath}.contactEmails`,
                 message: 'At least one contact method (email, role, or action group) is required',

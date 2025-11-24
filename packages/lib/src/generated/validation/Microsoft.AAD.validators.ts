@@ -53,7 +53,8 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 /**
  * Azure GUID pattern.
  */
-const GUID_PATTERN = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
+const GUID_PATTERN =
+  /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
 
 /**
  * Validate Microsoft.AAD/domainServices properties.
@@ -312,7 +313,8 @@ export function validateDomainServices(props: any): ValidationResult {
         if (!Array.isArray(notificationSettings.additionalRecipients)) {
           errors.push({
             path: 'properties.notificationSettings.additionalRecipients',
-            message: 'Property "properties.notificationSettings.additionalRecipients" must be an array',
+            message:
+              'Property "properties.notificationSettings.additionalRecipients" must be an array',
             code: 'INVALID_TYPE',
             fix: 'Provide an array of email addresses',
           });
@@ -344,7 +346,10 @@ export function validateDomainServices(props: any): ValidationResult {
       const validLdapsValues = ['Enabled', 'Disabled'];
 
       ['ldaps', 'externalAccess'].forEach((field) => {
-        if (ldapsSettings[field] !== undefined && !validLdapsValues.includes(ldapsSettings[field])) {
+        if (
+          ldapsSettings[field] !== undefined &&
+          !validLdapsValues.includes(ldapsSettings[field])
+        ) {
           errors.push({
             path: `properties.ldapsSettings.${field}`,
             message: `Property "properties.ldapsSettings.${field}" must be one of: ${validLdapsValues.join(', ')}. Got: "${ldapsSettings[field]}"`,

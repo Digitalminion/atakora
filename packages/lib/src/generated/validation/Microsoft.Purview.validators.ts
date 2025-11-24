@@ -169,7 +169,10 @@ function validateIdentity(identity: any): ValidationError[] {
 
   // Validate userAssignedIdentities if type is UserAssigned
   if (identity.type === 'UserAssigned') {
-    if (!identity.userAssignedIdentities || Object.keys(identity.userAssignedIdentities).length === 0) {
+    if (
+      !identity.userAssignedIdentities ||
+      Object.keys(identity.userAssignedIdentities).length === 0
+    ) {
       errors.push({
         path: 'identity.userAssignedIdentities',
         message: 'User-assigned identities must be specified when identity type is UserAssigned',
@@ -270,7 +273,12 @@ function validateAccountProperties(properties: any): ValidationError[] {
 
   // Validate public network access settings
   if (properties.publicNetworkAccess !== undefined) {
-    errors.push(...validatePublicNetworkAccess(properties.publicNetworkAccess, 'properties.publicNetworkAccess'));
+    errors.push(
+      ...validatePublicNetworkAccess(
+        properties.publicNetworkAccess,
+        'properties.publicNetworkAccess'
+      )
+    );
   }
 
   if (properties.managedResourcesPublicNetworkAccess !== undefined) {
@@ -283,11 +291,21 @@ function validateAccountProperties(properties: any): ValidationError[] {
   }
 
   if (properties.managedEventHubState !== undefined) {
-    errors.push(...validatePublicNetworkAccess(properties.managedEventHubState, 'properties.managedEventHubState'));
+    errors.push(
+      ...validatePublicNetworkAccess(
+        properties.managedEventHubState,
+        'properties.managedEventHubState'
+      )
+    );
   }
 
   if (properties.tenantEndpointState !== undefined) {
-    errors.push(...validatePublicNetworkAccess(properties.tenantEndpointState, 'properties.tenantEndpointState'));
+    errors.push(
+      ...validatePublicNetworkAccess(
+        properties.tenantEndpointState,
+        'properties.tenantEndpointState'
+      )
+    );
   }
 
   // Validate ingestion storage

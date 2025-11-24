@@ -56,7 +56,12 @@ const VALID_PUBLIC_NETWORK_ACCESS = ['Enabled', 'Disabled'] as const;
 /**
  * Valid identity types.
  */
-const VALID_IDENTITY_TYPES = ['None', 'SystemAssigned', 'UserAssigned', 'SystemAssigned,UserAssigned'] as const;
+const VALID_IDENTITY_TYPES = [
+  'None',
+  'SystemAssigned',
+  'UserAssigned',
+  'SystemAssigned,UserAssigned',
+] as const;
 
 /**
  * Validate workspace name.
@@ -304,10 +309,14 @@ function validateIdentity(identity: any): ValidationError[] {
 
   // Validate userAssignedIdentities if type includes UserAssigned
   if (identity.type && identity.type.includes('UserAssigned')) {
-    if (!identity.userAssignedIdentities || Object.keys(identity.userAssignedIdentities).length === 0) {
+    if (
+      !identity.userAssignedIdentities ||
+      Object.keys(identity.userAssignedIdentities).length === 0
+    ) {
       errors.push({
         path: 'identity.userAssignedIdentities',
-        message: 'User-assigned identities must be specified when identity type includes UserAssigned',
+        message:
+          'User-assigned identities must be specified when identity type includes UserAssigned',
         code: 'REQUIRED_PROPERTY_MISSING',
         fix: 'Provide at least one user-assigned identity resource ID',
       });
@@ -397,7 +406,10 @@ export function validateWorkspace(props: any): ValidationResult {
 
   if (props.properties.publicNetworkAccessForQuery !== undefined) {
     errors.push(
-      ...validatePublicNetworkAccess(props.properties.publicNetworkAccessForQuery, 'properties.publicNetworkAccessForQuery')
+      ...validatePublicNetworkAccess(
+        props.properties.publicNetworkAccessForQuery,
+        'properties.publicNetworkAccessForQuery'
+      )
     );
   }
 

@@ -72,15 +72,16 @@ export function grantResourceRole(
   props: GrantResourceRoleProps
 ): RoleAssignment {
   // Extract principal ID (handle both managed identities and other principals)
-  const principalId = props.principal.principalId ||
-                      props.principal.identityId ||
-                      props.principal.objectId ||
-                      props.principal.id;
+  const principalId =
+    props.principal.principalId ||
+    props.principal.identityId ||
+    props.principal.objectId ||
+    props.principal.id;
 
   if (!principalId) {
     throw new Error(
       `Unable to determine principal ID from principal. ` +
-      `Expected principal to have one of: principalId, identityId, objectId, or id properties.`
+        `Expected principal to have one of: principalId, identityId, objectId, or id properties.`
     );
   }
 

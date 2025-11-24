@@ -302,8 +302,7 @@ export interface ArcConfiguration {
 /**
  * ArmIdWrapper definition.
  */
-export interface ArmIdWrapper {
-}
+export interface ArmIdWrapper {}
 
 /**
  * AseV3NetworkingConfiguration definition.
@@ -487,7 +486,7 @@ export interface AzureActiveDirectoryLogin {
 export interface AzureActiveDirectoryRegistration {
   /**
    * The Client ID of this relying party application, known as the client_id.
-   * This setting is required for enabling OpenID Connection authentication with Azure Active Directory or 
+   * This setting is required for enabling OpenID Connection authentication with Azure Active Directory or
    * other 3rd party OpenID Connect providers.
    * More information on OpenID Connect: http://openid.net/specs/openid-connect-core-1_0.html
    */
@@ -779,7 +778,7 @@ export interface ClientRegistration {
  */
 export interface CloningInfo {
   /**
-   * Application setting overrides for cloned app. If specified, these settings override the settings cloned 
+   * Application setting overrides for cloned app. If specified, these settings override the settings cloned
    * from source app. Otherwise, application settings from source app are retained.
    */
   readonly appSettingsOverrides?: Record<string, string> | any;
@@ -809,8 +808,8 @@ export interface CloningInfo {
    */
   readonly overwrite?: boolean | any;
   /**
-   * ARM resource ID of the source app. App resource ID is of the form 
-   * /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName} for production slots and 
+   * ARM resource ID of the source app. App resource ID is of the form
+   * /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName} for production slots and
    * /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slotName} for other slots.
    */
   readonly sourceWebAppId?: string;
@@ -819,7 +818,7 @@ export interface CloningInfo {
    */
   readonly sourceWebAppLocation?: string;
   /**
-   * ARM resource ID of the Traffic Manager profile to use, if it exists. Traffic Manager resource ID is of the form 
+   * ARM resource ID of the Traffic Manager profile to use, if it exists. Traffic Manager resource ID is of the form
    * /subscriptions/{subId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/trafficManagerProfiles/{profileName}.
    */
   readonly trafficManagerProfileId?: string;
@@ -907,7 +906,7 @@ export interface CorsSettings {
    */
   readonly allowedOrigins?: string[] | any;
   /**
-   * Gets or sets whether CORS requests with credentials are allowed. See 
+   * Gets or sets whether CORS requests with credentials are allowed. See
    * https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#Requests_with_credentials
    * for more details.
    */
@@ -1526,7 +1525,12 @@ export interface GlobalValidation {
   /**
    * The action to take when an unauthenticated client attempts to access the app.
    */
-  readonly unauthenticatedClientAction?: 'RedirectToLoginPage' | 'AllowAnonymous' | 'Return401' | 'Return403' | any;
+  readonly unauthenticatedClientAction?:
+    | 'RedirectToLoginPage'
+    | 'AllowAnonymous'
+    | 'Return401'
+    | 'Return403'
+    | any;
 }
 
 /**
@@ -1795,19 +1799,19 @@ export interface IpSecurityRestriction {
   readonly description?: string;
   /**
    * IP restriction rule headers.
-   * X-Forwarded-Host (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host#Examples). 
+   * X-Forwarded-Host (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host#Examples).
    * The matching logic is ..
    * - If the property is null or empty (default), all hosts(or lack of) are allowed.
    * - A value is compared using ordinal-ignore-case (excluding port number).
    * - Subdomain wildcards are permitted but don't match the root domain. For example, *.contoso.com matches the subdomain foo.contoso.com
    *  but not the root domain contoso.com or multi-level foo.bar.contoso.com
    * - Unicode host names are allowed but are converted to Punycode for matching.
-   * 
+   *
    * X-Forwarded-For (https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For#Examples).
    * The matching logic is ..
    * - If the property is null or empty (default), any forwarded-for chains (or lack of) are allowed.
    * - If any address (excluding port number) in the chain (comma separated) matches the CIDR defined by the property.
-   * 
+   *
    * X-Azure-FDID and X-FD-HealthProbe.
    * The matching logic is exact match.
    */
@@ -2314,7 +2318,7 @@ export interface PushSettingsProps {
   /**
    * Gets or sets a JSON string containing a list of tags that require user authentication to be used in the push registration endpoint.
    * Tags can consist of alphanumeric characters and the following:
-   * '_', '@', '#', '.', ':', '-'. 
+   * '_', '@', '#', '.', ':', '-'.
    * Validation should be performed at the PushRequestHandler.
    */
   readonly tagsRequiringAuth?: string;
@@ -2337,8 +2341,8 @@ export interface RampUpRule {
    */
   readonly changeIntervalInMinutes?: number | any;
   /**
-   * In auto ramp up scenario this is the step to add/remove from <code>ReroutePercentage</code> until it reaches \n<code>MinReroutePercentage</code> or 
-   * <code>MaxReroutePercentage</code>. Site metrics are checked every N minutes specified in <code>ChangeIntervalInMinutes</code>.\nCustom decision algorithm 
+   * In auto ramp up scenario this is the step to add/remove from <code>ReroutePercentage</code> until it reaches \n<code>MinReroutePercentage</code> or
+   * <code>MaxReroutePercentage</code>. Site metrics are checked every N minutes specified in <code>ChangeIntervalInMinutes</code>.\nCustom decision algorithm
    * can be provided in TiPCallback site extension which URL can be specified in <code>ChangeDecisionCallbackUrl</code>.
    */
   readonly changeStep?: number | any;
@@ -2454,7 +2458,7 @@ export interface SiteAuthSettingsProps {
    */
   readonly additionalLoginParams?: string[] | any;
   /**
-   * Allowed audience values to consider when validating JSON Web Tokens issued by 
+   * Allowed audience values to consider when validating JSON Web Tokens issued by
    * Azure Active Directory. Note that the <code>ClientID</code> value is always considered an
    * allowed audience, regardless of this setting.
    */
@@ -2472,7 +2476,7 @@ export interface SiteAuthSettingsProps {
   readonly authFilePath?: string;
   /**
    * The Client ID of this relying party application, known as the client_id.
-   * This setting is required for enabling OpenID Connection authentication with Azure Active Directory or 
+   * This setting is required for enabling OpenID Connection authentication with Azure Active Directory or
    * other 3rd party OpenID Connect providers.
    * More information on OpenID Connect: http://openid.net/specs/openid-connect-core-1_0.html
    */
@@ -2503,7 +2507,14 @@ export interface SiteAuthSettingsProps {
    * This setting is only needed if multiple providers are configured and the unauthenticated client
    * action is set to "RedirectToLoginPage".
    */
-  readonly defaultProvider?: 'AzureActiveDirectory' | 'Facebook' | 'Google' | 'MicrosoftAccount' | 'Twitter' | 'Github' | any;
+  readonly defaultProvider?:
+    | 'AzureActiveDirectory'
+    | 'Facebook'
+    | 'Google'
+    | 'MicrosoftAccount'
+    | 'Twitter'
+    | 'Github'
+    | any;
   /**
    * <code>true</code> if the Authentication / Authorization feature is enabled for the current app; otherwise, <code>false</code>.
    */
@@ -2563,7 +2574,7 @@ export interface SiteAuthSettingsProps {
    */
   readonly googleClientSecret?: string;
   /**
-   * The app setting name that contains the client secret associated with 
+   * The app setting name that contains the client secret associated with
    * the Google web application.
    */
   readonly googleClientSecretSettingName?: string;
@@ -2823,7 +2834,15 @@ export interface SiteConfig {
   /**
    * Site load balancing.
    */
-  readonly loadBalancing?: 'WeightedRoundRobin' | 'LeastRequests' | 'LeastResponseTime' | 'WeightedTotalTraffic' | 'RequestHash' | 'PerSiteRoundRobin' | 'LeastRequestsWithTieBreaker' | any;
+  readonly loadBalancing?:
+    | 'WeightedRoundRobin'
+    | 'LeastRequests'
+    | 'LeastResponseTime'
+    | 'WeightedTotalTraffic'
+    | 'RequestHash'
+    | 'PerSiteRoundRobin'
+    | 'LeastRequestsWithTieBreaker'
+    | any;
   /**
    * <code>true</code> to enable local MySQL; otherwise, <code>false</code>.
    */
@@ -2847,7 +2866,25 @@ export interface SiteConfig {
   /**
    * The minimum strength TLS cipher suite allowed for an application
    */
-  readonly minTlsCipherSuite?: 'TLS_AES_256_GCM_SHA384' | 'TLS_AES_128_GCM_SHA256' | 'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384' | 'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256' | 'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256' | 'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384' | 'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256' | 'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384' | 'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256' | 'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA' | 'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA' | 'TLS_RSA_WITH_AES_256_GCM_SHA384' | 'TLS_RSA_WITH_AES_128_GCM_SHA256' | 'TLS_RSA_WITH_AES_256_CBC_SHA256' | 'TLS_RSA_WITH_AES_128_CBC_SHA256' | 'TLS_RSA_WITH_AES_256_CBC_SHA' | 'TLS_RSA_WITH_AES_128_CBC_SHA' | any;
+  readonly minTlsCipherSuite?:
+    | 'TLS_AES_256_GCM_SHA384'
+    | 'TLS_AES_128_GCM_SHA256'
+    | 'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384'
+    | 'TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256'
+    | 'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256'
+    | 'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384'
+    | 'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256'
+    | 'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384'
+    | 'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256'
+    | 'TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA'
+    | 'TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA'
+    | 'TLS_RSA_WITH_AES_256_GCM_SHA384'
+    | 'TLS_RSA_WITH_AES_128_GCM_SHA256'
+    | 'TLS_RSA_WITH_AES_256_CBC_SHA256'
+    | 'TLS_RSA_WITH_AES_128_CBC_SHA256'
+    | 'TLS_RSA_WITH_AES_256_CBC_SHA'
+    | 'TLS_RSA_WITH_AES_128_CBC_SHA'
+    | any;
   /**
    * MinTlsVersion: configures the minimum version of TLS required for SSL requests
    */
@@ -2933,7 +2970,22 @@ export interface SiteConfig {
   /**
    * SCM type.
    */
-  readonly scmType?: 'None' | 'Dropbox' | 'Tfs' | 'LocalGit' | 'GitHub' | 'CodePlexGit' | 'CodePlexHg' | 'BitbucketGit' | 'BitbucketHg' | 'ExternalGit' | 'ExternalHg' | 'OneDrive' | 'VSO' | 'VSTSRM' | any;
+  readonly scmType?:
+    | 'None'
+    | 'Dropbox'
+    | 'Tfs'
+    | 'LocalGit'
+    | 'GitHub'
+    | 'CodePlexGit'
+    | 'CodePlexHg'
+    | 'BitbucketGit'
+    | 'BitbucketHg'
+    | 'ExternalGit'
+    | 'ExternalHg'
+    | 'OneDrive'
+    | 'VSO'
+    | 'VSTSRM'
+    | any;
   /**
    * Tracing options.
    */
@@ -3099,7 +3151,12 @@ export interface SiteProps {
   /**
    * Specifies the scope of uniqueness for the default hostname during resource creation
    */
-  readonly autoGeneratedDomainNameLabelScope?: 'TenantReuse' | 'SubscriptionReuse' | 'ResourceGroupReuse' | 'NoReuse' | any;
+  readonly autoGeneratedDomainNameLabelScope?:
+    | 'TenantReuse'
+    | 'SubscriptionReuse'
+    | 'ResourceGroupReuse'
+    | 'NoReuse'
+    | any;
   /**
    * <code>true</code> to enable client affinity; <code>false</code> to stop sending session affinity cookies, which route client requests in the same session to the same instance. Default is <code>true</code>.
    */
@@ -3706,8 +3763,7 @@ export interface TwitterRegistration {
 /**
  * UserAssignedIdentity definition.
  */
-export interface UserAssignedIdentity {
-}
+export interface UserAssignedIdentity {}
 
 /**
  * UserProps definition.
@@ -3804,7 +3860,7 @@ export interface VnetGatewayProps {
  */
 export interface VnetInfo {
   /**
-   * A certificate file (.cer) blob containing the public key of the private key used to authenticate a 
+   * A certificate file (.cer) blob containing the public key of the private key used to authenticate a
    * Point-To-Site VPN connection.
    */
   readonly certBlob?: string;
@@ -3835,7 +3891,7 @@ export interface VnetRouteProps {
    * DEFAULT - By default, every app has routes to the local address ranges specified by RFC1918
    * INHERITED - Routes inherited from the real Virtual Network routes
    * STATIC - Static route set on the app only
-   * 
+   *
    * These values will be used for syncing an app's routes with those from a Virtual Network.
    */
   readonly routeType?: 'DEFAULT' | 'INHERITED' | 'STATIC' | any;
@@ -3990,7 +4046,18 @@ export interface sites_certificates_childResource {
 /**
  * sites_config_childResource type.
  */
-export type sites_config_childResource = object | object | object | object | object | object | object | object | object | object | object;
+export type sites_config_childResource =
+  | object
+  | object
+  | object
+  | object
+  | object
+  | object
+  | object
+  | object
+  | object
+  | object
+  | object;
 
 /**
  * sites_deployments_childResource definition.
@@ -4295,7 +4362,17 @@ export interface sites_slots_childResource {
 /**
  * sites_slots_config_childResource type.
  */
-export type sites_slots_config_childResource = object | object | object | object | object | object | object | object | object | object;
+export type sites_slots_config_childResource =
+  | object
+  | object
+  | object
+  | object
+  | object
+  | object
+  | object
+  | object
+  | object
+  | object;
 
 /**
  * sites_slots_deployments_childResource definition.
@@ -4845,8 +4922,7 @@ export interface ArmHostingEnvironmentsProps {
  *
  * Direct mapping to ARM resource properties with no defaults or transformations.
  */
-export interface ArmHostingEnvironmentsConfigurationsProps {
-}
+export interface ArmHostingEnvironmentsConfigurationsProps {}
 
 /**
  * Properties for Microsoft.Web/hostingEnvironments/multiRolePools (L1 construct).
@@ -5119,8 +5195,7 @@ export interface ArmSitesProps {
  *
  * Direct mapping to ARM resource properties with no defaults or transformations.
  */
-export interface ArmSitesBasicPublishingCredentialsPoliciesProps {
-}
+export interface ArmSitesBasicPublishingCredentialsPoliciesProps {}
 
 /**
  * Properties for Microsoft.Web/sites/certificates (L1 construct).
@@ -5167,8 +5242,7 @@ export interface ArmSitesCertificatesProps {
  *
  * Direct mapping to ARM resource properties with no defaults or transformations.
  */
-export interface ArmSitesConfigProps {
-}
+export interface ArmSitesConfigProps {}
 
 /**
  * Properties for Microsoft.Web/sites/deployments (L1 construct).
@@ -5233,8 +5307,7 @@ export interface ArmSitesDomainOwnershipIdentifiersProps {
  *
  * Direct mapping to ARM resource properties with no defaults or transformations.
  */
-export interface ArmSitesExtensionsProps {
-}
+export interface ArmSitesExtensionsProps {}
 
 /**
  * Properties for Microsoft.Web/sites/functions (L1 construct).
@@ -5623,8 +5696,7 @@ export interface ArmSitesSlotsProps {
  *
  * Direct mapping to ARM resource properties with no defaults or transformations.
  */
-export interface ArmSitesSlotsBasicPublishingCredentialsPoliciesProps {
-}
+export interface ArmSitesSlotsBasicPublishingCredentialsPoliciesProps {}
 
 /**
  * Properties for Microsoft.Web/sites/slots/certificates (L1 construct).
@@ -5671,8 +5743,7 @@ export interface ArmSitesSlotsCertificatesProps {
  *
  * Direct mapping to ARM resource properties with no defaults or transformations.
  */
-export interface ArmSitesSlotsConfigProps {
-}
+export interface ArmSitesSlotsConfigProps {}
 
 /**
  * Properties for Microsoft.Web/sites/slots/deployments (L1 construct).
@@ -6321,8 +6392,7 @@ export interface ArmStaticSitesBasicAuthProps {
  *
  * Direct mapping to ARM resource properties with no defaults or transformations.
  */
-export interface ArmStaticSitesBuildsConfigProps {
-}
+export interface ArmStaticSitesBuildsConfigProps {}
 
 /**
  * Properties for Microsoft.Web/staticSites/builds/databaseConnections (L1 construct).
@@ -6413,8 +6483,7 @@ export interface ArmStaticSitesBuildsUserProvidedFunctionAppsProps {
  *
  * Direct mapping to ARM resource properties with no defaults or transformations.
  */
-export interface ArmStaticSitesConfigProps {
-}
+export interface ArmStaticSitesConfigProps {}
 
 /**
  * Properties for Microsoft.Web/staticSites/customDomains (L1 construct).

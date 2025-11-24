@@ -65,7 +65,14 @@ export interface Condition {
   /**
    * The criteria operator. Relevant and required only for rules of the kind LogAlert.
    */
-  readonly operator?: 'Equals' | 'GreaterThan' | 'GreaterThanOrEqual' | 'LessThan' | 'LessThanOrEqual' | 'GreaterOrLessThan' | any;
+  readonly operator?:
+    | 'Equals'
+    | 'GreaterThan'
+    | 'GreaterThanOrEqual'
+    | 'LessThan'
+    | 'LessThanOrEqual'
+    | 'GreaterOrLessThan'
+    | any;
   /**
    * Log query alert
    */
@@ -223,8 +230,7 @@ export interface ScheduledQueryRuleProps {
 /**
  * UserIdentityProps definition.
  */
-export interface UserIdentityProps {
-}
+export interface UserIdentityProps {}
 
 /**
  * Properties for Microsoft.Insights/scheduledQueryRules (L1 construct).

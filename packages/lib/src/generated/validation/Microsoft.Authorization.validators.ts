@@ -96,7 +96,10 @@ export function validateRoleAssignments(props: any): ValidationResult {
         code: 'REQUIRED_PROPERTY_MISSING',
         fix: 'Add "roleDefinitionId" with a valid role definition resource ID',
       });
-    } else if (typeof propsObj.roleDefinitionId === 'string' && !isValidResourceId(propsObj.roleDefinitionId)) {
+    } else if (
+      typeof propsObj.roleDefinitionId === 'string' &&
+      !isValidResourceId(propsObj.roleDefinitionId)
+    ) {
       errors.push({
         path: 'properties.roleDefinitionId',
         message: 'Property "roleDefinitionId" must be a valid Azure resource ID',
@@ -125,7 +128,10 @@ export function validateRoleAssignments(props: any): ValidationResult {
     // Validate principalType enum
     if (propsObj.principalType !== undefined && propsObj.principalType !== null) {
       const validPrincipalTypes = ['User', 'Group', 'ServicePrincipal', 'ForeignGroup'];
-      if (!validPrincipalTypes.includes(propsObj.principalType) && typeof propsObj.principalType !== 'object') {
+      if (
+        !validPrincipalTypes.includes(propsObj.principalType) &&
+        typeof propsObj.principalType !== 'object'
+      ) {
         errors.push({
           path: 'properties.principalType',
           message: `Property "principalType" must be one of: ${validPrincipalTypes.join(', ')}`,
@@ -232,7 +238,10 @@ export function validatePolicyAssignments(props: any): ValidationResult {
         code: 'REQUIRED_PROPERTY_MISSING',
         fix: 'Add "policyDefinitionId" with a valid policy definition resource ID',
       });
-    } else if (typeof propsObj.policyDefinitionId === 'string' && !isValidResourceId(propsObj.policyDefinitionId)) {
+    } else if (
+      typeof propsObj.policyDefinitionId === 'string' &&
+      !isValidResourceId(propsObj.policyDefinitionId)
+    ) {
       errors.push({
         path: 'properties.policyDefinitionId',
         message: 'Property "policyDefinitionId" must be a valid Azure resource ID',
@@ -268,7 +277,10 @@ export function validatePolicyAssignments(props: any): ValidationResult {
     // Validate enforcementMode enum
     if (propsObj.enforcementMode !== undefined && propsObj.enforcementMode !== null) {
       const validModes = ['Default', 'DoNotEnforce'];
-      if (!validModes.includes(propsObj.enforcementMode) && typeof propsObj.enforcementMode !== 'object') {
+      if (
+        !validModes.includes(propsObj.enforcementMode) &&
+        typeof propsObj.enforcementMode !== 'object'
+      ) {
         errors.push({
           path: 'properties.enforcementMode',
           message: `Property "enforcementMode" must be one of: ${validModes.join(', ')}`,
@@ -281,7 +293,11 @@ export function validatePolicyAssignments(props: any): ValidationResult {
     // Validate identity type
     if (propsObj.identity !== undefined && propsObj.identity !== null) {
       const validIdentityTypes = ['SystemAssigned', 'UserAssigned', 'None'];
-      if (propsObj.identity.type && !validIdentityTypes.includes(propsObj.identity.type) && typeof propsObj.identity.type !== 'object') {
+      if (
+        propsObj.identity.type &&
+        !validIdentityTypes.includes(propsObj.identity.type) &&
+        typeof propsObj.identity.type !== 'object'
+      ) {
         errors.push({
           path: 'properties.identity.type',
           message: `Property "identity.type" must be one of: ${validIdentityTypes.join(', ')}`,
@@ -350,7 +366,8 @@ export function validateLocks(props: any): ValidationResult {
     if (!/^[a-zA-Z0-9._()-]+$/.test(props.name)) {
       errors.push({
         path: 'name',
-        message: 'Property "name" can only contain alphanumeric characters, periods, underscores, hyphens, and parentheses',
+        message:
+          'Property "name" can only contain alphanumeric characters, periods, underscores, hyphens, and parentheses',
         code: 'INVALID_NAME_PATTERN',
         fix: 'Use only allowed characters in the lock name',
       });
@@ -404,7 +421,11 @@ export function validateLocks(props: any): ValidationResult {
     if (propsObj.owners !== undefined && propsObj.owners !== null) {
       if (Array.isArray(propsObj.owners)) {
         propsObj.owners.forEach((owner: any, index: number) => {
-          if (owner.applicationId && typeof owner.applicationId === 'string' && !isValidGuid(owner.applicationId)) {
+          if (
+            owner.applicationId &&
+            typeof owner.applicationId === 'string' &&
+            !isValidGuid(owner.applicationId)
+          ) {
             errors.push({
               path: `properties.owners[${index}].applicationId`,
               message: 'Property "applicationId" must be a valid GUID',

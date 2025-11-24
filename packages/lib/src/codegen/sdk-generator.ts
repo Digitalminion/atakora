@@ -170,8 +170,8 @@ export class SDKGenerator {
       lines.push(result.code);
       lines.push('');
 
-      result.imports.forEach(imp => allImports.add(imp));
-      result.classes.forEach(cls => allClasses.add(cls));
+      result.imports.forEach((imp) => allImports.add(imp));
+      result.classes.forEach((cls) => allClasses.add(cls));
     }
 
     // Generate main SDK class
@@ -326,7 +326,9 @@ export class SDKGenerator {
     lines.push(`      params.set('include', include.join(','));`);
     lines.push(`    }`);
     lines.push('');
-    lines.push(`    const url = \`\${this.baseUrl}/${schema.name.toLowerCase()}s/\${id}\${params.toString() ? '?' + params.toString() : ''}\`;`);
+    lines.push(
+      `    const url = \`\${this.baseUrl}/${schema.name.toLowerCase()}s/\${id}\${params.toString() ? '?' + params.toString() : ''}\`;`
+    );
     lines.push(`    const response = await this.fetch(url);`);
     lines.push('');
     lines.push(`    if (!response.ok) {`);
@@ -361,11 +363,15 @@ export class SDKGenerator {
     lines.push(`    if (options?.offset) params.set('offset', String(options.offset));`);
     lines.push(`    if (options?.cursor) params.set('cursor', options.cursor);`);
     lines.push('');
-    lines.push(`    const url = \`\${this.baseUrl}/${schema.name.toLowerCase()}s?\${params.toString()}\`;`);
+    lines.push(
+      `    const url = \`\${this.baseUrl}/${schema.name.toLowerCase()}s?\${params.toString()}\`;`
+    );
     lines.push(`    const response = await this.fetch(url);`);
     lines.push('');
     lines.push(`    if (!response.ok) {`);
-    lines.push(`      throw new Error(\`Failed to list ${schema.name}s: \${response.statusText}\`);`);
+    lines.push(
+      `      throw new Error(\`Failed to list ${schema.name}s: \${response.statusText}\`);`
+    );
     lines.push(`    }`);
     lines.push('');
     lines.push(`    return response.json();`);
@@ -389,7 +395,9 @@ export class SDKGenerator {
       lines.push('   */');
     }
 
-    lines.push(`  async create(data: Create${schema.name}Input): Promise<MutationResult<${schema.name}>> {`);
+    lines.push(
+      `  async create(data: Create${schema.name}Input): Promise<MutationResult<${schema.name}>> {`
+    );
     lines.push(`    const url = \`\${this.baseUrl}/${schema.name.toLowerCase()}s\`;`);
     lines.push(`    const response = await this.fetch(url, {`);
     lines.push(`      method: 'POST',`);
@@ -398,10 +406,14 @@ export class SDKGenerator {
     lines.push(`    });`);
     lines.push('');
     lines.push(`    if (!response.ok) {`);
-    lines.push(`      const error = await response.json().catch(() => ({ message: response.statusText }));`);
+    lines.push(
+      `      const error = await response.json().catch(() => ({ message: response.statusText }));`
+    );
     lines.push(`      return {`);
     lines.push(`        success: false,`);
-    lines.push(`        errors: [{ message: error.message || 'Failed to create', code: 'CREATE_ERROR' }],`);
+    lines.push(
+      `        errors: [{ message: error.message || 'Failed to create', code: 'CREATE_ERROR' }],`
+    );
     lines.push(`      };`);
     lines.push(`    }`);
     lines.push('');
@@ -428,7 +440,9 @@ export class SDKGenerator {
       lines.push('   */');
     }
 
-    lines.push(`  async update(id: string, data: Update${schema.name}Input): Promise<MutationResult<${schema.name}>> {`);
+    lines.push(
+      `  async update(id: string, data: Update${schema.name}Input): Promise<MutationResult<${schema.name}>> {`
+    );
     lines.push(`    const url = \`\${this.baseUrl}/${schema.name.toLowerCase()}s/\${id}\`;`);
     lines.push(`    const response = await this.fetch(url, {`);
     lines.push(`      method: 'PATCH',`);
@@ -437,10 +451,14 @@ export class SDKGenerator {
     lines.push(`    });`);
     lines.push('');
     lines.push(`    if (!response.ok) {`);
-    lines.push(`      const error = await response.json().catch(() => ({ message: response.statusText }));`);
+    lines.push(
+      `      const error = await response.json().catch(() => ({ message: response.statusText }));`
+    );
     lines.push(`      return {`);
     lines.push(`        success: false,`);
-    lines.push(`        errors: [{ message: error.message || 'Failed to update', code: 'UPDATE_ERROR' }],`);
+    lines.push(
+      `        errors: [{ message: error.message || 'Failed to update', code: 'UPDATE_ERROR' }],`
+    );
     lines.push(`      };`);
     lines.push(`    }`);
     lines.push('');
@@ -471,10 +489,14 @@ export class SDKGenerator {
     lines.push(`    const response = await this.fetch(url, { method: 'DELETE' });`);
     lines.push('');
     lines.push(`    if (!response.ok) {`);
-    lines.push(`      const error = await response.json().catch(() => ({ message: response.statusText }));`);
+    lines.push(
+      `      const error = await response.json().catch(() => ({ message: response.statusText }));`
+    );
     lines.push(`      return {`);
     lines.push(`        success: false,`);
-    lines.push(`        errors: [{ message: error.message || 'Failed to delete', code: 'DELETE_ERROR' }],`);
+    lines.push(
+      `        errors: [{ message: error.message || 'Failed to delete', code: 'DELETE_ERROR' }],`
+    );
     lines.push(`      };`);
     lines.push(`    }`);
     lines.push('');
@@ -513,11 +535,15 @@ export class SDKGenerator {
     lines.push(`    if (pagination?.offset) params.set('offset', String(pagination.offset));`);
     lines.push(`    if (pagination?.cursor) params.set('cursor', pagination.cursor);`);
     lines.push('');
-    lines.push(`    const url = \`\${this.baseUrl}/${schema.name.toLowerCase()}s/query?\${params.toString()}\`;`);
+    lines.push(
+      `    const url = \`\${this.baseUrl}/${schema.name.toLowerCase()}s/query?\${params.toString()}\`;`
+    );
     lines.push(`    const response = await this.fetch(url);`);
     lines.push('');
     lines.push(`    if (!response.ok) {`);
-    lines.push(`      throw new Error(\`Failed to query ${schema.name}s: \${response.statusText}\`);`);
+    lines.push(
+      `      throw new Error(\`Failed to query ${schema.name}s: \${response.statusText}\`);`
+    );
     lines.push(`    }`);
     lines.push('');
     lines.push(`    return response.json();`);
@@ -543,7 +569,9 @@ export class SDKGenerator {
     lines.push('      } catch (error) {');
     lines.push('        lastError = error as Error;');
     lines.push('        if (i < maxRetries - 1) {');
-    lines.push('          await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));');
+    lines.push(
+      '          await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));'
+    );
     lines.push('        }');
     lines.push('      }');
     lines.push('    }');

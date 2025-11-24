@@ -7,7 +7,13 @@
  * @see ADR-011 GraphQL Resolver Architecture
  */
 
-import type { ResolverFunction, SubscriptionResolver, FieldAuthorization, FieldCachingStrategy, ComplexityCalculator } from './resolver-types';
+import type {
+  ResolverFunction,
+  SubscriptionResolver,
+  FieldAuthorization,
+  FieldCachingStrategy,
+  ComplexityCalculator,
+} from './resolver-types';
 
 /**
  * GraphQL operation types
@@ -341,11 +347,11 @@ export interface GraphQLBackendConfig {
  * GraphQL backend types
  */
 export type GraphQLBackendType =
-  | 'synthetic'      // Execute resolvers in API Management
-  | 'passthrough'    // Proxy to backend GraphQL service
-  | 'azureFunction'  // Azure Functions backend
-  | 'appService'     // App Service backend
-  | 'custom';        // Custom HTTP endpoint
+  | 'synthetic' // Execute resolvers in API Management
+  | 'passthrough' // Proxy to backend GraphQL service
+  | 'azureFunction' // Azure Functions backend
+  | 'appService' // App Service backend
+  | 'custom'; // Custom HTTP endpoint
 
 /**
  * Backend credentials
@@ -411,11 +417,11 @@ export interface SubscriptionConfig {
  * Subscription transport types
  */
 export type SubscriptionTransport =
-  | 'websocket'       // WebSocket transport
-  | 'sse'             // Server-Sent Events
-  | 'signalr'         // Azure SignalR Service
-  | 'eventgrid'       // Azure Event Grid
-  | 'servicebus';     // Azure Service Bus
+  | 'websocket' // WebSocket transport
+  | 'sse' // Server-Sent Events
+  | 'signalr' // Azure SignalR Service
+  | 'eventgrid' // Azure Event Grid
+  | 'servicebus'; // Azure Service Bus
 
 /**
  * Subscription connection options
@@ -672,8 +678,4 @@ export interface CustomMetric {
 /**
  * Metrics destination
  */
-export type MetricsDestination =
-  | 'applicationInsights'
-  | 'prometheus'
-  | 'statsd'
-  | 'cloudWatch';
+export type MetricsDestination = 'applicationInsights' | 'prometheus' | 'statsd' | 'cloudWatch';

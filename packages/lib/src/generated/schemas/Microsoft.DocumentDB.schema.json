@@ -19,11 +19,7 @@
           "maxLength": 44,
           "pattern": "^[a-z0-9-]+$",
           "description": "Account name must contain only lowercase letters, numbers, and hyphens. Must start and end with lowercase letter or number.",
-          "examples": [
-            "mycosmosdb123",
-            "my-cosmos-db-test",
-            "production-cosmos-001"
-          ],
+          "examples": ["mycosmosdb123", "my-cosmos-db-test", "production-cosmos-001"],
           "invalidExamples": [
             {
               "value": "My-Cosmos-DB",
@@ -69,13 +65,7 @@
               "type": "object",
               "properties": {
                 "defaultConsistencyLevel": {
-                  "enum": [
-                    "Eventual",
-                    "Session",
-                    "BoundedStaleness",
-                    "Strong",
-                    "ConsistentPrefix"
-                  ]
+                  "enum": ["Eventual", "Session", "BoundedStaleness", "Strong", "ConsistentPrefix"]
                 }
               }
             }

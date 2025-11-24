@@ -135,7 +135,11 @@ export function validateB2CDirectories(props: any): ValidationResult {
   } else {
     // Validate sku.name
     const validSkuNames = ['Standard', 'PremiumP1', 'PremiumP2'];
-    if (props.sku.name && !validSkuNames.includes(props.sku.name) && typeof props.sku.name !== 'object') {
+    if (
+      props.sku.name &&
+      !validSkuNames.includes(props.sku.name) &&
+      typeof props.sku.name !== 'object'
+    ) {
       errors.push({
         path: 'sku.name',
         message: `Property "sku.name" must be one of: ${validSkuNames.join(', ')}`,
@@ -198,7 +202,8 @@ export function validateB2CDirectories(props: any): ValidationResult {
           if (!isValidInitialDomainName(tenantProps.initialDomainName)) {
             errors.push({
               path: 'properties.createTenantProperties.initialDomainName',
-              message: 'Property "initialDomainName" must contain only lowercase letters, numbers, and hyphens, and cannot start or end with a hyphen',
+              message:
+                'Property "initialDomainName" must contain only lowercase letters, numbers, and hyphens, and cannot start or end with a hyphen',
               code: 'INVALID_DOMAIN_FORMAT',
               fix: 'Use only lowercase letters, numbers, and hyphens; avoid starting or ending with hyphens',
             });
@@ -208,10 +213,14 @@ export function validateB2CDirectories(props: any): ValidationResult {
 
       // Validate countryCode
       if (tenantProps.countryCode !== undefined && tenantProps.countryCode !== null) {
-        if (typeof tenantProps.countryCode === 'string' && !isValidCountryCode(tenantProps.countryCode)) {
+        if (
+          typeof tenantProps.countryCode === 'string' &&
+          !isValidCountryCode(tenantProps.countryCode)
+        ) {
           errors.push({
             path: 'properties.createTenantProperties.countryCode',
-            message: 'Property "countryCode" must be a valid ISO 3166-1 alpha-2 country code (2 uppercase letters)',
+            message:
+              'Property "countryCode" must be a valid ISO 3166-1 alpha-2 country code (2 uppercase letters)',
             code: 'INVALID_COUNTRY_CODE',
             fix: 'Use a valid 2-letter country code (e.g., "US", "GB", "DE")',
           });
@@ -246,7 +255,10 @@ export function validateB2CDirectories(props: any): ValidationResult {
 
           if (domain.verificationStatus !== undefined && domain.verificationStatus !== null) {
             const validStatuses = ['Verified', 'Unverified', 'Failed'];
-            if (!validStatuses.includes(domain.verificationStatus) && typeof domain.verificationStatus !== 'object') {
+            if (
+              !validStatuses.includes(domain.verificationStatus) &&
+              typeof domain.verificationStatus !== 'object'
+            ) {
               errors.push({
                 path: `properties.domains[${index}].verificationStatus`,
                 message: `Property "verificationStatus" must be one of: ${validStatuses.join(', ')}`,
@@ -265,7 +277,10 @@ export function validateB2CDirectories(props: any): ValidationResult {
 
       if (billingConfig.billingType !== undefined && billingConfig.billingType !== null) {
         const validBillingTypes = ['MAU', 'Auths'];
-        if (!validBillingTypes.includes(billingConfig.billingType) && typeof billingConfig.billingType !== 'object') {
+        if (
+          !validBillingTypes.includes(billingConfig.billingType) &&
+          typeof billingConfig.billingType !== 'object'
+        ) {
           errors.push({
             path: 'properties.billingConfig.billingType',
             message: `Property "billingType" must be one of: ${validBillingTypes.join(', ')}`,
@@ -275,8 +290,14 @@ export function validateB2CDirectories(props: any): ValidationResult {
         }
       }
 
-      if (billingConfig.billingSubscriptionId !== undefined && billingConfig.billingSubscriptionId !== null) {
-        if (typeof billingConfig.billingSubscriptionId === 'string' && !isValidGuid(billingConfig.billingSubscriptionId)) {
+      if (
+        billingConfig.billingSubscriptionId !== undefined &&
+        billingConfig.billingSubscriptionId !== null
+      ) {
+        if (
+          typeof billingConfig.billingSubscriptionId === 'string' &&
+          !isValidGuid(billingConfig.billingSubscriptionId)
+        ) {
           errors.push({
             path: 'properties.billingConfig.billingSubscriptionId',
             message: 'Property "billingSubscriptionId" must be a valid GUID',
@@ -352,7 +373,11 @@ export function validateCIAMDirectories(props: any): ValidationResult {
   } else {
     // Validate sku.name
     const validSkuNames = ['Free', 'Standard', 'Premium'];
-    if (props.sku.name && !validSkuNames.includes(props.sku.name) && typeof props.sku.name !== 'object') {
+    if (
+      props.sku.name &&
+      !validSkuNames.includes(props.sku.name) &&
+      typeof props.sku.name !== 'object'
+    ) {
       errors.push({
         path: 'sku.name',
         message: `Property "sku.name" must be one of: ${validSkuNames.join(', ')}`,
@@ -410,7 +435,10 @@ export function validateCIAMDirectories(props: any): ValidationResult {
       // Validate passwordComplexity
       if (secSettings.passwordComplexity !== undefined && secSettings.passwordComplexity !== null) {
         const validComplexities = ['Low', 'Medium', 'High'];
-        if (!validComplexities.includes(secSettings.passwordComplexity) && typeof secSettings.passwordComplexity !== 'object') {
+        if (
+          !validComplexities.includes(secSettings.passwordComplexity) &&
+          typeof secSettings.passwordComplexity !== 'object'
+        ) {
           errors.push({
             path: 'properties.securitySettings.passwordComplexity',
             message: `Property "passwordComplexity" must be one of: ${validComplexities.join(', ')}`,
@@ -421,7 +449,10 @@ export function validateCIAMDirectories(props: any): ValidationResult {
       }
 
       // Validate passwordExpirationDays range
-      if (secSettings.passwordExpirationDays !== undefined && secSettings.passwordExpirationDays !== null) {
+      if (
+        secSettings.passwordExpirationDays !== undefined &&
+        secSettings.passwordExpirationDays !== null
+      ) {
         if (typeof secSettings.passwordExpirationDays === 'number') {
           if (secSettings.passwordExpirationDays < 0) {
             errors.push({
@@ -443,7 +474,10 @@ export function validateCIAMDirectories(props: any): ValidationResult {
       }
 
       // Validate accountLockoutThreshold range
-      if (secSettings.accountLockoutThreshold !== undefined && secSettings.accountLockoutThreshold !== null) {
+      if (
+        secSettings.accountLockoutThreshold !== undefined &&
+        secSettings.accountLockoutThreshold !== null
+      ) {
         if (typeof secSettings.accountLockoutThreshold === 'number') {
           if (secSettings.accountLockoutThreshold < 1) {
             errors.push({
@@ -465,7 +499,10 @@ export function validateCIAMDirectories(props: any): ValidationResult {
       }
 
       // Validate accountLockoutDurationMinutes range
-      if (secSettings.accountLockoutDurationMinutes !== undefined && secSettings.accountLockoutDurationMinutes !== null) {
+      if (
+        secSettings.accountLockoutDurationMinutes !== undefined &&
+        secSettings.accountLockoutDurationMinutes !== null
+      ) {
         if (typeof secSettings.accountLockoutDurationMinutes === 'number') {
           if (secSettings.accountLockoutDurationMinutes < 1) {
             errors.push({

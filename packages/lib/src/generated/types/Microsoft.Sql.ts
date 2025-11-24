@@ -160,17 +160,17 @@ export interface DataMaskingRuleProps {
 export interface DatabaseBlobAuditingPolicyProps {
   /**
    * Specifies the Actions-Groups and Actions to audit.
-   * 
+   *
    * The recommended set of action groups to use is the following combination - this will audit all the queries and stored procedures executed against the database, as well as successful and failed logins:
-   * 
+   *
    * BATCH_COMPLETED_GROUP,
    * SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,
    * FAILED_DATABASE_AUTHENTICATION_GROUP.
-   * 
+   *
    * This above combination is also the set that is configured by default when enabling auditing from the Azure portal.
-   * 
+   *
    * The supported action groups to audit are (note: choose only specific groups that cover your auditing needs. Using unnecessary groups could lead to very large quantities of audit records):
-   * 
+   *
    * APPLICATION_ROLE_CHANGE_PASSWORD_GROUP
    * BACKUP_RESTORE_GROUP
    * DATABASE_LOGOUT_GROUP
@@ -195,11 +195,11 @@ export interface DatabaseBlobAuditingPolicyProps {
    * DATABASE_OWNERSHIP_CHANGE_GROUP
    * DATABASE_CHANGE_GROUP
    * LEDGER_OPERATION_GROUP
-   * 
+   *
    * These are groups that cover all sql statements and stored procedures executed against the database, and should not be used in combination with other groups as this will result in duplicate audit logs.
-   * 
+   *
    * For more information, see [Database-Level Audit Action Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
-   * 
+   *
    * For Database auditing policy, specific Actions can also be specified (note that Actions cannot be specified for Server auditing policy). The supported actions to audit are:
    * SELECT
    * UPDATE
@@ -208,33 +208,33 @@ export interface DatabaseBlobAuditingPolicyProps {
    * EXECUTE
    * RECEIVE
    * REFERENCES
-   * 
+   *
    * The general form for defining an action to be audited is:
    * {action} ON {object} BY {principal}
-   * 
+   *
    * Note that <object> in the above format can refer to an object like a table, view, or stored procedure, or an entire database or schema. For the latter cases, the forms DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.
-   * 
+   *
    * For example:
    * SELECT on dbo.myTable by public
    * SELECT on DATABASE::myDatabase by public
    * SELECT on SCHEMA::mySchema by public
-   * 
+   *
    * For more information, see [Database-Level Audit Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
    */
   readonly auditActionsAndGroups?: string[] | any;
   /**
-   * Specifies whether audit events are sent to Azure Monitor. 
+   * Specifies whether audit events are sent to Azure Monitor.
    * In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and 'IsAzureMonitorTargetEnabled' as true.
-   * 
+   *
    * When using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents' diagnostic logs category on the database should be also created.
    * Note that for server level audit you should use the 'master' database as {databaseName}.
-   * 
+   *
    * Diagnostic Settings URI format:
    * PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
-   * 
+   *
    * For more information, see [Diagnostic Settings REST API](https://go.microsoft.com/fwlink/?linkid=2033207)
    * or [Diagnostic Settings PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
-   * 
+   *
    */
   readonly isAzureMonitorTargetEnabled?: boolean | any;
   /**
@@ -259,7 +259,7 @@ export interface DatabaseBlobAuditingPolicyProps {
    */
   readonly state?: 'Enabled' | 'Disabled' | any;
   /**
-   * Specifies the identifier key of the auditing storage account. 
+   * Specifies the identifier key of the auditing storage account.
    * If state is Enabled and storageEndpoint is specified, not specifying the storageAccountAccessKey will use SQL server system-assigned managed identity to access the storage.
    * Prerequisites for using managed identity authentication:
    * 1. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).
@@ -340,8 +340,7 @@ export interface DatabaseIdentity {
 /**
  * DatabaseKey definition.
  */
-export interface DatabaseKey {
-}
+export interface DatabaseKey {}
 
 /**
  * DatabaseProps definition.
@@ -365,24 +364,35 @@ export interface DatabaseProps {
   readonly collation?: string;
   /**
    * Specifies the mode of database creation.
-   * 
+   *
    * Default: regular database creation.
-   * 
+   *
    * Copy: creates a database as a copy of an existing database. sourceDatabaseId must be specified as the resource ID of the source database.
-   * 
+   *
    * Secondary: creates a database as a secondary replica of an existing database. sourceDatabaseId must be specified as the resource ID of the existing primary database.
-   * 
+   *
    * PointInTimeRestore: Creates a database by restoring a point in time backup of an existing database. sourceDatabaseId must be specified as the resource ID of the existing database, and restorePointInTime must be specified.
-   * 
+   *
    * Recovery: Creates a database by restoring a geo-replicated backup. sourceDatabaseId must be specified as the recoverable database resource ID to restore.
-   * 
+   *
    * Restore: Creates a database by restoring a backup of a deleted database. sourceDatabaseId must be specified. If sourceDatabaseId is the database's original resource ID, then sourceDatabaseDeletionDate must be specified. Otherwise sourceDatabaseId must be the restorable dropped database resource ID and sourceDatabaseDeletionDate is ignored. restorePointInTime may also be specified to restore from an earlier point in time.
-   * 
+   *
    * RestoreLongTermRetentionBackup: Creates a database by restoring from a long term retention vault. recoveryServicesRecoveryPointResourceId must be specified as the recovery point resource ID.
-   * 
+   *
    * Copy, Secondary, and RestoreLongTermRetentionBackup are not supported for DataWarehouse edition.
    */
-  readonly createMode?: 'Default' | 'Copy' | 'Secondary' | 'PointInTimeRestore' | 'Restore' | 'Recovery' | 'RestoreExternalBackup' | 'RestoreExternalBackupSecondary' | 'RestoreLongTermRetentionBackup' | 'OnlineSecondary' | any;
+  readonly createMode?:
+    | 'Default'
+    | 'Copy'
+    | 'Secondary'
+    | 'PointInTimeRestore'
+    | 'Restore'
+    | 'Recovery'
+    | 'RestoreExternalBackup'
+    | 'RestoreExternalBackupSecondary'
+    | 'RestoreLongTermRetentionBackup'
+    | 'OnlineSecondary'
+    | any;
   /**
    * The resource identifier of the elastic pool containing this database.
    */
@@ -401,9 +411,9 @@ export interface DatabaseProps {
   readonly federatedClientId?: string | any;
   /**
    * Specifies the behavior when monthly free limits are exhausted for the free database.
-   * 
+   *
    * AutoPause: The database will be auto paused upon exhaustion of free limits for remainder of the month.
-   * 
+   *
    * BillForUsage: The database will continue to be online upon exhaustion of free limits and any overage will be billed.
    */
   readonly freeLimitExhaustionBehavior?: 'AutoPause' | 'BillOverUsage' | any;
@@ -433,11 +443,11 @@ export interface DatabaseProps {
   readonly maintenanceConfigurationId?: string;
   /**
    * Whether or not customer controlled manual cutover needs to be done during Update Database operation to Hyperscale tier.
-   * 
+   *
    * This property is only applicable when scaling database from Business Critical/General Purpose/Premium/Standard tier to Hyperscale tier.
-   * 
+   *
    * When manualCutover is specified, the scaling operation will wait for user input to trigger cutover to Hyperscale database.
-   * 
+   *
    * To trigger cutover, please provide 'performCutover' parameter when the Scaling operation is in Waiting state.
    */
   readonly manualCutover?: boolean | any;
@@ -451,11 +461,11 @@ export interface DatabaseProps {
   readonly minCapacity?: number | any;
   /**
    * To trigger customer controlled manual cutover during the wait state while Scaling operation is in progress.
-   * 
+   *
    * This property parameter is only applicable for scaling operations that are initiated along with 'manualCutover' parameter.
-   * 
+   *
    * This property is only applicable when scaling database from Business Critical/General Purpose/Premium/Standard tier to Hyperscale tier is already in progress.
-   * 
+   *
    * When performCutover is specified, the scaling operation will trigger cutover and perform role-change to Hyperscale database.
    */
   readonly performCutover?: boolean | any;
@@ -490,7 +500,11 @@ export interface DatabaseProps {
   /**
    * The name of the sample schema to apply when creating this database.
    */
-  readonly sampleName?: 'AdventureWorksLT' | 'WideWorldImportersStd' | 'WideWorldImportersFull' | any;
+  readonly sampleName?:
+    | 'AdventureWorksLT'
+    | 'WideWorldImportersStd'
+    | 'WideWorldImportersFull'
+    | any;
   /**
    * The secondary type of the database if it is a secondary.  Valid values are Geo, Named and Standby.
    */
@@ -505,18 +519,18 @@ export interface DatabaseProps {
   readonly sourceDatabaseId?: string;
   /**
    * The resource identifier of the source associated with the create operation of this database.
-   * 
+   *
    * This property is only supported for DataWarehouse edition and allows to restore across subscriptions.
-   * 
+   *
    * When sourceResourceId is specified, sourceDatabaseId, recoverableDatabaseId, restorableDroppedDatabaseId and sourceDatabaseDeletionDate must not be specified and CreateMode must be PointInTimeRestore, Restore or Recover.
-   * 
+   *
    * When createMode is PointInTimeRestore, sourceResourceId must be the resource ID of the existing database or existing sql pool, and restorePointInTime must be specified.
-   * 
+   *
    * When createMode is Restore, sourceResourceId must be the resource ID of restorable dropped database or restorable dropped sql pool.
-   * 
+   *
    * When createMode is Recover, sourceResourceId must be the resource ID of recoverable database or recoverable sql pool.
-   * 
-   * When source subscription belongs to a different tenant than target subscription, “x-ms-authorization-auxiliary” header must contain authentication token for the source tenant. For more details about “x-ms-authorization-auxiliary” header see https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/authenticate-multi-tenant 
+   *
+   * When source subscription belongs to a different tenant than target subscription, “x-ms-authorization-auxiliary” header must contain authentication token for the source tenant. For more details about “x-ms-authorization-auxiliary” header see https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/authenticate-multi-tenant
    */
   readonly sourceResourceId?: string;
   /**
@@ -560,8 +574,7 @@ export interface DatabaseSqlVulnerabilityAssessmentRuleBaselineListInputProps {
 /**
  * DatabaseUserIdentity definition.
  */
-export interface DatabaseUserIdentity {
-}
+export interface DatabaseUserIdentity {}
 
 /**
  * DatabaseVulnerabilityAssessmentProps definition.
@@ -741,17 +754,17 @@ export interface EncryptionProtectorProps {
 export interface ExtendedDatabaseBlobAuditingPolicyProps {
   /**
    * Specifies the Actions-Groups and Actions to audit.
-   * 
+   *
    * The recommended set of action groups to use is the following combination - this will audit all the queries and stored procedures executed against the database, as well as successful and failed logins:
-   * 
+   *
    * BATCH_COMPLETED_GROUP,
    * SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,
    * FAILED_DATABASE_AUTHENTICATION_GROUP.
-   * 
+   *
    * This above combination is also the set that is configured by default when enabling auditing from the Azure portal.
-   * 
+   *
    * The supported action groups to audit are (note: choose only specific groups that cover your auditing needs. Using unnecessary groups could lead to very large quantities of audit records):
-   * 
+   *
    * APPLICATION_ROLE_CHANGE_PASSWORD_GROUP
    * BACKUP_RESTORE_GROUP
    * DATABASE_LOGOUT_GROUP
@@ -776,11 +789,11 @@ export interface ExtendedDatabaseBlobAuditingPolicyProps {
    * DATABASE_OWNERSHIP_CHANGE_GROUP
    * DATABASE_CHANGE_GROUP
    * LEDGER_OPERATION_GROUP
-   * 
+   *
    * These are groups that cover all sql statements and stored procedures executed against the database, and should not be used in combination with other groups as this will result in duplicate audit logs.
-   * 
+   *
    * For more information, see [Database-Level Audit Action Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
-   * 
+   *
    * For Database auditing policy, specific Actions can also be specified (note that Actions cannot be specified for Server auditing policy). The supported actions to audit are:
    * SELECT
    * UPDATE
@@ -789,33 +802,33 @@ export interface ExtendedDatabaseBlobAuditingPolicyProps {
    * EXECUTE
    * RECEIVE
    * REFERENCES
-   * 
+   *
    * The general form for defining an action to be audited is:
    * {action} ON {object} BY {principal}
-   * 
+   *
    * Note that <object> in the above format can refer to an object like a table, view, or stored procedure, or an entire database or schema. For the latter cases, the forms DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.
-   * 
+   *
    * For example:
    * SELECT on dbo.myTable by public
    * SELECT on DATABASE::myDatabase by public
    * SELECT on SCHEMA::mySchema by public
-   * 
+   *
    * For more information, see [Database-Level Audit Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
    */
   readonly auditActionsAndGroups?: string[] | any;
   /**
-   * Specifies whether audit events are sent to Azure Monitor. 
+   * Specifies whether audit events are sent to Azure Monitor.
    * In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and 'IsAzureMonitorTargetEnabled' as true.
-   * 
+   *
    * When using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents' diagnostic logs category on the database should be also created.
    * Note that for server level audit you should use the 'master' database as {databaseName}.
-   * 
+   *
    * Diagnostic Settings URI format:
    * PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
-   * 
+   *
    * For more information, see [Diagnostic Settings REST API](https://go.microsoft.com/fwlink/?linkid=2033207)
    * or [Diagnostic Settings PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
-   * 
+   *
    */
   readonly isAzureMonitorTargetEnabled?: boolean | any;
   /**
@@ -844,7 +857,7 @@ export interface ExtendedDatabaseBlobAuditingPolicyProps {
    */
   readonly state?: 'Enabled' | 'Disabled' | any;
   /**
-   * Specifies the identifier key of the auditing storage account. 
+   * Specifies the identifier key of the auditing storage account.
    * If state is Enabled and storageEndpoint is specified, not specifying the storageAccountAccessKey will use SQL server system-assigned managed identity to access the storage.
    * Prerequisites for using managed identity authentication:
    * 1. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).
@@ -868,17 +881,17 @@ export interface ExtendedDatabaseBlobAuditingPolicyProps {
 export interface ExtendedServerBlobAuditingPolicyProps {
   /**
    * Specifies the Actions-Groups and Actions to audit.
-   * 
+   *
    * The recommended set of action groups to use is the following combination - this will audit all the queries and stored procedures executed against the database, as well as successful and failed logins:
-   * 
+   *
    * BATCH_COMPLETED_GROUP,
    * SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,
    * FAILED_DATABASE_AUTHENTICATION_GROUP.
-   * 
+   *
    * This above combination is also the set that is configured by default when enabling auditing from the Azure portal.
-   * 
+   *
    * The supported action groups to audit are (note: choose only specific groups that cover your auditing needs. Using unnecessary groups could lead to very large quantities of audit records):
-   * 
+   *
    * APPLICATION_ROLE_CHANGE_PASSWORD_GROUP
    * BACKUP_RESTORE_GROUP
    * DATABASE_LOGOUT_GROUP
@@ -903,11 +916,11 @@ export interface ExtendedServerBlobAuditingPolicyProps {
    * DATABASE_OWNERSHIP_CHANGE_GROUP
    * DATABASE_CHANGE_GROUP
    * LEDGER_OPERATION_GROUP
-   * 
+   *
    * These are groups that cover all sql statements and stored procedures executed against the database, and should not be used in combination with other groups as this will result in duplicate audit logs.
-   * 
+   *
    * For more information, see [Database-Level Audit Action Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
-   * 
+   *
    * For Database auditing policy, specific Actions can also be specified (note that Actions cannot be specified for Server auditing policy). The supported actions to audit are:
    * SELECT
    * UPDATE
@@ -916,47 +929,47 @@ export interface ExtendedServerBlobAuditingPolicyProps {
    * EXECUTE
    * RECEIVE
    * REFERENCES
-   * 
+   *
    * The general form for defining an action to be audited is:
    * {action} ON {object} BY {principal}
-   * 
+   *
    * Note that <object> in the above format can refer to an object like a table, view, or stored procedure, or an entire database or schema. For the latter cases, the forms DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.
-   * 
+   *
    * For example:
    * SELECT on dbo.myTable by public
    * SELECT on DATABASE::myDatabase by public
    * SELECT on SCHEMA::mySchema by public
-   * 
+   *
    * For more information, see [Database-Level Audit Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
    */
   readonly auditActionsAndGroups?: string[] | any;
   /**
-   * Specifies whether audit events are sent to Azure Monitor. 
+   * Specifies whether audit events are sent to Azure Monitor.
    * In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and 'IsAzureMonitorTargetEnabled' as true.
-   * 
+   *
    * When using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents' diagnostic logs category on the database should be also created.
    * Note that for server level audit you should use the 'master' database as {databaseName}.
-   * 
+   *
    * Diagnostic Settings URI format:
    * PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
-   * 
+   *
    * For more information, see [Diagnostic Settings REST API](https://go.microsoft.com/fwlink/?linkid=2033207)
    * or [Diagnostic Settings PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
-   * 
+   *
    */
   readonly isAzureMonitorTargetEnabled?: boolean | any;
   /**
    * Specifies the state of devops audit. If state is Enabled, devops logs will be sent to Azure Monitor.
    * In order to send the events to Azure Monitor, specify 'State' as 'Enabled', 'IsAzureMonitorTargetEnabled' as true and 'IsDevopsAuditEnabled' as true
-   * 
+   *
    * When using REST API to configure auditing, Diagnostic Settings with 'DevOpsOperationsAudit' diagnostic logs category on the master database should also be created.
-   * 
+   *
    * Diagnostic Settings URI format:
    * PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
-   * 
+   *
    * For more information, see [Diagnostic Settings REST API](https://go.microsoft.com/fwlink/?linkid=2033207)
    * or [Diagnostic Settings PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
-   * 
+   *
    */
   readonly isDevopsAuditEnabled?: boolean | any;
   /**
@@ -985,7 +998,7 @@ export interface ExtendedServerBlobAuditingPolicyProps {
    */
   readonly state?: 'Enabled' | 'Disabled' | any;
   /**
-   * Specifies the identifier key of the auditing storage account. 
+   * Specifies the identifier key of the auditing storage account.
    * If state is Enabled and storageEndpoint is specified, not specifying the storageAccountAccessKey will use SQL server system-assigned managed identity to access the storage.
    * Prerequisites for using managed identity authentication:
    * 1. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).
@@ -1180,8 +1193,7 @@ export interface JobAgentProps {
 /**
  * JobAgentUserAssignedIdentity definition.
  */
-export interface JobAgentUserAssignedIdentity {
-}
+export interface JobAgentUserAssignedIdentity {}
 
 /**
  * JobCredentialProps definition.
@@ -1426,7 +1438,13 @@ export interface ManagedDatabaseProps {
   /**
    * Managed database create mode. PointInTimeRestore: Create a database by restoring a point in time backup of an existing database. SourceDatabaseName, SourceManagedInstanceName and PointInTime must be specified. RestoreExternalBackup: Create a database by restoring from external backup files. Collation, StorageContainerUri and StorageContainerSasToken must be specified. Recovery: Creates a database by restoring a geo-replicated backup. RecoverableDatabaseId must be specified as the recoverable database resource ID to restore. RestoreLongTermRetentionBackup: Create a database by restoring from a long term retention backup (longTermRetentionBackupResourceId required).
    */
-  readonly createMode?: 'Default' | 'RestoreExternalBackup' | 'PointInTimeRestore' | 'Recovery' | 'RestoreLongTermRetentionBackup' | any;
+  readonly createMode?:
+    | 'Default'
+    | 'RestoreExternalBackup'
+    | 'PointInTimeRestore'
+    | 'Recovery'
+    | 'RestoreLongTermRetentionBackup'
+    | any;
   /**
    * The restorable cross-subscription dropped database resource id to restore when creating this database.
    */
@@ -1542,7 +1560,9 @@ export interface ManagedInstanceDtcSecuritySettings {
   /**
    * Transaction Manager communication settings of managed instance DTC.
    */
-  readonly transactionManagerCommunicationSettings?: ManagedInstanceDtcTransactionManagerCommunicationSettings | any;
+  readonly transactionManagerCommunicationSettings?:
+    | ManagedInstanceDtcTransactionManagerCommunicationSettings
+    | any;
   /**
    * Default timeout for XA Transactions (in seconds).
    */
@@ -1688,7 +1708,9 @@ export interface ManagedInstancePrivateEndpointConnectionProps {
   /**
    * Connection State of the Private Endpoint Connection.
    */
-  readonly privateLinkServiceConnectionState?: ManagedInstancePrivateLinkServiceConnectionStateProperty | any;
+  readonly privateLinkServiceConnectionState?:
+    | ManagedInstancePrivateLinkServiceConnectionStateProperty
+    | any;
 }
 
 /**
@@ -1773,9 +1795,9 @@ export interface ManagedInstanceProps {
   readonly maintenanceConfigurationId?: string;
   /**
    * Specifies the mode of database creation.
-   * 
+   *
    * Default: Regular instance creation.
-   * 
+   *
    * Restore: Creates an instance by restoring a set of backups to specific point in time. RestorePointInTime and SourceManagedInstanceId must be specified.
    */
   readonly managedInstanceCreateMode?: 'Default' | 'PointInTimeRestore' | any;
@@ -1991,7 +2013,15 @@ export interface ScheduleItem {
   /**
    * Start day.
    */
-  readonly startDay?: 'Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | any;
+  readonly startDay?:
+    | 'Sunday'
+    | 'Monday'
+    | 'Tuesday'
+    | 'Wednesday'
+    | 'Thursday'
+    | 'Friday'
+    | 'Saturday'
+    | any;
   /**
    * Start time.
    */
@@ -1999,7 +2029,15 @@ export interface ScheduleItem {
   /**
    * Stop day.
    */
-  readonly stopDay?: 'Sunday' | 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | any;
+  readonly stopDay?:
+    | 'Sunday'
+    | 'Monday'
+    | 'Tuesday'
+    | 'Wednesday'
+    | 'Thursday'
+    | 'Friday'
+    | 'Saturday'
+    | any;
   /**
    * Stop time.
    */
@@ -2110,17 +2148,17 @@ export interface SensitivityLabelProps {
 export interface ServerBlobAuditingPolicyProps {
   /**
    * Specifies the Actions-Groups and Actions to audit.
-   * 
+   *
    * The recommended set of action groups to use is the following combination - this will audit all the queries and stored procedures executed against the database, as well as successful and failed logins:
-   * 
+   *
    * BATCH_COMPLETED_GROUP,
    * SUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,
    * FAILED_DATABASE_AUTHENTICATION_GROUP.
-   * 
+   *
    * This above combination is also the set that is configured by default when enabling auditing from the Azure portal.
-   * 
+   *
    * The supported action groups to audit are (note: choose only specific groups that cover your auditing needs. Using unnecessary groups could lead to very large quantities of audit records):
-   * 
+   *
    * APPLICATION_ROLE_CHANGE_PASSWORD_GROUP
    * BACKUP_RESTORE_GROUP
    * DATABASE_LOGOUT_GROUP
@@ -2145,11 +2183,11 @@ export interface ServerBlobAuditingPolicyProps {
    * DATABASE_OWNERSHIP_CHANGE_GROUP
    * DATABASE_CHANGE_GROUP
    * LEDGER_OPERATION_GROUP
-   * 
+   *
    * These are groups that cover all sql statements and stored procedures executed against the database, and should not be used in combination with other groups as this will result in duplicate audit logs.
-   * 
+   *
    * For more information, see [Database-Level Audit Action Groups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).
-   * 
+   *
    * For Database auditing policy, specific Actions can also be specified (note that Actions cannot be specified for Server auditing policy). The supported actions to audit are:
    * SELECT
    * UPDATE
@@ -2158,47 +2196,47 @@ export interface ServerBlobAuditingPolicyProps {
    * EXECUTE
    * RECEIVE
    * REFERENCES
-   * 
+   *
    * The general form for defining an action to be audited is:
    * {action} ON {object} BY {principal}
-   * 
+   *
    * Note that <object> in the above format can refer to an object like a table, view, or stored procedure, or an entire database or schema. For the latter cases, the forms DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.
-   * 
+   *
    * For example:
    * SELECT on dbo.myTable by public
    * SELECT on DATABASE::myDatabase by public
    * SELECT on SCHEMA::mySchema by public
-   * 
+   *
    * For more information, see [Database-Level Audit Actions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)
    */
   readonly auditActionsAndGroups?: string[] | any;
   /**
-   * Specifies whether audit events are sent to Azure Monitor. 
+   * Specifies whether audit events are sent to Azure Monitor.
    * In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and 'IsAzureMonitorTargetEnabled' as true.
-   * 
+   *
    * When using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents' diagnostic logs category on the database should be also created.
    * Note that for server level audit you should use the 'master' database as {databaseName}.
-   * 
+   *
    * Diagnostic Settings URI format:
    * PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
-   * 
+   *
    * For more information, see [Diagnostic Settings REST API](https://go.microsoft.com/fwlink/?linkid=2033207)
    * or [Diagnostic Settings PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
-   * 
+   *
    */
   readonly isAzureMonitorTargetEnabled?: boolean | any;
   /**
    * Specifies the state of devops audit. If state is Enabled, devops logs will be sent to Azure Monitor.
    * In order to send the events to Azure Monitor, specify 'State' as 'Enabled', 'IsAzureMonitorTargetEnabled' as true and 'IsDevopsAuditEnabled' as true
-   * 
+   *
    * When using REST API to configure auditing, Diagnostic Settings with 'DevOpsOperationsAudit' diagnostic logs category on the master database should also be created.
-   * 
+   *
    * Diagnostic Settings URI format:
    * PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
-   * 
+   *
    * For more information, see [Diagnostic Settings REST API](https://go.microsoft.com/fwlink/?linkid=2033207)
    * or [Diagnostic Settings PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
-   * 
+   *
    */
   readonly isDevopsAuditEnabled?: boolean | any;
   /**
@@ -2223,7 +2261,7 @@ export interface ServerBlobAuditingPolicyProps {
    */
   readonly state?: 'Enabled' | 'Disabled' | any;
   /**
-   * Specifies the identifier key of the auditing storage account. 
+   * Specifies the identifier key of the auditing storage account.
    * If state is Enabled and storageEndpoint is specified, not specifying the storageAccountAccessKey will use SQL server system-assigned managed identity to access the storage.
    * Prerequisites for using managed identity authentication:
    * 1. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).
@@ -2266,17 +2304,17 @@ export interface ServerConnectionPolicyProps {
  */
 export interface ServerDevOpsAuditSettingsProps {
   /**
-   * Specifies whether DevOps audit events are sent to Azure Monitor. 
+   * Specifies whether DevOps audit events are sent to Azure Monitor.
    * In order to send the events to Azure Monitor, specify 'State' as 'Enabled' and 'IsAzureMonitorTargetEnabled' as true.
-   * 
+   *
    * When using REST API to configure DevOps audit, Diagnostic Settings with 'DevOpsOperationsAudit' diagnostic logs category on the master database should be also created.
-   * 
+   *
    * Diagnostic Settings URI format:
    * PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/master/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview
-   * 
+   *
    * For more information, see [Diagnostic Settings REST API](https://go.microsoft.com/fwlink/?linkid=2033207)
    * or [Diagnostic Settings PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)
-   * 
+   *
    */
   readonly isAzureMonitorTargetEnabled?: boolean | any;
   /**
@@ -2288,7 +2326,7 @@ export interface ServerDevOpsAuditSettingsProps {
    */
   readonly state?: 'Enabled' | 'Disabled' | any;
   /**
-   * Specifies the identifier key of the auditing storage account. 
+   * Specifies the identifier key of the auditing storage account.
    * If state is Enabled and storageEndpoint is specified, not specifying the storageAccountAccessKey will use SQL server system-assigned managed identity to access the storage.
    * Prerequisites for using managed identity authentication:
    * 1. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).
@@ -2473,8 +2511,7 @@ export interface ServerVulnerabilityAssessmentProps {
 /**
  * ServicePrincipal definition.
  */
-export interface ServicePrincipal {
-}
+export interface ServicePrincipal {}
 
 /**
  * Sku definition.
@@ -2697,8 +2734,7 @@ export interface TransparentDataEncryptionProps {
 /**
  * UserIdentity definition.
  */
-export interface UserIdentity {
-}
+export interface UserIdentity {}
 
 /**
  * VirtualNetworkRuleProps definition.
@@ -3270,17 +3306,17 @@ export interface servers_databases_childResource {
   readonly properties?: DatabaseProps | any;
   /**
    * The database SKU.
-   * 
+   *
    * The list of SKUs may vary by region and support offer. To determine the SKUs (including the SKU name, tier/edition, family, and capacity) that are available to your subscription in an Azure region, use the `Capabilities_ListByLocation` REST API or one of the following commands:
-   * 
+   *
    * ```azurecli
    * az sql db list-editions -l <location> -o table
    * ````
-   * 
+   *
    * ```powershell
    * Get-AzSqlServerServiceObjective -Location <location>
    * ````
-   * 
+   *
    */
   readonly sku?: Sku | any;
   /**
@@ -3545,13 +3581,13 @@ export interface servers_elasticPools_childResource {
   readonly properties?: ElasticPoolProps | any;
   /**
    * The elastic pool SKU.
-   * 
+   *
    * The list of SKUs may vary by region and support offer. To determine the SKUs (including the SKU name, tier/edition, family, and capacity) that are available to your subscription in an Azure region, use the `Capabilities_ListByLocation` REST API or the following command:
-   * 
+   *
    * ```azurecli
    * az sql elastic-pool list-editions -l <location> -o table
    * ````
-   * 
+   *
    */
   readonly sku?: Sku | any;
   /**
@@ -4722,17 +4758,17 @@ export interface ArmServersDatabasesProps {
   readonly properties: DatabaseProps | any;
   /**
    * The database SKU.
-   * 
+   *
    * The list of SKUs may vary by region and support offer. To determine the SKUs (including the SKU name, tier/edition, family, and capacity) that are available to your subscription in an Azure region, use the `Capabilities_ListByLocation` REST API or one of the following commands:
-   * 
+   *
    * ```azurecli
    * az sql db list-editions -l <location> -o table
    * ````
-   * 
+   *
    * ```powershell
    * Get-AzSqlServerServiceObjective -Location <location>
    * ````
-   * 
+   *
    */
   readonly sku?: Sku | any;
   /**
@@ -5295,13 +5331,13 @@ export interface ArmServersElasticPoolsProps {
   readonly properties: ElasticPoolProps | any;
   /**
    * The elastic pool SKU.
-   * 
+   *
    * The list of SKUs may vary by region and support offer. To determine the SKUs (including the SKU name, tier/edition, family, and capacity) that are available to your subscription in an Azure region, use the `Capabilities_ListByLocation` REST API or the following command:
-   * 
+   *
    * ```azurecli
    * az sql elastic-pool list-editions -l <location> -o table
    * ````
-   * 
+   *
    */
   readonly sku?: Sku | any;
   /**

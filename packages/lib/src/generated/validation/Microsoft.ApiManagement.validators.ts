@@ -70,7 +70,8 @@ const KEY_VAULT_ID_PATTERN =
 /**
  * Hostname pattern (FQDN).
  */
-const HOSTNAME_PATTERN = /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)*[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
+const HOSTNAME_PATTERN =
+  /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)*[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
 
 /**
  * Validate Microsoft.ApiManagement/service properties.
@@ -358,14 +359,16 @@ export function validateApiManagementService(props: any): ValidationResult {
         if (typeof vnetConfig.subnetResourceId !== 'string') {
           errors.push({
             path: 'properties.virtualNetworkConfiguration.subnetResourceId',
-            message: 'Property "properties.virtualNetworkConfiguration.subnetResourceId" must be a string',
+            message:
+              'Property "properties.virtualNetworkConfiguration.subnetResourceId" must be a string',
             code: 'INVALID_TYPE',
             fix: 'Provide a valid Azure subnet resource ID',
           });
         } else if (!SUBNET_ID_PATTERN.test(vnetConfig.subnetResourceId)) {
           errors.push({
             path: 'properties.virtualNetworkConfiguration.subnetResourceId',
-            message: 'Property "properties.virtualNetworkConfiguration.subnetResourceId" must be a valid Azure subnet resource ID',
+            message:
+              'Property "properties.virtualNetworkConfiguration.subnetResourceId" must be a valid Azure subnet resource ID',
             code: 'INVALID_PATTERN',
             fix: 'Use format: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}',
           });
@@ -385,7 +388,8 @@ export function validateApiManagementService(props: any): ValidationResult {
       } else if (!PUBLIC_IP_PATTERN.test(props.properties.publicIpAddressId)) {
         errors.push({
           path: 'properties.publicIpAddressId',
-          message: 'Property "properties.publicIpAddressId" must be a valid Azure public IP address resource ID',
+          message:
+            'Property "properties.publicIpAddressId" must be a valid Azure public IP address resource ID',
           code: 'INVALID_PATTERN',
           fix: 'Use format: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPAddresses/{ipName}',
         });
@@ -740,7 +744,10 @@ export function validateApiManagementServiceProducts(props: any): ValidationResu
         code: 'INVALID_TYPE',
         fix: 'Provide a valid display name string',
       });
-    } else if (props.properties.displayName.length < 1 || props.properties.displayName.length > 300) {
+    } else if (
+      props.properties.displayName.length < 1 ||
+      props.properties.displayName.length > 300
+    ) {
       errors.push({
         path: 'properties.displayName',
         message: `Property "properties.displayName" must be between 1 and 300 characters, got ${props.properties.displayName.length}`,

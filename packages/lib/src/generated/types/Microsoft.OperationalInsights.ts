@@ -15,14 +15,12 @@
 /**
  * AssociatedWorkspace definition.
  */
-export interface AssociatedWorkspace {
-}
+export interface AssociatedWorkspace {}
 
 /**
  * CapacityReservationProps definition.
  */
-export interface CapacityReservationProps {
-}
+export interface CapacityReservationProps {}
 
 /**
  * ClusterProps definition.
@@ -207,8 +205,7 @@ export interface LinkedStorageAccountsProps {
 /**
  * LogAnalyticsQueryPackProps definition.
  */
-export interface LogAnalyticsQueryPackProps {
-}
+export interface LogAnalyticsQueryPackProps {}
 
 /**
  * LogAnalyticsQueryPackQueryProps definition.
@@ -291,7 +288,7 @@ export interface RestoredLogs {
  */
 export interface SavedSearchProps {
   /**
-   * The category of the saved search. This helps the user to find a saved search faster. 
+   * The category of the saved search. This helps the user to find a saved search faster.
    */
   readonly category?: string;
   /**
@@ -447,14 +444,12 @@ export interface Tag {
 /**
  * UserAssignedIdentity definition.
  */
-export interface UserAssignedIdentity {
-}
+export interface UserAssignedIdentity {}
 
 /**
  * UserIdentityProps definition.
  */
-export interface UserIdentityProps {
-}
+export interface UserIdentityProps {}
 
 /**
  * WorkspaceCapping definition.
@@ -541,7 +536,16 @@ export interface WorkspaceSku {
   /**
    * The name of the SKU.
    */
-  readonly name?: 'Free' | 'Standard' | 'Premium' | 'PerNode' | 'PerGB2018' | 'Standalone' | 'CapacityReservation' | 'LACluster' | any;
+  readonly name?:
+    | 'Free'
+    | 'Standard'
+    | 'Premium'
+    | 'PerNode'
+    | 'PerGB2018'
+    | 'Standalone'
+    | 'CapacityReservation'
+    | 'LACluster'
+    | any;
 }
 
 /**
@@ -583,7 +587,41 @@ export interface workspaces_dataSources_childResource {
   /**
    * The kind of the DataSource.
    */
-  readonly kind?: 'WindowsEvent' | 'WindowsPerformanceCounter' | 'IISLogs' | 'LinuxSyslog' | 'LinuxSyslogCollection' | 'LinuxPerformanceObject' | 'LinuxPerformanceCollection' | 'CustomLog' | 'CustomLogCollection' | 'AzureAuditLog' | 'AzureActivityLog' | 'GenericDataSource' | 'ChangeTrackingCustomPath' | 'ChangeTrackingPath' | 'ChangeTrackingServices' | 'ChangeTrackingDataTypeConfiguration' | 'ChangeTrackingDefaultRegistry' | 'ChangeTrackingRegistry' | 'ChangeTrackingLinuxPath' | 'LinuxChangeTrackingPath' | 'ChangeTrackingContentLocation' | 'WindowsTelemetry' | 'Office365' | 'SecurityWindowsBaselineConfiguration' | 'SecurityCenterSecurityWindowsBaselineConfiguration' | 'SecurityEventCollectionConfiguration' | 'SecurityInsightsSecurityEventCollectionConfiguration' | 'ImportComputerGroup' | 'NetworkMonitoring' | 'Itsm' | 'DnsAnalytics' | 'ApplicationInsights' | 'SqlDataClassification' | any;
+  readonly kind?:
+    | 'WindowsEvent'
+    | 'WindowsPerformanceCounter'
+    | 'IISLogs'
+    | 'LinuxSyslog'
+    | 'LinuxSyslogCollection'
+    | 'LinuxPerformanceObject'
+    | 'LinuxPerformanceCollection'
+    | 'CustomLog'
+    | 'CustomLogCollection'
+    | 'AzureAuditLog'
+    | 'AzureActivityLog'
+    | 'GenericDataSource'
+    | 'ChangeTrackingCustomPath'
+    | 'ChangeTrackingPath'
+    | 'ChangeTrackingServices'
+    | 'ChangeTrackingDataTypeConfiguration'
+    | 'ChangeTrackingDefaultRegistry'
+    | 'ChangeTrackingRegistry'
+    | 'ChangeTrackingLinuxPath'
+    | 'LinuxChangeTrackingPath'
+    | 'ChangeTrackingContentLocation'
+    | 'WindowsTelemetry'
+    | 'Office365'
+    | 'SecurityWindowsBaselineConfiguration'
+    | 'SecurityCenterSecurityWindowsBaselineConfiguration'
+    | 'SecurityEventCollectionConfiguration'
+    | 'SecurityInsightsSecurityEventCollectionConfiguration'
+    | 'ImportComputerGroup'
+    | 'NetworkMonitoring'
+    | 'Itsm'
+    | 'DnsAnalytics'
+    | 'ApplicationInsights'
+    | 'SqlDataClassification'
+    | any;
   /**
    * The name of the datasource resource.
    */
@@ -853,7 +891,41 @@ export interface ArmWorkspacesDataSourcesProps {
   /**
    * The kind of the DataSource.
    */
-  readonly kind?: 'WindowsEvent' | 'WindowsPerformanceCounter' | 'IISLogs' | 'LinuxSyslog' | 'LinuxSyslogCollection' | 'LinuxPerformanceObject' | 'LinuxPerformanceCollection' | 'CustomLog' | 'CustomLogCollection' | 'AzureAuditLog' | 'AzureActivityLog' | 'GenericDataSource' | 'ChangeTrackingCustomPath' | 'ChangeTrackingPath' | 'ChangeTrackingServices' | 'ChangeTrackingDataTypeConfiguration' | 'ChangeTrackingDefaultRegistry' | 'ChangeTrackingRegistry' | 'ChangeTrackingLinuxPath' | 'LinuxChangeTrackingPath' | 'ChangeTrackingContentLocation' | 'WindowsTelemetry' | 'Office365' | 'SecurityWindowsBaselineConfiguration' | 'SecurityCenterSecurityWindowsBaselineConfiguration' | 'SecurityEventCollectionConfiguration' | 'SecurityInsightsSecurityEventCollectionConfiguration' | 'ImportComputerGroup' | 'NetworkMonitoring' | 'Itsm' | 'DnsAnalytics' | 'ApplicationInsights' | 'SqlDataClassification' | any;
+  readonly kind?:
+    | 'WindowsEvent'
+    | 'WindowsPerformanceCounter'
+    | 'IISLogs'
+    | 'LinuxSyslog'
+    | 'LinuxSyslogCollection'
+    | 'LinuxPerformanceObject'
+    | 'LinuxPerformanceCollection'
+    | 'CustomLog'
+    | 'CustomLogCollection'
+    | 'AzureAuditLog'
+    | 'AzureActivityLog'
+    | 'GenericDataSource'
+    | 'ChangeTrackingCustomPath'
+    | 'ChangeTrackingPath'
+    | 'ChangeTrackingServices'
+    | 'ChangeTrackingDataTypeConfiguration'
+    | 'ChangeTrackingDefaultRegistry'
+    | 'ChangeTrackingRegistry'
+    | 'ChangeTrackingLinuxPath'
+    | 'LinuxChangeTrackingPath'
+    | 'ChangeTrackingContentLocation'
+    | 'WindowsTelemetry'
+    | 'Office365'
+    | 'SecurityWindowsBaselineConfiguration'
+    | 'SecurityCenterSecurityWindowsBaselineConfiguration'
+    | 'SecurityEventCollectionConfiguration'
+    | 'SecurityInsightsSecurityEventCollectionConfiguration'
+    | 'ImportComputerGroup'
+    | 'NetworkMonitoring'
+    | 'Itsm'
+    | 'DnsAnalytics'
+    | 'ApplicationInsights'
+    | 'SqlDataClassification'
+    | any;
   /**
    * The name of the datasource resource.
    */

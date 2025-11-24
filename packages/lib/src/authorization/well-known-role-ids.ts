@@ -82,9 +82,7 @@ export class WellKnownRoleIds {
    *
    * **Role GUID**: `acdd72a7-3385-48ef-bd42-f606fba81ae7`
    */
-  public static readonly READER = WellKnownRoleIds.roleId(
-    'acdd72a7-3385-48ef-bd42-f606fba81ae7'
-  );
+  public static readonly READER = WellKnownRoleIds.roleId('acdd72a7-3385-48ef-bd42-f606fba81ae7');
 
   /**
    * Create and manage all types of Azure resources.
@@ -139,9 +137,7 @@ export class WellKnownRoleIds {
    *
    * **Role GUID**: `8e3af657-a8ff-443c-a75c-2fe8c4bcb635`
    */
-  public static readonly OWNER = WellKnownRoleIds.roleId(
-    '8e3af657-a8ff-443c-a75c-2fe8c4bcb635'
-  );
+  public static readonly OWNER = WellKnownRoleIds.roleId('8e3af657-a8ff-443c-a75c-2fe8c4bcb635');
 
   /**
    * Manage user access to Azure resources.
@@ -1155,9 +1151,7 @@ export class WellKnownRoleIds {
    *
    * **Role GUID**: `7f951dda-4ed3-4680-a7ca-43fe172d538d`
    */
-  public static readonly ACR_PULL = WellKnownRoleIds.roleId(
-    '7f951dda-4ed3-4680-a7ca-43fe172d538d'
-  );
+  public static readonly ACR_PULL = WellKnownRoleIds.roleId('7f951dda-4ed3-4680-a7ca-43fe172d538d');
 
   /**
    * Push container images.
@@ -1177,9 +1171,7 @@ export class WellKnownRoleIds {
    *
    * **Role GUID**: `8311e382-0749-4cb8-b61a-304f252e45ec`
    */
-  public static readonly ACR_PUSH = WellKnownRoleIds.roleId(
-    '8311e382-0749-4cb8-b61a-304f252e45ec'
-  );
+  public static readonly ACR_PUSH = WellKnownRoleIds.roleId('8311e382-0749-4cb8-b61a-304f252e45ec');
 
   /**
    * Delete container images.

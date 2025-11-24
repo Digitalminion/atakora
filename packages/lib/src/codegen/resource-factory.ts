@@ -436,7 +436,9 @@ export class ResourceFactory {
       if (tagsProp.required) {
         lines.push('      tags: Object.keys(this.tags).length > 0 ? this.tags : undefined,');
       } else {
-        lines.push('      tags: this.tags !== undefined && Object.keys(this.tags).length > 0 ? this.tags : undefined,');
+        lines.push(
+          '      tags: this.tags !== undefined && Object.keys(this.tags).length > 0 ? this.tags : undefined,'
+        );
       }
     }
 

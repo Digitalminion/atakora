@@ -257,7 +257,14 @@ export interface PrivateEndpointConnectionProps {
   /**
    * Provisioning state of the Private Endpoint Connection.
    */
-  readonly provisioningState?: 'Creating' | 'Updating' | 'Deleting' | 'Succeeded' | 'Canceled' | 'Failed' | any;
+  readonly provisioningState?:
+    | 'Creating'
+    | 'Updating'
+    | 'Deleting'
+    | 'Succeeded'
+    | 'Canceled'
+    | 'Failed'
+    | any;
 }
 
 /**
@@ -415,7 +422,17 @@ export interface SBQueueProps {
   /**
    * Enumerates the possible values for the status of a messaging entity.
    */
-  readonly status?: 'Active' | 'Disabled' | 'Restoring' | 'SendDisabled' | 'ReceiveDisabled' | 'Creating' | 'Deleting' | 'Renaming' | 'Unknown' | any;
+  readonly status?:
+    | 'Active'
+    | 'Disabled'
+    | 'Restoring'
+    | 'SendDisabled'
+    | 'ReceiveDisabled'
+    | 'Creating'
+    | 'Deleting'
+    | 'Renaming'
+    | 'Unknown'
+    | any;
 }
 
 /**
@@ -495,7 +512,17 @@ export interface SBSubscriptionProps {
   /**
    * Enumerates the possible values for the status of a messaging entity.
    */
-  readonly status?: 'Active' | 'Disabled' | 'Restoring' | 'SendDisabled' | 'ReceiveDisabled' | 'Creating' | 'Deleting' | 'Renaming' | 'Unknown' | any;
+  readonly status?:
+    | 'Active'
+    | 'Disabled'
+    | 'Restoring'
+    | 'SendDisabled'
+    | 'ReceiveDisabled'
+    | 'Creating'
+    | 'Deleting'
+    | 'Renaming'
+    | 'Unknown'
+    | any;
 }
 
 /**
@@ -541,7 +568,17 @@ export interface SBTopicProps {
   /**
    * Enumerates the possible values for the status of a messaging entity.
    */
-  readonly status?: 'Active' | 'Disabled' | 'Restoring' | 'SendDisabled' | 'ReceiveDisabled' | 'Creating' | 'Deleting' | 'Renaming' | 'Unknown' | any;
+  readonly status?:
+    | 'Active'
+    | 'Disabled'
+    | 'Restoring'
+    | 'SendDisabled'
+    | 'ReceiveDisabled'
+    | 'Creating'
+    | 'Deleting'
+    | 'Renaming'
+    | 'Unknown'
+    | any;
   /**
    * Value that indicates whether the topic supports ordering.
    */
@@ -579,8 +616,7 @@ export interface Subnet {
 /**
  * UserAssignedIdentity definition.
  */
-export interface UserAssignedIdentity {
-}
+export interface UserAssignedIdentity {}
 
 /**
  * UserAssignedIdentityProps definition.

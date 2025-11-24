@@ -182,8 +182,8 @@ export class TypesGenerator {
       lines.push(result.code);
       lines.push('');
 
-      result.imports.forEach(imp => allImports.add(imp));
-      result.types.forEach(type => allTypes.add(type));
+      result.imports.forEach((imp) => allImports.add(imp));
+      result.types.forEach((type) => allTypes.add(type));
     }
 
     return {
@@ -434,7 +434,7 @@ export class TypesGenerator {
         return 'Record<string, any>'; // Could be more specific
       case 'ZodEnum':
         const values = zodType._def.values as string[];
-        return values.map(v => `'${v}'`).join(' | ');
+        return values.map((v) => `'${v}'`).join(' | ');
       case 'ZodOptional':
         return this.zodTypeToTypeScript(zodType._def.innerType);
       case 'ZodNullable':

@@ -73,12 +73,12 @@ export interface AuthenticatedUser {
  * Authentication provider type
  */
 export type AuthenticationProvider =
-  | 'azuread'      // Azure Active Directory
-  | 'azureadb2c'   // Azure AD B2C
-  | 'apikey'       // API key authentication
-  | 'jwt'          // JWT token
-  | 'oauth2'       // OAuth 2.0
-  | 'custom';      // Custom authentication
+  | 'azuread' // Azure Active Directory
+  | 'azureadb2c' // Azure AD B2C
+  | 'apikey' // API key authentication
+  | 'jwt' // JWT token
+  | 'oauth2' // OAuth 2.0
+  | 'custom'; // Custom authentication
 
 /**
  * Permission set for authorization
@@ -109,7 +109,7 @@ export interface ResolverCache {
  * Cache set options
  */
 export interface CacheSetOptions {
-  readonly ttl: number;              // Time to live in seconds
+  readonly ttl: number; // Time to live in seconds
   readonly scope?: 'private' | 'public';
   readonly tags?: readonly string[]; // Tags for invalidation
 }
@@ -191,10 +191,10 @@ export interface ResponseContext {
  * Azure environment type
  */
 export type AzureEnvironment =
-  | 'AzureCloud'           // Public Azure
-  | 'AzureUSGovernment'    // Azure Government Cloud
-  | 'AzureChinaCloud'      // Azure China Cloud
-  | 'AzureGermanCloud';    // Azure German Cloud
+  | 'AzureCloud' // Public Azure
+  | 'AzureUSGovernment' // Azure Government Cloud
+  | 'AzureChinaCloud' // Azure China Cloud
+  | 'AzureGermanCloud'; // Azure German Cloud
 
 /**
  * Cosmos DB client interface
@@ -281,7 +281,12 @@ export interface ConsistencyPolicy {
   readonly defaultConsistencyLevel: ConsistencyLevel;
 }
 
-export type ConsistencyLevel = 'Strong' | 'BoundedStaleness' | 'Session' | 'ConsistentPrefix' | 'Eventual';
+export type ConsistencyLevel =
+  | 'Strong'
+  | 'BoundedStaleness'
+  | 'Session'
+  | 'ConsistentPrefix'
+  | 'Eventual';
 
 export interface Location {
   readonly name: string;
@@ -434,13 +439,19 @@ export interface ServiceBusClient {
 export interface ServiceBusSender {
   readonly entityPath: string;
   sendMessages(messages: ServiceBusMessage | readonly ServiceBusMessage[]): Promise<void>;
-  scheduleMessages(messages: ServiceBusMessage | readonly ServiceBusMessage[], scheduledEnqueueTime: Date): Promise<readonly number[]>;
+  scheduleMessages(
+    messages: ServiceBusMessage | readonly ServiceBusMessage[],
+    scheduledEnqueueTime: Date
+  ): Promise<readonly number[]>;
   close(): Promise<void>;
 }
 
 export interface ServiceBusReceiver {
   readonly entityPath: string;
-  receiveMessages(maxMessageCount: number, options?: ReceiveOptions): Promise<readonly ServiceBusReceivedMessage[]>;
+  receiveMessages(
+    maxMessageCount: number,
+    options?: ReceiveOptions
+  ): Promise<readonly ServiceBusReceivedMessage[]>;
   peekMessages(maxMessageCount: number): Promise<readonly ServiceBusReceivedMessage[]>;
   completeMessage(message: ServiceBusReceivedMessage): Promise<void>;
   abandonMessage(message: ServiceBusReceivedMessage): Promise<void>;

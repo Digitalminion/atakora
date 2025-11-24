@@ -297,11 +297,11 @@ export interface LoadBalancingConfig {
  * Load balancing strategies
  */
 export type LoadBalancingStrategy =
-  | 'roundRobin'       // Distribute requests evenly
+  | 'roundRobin' // Distribute requests evenly
   | 'leastConnections' // Route to backend with fewest active connections
-  | 'weighted'         // Distribute based on weight
-  | 'ipHash'           // Consistent routing based on client IP
-  | 'random';          // Random distribution
+  | 'weighted' // Distribute based on weight
+  | 'ipHash' // Consistent routing based on client IP
+  | 'random'; // Random distribution
 
 /**
  * Backend pool member for load balancing

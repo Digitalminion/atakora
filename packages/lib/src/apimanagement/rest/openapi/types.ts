@@ -173,7 +173,14 @@ export interface ParameterObject {
   readonly required?: boolean;
   readonly deprecated?: boolean;
   readonly allowEmptyValue?: boolean;
-  readonly style?: 'matrix' | 'label' | 'form' | 'simple' | 'spaceDelimited' | 'pipeDelimited' | 'deepObject';
+  readonly style?:
+    | 'matrix'
+    | 'label'
+    | 'form'
+    | 'simple'
+    | 'spaceDelimited'
+    | 'pipeDelimited'
+    | 'deepObject';
   readonly explode?: boolean;
   readonly allowReserved?: boolean;
   readonly schema?: SchemaObject | ReferenceObject;

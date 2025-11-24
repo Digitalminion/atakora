@@ -161,8 +161,8 @@ export class HooksGenerator {
       lines.push(result.code);
       lines.push('');
 
-      result.imports.forEach(imp => allImports.add(imp));
-      result.hooks.forEach(hook => allHooks.add(hook));
+      result.imports.forEach((imp) => allImports.add(imp));
+      result.hooks.forEach((hook) => allHooks.add(hook));
     }
 
     return {
@@ -210,7 +210,9 @@ export class HooksGenerator {
     lines.push(`  ${schema.name}SortField,`);
     lines.push(`} from './types';`);
     lines.push(`import { ${schema.name}Client } from './sdk';`);
-    lines.push(`import type { QueryResult, MutationResult, PaginationOptions, SortDirection } from '@atakora/lib/runtime';`);
+    lines.push(
+      `import type { QueryResult, MutationResult, PaginationOptions, SortDirection } from '@atakora/lib/runtime';`
+    );
 
     return lines.join('\n');
   }
@@ -222,7 +224,9 @@ export class HooksGenerator {
     const lines: string[] = [];
 
     lines.push(`import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';`);
-    lines.push(`import type { QueryResult, MutationResult, PaginationOptions, SortDirection } from '@atakora/lib/runtime';`);
+    lines.push(
+      `import type { QueryResult, MutationResult, PaginationOptions, SortDirection } from '@atakora/lib/runtime';`
+    );
 
     return lines.join('\n');
   }
@@ -388,7 +392,9 @@ export class HooksGenerator {
     lines.push(`  const client = new ${entityName}Client();`);
     lines.push('');
     lines.push(`  return useQuery({`);
-    lines.push(`    queryKey: ['${entityName.toLowerCase()}s', 'query', filter, sort, pagination],`);
+    lines.push(
+      `    queryKey: ['${entityName.toLowerCase()}s', 'query', filter, sort, pagination],`
+    );
     lines.push(`    queryFn: () => client.query(filter, sort, pagination),`);
     lines.push(`  });`);
     lines.push(`}`);
@@ -428,7 +434,9 @@ export class HooksGenerator {
     lines.push(`  return useMutation({`);
     lines.push(`    mutationFn: (data: Create${entityName}Input) => client.create(data),`);
     lines.push(`    onSuccess: () => {`);
-    lines.push(`      queryClient.invalidateQueries({ queryKey: ['${entityName.toLowerCase()}s'] });`);
+    lines.push(
+      `      queryClient.invalidateQueries({ queryKey: ['${entityName.toLowerCase()}s'] });`
+    );
     lines.push(`    },`);
     lines.push(`  });`);
     lines.push(`}`);
@@ -469,8 +477,12 @@ export class HooksGenerator {
     lines.push(`    mutationFn: ({ id, data }: { id: string; data: Update${entityName}Input }) =>`);
     lines.push(`      client.update(id, data),`);
     lines.push(`    onSuccess: (result, { id }) => {`);
-    lines.push(`      queryClient.invalidateQueries({ queryKey: ['${entityName.toLowerCase()}', id] });`);
-    lines.push(`      queryClient.invalidateQueries({ queryKey: ['${entityName.toLowerCase()}s'] });`);
+    lines.push(
+      `      queryClient.invalidateQueries({ queryKey: ['${entityName.toLowerCase()}', id] });`
+    );
+    lines.push(
+      `      queryClient.invalidateQueries({ queryKey: ['${entityName.toLowerCase()}s'] });`
+    );
     lines.push(`    },`);
     lines.push(`  });`);
     lines.push(`}`);
@@ -510,8 +522,12 @@ export class HooksGenerator {
     lines.push(`  return useMutation({`);
     lines.push(`    mutationFn: (id: string) => client.delete(id),`);
     lines.push(`    onSuccess: (result, id) => {`);
-    lines.push(`      queryClient.invalidateQueries({ queryKey: ['${entityName.toLowerCase()}', id] });`);
-    lines.push(`      queryClient.invalidateQueries({ queryKey: ['${entityName.toLowerCase()}s'] });`);
+    lines.push(
+      `      queryClient.invalidateQueries({ queryKey: ['${entityName.toLowerCase()}', id] });`
+    );
+    lines.push(
+      `      queryClient.invalidateQueries({ queryKey: ['${entityName.toLowerCase()}s'] });`
+    );
     lines.push(`    },`);
     lines.push(`  });`);
     lines.push(`}`);

@@ -399,7 +399,9 @@ export class RoleAssignmentArm extends Resource {
 
     // Check if principalId contains a reference() call
     // Pattern: [reference(resourceId(...)).identity.principalId]
-    const referenceMatch = principalIdentifier.match(/\[?reference\((.*?)\)\.identity\.principalId\]?/);
+    const referenceMatch = principalIdentifier.match(
+      /\[?reference\((.*?)\)\.identity\.principalId\]?/
+    );
     if (referenceMatch) {
       // Extract the resourceId expression from inside reference()
       // Use the resourceId as the stable identifier instead

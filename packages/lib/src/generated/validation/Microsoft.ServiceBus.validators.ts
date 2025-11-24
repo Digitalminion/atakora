@@ -44,7 +44,7 @@ export function validateNamespaces(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -54,13 +54,13 @@ export function validateNamespaces(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -79,7 +79,7 @@ export function validateNamespacesAuthorizationRules(props: any): ValidationResu
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -89,7 +89,7 @@ export function validateNamespacesAuthorizationRules(props: any): ValidationResu
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
@@ -101,7 +101,7 @@ export function validateNamespacesAuthorizationRules(props: any): ValidationResu
           path: 'name',
           message: 'Property "name" must be at least 1 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
       if (props.name.length > 50) {
@@ -109,7 +109,7 @@ export function validateNamespacesAuthorizationRules(props: any): ValidationResu
           path: 'name',
           message: 'Property "name" must be at most 50 characters',
           code: 'STRING_TOO_LONG',
-          fix: 'Shorten the value of "name" to 50 characters or less'
+          fix: 'Shorten the value of "name" to 50 characters or less',
         });
       }
     }
@@ -117,7 +117,7 @@ export function validateNamespacesAuthorizationRules(props: any): ValidationResu
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -136,7 +136,7 @@ export function validateNamespacesDisasterRecoveryConfigs(props: any): Validatio
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -146,7 +146,7 @@ export function validateNamespacesDisasterRecoveryConfigs(props: any): Validatio
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
@@ -158,7 +158,7 @@ export function validateNamespacesDisasterRecoveryConfigs(props: any): Validatio
           path: 'name',
           message: 'Property "name" must be at least 1 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
       if (props.name.length > 50) {
@@ -166,7 +166,7 @@ export function validateNamespacesDisasterRecoveryConfigs(props: any): Validatio
           path: 'name',
           message: 'Property "name" must be at most 50 characters',
           code: 'STRING_TOO_LONG',
-          fix: 'Shorten the value of "name" to 50 characters or less'
+          fix: 'Shorten the value of "name" to 50 characters or less',
         });
       }
     }
@@ -174,7 +174,7 @@ export function validateNamespacesDisasterRecoveryConfigs(props: any): Validatio
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -193,7 +193,7 @@ export function validateNamespacesMigrationConfigurations(props: any): Validatio
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -203,13 +203,13 @@ export function validateNamespacesMigrationConfigurations(props: any): Validatio
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -228,7 +228,7 @@ export function validateNamespacesNetworkRuleSets(props: any): ValidationResult 
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -238,13 +238,13 @@ export function validateNamespacesNetworkRuleSets(props: any): ValidationResult 
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -263,7 +263,7 @@ export function validateNamespacesPrivateEndpointConnections(props: any): Valida
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -273,13 +273,13 @@ export function validateNamespacesPrivateEndpointConnections(props: any): Valida
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -298,7 +298,7 @@ export function validateNamespacesQueues(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -308,7 +308,7 @@ export function validateNamespacesQueues(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
@@ -320,7 +320,7 @@ export function validateNamespacesQueues(props: any): ValidationResult {
           path: 'name',
           message: 'Property "name" must be at least 1 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
     }
@@ -328,7 +328,7 @@ export function validateNamespacesQueues(props: any): ValidationResult {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -347,7 +347,7 @@ export function validateNamespacesQueuesAuthorizationRules(props: any): Validati
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -357,7 +357,7 @@ export function validateNamespacesQueuesAuthorizationRules(props: any): Validati
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
@@ -369,7 +369,7 @@ export function validateNamespacesQueuesAuthorizationRules(props: any): Validati
           path: 'name',
           message: 'Property "name" must be at least 1 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
       if (props.name.length > 50) {
@@ -377,7 +377,7 @@ export function validateNamespacesQueuesAuthorizationRules(props: any): Validati
           path: 'name',
           message: 'Property "name" must be at most 50 characters',
           code: 'STRING_TOO_LONG',
-          fix: 'Shorten the value of "name" to 50 characters or less'
+          fix: 'Shorten the value of "name" to 50 characters or less',
         });
       }
     }
@@ -385,7 +385,7 @@ export function validateNamespacesQueuesAuthorizationRules(props: any): Validati
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -404,7 +404,7 @@ export function validateNamespacesTopics(props: any): ValidationResult {
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -414,7 +414,7 @@ export function validateNamespacesTopics(props: any): ValidationResult {
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
@@ -426,7 +426,7 @@ export function validateNamespacesTopics(props: any): ValidationResult {
           path: 'name',
           message: 'Property "name" must be at least 1 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
     }
@@ -434,7 +434,7 @@ export function validateNamespacesTopics(props: any): ValidationResult {
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -453,7 +453,7 @@ export function validateNamespacesTopicsAuthorizationRules(props: any): Validati
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -463,7 +463,7 @@ export function validateNamespacesTopicsAuthorizationRules(props: any): Validati
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
@@ -475,7 +475,7 @@ export function validateNamespacesTopicsAuthorizationRules(props: any): Validati
           path: 'name',
           message: 'Property "name" must be at least 1 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
       if (props.name.length > 50) {
@@ -483,7 +483,7 @@ export function validateNamespacesTopicsAuthorizationRules(props: any): Validati
           path: 'name',
           message: 'Property "name" must be at most 50 characters',
           code: 'STRING_TOO_LONG',
-          fix: 'Shorten the value of "name" to 50 characters or less'
+          fix: 'Shorten the value of "name" to 50 characters or less',
         });
       }
     }
@@ -491,7 +491,7 @@ export function validateNamespacesTopicsAuthorizationRules(props: any): Validati
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -510,7 +510,7 @@ export function validateNamespacesTopicsSubscriptions(props: any): ValidationRes
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -520,7 +520,7 @@ export function validateNamespacesTopicsSubscriptions(props: any): ValidationRes
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
@@ -532,7 +532,7 @@ export function validateNamespacesTopicsSubscriptions(props: any): ValidationRes
           path: 'name',
           message: 'Property "name" must be at least 1 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
       if (props.name.length > 50) {
@@ -540,7 +540,7 @@ export function validateNamespacesTopicsSubscriptions(props: any): ValidationRes
           path: 'name',
           message: 'Property "name" must be at most 50 characters',
           code: 'STRING_TOO_LONG',
-          fix: 'Shorten the value of "name" to 50 characters or less'
+          fix: 'Shorten the value of "name" to 50 characters or less',
         });
       }
     }
@@ -548,7 +548,7 @@ export function validateNamespacesTopicsSubscriptions(props: any): ValidationRes
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -567,7 +567,7 @@ export function validateNamespacesTopicsSubscriptionsRules(props: any): Validati
       path: 'name',
       message: 'Required property "name" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "name" property to your resource definition'
+      fix: 'Add the "name" property to your resource definition',
     });
   }
 
@@ -577,7 +577,7 @@ export function validateNamespacesTopicsSubscriptionsRules(props: any): Validati
       path: 'properties',
       message: 'Required property "properties" is missing',
       code: 'REQUIRED_PROPERTY_MISSING',
-      fix: 'Add the "properties" property to your resource definition'
+      fix: 'Add the "properties" property to your resource definition',
     });
   }
 
@@ -589,7 +589,7 @@ export function validateNamespacesTopicsSubscriptionsRules(props: any): Validati
           path: 'name',
           message: 'Property "name" must be at least 1 characters',
           code: 'STRING_TOO_SHORT',
-          fix: 'Provide a longer value for "name"'
+          fix: 'Provide a longer value for "name"',
         });
       }
       if (props.name.length > 50) {
@@ -597,7 +597,7 @@ export function validateNamespacesTopicsSubscriptionsRules(props: any): Validati
           path: 'name',
           message: 'Property "name" must be at most 50 characters',
           code: 'STRING_TOO_LONG',
-          fix: 'Shorten the value of "name" to 50 characters or less'
+          fix: 'Shorten the value of "name" to 50 characters or less',
         });
       }
     }
@@ -605,6 +605,6 @@ export function validateNamespacesTopicsSubscriptionsRules(props: any): Validati
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }

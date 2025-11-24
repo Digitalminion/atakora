@@ -77,11 +77,7 @@
           "maxLength": 260,
           "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
           "description": "Queue name must be 1-260 characters, lowercase only, start and end with letter/number.",
-          "examples": [
-            "myqueue",
-            "my-queue-1",
-            "production-orders-queue"
-          ],
+          "examples": ["myqueue", "my-queue-1", "production-orders-queue"],
           "invalidExamples": [
             {
               "value": "-myqueue",
@@ -110,11 +106,7 @@
           "maxLength": 260,
           "pattern": "^[a-z0-9][a-z0-9-]*[a-z0-9]$",
           "description": "Topic name must be 1-260 characters, lowercase only, start and end with letter/number.",
-          "examples": [
-            "mytopic",
-            "my-topic-1",
-            "production-events-topic"
-          ],
+          "examples": ["mytopic", "my-topic-1", "production-events-topic"],
           "invalidExamples": [
             {
               "value": "-mytopic",
@@ -143,11 +135,7 @@
           "maxLength": 50,
           "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$",
           "description": "Subscription name must be 1-50 characters, start and end with letter/number.",
-          "examples": [
-            "mysubscription",
-            "my-subscription-1",
-            "ProcessorA"
-          ],
+          "examples": ["mysubscription", "my-subscription-1", "ProcessorA"],
           "invalidExamples": [
             {
               "value": "-mysubscription",
@@ -172,11 +160,7 @@
           "maxLength": 260,
           "pattern": "^[A-Za-z0-9]$|^[A-Za-z0-9][\\w-\\.\\/\\~]*[A-Za-z0-9]$",
           "description": "Rule name must be 1-260 characters with specific pattern requirements.",
-          "examples": [
-            "myrule",
-            "my-rule-1",
-            "FilterRule.v1"
-          ]
+          "examples": ["myrule", "my-rule-1", "FilterRule.v1"]
         }
       }
     },

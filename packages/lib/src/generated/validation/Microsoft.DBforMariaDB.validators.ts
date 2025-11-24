@@ -420,7 +420,14 @@ export function validateMariaDbServer(props: any): ValidationResult {
           fix: 'Add "administratorLogin" property with a valid username',
         });
       } else {
-        const invalidUsernames = ['azure_superuser', 'admin', 'administrator', 'root', 'guest', 'public'];
+        const invalidUsernames = [
+          'azure_superuser',
+          'admin',
+          'administrator',
+          'root',
+          'guest',
+          'public',
+        ];
         if (invalidUsernames.includes(properties.administratorLogin.toLowerCase())) {
           errors.push({
             path: 'properties.administratorLogin',
@@ -480,7 +487,9 @@ export function validateMariaDbServer(props: any): ValidationResult {
           fix: 'Add "restorePointInTime" property with an ISO 8601 date-time string',
         });
       } else {
-        errors.push(...validateIso8601DateTime(properties.restorePointInTime, 'properties.restorePointInTime'));
+        errors.push(
+          ...validateIso8601DateTime(properties.restorePointInTime, 'properties.restorePointInTime')
+        );
       }
       break;
 
@@ -601,15 +610,24 @@ export function validateMariaDbFirewallRule(props: any): ValidationResult {
 
   // Validate IP range if both IPs are valid
   if (props.properties.startIpAddress && props.properties.endIpAddress) {
-    const startErrors = validateIpAddress(props.properties.startIpAddress, 'properties.startIpAddress');
+    const startErrors = validateIpAddress(
+      props.properties.startIpAddress,
+      'properties.startIpAddress'
+    );
     const endErrors = validateIpAddress(props.properties.endIpAddress, 'properties.endIpAddress');
 
     if (startErrors.length === 0 && endErrors.length === 0) {
-      const startOctets = props.properties.startIpAddress.split('.').map((o: string) => parseInt(o, 10));
-      const endOctets = props.properties.endIpAddress.split('.').map((o: string) => parseInt(o, 10));
+      const startOctets = props.properties.startIpAddress
+        .split('.')
+        .map((o: string) => parseInt(o, 10));
+      const endOctets = props.properties.endIpAddress
+        .split('.')
+        .map((o: string) => parseInt(o, 10));
 
-      const startValue = (startOctets[0] << 24) + (startOctets[1] << 16) + (startOctets[2] << 8) + startOctets[3];
-      const endValue = (endOctets[0] << 24) + (endOctets[1] << 16) + (endOctets[2] << 8) + endOctets[3];
+      const startValue =
+        (startOctets[0] << 24) + (startOctets[1] << 16) + (startOctets[2] << 8) + startOctets[3];
+      const endValue =
+        (endOctets[0] << 24) + (endOctets[1] << 16) + (endOctets[2] << 8) + endOctets[3];
 
       if (startValue > endValue) {
         errors.push({

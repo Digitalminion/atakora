@@ -69,18 +69,19 @@ const KEY_VAULT_URI_PATTERN = /^https:\/\/[\w-]+\.vault\.azure\.net$/;
 /**
  * Key Vault key identifier pattern.
  */
-const KEY_VAULT_KEY_IDENTIFIER_PATTERN = /^https:\/\/[\w-]+\.vault\.azure\.net\/keys\/[\w-]+(\/[\w-]+)?$/;
+const KEY_VAULT_KEY_IDENTIFIER_PATTERN =
+  /^https:\/\/[\w-]+\.vault\.azure\.net\/keys\/[\w-]+(\/[\w-]+)?$/;
 
 /**
  * IP address or CIDR pattern.
  */
-const IP_OR_CIDR_PATTERN =
-  /^(\d{1,3}\.){3}\d{1,3}(\/\d{1,2})?$/;
+const IP_OR_CIDR_PATTERN = /^(\d{1,3}\.){3}\d{1,3}(\/\d{1,2})?$/;
 
 /**
  * Azure GUID pattern.
  */
-const GUID_PATTERN = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
+const GUID_PATTERN =
+  /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
 
 /**
  * Valid SKU tiers.
@@ -90,7 +91,12 @@ const VALID_SKU_TIERS = ['Basic', 'Enterprise', 'Free', 'Premium', 'Standard'];
 /**
  * Valid identity types.
  */
-const VALID_IDENTITY_TYPES = ['None', 'SystemAssigned', 'SystemAssigned, UserAssigned', 'UserAssigned'];
+const VALID_IDENTITY_TYPES = [
+  'None',
+  'SystemAssigned',
+  'SystemAssigned, UserAssigned',
+  'UserAssigned',
+];
 
 /**
  * Valid public network access values.
@@ -312,7 +318,10 @@ export function validateCognitiveServicesAccount(props: any): ValidationResult {
 
     // Validate identity.userAssignedIdentities if present
     if (props.identity.userAssignedIdentities !== undefined) {
-      if (typeof props.identity.userAssignedIdentities !== 'object' || Array.isArray(props.identity.userAssignedIdentities)) {
+      if (
+        typeof props.identity.userAssignedIdentities !== 'object' ||
+        Array.isArray(props.identity.userAssignedIdentities)
+      ) {
         errors.push({
           path: 'identity.userAssignedIdentities',
           message: 'Property "identity.userAssignedIdentities" must be an object',
@@ -338,7 +347,10 @@ export function validateCognitiveServicesAccount(props: any): ValidationResult {
         });
       } else {
         // Validate length
-        if (properties.customSubDomainName.length < 2 || properties.customSubDomainName.length > 64) {
+        if (
+          properties.customSubDomainName.length < 2 ||
+          properties.customSubDomainName.length > 64
+        ) {
           errors.push({
             path: 'properties.customSubDomainName',
             message: `Property "properties.customSubDomainName" must be between 2 and 64 characters, got ${properties.customSubDomainName.length}`,
@@ -382,7 +394,10 @@ export function validateCognitiveServicesAccount(props: any): ValidationResult {
     }
 
     // Validate properties.disableLocalAuth if present
-    if (properties.disableLocalAuth !== undefined && typeof properties.disableLocalAuth !== 'boolean') {
+    if (
+      properties.disableLocalAuth !== undefined &&
+      typeof properties.disableLocalAuth !== 'boolean'
+    ) {
       errors.push({
         path: 'properties.disableLocalAuth',
         message: 'Property "properties.disableLocalAuth" must be a boolean',
@@ -392,7 +407,10 @@ export function validateCognitiveServicesAccount(props: any): ValidationResult {
     }
 
     // Validate properties.dynamicThrottlingEnabled if present
-    if (properties.dynamicThrottlingEnabled !== undefined && typeof properties.dynamicThrottlingEnabled !== 'boolean') {
+    if (
+      properties.dynamicThrottlingEnabled !== undefined &&
+      typeof properties.dynamicThrottlingEnabled !== 'boolean'
+    ) {
       errors.push({
         path: 'properties.dynamicThrottlingEnabled',
         message: 'Property "properties.dynamicThrottlingEnabled" must be a boolean',
@@ -402,7 +420,10 @@ export function validateCognitiveServicesAccount(props: any): ValidationResult {
     }
 
     // Validate properties.restrictOutboundNetworkAccess if present
-    if (properties.restrictOutboundNetworkAccess !== undefined && typeof properties.restrictOutboundNetworkAccess !== 'boolean') {
+    if (
+      properties.restrictOutboundNetworkAccess !== undefined &&
+      typeof properties.restrictOutboundNetworkAccess !== 'boolean'
+    ) {
       errors.push({
         path: 'properties.restrictOutboundNetworkAccess',
         message: 'Property "properties.restrictOutboundNetworkAccess" must be a boolean',
@@ -521,7 +542,10 @@ export function validateCognitiveServicesAccount(props: any): ValidationResult {
               });
             }
 
-            if (rule.ignoreMissingVnetServiceEndpoint !== undefined && typeof rule.ignoreMissingVnetServiceEndpoint !== 'boolean') {
+            if (
+              rule.ignoreMissingVnetServiceEndpoint !== undefined &&
+              typeof rule.ignoreMissingVnetServiceEndpoint !== 'boolean'
+            ) {
               errors.push({
                 path: `properties.networkAcls.virtualNetworkRules[${index}].ignoreMissingVnetServiceEndpoint`,
                 message: 'Property "ignoreMissingVnetServiceEndpoint" must be a boolean',
@@ -554,7 +578,8 @@ export function validateCognitiveServicesAccount(props: any): ValidationResult {
           if (!encryption.keyVaultProperties) {
             errors.push({
               path: 'properties.encryption.keyVaultProperties',
-              message: 'Property "properties.encryption.keyVaultProperties" is required when keySource is "Microsoft.KeyVault"',
+              message:
+                'Property "properties.encryption.keyVaultProperties" is required when keySource is "Microsoft.KeyVault"',
               code: 'REQUIRED_PROPERTY_MISSING',
               fix: 'Add keyVaultProperties with keyIdentifier or keyVaultUri, keyName, and keyVersion',
             });

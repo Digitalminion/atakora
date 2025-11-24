@@ -324,7 +324,11 @@ export abstract class GrantableResource extends Resource implements IGrantable {
    * // System-assigned identity is automatically enabled on 'this' resource
    * ```
    */
-  protected grant(grantable: IGrantable, roleDefinitionId: string, description?: string): IGrantResult {
+  protected grant(
+    grantable: IGrantable,
+    roleDefinitionId: string,
+    description?: string
+  ): IGrantResult {
     // Auto-enable identity if granting to self
     if (grantable === this) {
       this.ensureIdentity();

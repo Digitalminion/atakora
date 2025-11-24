@@ -482,7 +482,8 @@ function validateDataEncryption(dataEncryption: any, path: string): ValidationEr
     if (!dataEncryption.primaryUserAssignedIdentityId) {
       errors.push({
         path: `${path}.primaryUserAssignedIdentityId`,
-        message: 'Primary user-assigned identity ID is required when using AzureKeyVault encryption',
+        message:
+          'Primary user-assigned identity ID is required when using AzureKeyVault encryption',
         code: 'REQUIRED_PROPERTY_MISSING',
         fix: 'Provide primaryUserAssignedIdentityId for Azure Key Vault encryption',
       });
@@ -539,11 +540,15 @@ function validateCommonServerProperties(properties: any, path: string): Validati
   }
 
   if (properties.highAvailability) {
-    errors.push(...validateHighAvailability(properties.highAvailability, `${path}.highAvailability`));
+    errors.push(
+      ...validateHighAvailability(properties.highAvailability, `${path}.highAvailability`)
+    );
   }
 
   if (properties.maintenanceWindow) {
-    errors.push(...validateMaintenanceWindow(properties.maintenanceWindow, `${path}.maintenanceWindow`));
+    errors.push(
+      ...validateMaintenanceWindow(properties.maintenanceWindow, `${path}.maintenanceWindow`)
+    );
   }
 
   if (properties.dataEncryption) {
@@ -651,7 +656,14 @@ export function validateMySqlFlexibleServer(props: any): ValidationResult {
           });
         }
 
-        const invalidUsernames = ['azure_superuser', 'admin', 'administrator', 'root', 'guest', 'public'];
+        const invalidUsernames = [
+          'azure_superuser',
+          'admin',
+          'administrator',
+          'root',
+          'guest',
+          'public',
+        ];
         if (invalidUsernames.includes(properties.administratorLogin.toLowerCase())) {
           errors.push({
             path: 'properties.administratorLogin',
@@ -693,7 +705,9 @@ export function validateMySqlFlexibleServer(props: any): ValidationResult {
       }
 
       if (properties.pointInTimeUTC) {
-        errors.push(...validateIso8601DateTime(properties.pointInTimeUTC, 'properties.pointInTimeUTC'));
+        errors.push(
+          ...validateIso8601DateTime(properties.pointInTimeUTC, 'properties.pointInTimeUTC')
+        );
       }
       break;
 
@@ -715,7 +729,9 @@ export function validateMySqlFlexibleServer(props: any): ValidationResult {
           fix: 'Add "pointInTimeUTC" property with an ISO 8601 date-time string',
         });
       } else {
-        errors.push(...validateIso8601DateTime(properties.pointInTimeUTC, 'properties.pointInTimeUTC'));
+        errors.push(
+          ...validateIso8601DateTime(properties.pointInTimeUTC, 'properties.pointInTimeUTC')
+        );
       }
       break;
 
@@ -831,15 +847,24 @@ export function validateMySqlFirewallRule(props: any): ValidationResult {
 
   // Validate IP range if both IPs are valid
   if (props.properties.startIpAddress && props.properties.endIpAddress) {
-    const startErrors = validateIpAddress(props.properties.startIpAddress, 'properties.startIpAddress');
+    const startErrors = validateIpAddress(
+      props.properties.startIpAddress,
+      'properties.startIpAddress'
+    );
     const endErrors = validateIpAddress(props.properties.endIpAddress, 'properties.endIpAddress');
 
     if (startErrors.length === 0 && endErrors.length === 0) {
-      const startOctets = props.properties.startIpAddress.split('.').map((o: string) => parseInt(o, 10));
-      const endOctets = props.properties.endIpAddress.split('.').map((o: string) => parseInt(o, 10));
+      const startOctets = props.properties.startIpAddress
+        .split('.')
+        .map((o: string) => parseInt(o, 10));
+      const endOctets = props.properties.endIpAddress
+        .split('.')
+        .map((o: string) => parseInt(o, 10));
 
-      const startValue = (startOctets[0] << 24) + (startOctets[1] << 16) + (startOctets[2] << 8) + startOctets[3];
-      const endValue = (endOctets[0] << 24) + (endOctets[1] << 16) + (endOctets[2] << 8) + endOctets[3];
+      const startValue =
+        (startOctets[0] << 24) + (startOctets[1] << 16) + (startOctets[2] << 8) + startOctets[3];
+      const endValue =
+        (endOctets[0] << 24) + (endOctets[1] << 16) + (endOctets[2] << 8) + endOctets[3];
 
       if (startValue > endValue) {
         errors.push({

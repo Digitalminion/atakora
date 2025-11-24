@@ -199,10 +199,7 @@ export interface CertificateConfiguration {
   /**
    * Store name for certificate.
    */
-  readonly storeName:
-    | 'CertificateAuthority'
-    | 'Root'
-    | string;
+  readonly storeName: 'CertificateAuthority' | 'Root' | string;
 
   /**
    * Certificate information.

@@ -109,8 +109,8 @@ export interface FieldAuthorization {
  * Authorization strategy
  */
 export type AuthorizationStrategy =
-  | 'any'    // Any rule passes
-  | 'all'    // All rules must pass
+  | 'any' // Any rule passes
+  | 'all' // All rules must pass
   | 'custom'; // Custom logic
 
 /**
@@ -125,11 +125,11 @@ export interface AuthorizationRule {
  * Authorization types
  */
 export type AuthorizationType =
-  | 'role'       // Role-based access control
-  | 'claim'      // Claim-based access control
-  | 'attribute'  // Attribute-based access control
-  | 'policy'     // Azure Policy-based
-  | 'custom';    // Custom authorization
+  | 'role' // Role-based access control
+  | 'claim' // Claim-based access control
+  | 'attribute' // Attribute-based access control
+  | 'policy' // Azure Policy-based
+  | 'custom'; // Custom authorization
 
 /**
  * Authorization configuration (discriminated union)
@@ -169,7 +169,7 @@ export interface AttributeAuthorizationConfig {
  * Attribute rule for ABAC
  */
 export interface AttributeRule {
-  readonly subject: string;    // e.g., 'user.department'
+  readonly subject: string; // e.g., 'user.department'
   readonly operator: 'eq' | 'ne' | 'in' | 'nin' | 'gt' | 'lt';
   readonly value: any;
 }
@@ -203,9 +203,9 @@ export type AuthorizationHandler = (
  * Field-level caching strategy
  */
 export interface FieldCachingStrategy {
-  readonly ttl: number;              // Time to live in seconds
-  readonly scope: CacheScope;        // private or public
-  readonly key?: CacheKeyGenerator;  // Custom cache key
+  readonly ttl: number; // Time to live in seconds
+  readonly scope: CacheScope; // private or public
+  readonly key?: CacheKeyGenerator; // Custom cache key
   readonly tags?: readonly string[]; // Cache tags for invalidation
   readonly vary?: readonly string[]; // Vary by headers/context
 }
@@ -218,19 +218,12 @@ export type CacheScope = 'private' | 'public';
 /**
  * Cache key generator function
  */
-export type CacheKeyGenerator = (
-  args: any,
-  context: any,
-  info: GraphQLResolveInfo
-) => string;
+export type CacheKeyGenerator = (args: any, context: any, info: GraphQLResolveInfo) => string;
 
 /**
  * Complexity calculator function
  */
-export type ComplexityCalculator = (
-  args: any,
-  childComplexity: number
-) => number;
+export type ComplexityCalculator = (args: any, childComplexity: number) => number;
 
 /**
  * Cache control hint
@@ -499,9 +492,7 @@ export interface DataLoader<K, V> {
 /**
  * Batch loading function for DataLoader
  */
-export type BatchLoadFn<K, V> = (
-  keys: readonly K[]
-) => Promise<ReadonlyArray<V | Error>>;
+export type BatchLoadFn<K, V> = (keys: readonly K[]) => Promise<ReadonlyArray<V | Error>>;
 
 /**
  * DataLoader options
@@ -543,10 +534,7 @@ export interface DocumentNode {
   readonly definitions: readonly DefinitionNode[];
 }
 
-export type DefinitionNode =
-  | OperationDefinition
-  | FragmentDefinition
-  | TypeSystemDefinitionNode;
+export type DefinitionNode = OperationDefinition | FragmentDefinition | TypeSystemDefinitionNode;
 
 export type TypeSystemDefinitionNode =
   | SchemaDefinitionNode

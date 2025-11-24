@@ -234,11 +234,7 @@ export class CrossStackGrant {
    * });
    * ```
    */
-  public static create(
-    scope: Construct,
-    id: string,
-    props: CrossStackGrantProps
-  ): RoleAssignment {
+  public static create(scope: Construct, id: string, props: CrossStackGrantProps): RoleAssignment {
     const roleAssignmentProps: RoleAssignmentProps = {
       scope: props.resource.resourceId,
       roleDefinitionId: props.roleDefinitionId,
