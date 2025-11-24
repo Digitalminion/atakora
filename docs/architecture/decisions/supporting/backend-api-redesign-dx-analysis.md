@@ -1,6 +1,7 @@
 # ADR-017: Backend API Redesign - Developer Experience Analysis
 
 ## Status
+
 Draft - DX-Focused Re-analysis
 
 ## Context
@@ -27,6 +28,7 @@ This ADR provides a comprehensive DX-focused analysis of the proposed backend ar
 8. Run build and hope you didn't miss anything
 
 **Pain Points:**
+
 - Single massive file (297 lines) with all API definitions
 - No clear separation between different APIs
 - Easy to accidentally modify existing APIs
@@ -37,6 +39,7 @@ This ADR provides a comprehensive DX-focused analysis of the proposed backend ar
 #### Scenario B: Modifying an Existing CRUD API
 
 **Current Process:**
+
 1. Open `packages/backend/src/crud-backend.ts`
 2. Scroll through 297 lines to find your API
 3. Make changes inline with other API definitions
@@ -44,6 +47,7 @@ This ADR provides a comprehensive DX-focused analysis of the proposed backend ar
 5. No version control isolation (all APIs in same file)
 
 **Pain Points:**
+
 - Finding the right API requires scrolling through unrelated code
 - Changes to one API show up in diffs alongside others
 - Code review is harder (reviewers see all APIs)
@@ -52,6 +56,7 @@ This ADR provides a comprehensive DX-focused analysis of the proposed backend ar
 #### Scenario C: Understanding Resource Creation
 
 **Current Process:**
+
 1. Read through `createCrudBackend` function
 2. Understand the `defineBackend` pattern
 3. Trace through `@atakora/component` internals
@@ -59,6 +64,7 @@ This ADR provides a comprehensive DX-focused analysis of the proposed backend ar
 5. Still unclear what actual Azure resources are created
 
 **Pain Points:**
+
 - Resource creation is implicit and magical
 - Must understand framework internals
 - No clear mapping from code to Azure resources
@@ -80,11 +86,11 @@ export const projectsCrud = CrudApi.define('ProjectsCrud', {
     owner: { type: 'string', required: true },
     status: {
       type: 'string',
-      validation: { enum: ['active', 'archived'] }
+      validation: { enum: ['active', 'archived'] },
     },
-    createdAt: 'timestamp'
+    createdAt: 'timestamp',
   },
-  partitionKey: '/owner'
+  partitionKey: '/owner',
 });
 
 // Step 2: Add to packages/backend/src/data/crud/index.ts
@@ -94,12 +100,13 @@ export { projectsCrud } from './projects/resource';
 const backend = defineBackend({
   feedbackCrud,
   labDatasetCrud,
-  projectsCrud,  // <-- Just add this line
+  projectsCrud, // <-- Just add this line
   // ... other components
 });
 ```
 
 **Developer Experience Improvements:**
+
 - **3 steps vs 8 steps** (62% reduction)
 - **Single responsibility files** - each API in its own file
 - **Clear file structure** - `data/crud/[entity]/resource.ts`
@@ -110,11 +117,13 @@ const backend = defineBackend({
 #### Scenario B: Modifying an Existing CRUD API
 
 **Proposed Process:**
+
 1. Navigate directly to `data/crud/feedback/resource.ts`
 2. Make changes to isolated file
 3. Changes are scoped and reviewable
 
 **Developer Experience Improvements:**
+
 - **Direct navigation** via file explorer or IDE shortcuts
 - **Isolated changes** in version control
 - **Clear ownership** - one file per API
@@ -123,6 +132,7 @@ const backend = defineBackend({
 #### Scenario C: Understanding Resource Creation
 
 **Proposed Process:**
+
 1. Look at folder structure - clearly shows what's created
 2. Each component explicitly declares its resources
 3. Backend composition is visible and explicit
@@ -140,6 +150,7 @@ packages/backend/src/
 ```
 
 **Developer Experience Improvements:**
+
 - **Folder structure mirrors Azure resources**
 - **Explicit resource requirements** in each component
 - **Clear mental model** - folders = features
@@ -148,37 +159,38 @@ packages/backend/src/
 
 #### Time to Add New CRUD API
 
-| Metric | Current | Proposed | Improvement |
-|--------|---------|----------|-------------|
-| Files to modify | 2-3 | 2-3 | Same |
-| Lines to write | 80-100 | 30-40 | **60% less** |
-| Cognitive steps | 8 | 3 | **62% less** |
-| Risk of errors | High | Low | **Significant** |
-| IDE assistance | Poor | Good | **Significant** |
+| Metric          | Current | Proposed | Improvement     |
+| --------------- | ------- | -------- | --------------- |
+| Files to modify | 2-3     | 2-3      | Same            |
+| Lines to write  | 80-100  | 30-40    | **60% less**    |
+| Cognitive steps | 8       | 3        | **62% less**    |
+| Risk of errors  | High    | Low      | **Significant** |
+| IDE assistance  | Poor    | Good     | **Significant** |
 
 #### Time to Understand System
 
-| Metric | Current | Proposed | Improvement |
-|--------|---------|----------|-------------|
-| Files to read | 1 massive | Multiple small | **Better** |
-| Mental model | Complex | Folder-based | **Clearer** |
-| Resource mapping | Hidden | Explicit | **Clearer** |
-| Onboarding time | Hours | Minutes | **80% faster** |
+| Metric           | Current   | Proposed       | Improvement    |
+| ---------------- | --------- | -------------- | -------------- |
+| Files to read    | 1 massive | Multiple small | **Better**     |
+| Mental model     | Complex   | Folder-based   | **Clearer**    |
+| Resource mapping | Hidden    | Explicit       | **Clearer**    |
+| Onboarding time  | Hours     | Minutes        | **80% faster** |
 
 #### Code Review Experience
 
-| Aspect | Current | Proposed | Improvement |
-|--------|---------|----------|-------------|
-| PR scope | Shows all APIs | Shows one API | **Focused** |
-| Conflict risk | High | Low | **Reduced** |
-| Review time | Longer | Shorter | **Faster** |
-| Ownership | Unclear | Clear | **Better** |
+| Aspect        | Current        | Proposed      | Improvement |
+| ------------- | -------------- | ------------- | ----------- |
+| PR scope      | Shows all APIs | Shows one API | **Focused** |
+| Conflict risk | High           | Low           | **Reduced** |
+| Review time   | Longer         | Shorter       | **Faster**  |
+| Ownership     | Unclear        | Clear         | **Better**  |
 
 ### Pattern Recognition & Familiarity
 
 The proposed pattern aligns with established frameworks:
 
 **Next.js App Router:**
+
 ```
 app/
 ├── api/
@@ -187,6 +199,7 @@ app/
 ```
 
 **Rails Controllers:**
+
 ```
 app/controllers/
 ├── feedback_controller.rb
@@ -194,6 +207,7 @@ app/controllers/
 ```
 
 **AWS CDK Constructs:**
+
 ```
 constructs/
 ├── database/
@@ -202,6 +216,7 @@ constructs/
 ```
 
 Developers immediately understand:
+
 - One folder = one feature
 - Isolated files = isolated changes
 - Folder structure = system architecture
@@ -261,10 +276,12 @@ Developers immediately understand:
 ### Break-Even Analysis
 
 With a team of 3+ developers:
+
 - **Break-even**: 2-3 months
 - **First year ROI**: 300-400%
 
 With a team of 5+ developers:
+
 - **Break-even**: 3-4 weeks
 - **First year ROI**: 600-800%
 
@@ -273,6 +290,7 @@ With a team of 5+ developers:
 If full redesign isn't approved, these changes deliver 60% of benefits:
 
 1. **Split the God File** (2 hours)
+
    ```typescript
    // packages/backend/src/crud/feedback.ts
    export const feedbackApiConfig = { ... };
@@ -286,6 +304,7 @@ If full redesign isn't approved, these changes deliver 60% of benefits:
    ```
 
 2. **Add Schema Builder Helper** (4 hours)
+
    ```typescript
    const schema = new SchemaBuilder()
      .string('id')
@@ -296,6 +315,7 @@ If full redesign isn't approved, these changes deliver 60% of benefits:
    ```
 
 3. **Create CLI Generator** (4 hours)
+
    ```bash
    npm run generate:crud -- --name projects --partition-key owner
    ```
@@ -327,21 +347,25 @@ If full redesign isn't approved, these changes deliver 60% of benefits:
 ### Implementation Priority
 
 Phase 1 (Day 1-2): **Folder Structure & File Splitting**
+
 - Create `data/crud/` folder structure
 - Split existing APIs into separate files
 - Maintain backward compatibility
 
 Phase 2 (Day 2-3): **Schema Improvements**
+
 - Implement schema builder pattern
 - Add TypeScript types for better IDE support
 - Add validation helpers
 
 Phase 3 (Day 3-4): **Backend Pattern Integration**
+
 - Update `defineBackend` to use new structure
 - Ensure resource sharing still works
 - Add resource visualization
 
 Phase 4 (Day 4-5): **DX Polish**
+
 - Add CLI generators
 - Improve error messages
 - Update documentation
@@ -351,6 +375,7 @@ Phase 4 (Day 4-5): **DX Polish**
 The proposed backend redesign is **strongly recommended** when evaluated through a developer experience lens. The current approach has significant DX problems that will compound as the system grows. The proposed approach solves these problems elegantly while aligning with established patterns developers already know.
 
 The investment of 4-5 days will pay for itself within the first month and continue delivering value through:
+
 - Faster feature development
 - Fewer bugs and merge conflicts
 - Easier onboarding

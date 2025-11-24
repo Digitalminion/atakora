@@ -3,12 +3,14 @@
 ## Context
 
 Azure API Management supports GraphQL APIs in two modes:
+
 1. **Pass-through mode**: Proxies GraphQL requests to a backend GraphQL service
 2. **Synthetic mode**: Executes GraphQL queries directly in API Management using configured resolvers
 
 Our architecture needs to support both modes while providing a type-safe, developer-friendly experience for defining and managing GraphQL resolvers. The resolver architecture must integrate seamlessly with Azure Functions, Azure data sources, and our existing handler.ts + resource.ts pattern established in ADR-006.
 
 Current challenges:
+
 - GraphQL resolvers need access to various Azure data sources (Cosmos DB, SQL, Storage, Service Bus)
 - Type safety must be maintained between GraphQL schema, resolver implementations, and TypeScript
 - Field-level resolution requires efficient batching to prevent N+1 query problems
@@ -123,7 +125,11 @@ export interface AuthenticatedUser {
 export interface DataLoaderRegistry {
   get<K, V>(key: string): DataLoader<K, V> | undefined;
   set<K, V>(key: string, loader: DataLoader<K, V>): void;
-  create<K, V>(key: string, batchFn: BatchLoadFn<K, V>, options?: DataLoaderOptions<K, V>): DataLoader<K, V>;
+  create<K, V>(
+    key: string,
+    batchFn: BatchLoadFn<K, V>,
+    options?: DataLoaderOptions<K, V>
+  ): DataLoader<K, V>;
 }
 ```
 
@@ -163,7 +169,7 @@ export class GraphQLResolverBuilder<TSource = any, TContext = GraphQLResolverCon
       for (const [fieldName, resolver] of fields) {
         resolvers.push({
           path: `${typeName}.${fieldName}`,
-          resolver: this.serializeResolver(resolver)
+          resolver: this.serializeResolver(resolver),
         });
       }
     }
@@ -174,7 +180,7 @@ export class GraphQLResolverBuilder<TSource = any, TContext = GraphQLResolverCon
     // Convert resolver to API Management format
     return {
       type: 'http' | 'cosmos' | 'sql' | 'cache',
-      config: this.extractResolverConfig(resolver)
+      config: this.extractResolverConfig(resolver),
     };
   }
 }
@@ -195,7 +201,7 @@ export class TypeResolverBuilder<TSource, TContext, TType extends string> {
     const fieldResolver: IGraphQLResolver = {
       fieldName,
       typeName: this.typeName,
-      resolve: resolver
+      resolve: resolver,
     };
     this.resolvers.set(fieldName, fieldResolver);
     return new FieldResolverBuilder(this, fieldResolver);
@@ -216,7 +222,14 @@ export class TypeResolverBuilder<TSource, TContext, TType extends string> {
 }
 
 // Field-specific configuration builder
-export class FieldResolverBuilder<TSource, TContext, TType extends string, TField extends string, TArgs, TReturn> {
+export class FieldResolverBuilder<
+  TSource,
+  TContext,
+  TType extends string,
+  TField extends string,
+  TArgs,
+  TReturn,
+> {
   constructor(
     private parent: TypeResolverBuilder<TSource, TContext, TType>,
     private resolver: IGraphQLResolver
@@ -279,29 +292,23 @@ export class CosmosResolverUtils {
     return resources[0] || null;
   }
 
-  static batchGet<T>(
-    container: Container,
-    ids: string[],
-    partitionKey?: string
-  ): Promise<T[]> {
+  static batchGet<T>(container: Container, ids: string[], partitionKey?: string): Promise<T[]> {
     // Implement efficient batch retrieval
     return Promise.all(
-      ids.map(id =>
-        container.item(id, partitionKey).read<T>()
-          .then(r => r.resource)
+      ids.map((id) =>
+        container
+          .item(id, partitionKey)
+          .read<T>()
+          .then((r) => r.resource)
           .catch(() => null)
       )
-    ).then(items => items.filter(Boolean) as T[]);
+    ).then((items) => items.filter(Boolean) as T[]);
   }
 }
 
 // SQL Database resolver utilities
 export class SqlResolverUtils {
-  static async query<T>(
-    client: SqlClient,
-    query: string,
-    params?: any[]
-  ): Promise<T[]> {
+  static async query<T>(client: SqlClient, query: string, params?: any[]): Promise<T[]> {
     const request = client.request();
     params?.forEach((param, index) => {
       request.input(`param${index}`, param);
@@ -310,20 +317,12 @@ export class SqlResolverUtils {
     return result.recordset as T[];
   }
 
-  static async queryOne<T>(
-    client: SqlClient,
-    query: string,
-    params?: any[]
-  ): Promise<T | null> {
+  static async queryOne<T>(client: SqlClient, query: string, params?: any[]): Promise<T | null> {
     const results = await this.query<T>(client, query, params);
     return results[0] || null;
   }
 
-  static prepareBatchQuery<T, K>(
-    tableName: string,
-    keyField: string,
-    keys: K[]
-  ): [string, any[]] {
+  static prepareBatchQuery<T, K>(tableName: string, keyField: string, keys: K[]): [string, any[]] {
     const placeholders = keys.map((_, i) => `@param${i}`).join(',');
     const query = `SELECT * FROM ${tableName} WHERE ${keyField} IN (${placeholders})`;
     return [query, keys];
@@ -332,10 +331,7 @@ export class SqlResolverUtils {
 
 // Storage resolver utilities
 export class StorageResolverUtils {
-  static async getBlob(
-    containerClient: ContainerClient,
-    blobName: string
-  ): Promise<Buffer> {
+  static async getBlob(containerClient: ContainerClient, blobName: string): Promise<Buffer> {
     const blobClient = containerClient.getBlobClient(blobName);
     const response = await blobClient.download();
     return this.streamToBuffer(response.readableStreamBody!);
@@ -360,7 +356,7 @@ export class StorageResolverUtils {
   private static async streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
     const chunks: Buffer[] = [];
     return new Promise((resolve, reject) => {
-      stream.on('data', chunk => chunks.push(chunk));
+      stream.on('data', (chunk) => chunks.push(chunk));
       stream.on('end', () => resolve(Buffer.concat(chunks)));
       stream.on('error', reject);
     });
@@ -429,9 +425,11 @@ export class ResolverDiscoveryService {
 
   // Type guard for resolver modules
   private isResolverModule(obj: any): obj is IResolverModule {
-    return obj &&
+    return (
+      obj &&
       typeof obj.name === 'string' &&
-      (typeof obj.resolvers === 'object' || typeof obj.resolvers === 'function');
+      (typeof obj.resolvers === 'object' || typeof obj.resolvers === 'function')
+    );
   }
 
   // Merge all discovered resolvers
@@ -441,7 +439,7 @@ export class ResolverDiscoveryService {
       resolvers: {},
       directives: {},
       dataSources: {},
-      context: {}
+      context: {},
     };
 
     for (const module of this.modules.values()) {
@@ -451,9 +449,8 @@ export class ResolverDiscoveryService {
       }
 
       // Merge resolvers
-      const resolvers = typeof module.resolvers === 'function'
-        ? module.resolvers()
-        : module.resolvers;
+      const resolvers =
+        typeof module.resolvers === 'function' ? module.resolvers() : module.resolvers;
 
       for (const [type, fields] of Object.entries(resolvers)) {
         if (!merged.resolvers[type]) {
@@ -476,10 +473,10 @@ export class ResolverDiscoveryService {
 export interface ResolverFileStructure {
   'resolvers/': {
     'user/': {
-      'index.ts': IResolverModule;      // User type resolvers
-      'queries.ts': QueryResolvers;      // User-related queries
+      'index.ts': IResolverModule; // User type resolvers
+      'queries.ts': QueryResolvers; // User-related queries
       'mutations.ts': MutationResolvers; // User-related mutations
-      'schema.graphql': string;          // User type definitions
+      'schema.graphql': string; // User type definitions
     };
     'product/': {
       'index.ts': IResolverModule;
@@ -487,7 +484,8 @@ export interface ResolverFileStructure {
       'mutations.ts': MutationResolvers;
       'schema.graphql': string;
     };
-    'index.ts': {                        // Root resolver aggregation
+    'index.ts': {
+      // Root resolver aggregation
       modules: IResolverModule[];
     };
   };
@@ -511,7 +509,7 @@ export class GraphQLAzureError extends GraphQLError {
       code: code || 'INTERNAL_ERROR',
       statusCode: statusCode || 500,
       timestamp: new Date().toISOString(),
-      ...extensions
+      ...extensions,
     });
   }
 
@@ -524,11 +522,7 @@ export class GraphQLAzureError extends GraphQLError {
   }
 
   static unauthorized(message?: string): GraphQLAzureError {
-    return new GraphQLAzureError(
-      message || 'Unauthorized',
-      'UNAUTHORIZED',
-      401
-    );
+    return new GraphQLAzureError(message || 'Unauthorized', 'UNAUTHORIZED', 401);
   }
 
   static forbidden(resource?: string): GraphQLAzureError {
@@ -540,12 +534,9 @@ export class GraphQLAzureError extends GraphQLError {
   }
 
   static validationFailed(errors: ValidationError[]): GraphQLAzureError {
-    return new GraphQLAzureError(
-      'Validation failed',
-      'VALIDATION_ERROR',
-      400,
-      { validationErrors: errors }
-    );
+    return new GraphQLAzureError('Validation failed', 'VALIDATION_ERROR', 400, {
+      validationErrors: errors,
+    });
   }
 
   static rateLimitExceeded(limit: number, window: string): GraphQLAzureError {
@@ -573,7 +564,7 @@ export function withErrorHandling<TSource, TContext, TArgs, TReturn>(
         path: info.path,
         error: error instanceof Error ? error.message : String(error),
         stack: error instanceof Error ? error.stack : undefined,
-        args: JSON.stringify(args)
+        args: JSON.stringify(args),
       });
 
       // Transform known errors
@@ -591,23 +582,15 @@ export function withErrorHandling<TSource, TContext, TArgs, TReturn>(
       }
 
       // Wrap unknown errors
-      throw new GraphQLAzureError(
-        'Internal server error',
-        'INTERNAL_ERROR',
-        500,
-        {
-          originalError: error instanceof Error ? error.message : String(error)
-        }
-      );
+      throw new GraphQLAzureError('Internal server error', 'INTERNAL_ERROR', 500, {
+        originalError: error instanceof Error ? error.message : String(error),
+      });
     }
   };
 }
 
 // Batch error handling for DataLoader
-export function handleBatchError<K, V>(
-  keys: readonly K[],
-  error: Error
-): Array<V | Error> {
+export function handleBatchError<K, V>(keys: readonly K[], error: Error): Array<V | Error> {
   return keys.map(() => error);
 }
 ```
@@ -704,6 +687,7 @@ export const getUserResolver: HttpHandler = async (context, req) => {
 ```
 
 **Rejected because:**
+
 - Poor performance due to function cold starts for each field
 - Complex orchestration required for nested queries
 - Difficult to share context between resolvers
@@ -716,14 +700,17 @@ One large resolver function handling all fields:
 ```typescript
 export const resolveGraphQL = (typeName: string, fieldName: string, ...args: any[]) => {
   switch (`${typeName}.${fieldName}`) {
-    case 'Query.user': return resolveUser(...args);
-    case 'User.posts': return resolveUserPosts(...args);
+    case 'Query.user':
+      return resolveUser(...args);
+    case 'User.posts':
+      return resolveUserPosts(...args);
     // ... hundreds of cases
   }
 };
 ```
 
 **Rejected because:**
+
 - Poor maintainability and scalability
 - No type safety
 - Difficult to test individual resolvers
@@ -744,6 +731,7 @@ class UserResolver {
 ```
 
 **Rejected because:**
+
 - Requires experimental decorator support
 - Less functional, more OOP complexity
 - Harder to compose and test
@@ -788,22 +776,26 @@ class UserResolver {
 ## Implementation Roadmap
 
 ### Phase 1: Core Resolver Framework (Week 1)
+
 - Implement base resolver interfaces and types
 - Create resolver builder pattern
 - Add basic error handling
 
 ### Phase 2: Data Source Integration (Week 2)
+
 - Implement Cosmos DB resolver utilities
 - Add SQL Database resolver utilities
 - Create Storage resolver utilities
 - Implement DataLoader integration
 
 ### Phase 3: Discovery & Registration (Week 3)
+
 - Build resolver discovery service
 - Implement module loading
 - Create resolver merging logic
 
 ### Phase 4: Type Safety & Validation (Week 4)
+
 - Add schema validation
 - Implement type generation
 - Create build-time validation

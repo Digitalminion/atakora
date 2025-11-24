@@ -13,6 +13,7 @@ A comprehensive, dynamic tagging system that automatically cascades tags from th
 **Tag Everything, Relate Everything, Find Everything**
 
 Every resource should be:
+
 1. **Traceable** - From manifest through component to individual resource
 2. **Relatable** - Understand which resources work together
 3. **Queryable** - Find resources by any dimension (cost, compliance, feature, etc.)
@@ -72,6 +73,7 @@ Each level inherits tags from levels above and adds its own.
 ```
 
 **Every field becomes a tag automatically:**
+
 ```typescript
 {
   'atakora:version': '2.0.0',
@@ -121,6 +123,7 @@ Users can add ANY field to the manifest and it becomes a tag:
 ```
 
 **All become tags automatically:**
+
 ```typescript
 {
   'atakora:project': 'colorai',
@@ -216,6 +219,7 @@ backend.instanceHash = generateHash({
 ```
 
 **All resources in this backend get:**
+
 ```typescript
 {
   'atakora:backend-instance': 'backend-colorai-b4f3a2e1',
@@ -224,6 +228,7 @@ backend.instanceHash = generateHash({
 ```
 
 **Benefits:**
+
 - Query all resources for this specific backend deployment
 - Identify resources that were created together
 - Track backend lifecycle (when created, by whom)
@@ -242,6 +247,7 @@ console.log(`Synthesis Run ID: ${taggingEngine.synthesisRunId}`);
 ```
 
 **All resources in this synthesis run get:**
+
 ```typescript
 {
   'atakora:synthesis-run-id': 'synth-20251014-153000-b8d4e2a1',
@@ -249,12 +255,14 @@ console.log(`Synthesis Run ID: ${taggingEngine.synthesisRunId}`);
 ```
 
 **Benefits:**
+
 - **Deployment tracking** - Query all resources that were deployed together in a single synthesis run
 - **Rollback capability** - Identify exactly which resources were created in a failed deployment
 - **Change tracking** - Compare resources between different synthesis runs
 - **Audit trail** - Complete history of what was deployed when
 
 **Use cases:**
+
 ```kql
 -- Find everything deployed in the latest run
 Resources
@@ -279,8 +287,8 @@ Each stack within a backend gets its own identifier:
 
 ```typescript
 const backend = defineBackend({
-  feedbackApi,      // Goes to default stack
-  labDatasetApi,    // Goes to default stack
+  feedbackApi, // Goes to default stack
+  labDatasetApi, // Goes to default stack
 });
 
 // Additional stacks
@@ -289,6 +297,7 @@ const networkStack = backend.createStack('network');
 ```
 
 **Stack tags:**
+
 ```typescript
 // Default stack resources:
 {
@@ -323,7 +332,9 @@ Each component (CRUD API, Function, etc.) gets unique tags:
 export const feedbackApi = defineCrudApi({
   name: 'feedback',
   entityName: 'Feedback',
-  schema: { /* ... */ },
+  schema: {
+    /* ... */
+  },
 });
 
 // Generates component hash
@@ -331,6 +342,7 @@ feedbackApi.componentHash = 'crud-feedback-a8e3f1d9';
 ```
 
 **All resources created by this component inherit:**
+
 ```typescript
 {
   // Inherited from manifest
@@ -379,6 +391,7 @@ feedbackApi.resources = [
 ```
 
 **Query to find all resources for a component:**
+
 ```kql
 Resources
 | where tags['atakora:component-instance'] == 'crud-feedback-a8e3f1d9'
@@ -434,7 +447,7 @@ interface TaggingRule {
 
   // Tag key (with optional prefix)
   key: string;
-  prefix?: string;  // e.g., 'atakora:' or 'azure:'
+  prefix?: string; // e.g., 'atakora:' or 'azure:'
 
   // Tag value (can be static or computed)
   value: string | ((context: TaggingContext) => string);
@@ -447,7 +460,7 @@ interface TaggingContext {
   component?: Component;
   resource?: ArmResource;
   timestamp: Date;
-  synthesisRunId: string;  // Unique ID for this synthesis run
+  synthesisRunId: string; // Unique ID for this synthesis run
 }
 ```
 
@@ -461,7 +474,7 @@ const builtInRules: TaggingRule[] = [
     description: 'All manifest fields automatically become tags',
     source: 'manifest',
     scope: 'all',
-    key: '*',  // Wildcard - use field name as key
+    key: '*', // Wildcard - use field name as key
     prefix: 'atakora:',
     transform: (value) => String(value),
   },
@@ -584,50 +597,53 @@ const builtInRules: TaggingRule[] = [
 Users can define custom rules:
 
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-}, {
-  tagging: {
-    rules: [
-      // Custom rule: Tag all storage accounts with replication strategy
-      {
-        name: 'storage-replication',
-        source: 'resource',
-        scope: 'resource-type',
-        condition: (ctx) => ctx.resource.type === 'Microsoft.Storage/storageAccounts',
-        key: 'replication',
-        value: (ctx) => ctx.resource.properties.sku.name,
-      },
-
-      // Custom rule: Tag functions with their trigger type
-      {
-        name: 'function-trigger',
-        source: 'resource',
-        scope: 'resource-type',
-        condition: (ctx) => ctx.resource.type.includes('Microsoft.Web/sites/functions'),
-        key: 'trigger-type',
-        value: (ctx) => ctx.component.trigger?.type || 'unknown',
-      },
-
-      // Custom rule: Feature-level tagging
-      {
-        name: 'feature-grouping',
-        source: 'component',
-        scope: 'all',
-        key: 'feature',
-        value: (ctx) => {
-          // Map component names to features
-          const featureMap = {
-            'feedback': 'user-feedback',
-            'user-profile': 'user-management',
-            'auth': 'authentication',
-          };
-          return featureMap[ctx.component.name] || 'general';
-        },
-      },
-    ],
+const backend = defineBackend(
+  {
+    feedbackApi,
   },
-});
+  {
+    tagging: {
+      rules: [
+        // Custom rule: Tag all storage accounts with replication strategy
+        {
+          name: 'storage-replication',
+          source: 'resource',
+          scope: 'resource-type',
+          condition: (ctx) => ctx.resource.type === 'Microsoft.Storage/storageAccounts',
+          key: 'replication',
+          value: (ctx) => ctx.resource.properties.sku.name,
+        },
+
+        // Custom rule: Tag functions with their trigger type
+        {
+          name: 'function-trigger',
+          source: 'resource',
+          scope: 'resource-type',
+          condition: (ctx) => ctx.resource.type.includes('Microsoft.Web/sites/functions'),
+          key: 'trigger-type',
+          value: (ctx) => ctx.component.trigger?.type || 'unknown',
+        },
+
+        // Custom rule: Feature-level tagging
+        {
+          name: 'feature-grouping',
+          source: 'component',
+          scope: 'all',
+          key: 'feature',
+          value: (ctx) => {
+            // Map component names to features
+            const featureMap = {
+              feedback: 'user-feedback',
+              'user-profile': 'user-management',
+              auth: 'authentication',
+            };
+            return featureMap[ctx.component.name] || 'general';
+          },
+        },
+      ],
+    },
+  }
+);
 ```
 
 ## Tag Cascade Examples
@@ -647,6 +663,7 @@ const backend = defineBackend({ feedbackApi });
 ```
 
 **Cosmos Container gets these tags:**
+
 ```typescript
 {
   // Level 1: Manifest (project)
@@ -691,6 +708,7 @@ const backend = defineBackend({ feedbackApi });
 ```
 
 **Function (feedback-create) gets these tags:**
+
 ```typescript
 {
   // All the same tags as above, PLUS:
@@ -715,6 +733,7 @@ const processUploadFunction = defineFunction({
 ```
 
 **Function gets:**
+
 ```typescript
 {
   // Inherited from manifest + backend + stack...
@@ -730,6 +749,7 @@ const processUploadFunction = defineFunction({
 ```
 
 **Storage Container (uploads) gets:**
+
 ```typescript
 {
   // Inherited from manifest + backend + stack...
@@ -751,23 +771,27 @@ const processUploadFunction = defineFunction({
 Group resources by application feature:
 
 ```typescript
-const backend = defineBackend({
-  // User management feature
-  userProfileApi: defineCrudApi({ name: 'user-profile' }),
-  uploadAvatarFunction: defineFunction({ name: 'upload-avatar' }),
+const backend = defineBackend(
+  {
+    // User management feature
+    userProfileApi: defineCrudApi({ name: 'user-profile' }),
+    uploadAvatarFunction: defineFunction({ name: 'upload-avatar' }),
 
-  // Authentication feature
-  loginFunction: defineFunction({ name: 'login' }),
-  resetPasswordFunction: defineFunction({ name: 'reset-password' }),
-}, {
-  features: {
-    'user-management': ['userProfileApi', 'uploadAvatarFunction'],
-    'authentication': ['loginFunction', 'resetPasswordFunction'],
+    // Authentication feature
+    loginFunction: defineFunction({ name: 'login' }),
+    resetPasswordFunction: defineFunction({ name: 'reset-password' }),
   },
-});
+  {
+    features: {
+      'user-management': ['userProfileApi', 'uploadAvatarFunction'],
+      authentication: ['loginFunction', 'resetPasswordFunction'],
+    },
+  }
+);
 ```
 
 **All resources get:**
+
 ```typescript
 {
   'atakora:feature': 'user-management',  // or 'authentication'
@@ -878,7 +902,10 @@ export class TaggingEngine {
   }
 
   private generateSynthesisRunId(): string {
-    const timestamp = new Date().toISOString().replace(/[-:\.]/g, '').substring(0, 15);
+    const timestamp = new Date()
+      .toISOString()
+      .replace(/[-:\.]/g, '')
+      .substring(0, 15);
     const random = crypto.randomBytes(4).toString('hex');
     return `synth-${timestamp}-${random}`;
   }
@@ -958,7 +985,7 @@ export class TaggingEngine {
     if (rule.source === 'manifest') {
       // All manifest fields
       for (const [key, value] of Object.entries(context.manifest)) {
-        if (key === 'tags' || key === 'packages') continue;  // Skip special fields
+        if (key === 'tags' || key === 'packages') continue; // Skip special fields
 
         const tagKey = rule.prefix ? `${rule.prefix}${key}` : key;
         const tagValue = rule.transform ? rule.transform(value, context) : String(value);
@@ -1172,6 +1199,7 @@ Resources
 11. ✅ **Operational** (monitoring-group, security-zone, dependencies)
 
 **The system is:**
+
 - **Dynamic** - Add fields to manifest, get tags automatically
 - **Rule-driven** - Define custom tagging rules as needed
 - **Cascading** - Tags flow from manifest → backend → stack → component → resource
@@ -1180,6 +1208,7 @@ Resources
 ---
 
 **Next Steps:**
+
 1. Review tagging hierarchy and rules
 2. Identify additional cascade strategies needed
 3. Implement TaggingEngine

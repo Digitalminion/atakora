@@ -1,0 +1,544 @@
+# Phase 2: API Layer (Week 3-4)
+# Critical path: Auto-generate API Management resources and OpenAPI specs
+
+---
+# ============================================================================
+# FOUNDATION TASKS (Day 11-12) - Can run in parallel
+# ============================================================================
+
+- id: DEV-2-001
+  title: Implement ApiSynthesizer constructor and setup
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-1-014]
+  phase: 2
+  description: |
+    Implement ApiSynthesizer class constructor that initializes API Management
+    configuration and naming utilities.
+  acceptance_criteria:
+    - ApiSynthesizer class created
+    - Constructor accepts schema, stack, and dataResources
+    - Initializes naming utility
+    - Sets up API Management configuration
+    - Unit test validates initialization
+    - JSDoc documentation complete
+  files:
+    - packages/component/src/synthesis/api-synthesizer.ts (create)
+    - packages/component/src/synthesis/api-synthesizer.spec.ts (create)
+
+- id: DEV-2-002
+  title: Create API operation path utilities
+  agent: devon
+  effort: 2h
+  dependencies: []
+  phase: 2
+  description: |
+    Create utilities for generating REST API paths and operation IDs from model names.
+    Support standard CRUD operations and custom endpoints.
+  acceptance_criteria:
+    - generateListPath() function (e.g., /users)
+    - generateGetPath() function (e.g., /users/{id})
+    - generateCreatePath() function (e.g., /users)
+    - generateUpdatePath() function (e.g., /users/{id})
+    - generateDeletePath() function (e.g., /users/{id})
+    - generateOperationId() function (e.g., listUsers, getUser)
+    - Unit tests for all utilities
+  files:
+    - packages/component/src/synthesis/utils/api-paths.ts (create)
+    - packages/component/src/synthesis/utils/api-paths.spec.ts (create)
+    - packages/component/src/synthesis/utils/index.ts (modify)
+
+- id: FEL-2-001
+  title: Create OpenAPI path generator from model
+  agent: felix
+  effort: 3h
+  dependencies: [FEL-1-001]
+  phase: 2
+  description: |
+    Implement function to generate OpenAPI path definitions from a model schema.
+    Create path, operation, parameter, and response definitions.
+  acceptance_criteria:
+    - generatePathsForModel() function implemented
+    - Generates GET /resources (list operation)
+    - Generates GET /resources/{id} (get operation)
+    - Generates POST /resources (create operation)
+    - Generates PUT /resources/{id} (update operation)
+    - Generates DELETE /resources/{id} (delete operation)
+    - Includes parameters, request/response bodies
+    - Unit tests with sample models
+  files:
+    - packages/component/src/synthesis/schema/openapi-path-generator.ts (create)
+    - packages/component/src/synthesis/schema/openapi-path-generator.spec.ts (create)
+
+- id: FEL-2-002
+  title: Create OpenAPI schema generator from model
+  agent: felix
+  effort: 3h
+  dependencies: [FEL-1-001, DEV-1-006]
+  phase: 2
+  description: |
+    Implement function to generate OpenAPI schema definitions from model fields.
+    Convert field types to OpenAPI types and handle validation rules.
+  acceptance_criteria:
+    - generateSchemaForModel() function implemented
+    - Converts a.string() to OpenAPI string type
+    - Converts a.number() to OpenAPI number/integer types
+    - Converts a.boolean() to OpenAPI boolean type
+    - Converts a.ref() to OpenAPI reference ($ref)
+    - Converts a.array() to OpenAPI array type
+    - Includes validation rules (required, min/max, pattern)
+    - Unit tests for all field types
+  files:
+    - packages/component/src/synthesis/schema/openapi-schema-generator.ts (create)
+    - packages/component/src/synthesis/schema/openapi-schema-generator.spec.ts (create)
+
+# ============================================================================
+# API MANAGEMENT SYNTHESIS (Day 12-14)
+# ============================================================================
+
+- id: DEV-2-003
+  title: Implement ApiSynthesizer.synthesizeApiManagement()
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-2-001, DEV-1-005]
+  phase: 2
+  description: |
+    Implement method to synthesize API Management instance using CDK ApiManagementService construct.
+    Configure SKU, location, and publisher information based on environment.
+  acceptance_criteria:
+    - synthesizeApiManagement() method creates ApiManagementService construct
+    - Uses naming utility for service name generation
+    - Environment-aware SKU (dev: Consumption, prod: Standard)
+    - Configures publisher name and email from backend settings
+    - Returns ApiManagementService construct reference
+    - Integration test validates construct created
+  files:
+    - packages/component/src/synthesis/api-synthesizer.ts (modify)
+    - packages/component/src/synthesis/api-synthesizer.spec.ts (modify)
+
+- id: DEV-2-004
+  title: Implement ApiSynthesizer.synthesizeApi()
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-2-003]
+  phase: 2
+  description: |
+    Implement method to synthesize API definition using CDK ApiManagementApi construct.
+    Configure API path, protocols, and versioning.
+  acceptance_criteria:
+    - synthesizeApi() method creates ApiManagementApi construct
+    - Takes ApiManagementService as dependency
+    - Configures API display name from schema
+    - Configures base path (/api)
+    - Enables HTTPS and CORS
+    - Returns ApiManagementApi construct reference
+    - Integration test validates API created
+  files:
+    - packages/component/src/synthesis/api-synthesizer.ts (modify)
+    - packages/component/src/synthesis/api-synthesizer.spec.ts (modify)
+
+- id: DEV-2-005
+  title: Implement ApiSynthesizer.generateCrudOperations()
+  agent: devon
+  effort: 4h
+  dependencies: [DEV-2-004, DEV-2-002]
+  phase: 2
+  description: |
+    Implement method to generate CRUD operations for a model using CDK ApiManagementOperation construct.
+    Create operations for list, get, create, update, and delete.
+  acceptance_criteria:
+    - generateCrudOperations() creates 5 operations per model
+    - Uses api-paths utilities for path generation
+    - Configures HTTP method, path, and operation ID
+    - Configures path parameters for {id} routes
+    - Returns array of ApiManagementOperation constructs
+    - Integration test validates all operations created
+  files:
+    - packages/component/src/synthesis/api-synthesizer.ts (modify)
+    - packages/component/src/synthesis/api-synthesizer.spec.ts (modify)
+
+- id: DEV-2-006
+  title: Implement ApiSynthesizer.synthesize() orchestration
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-2-005]
+  phase: 2
+  description: |
+    Implement main synthesize() method that orchestrates API Management resource creation.
+    Iterate over all CRUD models and create operations for each.
+  acceptance_criteria:
+    - synthesize() method creates API Management, API, and all operations
+    - Iterates over schema models using getCrudModelNames()
+    - Returns ApiResources with all created constructs
+    - Integration test validates complete API hierarchy
+    - Error handling for invalid configurations
+    - JSDoc documentation complete
+  files:
+    - packages/component/src/synthesis/api-synthesizer.ts (modify)
+    - packages/component/src/synthesis/api-synthesizer.spec.ts (modify)
+
+# ============================================================================
+# POLICY GENERATION (Day 14-15)
+# ============================================================================
+
+- id: DEV-2-007
+  title: Create policy template utilities
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-2-006]
+  phase: 2
+  description: |
+    Create utilities for generating API Management policy XML templates.
+    Support authentication, rate limiting, CORS, and caching policies.
+  acceptance_criteria:
+    - generateAuthPolicy() function for JWT validation
+    - generateRateLimitPolicy() function for rate limiting
+    - generateCorsPolicy() function for CORS configuration
+    - generateCachePolicy() function for response caching
+    - All functions return valid XML strings
+    - Unit tests validate XML structure
+  files:
+    - packages/component/src/synthesis/utils/policy-templates.ts (create)
+    - packages/component/src/synthesis/utils/policy-templates.spec.ts (create)
+    - packages/component/src/synthesis/utils/index.ts (modify)
+
+- id: DEV-2-008
+  title: Implement ApiSynthesizer.applyPolicies()
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-2-007]
+  phase: 2
+  description: |
+    Implement method to apply policies to API Management operations.
+    Support global policies and operation-specific policies.
+  acceptance_criteria:
+    - applyPolicies() method applies policies to API and operations
+    - Applies global authentication policy to all operations
+    - Applies rate limiting policy (100 calls/minute default)
+    - Applies CORS policy for browser clients
+    - Applies caching policy for GET operations (60 seconds default)
+    - Integration test validates policies applied
+  files:
+    - packages/component/src/synthesis/api-synthesizer.ts (modify)
+    - packages/component/src/synthesis/api-synthesizer.spec.ts (modify)
+
+# ============================================================================
+# OPENAPI GENERATION (Day 15-17)
+# ============================================================================
+
+- id: FEL-2-003
+  title: Implement OpenAPI spec generator
+  agent: felix
+  effort: 4h
+  dependencies: [FEL-2-001, FEL-2-002]
+  phase: 2
+  description: |
+    Implement SchemaSynthesizer.generateOpenAPI() method that creates complete
+    OpenAPI 3.0 specification from schema and API resources.
+  acceptance_criteria:
+    - generateOpenAPI() creates OpenAPI 3.0 spec object
+    - Includes info section with title, version, description
+    - Includes servers section with API Management URL
+    - Includes paths for all models using openapi-path-generator
+    - Includes components/schemas for all models using openapi-schema-generator
+    - Includes security schemes for authentication
+    - Returns JSON object
+  files:
+    - packages/component/src/synthesis/schema/schema-synthesizer.ts (create)
+    - packages/component/src/synthesis/schema/schema-synthesizer.spec.ts (create)
+
+- id: FEL-2-004
+  title: Add OpenAPI validation and formatting
+  agent: felix
+  effort: 2h
+  dependencies: [FEL-2-003]
+  phase: 2
+  description: |
+    Add validation and formatting to OpenAPI spec generator.
+    Validate spec against OpenAPI 3.0 schema and format as YAML.
+  acceptance_criteria:
+    - Validates generated spec against OpenAPI 3.0 JSON schema
+    - Formats spec as YAML with proper indentation
+    - Validates all $ref references resolve correctly
+    - Clear error messages for invalid specs
+    - Unit tests for validation and formatting
+  files:
+    - packages/component/src/synthesis/schema/openapi-validator.ts (create)
+    - packages/component/src/synthesis/schema/openapi-validator.spec.ts (create)
+    - packages/component/src/synthesis/schema/schema-synthesizer.ts (modify)
+
+- id: FEL-2-005
+  title: Add TypeScript client type generation
+  agent: felix
+  effort: 4h
+  dependencies: [FEL-2-003]
+  phase: 2
+  description: |
+    Implement TypeScript client type generation from schema.
+    Generate interfaces for request/response types and API client.
+  acceptance_criteria:
+    - generateClientTypes() creates TypeScript type definitions
+    - Generates interface for each model
+    - Generates CreateInput, UpdateInput types per model
+    - Generates API response types (list, paginated, error)
+    - Generates API client interface with typed methods
+    - Generated types compile with TypeScript
+  files:
+    - packages/component/src/synthesis/schema/typescript-generator.ts (create)
+    - packages/component/src/synthesis/schema/typescript-generator.spec.ts (create)
+
+# ============================================================================
+# BACKEND SYNTHESIZER INTEGRATION (Day 17-18)
+# ============================================================================
+
+- id: DEV-2-009
+  title: Integrate ApiSynthesizer into BackendSynthesizer
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-2-006, FEL-2-003]
+  phase: 2
+  description: |
+    Integrate ApiSynthesizer into BackendSynthesizer orchestration flow.
+    Call ApiSynthesizer after DataSynthesizer completes.
+  acceptance_criteria:
+    - BackendSynthesizer creates ApiSynthesizer instance
+    - Calls ApiSynthesizer.synthesize() after DataSynthesizer
+    - Passes DataResources to ApiSynthesizer
+    - Stores ApiResources for future use
+    - Calls SchemaSynthesizer.generateOpenAPI()
+    - Integration test validates complete flow
+  files:
+    - packages/component/src/synthesis/backend-synthesizer.ts (modify)
+    - packages/component/src/synthesis/backend-synthesizer.spec.ts (modify)
+
+- id: DEV-2-010
+  title: Add schema file writing to synthesis output
+  agent: devon
+  effort: 2h
+  dependencies: [FEL-2-004, FEL-2-005]
+  phase: 2
+  description: |
+    Add schema file writing to BackendSynthesizer.synthesize() output.
+    Write OpenAPI YAML and TypeScript types to schemas/ directory.
+  acceptance_criteria:
+    - Creates schemas/ output directory
+    - Writes openapi.yaml with OpenAPI spec
+    - Writes types.ts with TypeScript client types
+    - Files written alongside arm.out/ directory
+    - Integration test validates files created
+    - File paths included in SynthesisResult
+  files:
+    - packages/component/src/synthesis/backend-synthesizer.ts (modify)
+    - packages/component/src/synthesis/backend-synthesizer.spec.ts (modify)
+
+# ============================================================================
+# TESTING TASKS (Day 16-20) - Can run in parallel with development
+# ============================================================================
+
+- id: TEST-2-001
+  title: Write unit tests for API path utilities
+  agent: charlie
+  effort: 2h
+  dependencies: [DEV-2-002]
+  phase: 2
+  description: |
+    Write comprehensive unit tests for API path generation utilities
+    covering various model names and operation types.
+  acceptance_criteria:
+    - Tests for all generateX() path functions
+    - Tests for single-word models (User -> /users)
+    - Tests for multi-word models (ProjectMember -> /project-members)
+    - Tests for operation ID generation
+    - Tests for path parameter handling
+    - 100% code coverage for api-paths.ts
+  files:
+    - packages/component/src/synthesis/utils/api-paths.spec.ts (modify)
+
+- id: TEST-2-002
+  title: Write unit tests for policy template utilities
+  agent: charlie
+  effort: 2h
+  dependencies: [DEV-2-007]
+  phase: 2
+  description: |
+    Write comprehensive unit tests for policy template generation
+    covering all policy types and configurations.
+  acceptance_criteria:
+    - Tests for authentication policy generation
+    - Tests for rate limiting with various limits
+    - Tests for CORS with various origins
+    - Tests for caching with various durations
+    - Validates XML structure of generated policies
+    - 100% code coverage for policy-templates.ts
+  files:
+    - packages/component/src/synthesis/utils/policy-templates.spec.ts (modify)
+
+- id: TEST-2-003
+  title: Write unit tests for OpenAPI generators
+  agent: charlie
+  effort: 3h
+  dependencies: [FEL-2-002]
+  phase: 2
+  description: |
+    Write comprehensive unit tests for OpenAPI path and schema generators
+    covering all field types and model configurations.
+  acceptance_criteria:
+    - Tests for all field type conversions
+    - Tests for required vs optional fields
+    - Tests for validation rules (min/max, pattern)
+    - Tests for nested objects and arrays
+    - Tests for references between models
+    - 100% code coverage for openapi-*-generator.ts files
+  files:
+    - packages/component/src/synthesis/schema/openapi-path-generator.spec.ts (modify)
+    - packages/component/src/synthesis/schema/openapi-schema-generator.spec.ts (modify)
+
+- id: TEST-2-004
+  title: Write integration tests for ApiSynthesizer
+  agent: charlie
+  effort: 4h
+  dependencies: [DEV-2-006]
+  phase: 2
+  description: |
+    Write integration tests for ApiSynthesizer that validate complete API Management
+    resource hierarchy generation using CDK constructs.
+  acceptance_criteria:
+    - Test single model API generation
+    - Test multiple models API generation
+    - Test environment-specific configuration
+    - Test policy application
+    - Validate CDK Stack contains correct API resources
+    - Validate operation paths and methods
+  files:
+    - packages/component/src/synthesis/api-synthesizer.integration.spec.ts (create)
+
+- id: TEST-2-005
+  title: Write integration tests for OpenAPI generation
+  agent: charlie
+  effort: 3h
+  dependencies: [FEL-2-004]
+  phase: 2
+  description: |
+    Write integration tests for OpenAPI spec generation that validate
+    complete spec structure and validity.
+  acceptance_criteria:
+    - Test OpenAPI spec generation from simple schema
+    - Test OpenAPI spec generation from complex schema with refs
+    - Validate spec against OpenAPI 3.0 JSON schema
+    - Test YAML formatting and indentation
+    - Test TypeScript type generation
+    - Validate generated types compile
+  files:
+    - packages/component/src/synthesis/schema/schema-synthesizer.integration.spec.ts (create)
+
+- id: TEST-2-006
+  title: Write E2E test for API layer synthesis
+  agent: charlie
+  effort: 4h
+  dependencies: [DEV-2-010]
+  phase: 2
+  description: |
+    Write end-to-end test that validates complete API layer synthesis
+    from schema to ARM templates and OpenAPI specs.
+  acceptance_criteria:
+    - Test creates schema with multiple models
+    - Test calls backend.synth()
+    - Validates API Management resources in ARM template
+    - Validates operations for all models
+    - Validates policies applied
+    - Validates OpenAPI spec generated in schemas/
+    - Test cleanup removes generated files
+  files:
+    - packages/component/__tests__/synthesis/e2e-api-synthesis.test.ts (create)
+
+# ============================================================================
+# DOCUMENTATION TASKS (Day 18-20) - Can run in parallel with testing
+# ============================================================================
+
+- id: DOC-2-001
+  title: Create API synthesis architecture documentation
+  agent: ella
+  effort: 4h
+  dependencies: [DEV-2-009]
+  phase: 2
+  description: |
+    Create comprehensive documentation explaining API Management synthesis,
+    operation generation, and policy application.
+  acceptance_criteria:
+    - Architecture diagram showing API synthesis flow
+    - Explanation of operation generation for CRUD
+    - Policy configuration and customization guide
+    - Code examples for API customization
+    - Troubleshooting guide for API issues
+    - Published to docs/design/synthesis/api.md
+  files:
+    - docs/design/synthesis/api.md (create)
+
+- id: DOC-2-002
+  title: Create OpenAPI generation documentation
+  agent: ella
+  effort: 3h
+  dependencies: [FEL-2-004]
+  phase: 2
+  description: |
+    Create documentation explaining OpenAPI spec generation,
+    how to customize specs, and how to use generated client types.
+  acceptance_criteria:
+    - Explanation of OpenAPI spec generation
+    - How to customize OpenAPI metadata
+    - How to add custom operations
+    - How to use generated TypeScript types
+    - Examples of client usage
+    - Published to docs/design/synthesis/openapi.md
+  files:
+    - docs/design/synthesis/openapi.md (create)
+
+- id: DOC-2-003
+  title: Create API policy customization guide
+  agent: ella
+  effort: 3h
+  dependencies: [DEV-2-008]
+  phase: 2
+  description: |
+    Create guide explaining how to customize API Management policies,
+    including authentication, rate limiting, CORS, and caching.
+  acceptance_criteria:
+    - How to customize authentication policies
+    - How to configure rate limiting per operation
+    - How to configure CORS for different origins
+    - How to customize caching policies
+    - Examples of custom policy templates
+    - Published to docs/user-guide/api-policies.md
+  files:
+    - docs/user-guide/api-policies.md (create)
+
+- id: DOC-2-004
+  title: Update synthesis user guide with API layer
+  agent: ella
+  effort: 2h
+  dependencies: [TEST-2-006]
+  phase: 2
+  description: |
+    Update synthesis user guide to include API layer synthesis,
+    showing complete examples with data and API layers.
+  acceptance_criteria:
+    - Updated quick start with API synthesis
+    - Complete example showing Cosmos + API Management
+    - How to inspect generated OpenAPI specs
+    - How to test generated API locally
+    - Published to docs/user-guide/synthesis.md
+  files:
+    - docs/user-guide/synthesis.md (modify)
+
+# ============================================================================
+# SUMMARY
+# ============================================================================
+# Total tickets: 25
+# devon: 10 tickets (26 hours)
+# felix: 5 tickets (16 hours)
+# charlie: 6 tickets (18 hours)
+# ella: 4 tickets (12 hours)
+#
+# Total estimated effort: 72 hours
+# Parallelization: ~35 hours (with 2-3 agents working simultaneously)
+# Calendar time: 10 working days (2 weeks)

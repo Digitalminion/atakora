@@ -44,21 +44,25 @@ export { backend };
 ## Key Design Principles
 
 ### 1. Zero Boilerplate
+
 - No manual App/Stack creation
 - No configuration passing
 - No component type categorization
 
 ### 2. Convention Over Configuration
+
 - Configuration loaded from `.atakora/manifest.json` (created by `atakora init`)
 - Automatic naming based on project/environment
 - Smart defaults for everything
 
 ### 3. Component Self-Description
+
 - Components declare their type via `componentType` property
 - Backend automatically routes components to appropriate handlers
 - No developer categorization required
 
 ### 4. Progressive Disclosure
+
 - Simple tasks are simple
 - Complex customization available when needed
 - Escape hatches for advanced scenarios
@@ -72,6 +76,7 @@ export { backend };
 This prevents circular dependencies and allows `@atakora/component` to use them.
 
 **Files to create/move:**
+
 ```
 packages/lib/src/config/
 ├── index.ts              # Public exports
@@ -81,6 +86,7 @@ packages/lib/src/config/
 ```
 
 **Key Functions:**
+
 ```typescript
 // packages/lib/src/config/config-loader.ts
 export interface ProjectConfig {
@@ -126,6 +132,7 @@ export class InfrastructureResource extends Construct {
 ```
 
 **Component Type Union:**
+
 ```typescript
 // packages/component/src/types.ts
 export type ComponentType =
@@ -236,11 +243,7 @@ export class Backend extends Construct {
   private crudApis: Map<string, CrudApi> = new Map();
   private functions: Map<string, AzureFunction> = new Map();
 
-  constructor(
-    scope: SubscriptionStack,
-    name: string,
-    config: BackendConfig
-  ) {
+  constructor(scope: SubscriptionStack, name: string, config: BackendConfig) {
     super(scope, name);
 
     // Create resource group automatically
@@ -302,7 +305,7 @@ export class Backend extends Construct {
     return new ResourceGroupStack(this._subscriptionStack, stackName, {
       resourceGroup: options?.separateResourceGroup
         ? new ResourceGroups(this._subscriptionStack, `${name}-rg`, {
-            tags: options.tags
+            tags: options.tags,
           })
         : this.resourceGroup, // Reuse backend RG by default
       ...options,
@@ -411,6 +414,7 @@ Next steps:
 ```
 
 **Generator should:**
+
 1. Create component file with template
 2. Auto-update `index.ts` with import and component
 3. No manual intervention required
@@ -418,30 +422,35 @@ Next steps:
 ## Implementation Plan
 
 ### Week 1-2: Foundation
+
 - [ ] Move config utilities from CLI to lib
 - [ ] Add `componentType` to all components
 - [ ] Create component type system
 - [ ] Update tests
 
 ### Week 3-4: Backend Redesign
+
 - [ ] Implement new `defineBackend` function
 - [ ] Enhance Backend class with auto-initialization
 - [ ] Add `createStack` method
 - [ ] Update backend tests
 
 ### Week 5-6: Developer Experience
+
 - [ ] Implement file-based component loading
 - [ ] Create schema builder helpers
 - [ ] Update CLI generators
 - [ ] Add component templates
 
 ### Week 7-8: Migration & Documentation
+
 - [ ] Create migration guide
 - [ ] Update all examples
 - [ ] Create comprehensive documentation
 - [ ] Add video tutorials
 
 ### Week 9-10: Testing & Refinement
+
 - [ ] End-to-end testing
 - [ ] Performance optimization
 - [ ] Bug fixes
@@ -452,6 +461,7 @@ Next steps:
 ### What Changes
 
 **Before (Gen 1):**
+
 ```typescript
 const app = new App();
 const stack = new SubscriptionStack(app, 'ColorAI', { ... });
@@ -463,6 +473,7 @@ crudBackend.addToStack(foundation);
 ```
 
 **After (Gen 2):**
+
 ```typescript
 const backend = defineBackend({
   feedbackApi,
@@ -480,16 +491,19 @@ const backend = defineBackend({
 ## Success Metrics
 
 ### Developer Experience
+
 - **Time to add CRUD API**: < 5 minutes (currently 15)
 - **Lines of boilerplate**: < 10 (currently 80-100)
 - **Onboarding time**: < 4 hours (currently 2 days)
 
 ### Code Quality
+
 - **Merge conflict rate**: -90%
 - **Test coverage**: >85%
 - **Type safety**: 100% (no `any` types)
 
 ### Adoption
+
 - **Internal adoption**: 100% within 3 months
 - **External feedback**: >4.5/5 satisfaction
 - **Documentation completeness**: 100%
@@ -497,11 +511,13 @@ const backend = defineBackend({
 ## Risk Assessment
 
 ### Technical Risks
+
 - **Circular dependencies**: Mitigated by moving config to lib
 - **Breaking changes**: Mitigated by side-by-side compatibility
 - **Performance**: Mitigated by lazy loading
 
 ### Process Risks
+
 - **Migration complexity**: Mitigated by automated migration tool
 - **Documentation**: Mitigated by comprehensive examples
 - **Learning curve**: Mitigated by progressive disclosure
@@ -525,6 +541,7 @@ const backend = defineBackend({
 Atakora Gen 2 represents a fundamental reimagining of how developers define Azure infrastructure. By eliminating boilerplate, embracing conventions, and focusing relentlessly on developer experience, we can make infrastructure-as-code as intuitive as writing application code.
 
 The estimated 10-week timeline delivers:
+
 - **60% less code** to write and maintain
 - **66% faster** development velocity
 - **75% faster** onboarding for new developers
@@ -535,6 +552,7 @@ This investment in developer experience will compound over time as the codebase 
 ---
 
 **Next Steps:**
+
 1. Review and approve this design
 2. Begin Week 1-2 implementation
 3. Weekly check-ins on progress

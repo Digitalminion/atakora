@@ -27,6 +27,7 @@ We need to provide Azure Functions support in Atakora with an AWS Amplify-like d
 ### Current State Analysis
 
 The existing codebase has:
+
 - Strong L1/L2 construct patterns (see `app-service` implementation)
 - Well-defined synthesis pipeline with prepare, transform, validate, and assembly phases
 - Type-safe resource modeling with proper interfaces
@@ -78,6 +79,7 @@ We will implement a comprehensive Azure Functions architecture that follows the 
 #### 1. Resource Model
 
 **File Structure (Amplify Pattern)**:
+
 ```
 packages/infrastructure/
 ├── src/
@@ -92,6 +94,7 @@ packages/infrastructure/
 ```
 
 **Construct Hierarchy**:
+
 ```typescript
 App
 └── SubscriptionStack
@@ -121,13 +124,13 @@ class FunctionDiscovery {
       const resourcePath = path.join(functionsPath, dir, 'resource.ts');
       const handlerPath = path.join(functionsPath, dir, 'handler.ts');
 
-      if (await fs.pathExists(resourcePath) && await fs.pathExists(handlerPath)) {
+      if ((await fs.pathExists(resourcePath)) && (await fs.pathExists(handlerPath))) {
         // Load and parse resource.ts configuration
         const config = await this.loadResourceConfig(resourcePath);
         definitions.push({
           name: dir,
           config,
-          handlerPath
+          handlerPath,
         });
       }
     }
@@ -138,19 +141,17 @@ class FunctionDiscovery {
 class FunctionBuildPhase {
   async execute(context: BuildContext): Promise<BuildResult> {
     // 1. Discover functions from filesystem
-    const functionApps = context.constructs.filter(c => c instanceof FunctionApp);
-    const discoveries = await Promise.all(
-      functionApps.map(app => this.discovery.discover(app))
-    );
+    const functionApps = context.constructs.filter((c) => c instanceof FunctionApp);
+    const discoveries = await Promise.all(functionApps.map((app) => this.discovery.discover(app)));
 
     // 2. Build discovered functions in parallel
-    const buildTasks = discoveries.flat().map(fn => this.buildFunction(fn));
+    const buildTasks = discoveries.flat().map((fn) => this.buildFunction(fn));
     const results = await Promise.all(buildTasks);
 
     // 3. Store artifacts and merge configurations
     return {
       artifacts: results,
-      configurations: this.mergeConfigurations(results)
+      configurations: this.mergeConfigurations(results),
     };
   }
 
@@ -162,13 +163,13 @@ class FunctionBuildPhase {
       minify: def.config.minify ?? true,
       target: def.config.runtime ?? 'node18',
       external: def.config.external,
-      define: def.config.buildDefines
+      define: def.config.buildDefines,
     });
 
     return {
       functionName: def.name,
       config: def.config,
-      bundle: result.outputFiles[0].contents
+      bundle: result.outputFiles[0].contents,
     };
   }
 }
@@ -180,10 +181,10 @@ class FunctionBuildPhase {
 
 ```typescript
 enum PackagingStrategy {
-  INLINE = 'inline',        // < 4KB: Embed in ARM template
-  STORAGE = 'storage',      // < 100MB: Upload to Storage Account
-  CONTAINER = 'container',  // > 100MB or custom deps: Container image
-  EXTERNAL = 'external'     // User-managed: GitHub, registry, etc.
+  INLINE = 'inline', // < 4KB: Embed in ARM template
+  STORAGE = 'storage', // < 100MB: Upload to Storage Account
+  CONTAINER = 'container', // > 100MB or custom deps: Container image
+  EXTERNAL = 'external', // User-managed: GitHub, registry, etc.
 }
 
 class PackagingResolver {
@@ -202,6 +203,7 @@ class PackagingResolver {
 #### 4. API Design
 
 **FunctionApp with Auto-Discovery**:
+
 ```typescript
 interface FunctionAppProps {
   // Required infrastructure
@@ -209,15 +211,15 @@ interface FunctionAppProps {
   readonly storageAccount: IStorageAccount;
 
   // Function discovery
-  readonly functionsPath: string;  // Path to functions directory (e.g., '../functions')
+  readonly functionsPath: string; // Path to functions directory (e.g., '../functions')
 
   // Global configuration (applies to all functions)
-  readonly runtime?: FunctionRuntime;    // Default: 'node18'
+  readonly runtime?: FunctionRuntime; // Default: 'node18'
   readonly environment?: Record<string, string | IResourceReference>;
 
   // Optional settings
-  readonly functionAppName?: string;     // Auto-generated if not provided
-  readonly location?: string;            // From ResourceGroup if not specified
+  readonly functionAppName?: string; // Auto-generated if not provided
+  readonly location?: string; // From ResourceGroup if not specified
 }
 
 // Usage in app.ts
@@ -230,12 +232,13 @@ const functionApp = new FunctionApp(stack, 'Api', {
   environment: {
     TABLE_NAME: cosmosDb.databaseName,
     COSMOS_ENDPOINT: cosmosDb.endpoint,
-    COSMOS_CONNECTION: cosmosDb.connectionString
-  }
+    COSMOS_CONNECTION: cosmosDb.connectionString,
+  },
 });
 ```
 
 **defineFunction Helper (in resource.ts)**:
+
 ```typescript
 import { defineFunction } from '@atakora/cdk/functions';
 
@@ -248,7 +251,7 @@ export default defineFunction({
   environment: {
     // Placeholders filled by app.ts environment
     TABLE_NAME: '${TABLE_NAME}',
-    COSMOS_ENDPOINT: '${COSMOS_ENDPOINT}'
+    COSMOS_ENDPOINT: '${COSMOS_ENDPOINT}',
   },
 
   // Trigger configuration
@@ -256,7 +259,7 @@ export default defineFunction({
     type: 'http',
     methods: ['GET', 'POST'],
     route: 'api/users/{id}',
-    authLevel: 'anonymous'
+    authLevel: 'anonymous',
   },
 
   // Additional bindings
@@ -266,19 +269,20 @@ export default defineFunction({
       direction: 'in',
       name: 'documents',
       databaseName: 'MyDatabase',
-      collectionName: 'Users'
-    }
+      collectionName: 'Users',
+    },
   ],
 
   // Build configuration
   buildOptions: {
     external: ['@azure/cosmos'],
-    minify: true
-  }
+    minify: true,
+  },
 });
 ```
 
 **Handler Pattern (in handler.ts)**:
+
 ```typescript
 import { AzureFunctionContext, HttpRequest } from '@atakora/cdk/functions';
 
@@ -292,15 +296,15 @@ export async function handler(context: AzureFunctionContext, req: HttpRequest) {
 
   // Operational logic
   const userId = req.params.id;
-  const user = documents.find(d => d.id === userId);
+  const user = documents.find((d) => d.id === userId);
 
   return {
     status: 200,
     body: {
       message: `User ${userId} found`,
       user,
-      environment: { tableName, cosmosEndpoint }
-    }
+      environment: { tableName, cosmosEndpoint },
+    },
   };
 }
 ```
@@ -308,6 +312,7 @@ export async function handler(context: AzureFunctionContext, req: HttpRequest) {
 #### 5. Handler Pattern
 
 **Standard Handler Interface**:
+
 ```typescript
 // HTTP Trigger Handler
 export interface HttpHandler {
@@ -332,6 +337,7 @@ interface Context {
 #### 6. Resource Dependencies
 
 **Cross-Reference Pattern**:
+
 ```typescript
 class AzureFunction extends Construct {
   // Allow both direct values and references
@@ -361,11 +367,13 @@ class AzureFunction extends Construct {
 **Description**: Only support inline function code in ARM templates.
 
 **Pros**:
+
 - Simpler implementation
 - No external storage required
 - Single deployment artifact
 
 **Cons**:
+
 - Severely limited function size (4KB)
 - No support for dependencies
 - Poor developer experience
@@ -377,11 +385,13 @@ class AzureFunction extends Construct {
 **Description**: Each function or function app gets its own stack.
 
 **Pros**:
+
 - Complete isolation
 - Independent deployment
 - Clear boundaries
 
 **Cons**:
+
 - More complex resource management
 - Difficult cross-stack references
 - Higher Azure management overhead
@@ -393,11 +403,13 @@ class AzureFunction extends Construct {
 **Description**: Generate function code from TypeScript DSL rather than using handler files.
 
 **Pros**:
+
 - Full type safety
 - No file management
 - Inline with infrastructure
 
 **Cons**:
+
 - Poor developer experience
 - Hard to test
 - Limited expressiveness
@@ -461,36 +473,42 @@ class AzureFunction extends Construct {
 ## Implementation Plan
 
 ### Phase 1: Foundation (Week 1-2)
+
 - Create L1 constructs for FunctionApp and Function
 - Implement basic L2 FunctionApp construct
 - Add FunctionApp to existing AppServicePlan support
 - Create unit tests for new constructs
 
 ### Phase 2: Build Pipeline (Week 2-3)
+
 - Implement FunctionBuildPhase class
 - Integrate esbuild for TypeScript compilation
 - Add build caching mechanism
 - Create build configuration options
 
 ### Phase 3: Core Functions (Week 3-4)
+
 - Implement L2 AzureFunction construct
 - Support HTTP and Timer triggers
 - Add inline packaging strategy
 - Create integration tests
 
 ### Phase 4: Advanced Features (Week 4-5)
+
 - Add Storage Account packaging
 - Support additional trigger types
 - Implement VNet integration
 - Add distributed tracing support
 
 ### Phase 5: Developer Experience (Week 5-6)
+
 - Create CLI commands for function management
 - Add local development server
 - Implement hot reload
 - Write comprehensive documentation
 
 ### Phase 6: Production Readiness (Week 6-7)
+
 - Performance optimization
 - Security review
 - Government cloud support

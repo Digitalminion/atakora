@@ -12,11 +12,11 @@ Technical design specifications and implementation plans for Atakora.
 
 ### Core Infrastructure
 
-- **[Project Structure Spec](../../design/architecture/project-structure-spec.md)** - Monorepo organization and package layout
+- **[Project Structure Spec](../../design/architecture/PROJECT-STRUCTURE-SPEC.md)** - Monorepo organization and package layout
 - **[CDK Migration Review](../../design/architecture/cdk-migration-review.md)** - Migration from @atakora/lib to @atakora/cdk
 - **[CDK Implementation Gap Analysis](../../design/architecture/cdk-implementation-gap-analysis.md)** - Feature completeness assessment
 - **[CDK Reexport Implementation Plan](../../design/architecture/cdk-reexport-implementation-plan.md)** - Package structure optimization
-- **[Industry Pattern Comparison](../../design/architecture/industry-pattern-comparison.md)** - CDK pattern comparisons across AWS, Azure, GCP
+- **[Industry Pattern Comparison](../../design/architecture/INDUSTRY-PATTERN-COMPARISON.md)** - CDK pattern comparisons across AWS, Azure, GCP
 
 ### Validation System
 
@@ -27,11 +27,11 @@ Technical design specifications and implementation plans for Atakora.
 ### Azure Functions Support
 
 - **[Azure Functions Architecture (ADR-006)](../../design/architecture/adr-006-azure-functions-architecture.md)** - Amplify-style pattern with handler.ts + resource.ts
-- **[Azure Functions API Design](../../design/architecture/azure-functions-api-design.md)** - Complete TypeScript API specification
-- **[Azure Functions API Examples](../../design/architecture/azure-functions-api-design-examples.md)** - Working code samples
-- **[Azure Functions Synthesis Integration](../../design/architecture/azure-functions-synthesis-integration.md)** - Discovery and build pipeline
+- **[Azure Functions API Design](../../design/architecture/AZURE-FUNCTIONS-API-Design.md)** - Complete TypeScript API specification
+- **[Azure Functions API Examples](../../design/architecture/AZURE-FUNCTIONS-API-Design-Examples.md)** - Working code samples
+- **[Azure Functions Synthesis Integration](../../design/architecture/AZURE-FUNCTIONS-Synthesis-Integration.md)** - Discovery and build pipeline
 - **[Azure Functions Implementation Roadmap](../../design/architecture/azure-functions-implementation-roadmap.md)** - 8-week implementation plan
-- **[Azure Functions Parallelization Analysis](../../design/architecture/azure-functions-parallelization-analysis.md)** - 5-agent parallel development strategy
+- **[Azure Functions Parallelization Analysis](../../design/architecture/AZURE-FUNCTIONS-Parallelization-Analysis.md)** - 5-agent parallel development strategy
 - **[Resource Object Pattern (ADR-007)](../../design/architecture/adr-007-resource-object-pattern.md)** - Resource configuration pattern
 - **[Resolver Auto-Detection (ADR-009)](../../design/architecture/adr-009-resolver-auto-detection.md)** - Function discovery mechanism
 
@@ -44,8 +44,8 @@ Technical design specifications and implementation plans for Atakora.
 ### Security & Access Control
 
 - **[Azure RBAC Grant Pattern (ADR-013)](../../design/architecture/adr-013-azure-rbac-grant-pattern.md)** - AWS CDK-inspired grant methods for Azure
-- **[Azure RBAC API Design](../../design/architecture/azure-rbac-api-design.md)** - Complete TypeScript API for role assignments
-- **[Azure RBAC vs AWS CDK Comparison](../../design/architecture/azure-rbac-aws-cdk-comparison.md)** - Pattern comparison and adaptation strategy
+- **[Azure RBAC API Design](../../design/architecture/AZURE-RBAC-API-Design.md)** - Complete TypeScript API for role assignments
+- **[Azure RBAC vs AWS CDK Comparison](../../design/architecture/AZURE-RBAC-AWS-CDK-Comparison.md)** - Pattern comparison and adaptation strategy
 
 ### Package Distribution
 

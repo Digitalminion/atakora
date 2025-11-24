@@ -2,7 +2,7 @@
 
 **Status**: Draft
 **Created**: 2025-10-14
-**Related**: [Gen 2 Core Design](./atakora-gen2-design.md), [Data Layer](./atakora-gen2-data-layer.md), [Secrets Management](./atakora-gen2-secrets-config-management.md)
+**Related**: [Gen 2 Core Design](./Atakora-Gen2-Design.md), [Data Layer](./Atakora-Gen2-Data-Layer.md), [Secrets Management](./Atakora-Gen2-Secrets-Config-Management.md)
 
 ---
 
@@ -26,6 +26,7 @@ This document defines how Atakora generates TypeScript types from backend defini
 ### What Amplify Does Well
 
 **1. Single Config File** (`amplify_outputs.json`)
+
 ```json
 {
   "version": "1",
@@ -37,7 +38,9 @@ This document defines how Atakora generates TypeScript types from backend defini
   "data": {
     "url": "https://xyz.appsync-api.us-east-1.amazonaws.com/graphql",
     "default_authorization_type": "AMAZON_COGNITO_USER_POOLS",
-    "model_introspection": { /* schema metadata */ }
+    "model_introspection": {
+      /* schema metadata */
+    }
   },
   "storage": {
     "bucket_name": "my-bucket",
@@ -47,26 +50,28 @@ This document defines how Atakora generates TypeScript types from backend defini
 ```
 
 **2. Type Export from Backend**
+
 ```typescript
 // amplify/data/resource.ts (backend)
 const schema = a.schema({
   Todo: a.model({
     content: a.string(),
-    isDone: a.boolean()
-  })
+    isDone: a.boolean(),
+  }),
 });
 
 export type Schema = ClientSchema<typeof schema>;
 ```
 
 **3. Frontend Usage**
+
 ```typescript
 // src/App.tsx (frontend)
-import type { Schema } from '../amplify/data/resource'
-import { generateClient } from 'aws-amplify/data'
+import type { Schema } from '../amplify/data/resource';
+import { generateClient } from 'aws-amplify/data';
 
-const client = generateClient<Schema>()
-const todos = await client.models.Todo.list()
+const client = generateClient<Schema>();
+const todos = await client.models.Todo.list();
 ```
 
 ### The Enterprise Problem
@@ -74,6 +79,7 @@ const todos = await client.models.Todo.list()
 **Amplify only supports ONE backend per frontend.**
 
 **Real-world enterprise scenario:**
+
 ```
 Frontend (Portal)
 ├── User Service Backend       (authentication, profiles)
@@ -84,12 +90,14 @@ Frontend (Portal)
 ```
 
 **Problem with Amplify:**
+
 - Can only configure ONE `amplify_outputs.json`
 - Client library singleton design
 - No way to talk to multiple backends with type safety
 - Forces monolithic backend architecture
 
 **Atakora Solution:**
+
 - Each backend generates its own outputs file
 - Frontend can import and use multiple backend clients
 - Shared Entra ID authentication across all backends
@@ -121,6 +129,7 @@ packages/backend/
 **Location**: `packages/backend/.atakora/outputs.json`
 
 **Format**:
+
 ```json
 {
   "version": "1",
@@ -166,6 +175,7 @@ packages/backend/
 ```
 
 **Comparison to Amplify:**
+
 - Similar to `amplify_outputs.json`
 - Includes backend name/instanceId for multi-backend support
 - Entra ID configuration instead of Cognito
@@ -222,7 +232,10 @@ export interface Session {
 export interface UserOperations {
   create: (input: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) => Promise<User>;
   get: (id: string) => Promise<User | null>;
-  update: (id: string, input: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>) => Promise<User>;
+  update: (
+    id: string,
+    input: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>
+  ) => Promise<User>;
   delete: (id: string) => Promise<void>;
   list: (options?: ListOptions) => Promise<User[]>;
 }
@@ -364,7 +377,10 @@ export class UserServiceClient {
         get: async (id: string): Promise<User | null> => {
           return this.request('GET', `/users/${id}`);
         },
-        update: async (id: string, input: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>): Promise<User> => {
+        update: async (
+          id: string,
+          input: Partial<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>
+        ): Promise<User> => {
           return this.request('PATCH', `/users/${id}`, input);
         },
         delete: async (id: string): Promise<void> => {
@@ -435,6 +451,7 @@ export const client = new UserServiceClient();
 ### Scenario: Frontend talks to 3 backends
 
 **Backend Structure:**
+
 ```
 packages/
 ├── user-service/         # Backend 1
@@ -562,6 +579,7 @@ export function Dashboard() {
 ```
 
 **Key Benefits:**
+
 - ✅ **Full type safety** for all backends
 - ✅ **IntelliSense** for every API call
 - ✅ **Single authentication** (Entra ID token works for all)
@@ -576,6 +594,7 @@ export function Dashboard() {
 ### When Types Are Generated
 
 **1. During Synthesis** (Automatic)
+
 ```bash
 atakora synth
 
@@ -587,6 +606,7 @@ atakora synth
 ```
 
 **2. Explicit Generation** (On-Demand)
+
 ```bash
 atakora generate types
 
@@ -594,6 +614,7 @@ atakora generate types
 ```
 
 **3. Watch Mode** (During Development)
+
 ```bash
 atakora dev --watch
 
@@ -604,6 +625,7 @@ atakora dev --watch
 ### What Triggers Type Regeneration
 
 Changes to:
+
 - `defineBackend()` configuration
 - `defineData()` schema
 - `defineCrudApi()` definitions
@@ -623,6 +645,7 @@ packages/backend/
 ```
 
 **Why Commit Generated Files?**
+
 - ✅ Works immediately after `git clone` (no build step required)
 - ✅ CI/CD can validate types
 - ✅ Frontend devs don't need to build backend
@@ -670,7 +693,7 @@ export const sendEmail = defineFunction({
 await client.functions.sendEmail({
   to: 'user@example.com',
   subject: 'Welcome!',
-  body: '|'  // ← IntelliSense knows this is required
+  body: '|', // ← IntelliSense knows this is required
 });
 ```
 
@@ -691,7 +714,7 @@ const functionUrl = backend.functions.  // ← Shows: appName, url
 // Backend code
 import { getSecret } from '@atakora/component/runtime';
 
-const key = await getSecret('|');  // ← IntelliSense shows: SENDGRID_API_KEY, STRIPE_SECRET_KEY, SLACK_WEBHOOK_URL
+const key = await getSecret('|'); // ← IntelliSense shows: SENDGRID_API_KEY, STRIPE_SECRET_KEY, SLACK_WEBHOOK_URL
 ```
 
 ### 5. Config Autocomplete
@@ -700,7 +723,7 @@ const key = await getSecret('|');  // ← IntelliSense shows: SENDGRID_API_KEY, 
 // Backend code
 import { getConfig } from '@atakora/component/runtime';
 
-const maxSize = getConfig('|');  // ← IntelliSense shows: maxUploadSizeMb, allowedOrigins, defaultPageSize
+const maxSize = getConfig('|'); // ← IntelliSense shows: maxUploadSizeMb, allowedOrigins, defaultPageSize
 ```
 
 ---
@@ -797,6 +820,7 @@ export function UserList() {
 **1. Schema Introspection**
 
 During synthesis, Atakora walks the `defineData()` schema and extracts:
+
 - Model names
 - Field names and types
 - Required/optional fields
@@ -821,8 +845,8 @@ export function generateTypes(schema: Schema): string {
   );
 
   // Generate interface for each model
-  const interfaces = schema.models.map(model => {
-    const properties = model.fields.map(field =>
+  const interfaces = schema.models.map((model) => {
+    const properties = model.fields.map((field) =>
       ts.factory.createPropertySignature(
         undefined,
         ts.factory.createIdentifier(field.name),
@@ -842,7 +866,9 @@ export function generateTypes(schema: Schema): string {
 
   // Print to string
   const printer = ts.createPrinter();
-  return interfaces.map(node => printer.printNode(ts.EmitHint.Unspecified, node, sourceFile)).join('\n\n');
+  return interfaces
+    .map((node) => printer.printNode(ts.EmitHint.Unspecified, node, sourceFile))
+    .join('\n\n');
 }
 ```
 
@@ -854,7 +880,7 @@ Generate client code using template strings with type information:
 // packages/lib/src/codegen/client-generator.ts
 export function generateClient(schema: Schema, backendName: string): string {
   return `
-import type { Schema, ${schema.models.map(m => m.name).join(', ')} } from './types';
+import type { Schema, ${schema.models.map((m) => m.name).join(', ')} } from './types';
 
 export class ${capitalize(backendName)}Client {
   // ... generated client code
@@ -889,7 +915,7 @@ export function generateOutputs(backend: Backend, deployment: Deployment): Outpu
       graphql: deployment.graphql?.url,
     },
     data: {
-      models: backend.data.models.map(m => m.name),
+      models: backend.data.models.map((m) => m.name),
       introspection: generateIntrospection(backend.data),
     },
     // ...
@@ -901,19 +927,19 @@ export function generateOutputs(backend: Backend, deployment: Deployment): Outpu
 
 ## Comparison: Amplify vs Atakora
 
-| Feature | AWS Amplify Gen 2 | Atakora Gen 2 |
-|---------|------------------|---------------|
-| **Multi-Backend Support** | ❌ Single backend only | ✅ Multiple backends per frontend |
-| **Type Generation** | ✅ Automatic | ✅ Automatic |
-| **Outputs File** | ✅ `amplify_outputs.json` | ✅ `outputs.json` per backend |
-| **Client Library** | ✅ `generateClient<Schema>()` | ✅ Per-backend typed clients |
-| **Auth Integration** | Cognito only | Entra ID + custom JWT |
-| **Framework Support** | React, Vue, Angular | Any TypeScript framework |
-| **React Hooks** | ✅ Built-in | ✅ Opt-in generation |
-| **IntelliSense** | ✅ Full | ✅ Full |
-| **Committed Types** | ❌ Runtime only | ✅ Committed to repo |
-| **Watch Mode** | ✅ Via sandbox | ✅ Via `atakora dev --watch` |
-| **Monorepo Support** | ⚠️ Limited | ✅ First-class |
+| Feature                   | AWS Amplify Gen 2             | Atakora Gen 2                     |
+| ------------------------- | ----------------------------- | --------------------------------- |
+| **Multi-Backend Support** | ❌ Single backend only        | ✅ Multiple backends per frontend |
+| **Type Generation**       | ✅ Automatic                  | ✅ Automatic                      |
+| **Outputs File**          | ✅ `amplify_outputs.json`     | ✅ `outputs.json` per backend     |
+| **Client Library**        | ✅ `generateClient<Schema>()` | ✅ Per-backend typed clients      |
+| **Auth Integration**      | Cognito only                  | Entra ID + custom JWT             |
+| **Framework Support**     | React, Vue, Angular           | Any TypeScript framework          |
+| **React Hooks**           | ✅ Built-in                   | ✅ Opt-in generation              |
+| **IntelliSense**          | ✅ Full                       | ✅ Full                           |
+| **Committed Types**       | ❌ Runtime only               | ✅ Committed to repo              |
+| **Watch Mode**            | ✅ Via sandbox                | ✅ Via `atakora dev --watch`      |
+| **Monorepo Support**      | ⚠️ Limited                    | ✅ First-class                    |
 
 ---
 
@@ -922,6 +948,7 @@ export function generateOutputs(backend: Backend, deployment: Deployment): Outpu
 ### Example 1: Adding a New Field
 
 **Backend Change:**
+
 ```typescript
 // packages/backend/src/index.ts
 export const data = defineData({
@@ -929,31 +956,34 @@ export const data = defineData({
     User: c.model({
       email: a.email().required(),
       displayName: a.string(),
-      phoneNumber: a.string(),  // ← New field
+      phoneNumber: a.string(), // ← New field
     }),
   }),
 });
 ```
 
 **What Happens:**
+
 1. Save file
 2. `atakora dev --watch` detects change
 3. Types regenerated automatically
 4. Frontend immediately gets IntelliSense for `phoneNumber`
 
 **Frontend:**
+
 ```typescript
 // IntelliSense now shows phoneNumber
 const user = await client.models.User.create({
   email: 'test@example.com',
   displayName: 'Test User',
-  phoneNumber: '+1234567890',  // ← New field available!
+  phoneNumber: '+1234567890', // ← New field available!
 });
 ```
 
 ### Example 2: Adding a New Function
 
 **Backend:**
+
 ```typescript
 export const generateReport = defineFunction({
   name: 'generate-report',
@@ -965,18 +995,20 @@ export const generateReport = defineFunction({
 ```
 
 **What Happens:**
+
 1. Synthesis regenerates types
 2. `client.functions.generateReport` now available
 3. Full type safety for input and output
 
 **Frontend:**
+
 ```typescript
 const result = await client.functions.generateReport({
   startDate: new Date('2025-01-01'),
   endDate: new Date('2025-12-31'),
 });
 
-console.log(result.reportUrl);  // ← Type-safe!
+console.log(result.reportUrl); // ← Type-safe!
 ```
 
 ---
@@ -1011,11 +1043,13 @@ jobs:
 ```
 
 **If types are committed** (recommended):
+
 - Skip `generate:types` step
 - Types always in sync with code
 - Faster CI builds
 
 **If types are not committed**:
+
 - Must generate during CI
 - Slower builds
 - Risk of type/code mismatch
@@ -1056,6 +1090,7 @@ const user = await client.models.User.create({
 ```
 
 **Migration Steps:**
+
 1. Backend generates types: `atakora synth`
 2. Install client package: `npm install @my-org/backend-client`
 3. Replace manual fetch with typed client
@@ -1118,6 +1153,7 @@ const user = await client.models.User.create({
 ### Developer Experience
 
 **Before (Gen 1):**
+
 - Manual type definitions
 - Manual fetch calls
 - No IntelliSense
@@ -1125,6 +1161,7 @@ const user = await client.models.User.create({
 - Single backend only
 
 **After (Gen 2):**
+
 - Auto-generated types
 - Type-safe clients
 - Full IntelliSense
@@ -1137,10 +1174,10 @@ const user = await client.models.User.create({
 
 ## Related Documents
 
-- [Gen 2 Core Design](./atakora-gen2-design.md)
-- [Data Layer](./atakora-gen2-data-layer.md)
-- [Secrets Management](./atakora-gen2-secrets-config-management.md)
-- [Authentication](./atakora-gen2-authentication.md)
+- [Gen 2 Core Design](./Atakora-Gen2-Design.md)
+- [Data Layer](./Atakora-Gen2-Data-Layer.md)
+- [Secrets Management](./Atakora-Gen2-Secrets-Config-Management.md)
+- [Authentication](./Atakora-Gen2-Authentication.md)
 - [Deployment & State Management](./atakora-gen2-deployment-state.md) (TODO)
 - [Local Development](./atakora-gen2-local-development.md) (TODO)
 

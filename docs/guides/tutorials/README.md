@@ -13,16 +13,19 @@ Step-by-step tutorials that walk you through building complete, real-world infra
 We're actively developing comprehensive tutorials covering:
 
 **Beginner Tutorials**
+
 - **Web App with Database**: Build a complete web application with App Service and Azure SQL Database
 - **Static Website with CDN**: Deploy a static website with Azure Storage and CDN
 - **Serverless API**: Create a serverless API with Azure Functions and API Management
 
 **Intermediate Tutorials**
+
 - **Multi-Region Deployment**: Deploy applications across multiple Azure regions with Traffic Manager
 - **Microservices Architecture**: Build a microservices platform with AKS and supporting services
 - **Data Pipeline**: Create an end-to-end data processing pipeline with Event Hubs and Azure Functions
 
 **Advanced Tutorials**
+
 - **CI/CD Integration**: Set up complete CI/CD pipeline with GitHub Actions or Azure DevOps
 - **Government Cloud Deployment**: Deploy compliant infrastructure to Azure Government Cloud
 - **Multi-Tenant SaaS**: Build multi-tenant SaaS infrastructure with tenant isolation
@@ -32,27 +35,32 @@ We're actively developing comprehensive tutorials covering:
 Each tutorial follows a consistent structure:
 
 ### 1. Overview
+
 - What you'll build
 - What you'll learn
 - Prerequisites
 - Estimated time
 
 ### 2. Architecture
+
 - Architecture diagram
 - Component explanation
 - Design decisions
 
 ### 3. Step-by-Step Instructions
+
 - Detailed implementation steps
 - Code with explanations
 - Testing at each stage
 
 ### 4. Deployment
+
 - Deploying to Azure
 - Verifying the deployment
 - Testing the application
 
 ### 5. Next Steps
+
 - Enhancements to try
 - Related tutorials
 - Additional resources
@@ -109,6 +117,7 @@ examples/
 ```
 
 Each example includes:
+
 - Complete, working code
 - README with setup instructions
 - Tests
@@ -127,15 +136,18 @@ We're actively developing tutorials based on community feedback. If you'd like t
 While we develop comprehensive tutorials, refer to these resources:
 
 ### Quick Starts
-- [Your First Stack](../../getting-started/your-first-stack.md)
+
+- [Your First Stack](../../getting-started/03-Your-First-Stack.md)
 - [Common Resources](../../getting-started/common-resources/README.md)
 
 ### Workflows
+
 - [Adding Resources](../workflows/adding-resources.md)
 - [Testing Infrastructure](../workflows/testing-infrastructure.md)
 - [Deploying Environments](../workflows/deploying-environments.md)
 
 ### Examples
+
 - [Simple Web App](../../examples/simple-web-app/README.md)
 - [Multi-Region App](../../examples/multi-region-app/README.md)
 - [Government Cloud](../../examples/government-cloud/README.md)
@@ -144,7 +156,7 @@ While we develop comprehensive tutorials, refer to these resources:
 
 If you get stuck on a tutorial:
 
-1. **Check troubleshooting**: See [Common Issues](../../troubleshooting/common-issues.md)
+1. **Check troubleshooting**: See [Common Issues](../../troubleshooting/Common-Issues.md)
 2. **Review examples**: Compare with working code in [examples](../../examples/README.md)
 3. **Ask for help**: Create a GitHub discussion or issue
 

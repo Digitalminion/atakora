@@ -9,7 +9,9 @@ Atakora includes a comprehensive validation system that catches configuration er
 ## What You'll Find Here
 
 ### [Overview](./overview.md)
+
 Understanding the validation system architecture and how it works. This guide covers:
+
 - How validation runs during synthesis
 - Types of validation rules
 - When validation occurs
@@ -17,7 +19,9 @@ Understanding the validation system architecture and how it works. This guide co
 - Integration with TypeScript type system
 
 ### [Common Errors](./common-errors.md)
+
 Troubleshooting validation errors you might encounter. This guide covers:
+
 - Most frequent validation errors
 - Error messages and what they mean
 - Step-by-step resolution guides
@@ -25,7 +29,9 @@ Troubleshooting validation errors you might encounter. This guide covers:
 - Error code reference
 
 ### [Writing Custom Validators](./writing-custom-validators.md)
+
 Extending validation with custom rules for your organization. This guide covers:
+
 - Creating custom validation functions
 - Registering validators
 - Validation context and metadata
@@ -44,8 +50,8 @@ const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   sku: {
-    name: 'Invalid_SKU'  // ❌ Invalid SKU name
-  }
+    name: 'Invalid_SKU', // ❌ Invalid SKU name
+  },
 });
 
 // Error: Invalid SKU name 'Invalid_SKU'. Valid options: Standard_LRS, Standard_GRS, ...
@@ -63,8 +69,8 @@ const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   properties: {
-    supportsHttpsTrafficOnly: false  // ❌ Fails validation
-  }
+    supportsHttpsTrafficOnly: false, // ❌ Fails validation
+  },
 });
 
 // Error: Storage accounts must support HTTPS-only traffic for security
@@ -100,8 +106,8 @@ const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   sku: {
-    name: 123  // ❌ TypeScript error: Type 'number' is not assignable to type 'string'
-  }
+    name: 123, // ❌ TypeScript error: Type 'number' is not assignable to type 'string'
+  },
 });
 ```
 
@@ -113,7 +119,7 @@ Individual constructs validate their properties:
 // WebApp validates serverFarmId is provided
 const webApp = new WebApp(this, 'webapp', {
   resourceGroup: rg,
-  location: 'eastus'
+  location: 'eastus',
   // Missing required serverFarmId - caught by construct validation
 });
 
@@ -127,7 +133,7 @@ Stacks validate resource relationships and dependencies:
 ```typescript
 // Validation catches circular dependencies
 const stack = new Stack('my-stack');
-stack.synthesize();  // ❌ Error: Circular dependency detected: A → B → A
+stack.synthesize(); // ❌ Error: Circular dependency detected: A → B → A
 ```
 
 ### Synthesis-Time Validation
@@ -156,11 +162,8 @@ export default {
   validation: {
     strict: true,
     failOnWarnings: false,
-    customValidators: [
-      './validators/naming.ts',
-      './validators/security.ts'
-    ]
-  }
+    customValidators: ['./validators/naming.ts', './validators/security.ts'],
+  },
 };
 ```
 
@@ -229,7 +232,7 @@ const rg = new ResourceGroup(stack, 'rg', { location: 'eastus' });
 const storage = new StorageAccount(stack, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
-  sku: { name: 'Standard_LRS' }
+  sku: { name: 'Standard_LRS' },
 });
 
 // Synthesis triggers full validation
@@ -246,17 +249,17 @@ const enforceTagging: ValidationRule = {
   name: 'enforce-required-tags',
   validate: (resource) => {
     const requiredTags = ['environment', 'owner', 'costCenter'];
-    const missingTags = requiredTags.filter(tag => !resource.tags?.[tag]);
+    const missingTags = requiredTags.filter((tag) => !resource.tags?.[tag]);
 
     if (missingTags.length > 0) {
       return {
         isValid: false,
-        message: `Missing required tags: ${missingTags.join(', ')}`
+        message: `Missing required tags: ${missingTags.join(', ')}`,
       };
     }
 
     return { isValid: true };
-  }
+  },
 };
 
 // Register rule
@@ -267,24 +270,24 @@ Stack.addValidationRule(enforceTagging);
 
 Validation and testing serve different purposes:
 
-| Aspect | Validation | Testing |
-|--------|-----------|---------|
-| **When** | During synthesis | During development/CI |
-| **What** | Configuration correctness | Business logic correctness |
-| **Scope** | Individual resources | Entire infrastructure |
-| **Speed** | Instant | Seconds to minutes |
-| **Purpose** | Catch config errors | Verify behavior |
+| Aspect      | Validation                | Testing                    |
+| ----------- | ------------------------- | -------------------------- |
+| **When**    | During synthesis          | During development/CI      |
+| **What**    | Configuration correctness | Business logic correctness |
+| **Scope**   | Individual resources      | Entire infrastructure      |
+| **Speed**   | Instant                   | Seconds to minutes         |
+| **Purpose** | Catch config errors       | Verify behavior            |
 
 Use validation for quick feedback on configuration issues, and testing for comprehensive verification of infrastructure behavior.
 
 ## Navigation by Scenario
 
-| I want to... | Go to... |
-|--------------|----------|
-| Understand how validation works | [Overview](./overview.md) |
-| Fix a validation error | [Common Errors](./common-errors.md) |
-| Enforce company standards | [Writing Custom Validators](./writing-custom-validators.md) |
-| Debug validation issues | [Common Errors](./common-errors.md) |
+| I want to...                    | Go to...                                                    |
+| ------------------------------- | ----------------------------------------------------------- |
+| Understand how validation works | [Overview](./overview.md)                                   |
+| Fix a validation error          | [Common Errors](./common-errors.md)                         |
+| Enforce company standards       | [Writing Custom Validators](./writing-custom-validators.md) |
+| Debug validation issues         | [Common Errors](./common-errors.md)                         |
 | Add organization-specific rules | [Writing Custom Validators](./writing-custom-validators.md) |
 
 ## Best Practices
@@ -301,7 +304,7 @@ Use validation for quick feedback on configuration issues, and testing for compr
 - [Core Concepts](../core-concepts/README.md) - Understanding how validation fits in
 - [Testing Infrastructure](../workflows/testing-infrastructure.md) - Complementing validation with tests
 - [CLI Reference](../../reference/cli/README.md) - Validation command options
-- [Troubleshooting](../../troubleshooting/common-issues.md) - Solving validation problems
+- [Troubleshooting](../../troubleshooting/Common-Issues.md) - Solving validation problems
 
 ---
 

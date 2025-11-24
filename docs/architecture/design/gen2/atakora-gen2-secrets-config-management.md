@@ -2,7 +2,7 @@
 
 **Status**: Draft
 **Created**: 2025-10-14
-**Related**: [Gen 2 Core Design](./atakora-gen2-design.md), [Default Infrastructure](./atakora-gen2-default-backend-infrastructure.md)
+**Related**: [Gen 2 Core Design](./Atakora-Gen2-Design.md), [Default Infrastructure](./Atakora-Gen2-Default-Backend-Infrastructure.md)
 
 ---
 
@@ -28,6 +28,7 @@ This document defines how secrets and configuration are managed in Atakora Gen 2
 Key Vault is **always provisioned** as part of `defineBackend()`, alongside Functions, Storage, and Cosmos.
 
 **Provisioned Automatically:**
+
 ```typescript
 // This is what defineBackend() provisions under the hood
 - Key Vault with:
@@ -39,12 +40,14 @@ Key Vault is **always provisioned** as part of `defineBackend()`, alongside Func
 ```
 
 **Naming Convention:**
+
 ```
 kv-{project}-{environment}-{hash}
 Example: kv-colorai-nonprod-a8b2c4
 ```
 
 **RBAC Assignments:**
+
 - Backend Managed Identity: `Key Vault Secrets User` (read secrets)
 - CI/CD Service Principal: `Key Vault Secrets Officer` (set secrets during deployment)
 - Developers: `Key Vault Secrets Officer` (dev/nonprod only)
@@ -63,38 +66,44 @@ Example: kv-colorai-nonprod-a8b2c4
 **Examples**: Feature toggles, API endpoints, timeouts, allowed origins
 
 **Usage:**
+
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-}, {
-  config: {
-    // Non-sensitive configuration
-    maxUploadSizeMb: 10,
-    maxRequestSizeMb: 6,
-    allowedOrigins: [
-      'https://app.colorai.com',
-      'https://staging.colorai.com',
-    ],
-    defaultPageSize: 50,
-    maxPageSize: 500,
-    enableBetaFeatures: false,
+const backend = defineBackend(
+  {
+    feedbackApi,
   },
-});
+  {
+    config: {
+      // Non-sensitive configuration
+      maxUploadSizeMb: 10,
+      maxRequestSizeMb: 6,
+      allowedOrigins: ['https://app.colorai.com', 'https://staging.colorai.com'],
+      defaultPageSize: 50,
+      maxPageSize: 500,
+      enableBetaFeatures: false,
+    },
+  }
+);
 ```
 
 **Environment-Specific Config:**
+
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-}, {
-  config: {
-    // Use environment-aware values
-    maxUploadSizeMb: process.env.AZURE_ENVIRONMENT === 'prod' ? 50 : 10,
-    allowedOrigins: process.env.AZURE_ENVIRONMENT === 'prod'
-      ? ['https://app.colorai.com']
-      : ['http://localhost:3000', 'https://staging.colorai.com'],
+const backend = defineBackend(
+  {
+    feedbackApi,
   },
-});
+  {
+    config: {
+      // Use environment-aware values
+      maxUploadSizeMb: process.env.AZURE_ENVIRONMENT === 'prod' ? 50 : 10,
+      allowedOrigins:
+        process.env.AZURE_ENVIRONMENT === 'prod'
+          ? ['https://app.colorai.com']
+          : ['http://localhost:3000', 'https://staging.colorai.com'],
+    },
+  }
+);
 ```
 
 ### Secrets (Sensitive)
@@ -106,43 +115,47 @@ const backend = defineBackend({
 **Examples**: API keys, connection strings, OAuth secrets, encryption keys
 
 **Usage:**
+
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-  emailService,
-}, {
-  secrets: {
-    // External API keys
-    SENDGRID_API_KEY: {
-      required: true,
-      description: 'SendGrid API key for sending emails',
-    },
-
-    STRIPE_SECRET_KEY: {
-      required: true,
-      description: 'Stripe secret key for payment processing',
-    },
-
-    // OAuth secrets
-    GITHUB_CLIENT_SECRET: {
-      required: true,
-      description: 'GitHub OAuth client secret',
-    },
-
-    // Optional secrets
-    SLACK_WEBHOOK_URL: {
-      required: false,
-      description: 'Slack webhook for notifications (optional)',
-    },
-
-    // Encryption keys
-    ENCRYPTION_KEY: {
-      required: true,
-      description: 'AES-256 encryption key for sensitive data',
-      generate: 'aes-256', // Auto-generate if not provided
-    },
+const backend = defineBackend(
+  {
+    feedbackApi,
+    emailService,
   },
-});
+  {
+    secrets: {
+      // External API keys
+      SENDGRID_API_KEY: {
+        required: true,
+        description: 'SendGrid API key for sending emails',
+      },
+
+      STRIPE_SECRET_KEY: {
+        required: true,
+        description: 'Stripe secret key for payment processing',
+      },
+
+      // OAuth secrets
+      GITHUB_CLIENT_SECRET: {
+        required: true,
+        description: 'GitHub OAuth client secret',
+      },
+
+      // Optional secrets
+      SLACK_WEBHOOK_URL: {
+        required: false,
+        description: 'Slack webhook for notifications (optional)',
+      },
+
+      // Encryption keys
+      ENCRYPTION_KEY: {
+        required: true,
+        description: 'AES-256 encryption key for sensitive data',
+        generate: 'aes-256', // Auto-generate if not provided
+      },
+    },
+  }
+);
 ```
 
 ---
@@ -162,6 +175,7 @@ SLACK_WEBHOOK_URL=https://hooks.slack.com/...
 ```
 
 **Step 2: Run locally**
+
 ```bash
 atakora dev
 
@@ -172,6 +186,7 @@ atakora dev
 ```
 
 **Step 3: Access secrets in code**
+
 ```typescript
 // packages/backend/src/email/send.ts
 import { getSecret } from '@atakora/component/runtime';
@@ -187,6 +202,7 @@ export async function sendEmail(to: string, subject: string, body: string) {
 ```
 
 **Type Safety:**
+
 ```typescript
 // Auto-generated from defineBackend() secrets declaration
 declare module '@atakora/component/runtime' {
@@ -255,6 +271,7 @@ export async function handler(context: FunctionContext) {
 ```
 
 **How it works deployed:**
+
 - Function App has Managed Identity
 - Managed Identity has `Key Vault Secrets User` role
 - `getSecret()` fetches from Key Vault at runtime
@@ -303,6 +320,7 @@ atakora secrets set SENDGRID_API_KEY --expires-in 90d --env prod
 ```
 
 **Security Features:**
+
 - Secrets never appear in command history (interactive prompt)
 - All secret operations are logged to Azure Activity Log
 - Requires Azure authentication (`az login`)
@@ -321,6 +339,7 @@ atakora secrets get SENDGRID_API_KEY --env nonprod > .env.local
 ```
 
 **Security Warning:**
+
 - This operation is audit logged
 - Only available to developers with Key Vault Secrets Officer role
 - NOT available for prod environment (security best practice)
@@ -342,6 +361,7 @@ atakora secrets generate API_KEY --type random --length 32 --env nonprod
 ```
 
 **Supported Types:**
+
 - `aes-256` - AES-256 encryption key (base64)
 - `rsa-2048` - RSA 2048-bit key pair (PEM)
 - `rsa-4096` - RSA 4096-bit key pair (PEM)
@@ -375,6 +395,7 @@ atakora secrets validate --env nonprod
 ```
 
 **Automatic Validation:**
+
 - Runs automatically during `atakora deploy`
 - Runs automatically during `atakora dev` (checks .env.local)
 - Can be added to CI/CD pipelines
@@ -392,6 +413,7 @@ atakora secrets rotate SENDGRID_API_KEY --schedule 90d --env prod
 ```
 
 **Rotation Workflow:**
+
 1. Generate new secret value externally (e.g., in SendGrid dashboard)
 2. Set new value: `atakora secrets set SENDGRID_API_KEY --env prod`
 3. Deploy with new value: `atakora deploy --env prod`
@@ -414,6 +436,7 @@ atakora secrets sync --from nonprod --to staging --dry-run
 ```
 
 **Safety:**
+
 - Cannot sync FROM prod (one-way protection)
 - Requires confirmation for each secret
 - Audit logged
@@ -427,23 +450,28 @@ atakora secrets sync --from nonprod --to staging --dry-run
 When you declare secrets in `defineBackend()`, Atakora automatically generates TypeScript types.
 
 **Input (in `packages/backend/src/index.ts`):**
+
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-}, {
-  secrets: {
-    SENDGRID_API_KEY: { required: true },
-    STRIPE_SECRET_KEY: { required: true },
-    SLACK_WEBHOOK_URL: { required: false },
+const backend = defineBackend(
+  {
+    feedbackApi,
   },
-  config: {
-    maxUploadSizeMb: 10,
-    allowedOrigins: ['https://app.colorai.com'],
-  },
-});
+  {
+    secrets: {
+      SENDGRID_API_KEY: { required: true },
+      STRIPE_SECRET_KEY: { required: true },
+      SLACK_WEBHOOK_URL: { required: false },
+    },
+    config: {
+      maxUploadSizeMb: 10,
+      allowedOrigins: ['https://app.colorai.com'],
+    },
+  }
+);
 ```
 
 **Generated (in `packages/backend/.atakora/types.d.ts`):**
+
 ```typescript
 // Auto-generated by Atakora - DO NOT EDIT
 
@@ -462,19 +490,16 @@ declare module '@atakora/component/runtime' {
   }
 
   // Runtime functions
-  export function getSecret<K extends keyof Secrets>(
-    key: K
-  ): Promise<Secrets[K]>;
+  export function getSecret<K extends keyof Secrets>(key: K): Promise<Secrets[K]>;
 
-  export function getConfig<K extends keyof Config>(
-    key: K
-  ): Config[K];
+  export function getConfig<K extends keyof Config>(key: K): Config[K];
 }
 ```
 
 ### Type-Safe Access
 
 **In your function code:**
+
 ```typescript
 import { getSecret, getConfig } from '@atakora/component/runtime';
 
@@ -493,29 +518,31 @@ export async function handler() {
 ### Environment Variables (Type-Safe)
 
 **For config that varies by environment:**
+
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-}, {
-  config: {
-    maxUploadSizeMb: env.number('MAX_UPLOAD_SIZE_MB', 10),
-    allowedOrigins: env.array('ALLOWED_ORIGINS', [
-      'https://app.colorai.com',
-    ]),
-    enableBetaFeatures: env.boolean('ENABLE_BETA_FEATURES', false),
+const backend = defineBackend(
+  {
+    feedbackApi,
   },
-});
+  {
+    config: {
+      maxUploadSizeMb: env.number('MAX_UPLOAD_SIZE_MB', 10),
+      allowedOrigins: env.array('ALLOWED_ORIGINS', ['https://app.colorai.com']),
+      enableBetaFeatures: env.boolean('ENABLE_BETA_FEATURES', false),
+    },
+  }
+);
 ```
 
 **Type-safe env helper:**
+
 ```typescript
 // Provided by @atakora/component
 const env = {
   string: (key: string, defaultValue: string) => process.env[key] ?? defaultValue,
   number: (key: string, defaultValue: number) => Number(process.env[key] ?? defaultValue),
   boolean: (key: string, defaultValue: boolean) => process.env[key] === 'true',
-  array: (key: string, defaultValue: string[]) =>
-    process.env[key]?.split(',') ?? defaultValue,
+  array: (key: string, defaultValue: string[]) => process.env[key]?.split(',') ?? defaultValue,
 };
 ```
 
@@ -572,7 +599,8 @@ export const data = defineData({
     // ...models
   }),
   mutations: {
-    initiatePasswordReset: a.mutation()
+    initiatePasswordReset: a
+      .mutation()
       .arguments({ email: a.string().required() })
       .handler(async ({ email }) => {
         const apiKey = await getSecret('SENDGRID_API_KEY');
@@ -591,6 +619,7 @@ export const data = defineData({
 Atakora uses **Managed Identity** wherever possible to eliminate secrets.
 
 **Never Needed as Secrets:**
+
 - Cosmos DB connection string → Use Managed Identity
 - Storage Account connection string → Use Managed Identity
 - Key Vault access → Use Managed Identity
@@ -598,6 +627,7 @@ Atakora uses **Managed Identity** wherever possible to eliminate secrets.
 - Event Hubs connection string → Use Managed Identity
 
 **Example (auto-configured by Atakora):**
+
 ```typescript
 // Backend code (no secrets needed!)
 import { CosmosClient } from '@azure/cosmos';
@@ -611,12 +641,14 @@ const client = new CosmosClient({
 ```
 
 **RBAC Assignments (automatic):**
+
 - Backend Managed Identity → Cosmos DB Data Contributor
 - Backend Managed Identity → Storage Blob Data Contributor
 - Backend Managed Identity → Key Vault Secrets User
 - Backend Managed Identity → Service Bus Data Sender/Receiver
 
 **Only Need Secrets For:**
+
 - External SaaS APIs (SendGrid, Stripe, Twilio)
 - OAuth secrets (GitHub, Google, Auth0)
 - Encryption keys
@@ -630,15 +662,18 @@ const client = new CosmosClient({
 ### RBAC Roles
 
 **Key Vault Secrets User** (Read-Only)
+
 - Backend Managed Identity (all environments)
 - Read secrets at runtime
 
 **Key Vault Secrets Officer** (Read/Write)
+
 - CI/CD Service Principal (all environments)
 - Developers (dev/nonprod only)
 - Set/update secrets via CLI
 
 **No Access**
+
 - Developers to prod Key Vault (security best practice)
 - External services (use Managed Identity instead)
 
@@ -647,12 +682,14 @@ const client = new CosmosClient({
 All secret operations are logged to Azure Activity Log and Log Analytics.
 
 **Logged Events:**
+
 - Secret created/updated/deleted
 - Secret accessed (who, when, from where)
 - Failed access attempts
 - RBAC changes
 
 **Pre-Built Queries:**
+
 ```kql
 // Who accessed SENDGRID_API_KEY in the last 7 days?
 AzureDiagnostics
@@ -667,6 +704,7 @@ AzureDiagnostics
 ### Security Best Practices
 
 **DO:**
+
 - ✓ Use `.env.local` for local development (gitignored)
 - ✓ Use `atakora secrets set` for deployed environments
 - ✓ Rotate secrets regularly (90-day reminder)
@@ -675,6 +713,7 @@ AzureDiagnostics
 - ✓ Monitor secret access in production
 
 **DON'T:**
+
 - ✗ Commit secrets to Git (use `.env.local`, never `.env`)
 - ✗ Share secrets via Slack/email
 - ✗ Grant developers access to prod secrets
@@ -691,6 +730,7 @@ AzureDiagnostics
 Before `atakora deploy` runs, the following validations occur:
 
 **1. Required Secrets Validation**
+
 ```bash
 atakora deploy --env nonprod
 
@@ -705,6 +745,7 @@ Error: Missing required secrets. Run:
 ```
 
 **2. RBAC Permissions Check**
+
 ```bash
 # Verify backend Managed Identity has Key Vault access
 ✓ Managed Identity has 'Key Vault Secrets User' role
@@ -713,6 +754,7 @@ Error: Missing required secrets. Run:
 ```
 
 **3. Key Vault Configuration Check**
+
 ```bash
 ✓ Soft delete enabled
 ✓ Purge protection enabled (prod only)
@@ -723,6 +765,7 @@ Error: Missing required secrets. Run:
 ### Deployment Failures
 
 **Missing Secret:**
+
 ```bash
 Error: Secret 'SENDGRID_API_KEY' is required but not found in Key Vault
 
@@ -734,6 +777,7 @@ Or generate automatically:
 ```
 
 **Permission Denied:**
+
 ```bash
 Error: Unable to access Key Vault 'kv-colorai-nonprod-a8b2c4'
 
@@ -853,13 +897,16 @@ functionApp.appSettings = {
 
 ```typescript
 // Gen 2 - Automatic Key Vault management
-const backend = defineBackend({
-  feedbackApi,
-}, {
-  secrets: {
-    SENDGRID_API_KEY: { required: true },
+const backend = defineBackend(
+  {
+    feedbackApi,
   },
-});
+  {
+    secrets: {
+      SENDGRID_API_KEY: { required: true },
+    },
+  }
+);
 
 // Everything else automatic:
 // - Key Vault provisioned
@@ -883,18 +930,22 @@ const backend = defineBackend({
 ### Key Vault Costs
 
 **Operations:**
+
 - First 10,000 operations/month: Free
 - Additional operations: $0.03 per 10,000
 
 **Secrets:**
+
 - Secret storage: $0.033 per secret per month
 - Certificate renewals: $3.00 per renewal
 
 **Hardware Security Module (HSM):**
+
 - Protected keys: $1.00 per key per month
 - HSM operations: $0.30 per 10,000
 
 **Typical Backend Costs:**
+
 - 10 secrets × $0.033 = $0.33/month
 - 100,000 operations × $0.03 / 10,000 = $0.30/month
 - **Total: ~$0.63/month per environment**
@@ -949,6 +1000,7 @@ const backend = defineBackend({
 ### Developer Experience
 
 **Before (Gen 1):**
+
 - Manual Key Vault provisioning
 - Manual RBAC assignments
 - Manual Function App settings
@@ -956,6 +1008,7 @@ const backend = defineBackend({
 - No validation
 
 **After (Gen 2):**
+
 - Key Vault provisioned automatically
 - RBAC assigned automatically
 - Type-safe secret access
@@ -968,9 +1021,9 @@ const backend = defineBackend({
 
 ## Related Documents
 
-- [Gen 2 Core Design](./atakora-gen2-design.md)
-- [Default Infrastructure](./atakora-gen2-default-backend-infrastructure.md)
-- [Authentication](./atakora-gen2-authentication.md)
+- [Gen 2 Core Design](./Atakora-Gen2-Design.md)
+- [Default Infrastructure](./Atakora-Gen2-Default-Backend-Infrastructure.md)
+- [Authentication](./Atakora-Gen2-Authentication.md)
 - [Local Development](./atakora-gen2-local-development.md) (TODO)
 - [Deployment & State Management](./atakora-gen2-deployment-state.md) (TODO)
 

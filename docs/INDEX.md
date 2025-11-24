@@ -116,7 +116,7 @@ Understanding project build configuration and TypeScript compiler setup.
 **[CI/CD Pipeline Tutorial](./guides/tutorials/ci-cd-pipeline.md)**
 Automating infrastructure deployments in CI/CD pipelines.
 
-**[CI/CD Problems](./troubleshooting/ci-cd-problems.md)**
+**[CI/CD Problems](./troubleshooting/CI-CD-PROBLEMS.md)**
 Troubleshooting pipeline and automation issues.
 
 **[CLI Command Reference](./reference/cli/README.md)**
@@ -128,7 +128,7 @@ Quick reference for commonly used CLI commands.
 **[CLI Templates](./reference/cli-templates.md)**
 Available project and resource templates for `atakora init` and `atakora add`.
 
-**[CLI Troubleshooting](./troubleshooting/cli-troubleshooting.md)**
+**[CLI Troubleshooting](./troubleshooting/CLI-TROUBLESHOOTING.md)**
 Resolving CLI-related errors and issues.
 
 **[CLI: add Command](./reference/cli/add.md)**
@@ -158,7 +158,7 @@ Synthesize TypeScript code into ARM templates.
 **[Codegen Guide](./contributing/technical/codegen.md)**
 Using code generation tools to create constructs from ARM schemas.
 
-**[Common Issues](./troubleshooting/common-issues.md)**
+**[Common Issues](./troubleshooting/COMMON-ISSUES.md)**
 Frequently encountered problems and their solutions.
 
 **[Common Validation Errors](./guides/common-validation-errors.md)**
@@ -169,13 +169,13 @@ How to contribute to Atakora development and documentation.
 
 ## D
 
-**[Debugging Synthesis](./troubleshooting/debugging-synthesis.md)**
+**[Debugging Synthesis](./troubleshooting/DEBUGGING-SYNTHESIS.md)**
 Troubleshooting ARM template generation issues.
 
 **[Deployment](./guides/fundamentals/deployment.md)**
 Understanding the deployment process and Azure Resource Manager.
 
-**[Deployment Failures](./troubleshooting/deployment-failures.md)**
+**[Deployment Failures](./troubleshooting/DEPLOYMENT-FAILURES.md)**
 Diagnosing and resolving deployment errors.
 
 **[Deploying Environments](./guides/workflows/deploying-environments.md)**
@@ -197,10 +197,10 @@ Index of complete, working code samples.
 
 ## F
 
-**[Functions - Basic Usage](./examples/functions-basic-usage.md)**
+**[Functions - Basic Usage](./examples/001-BASIC-FUNCTIONS.md)**
 Simple examples of Azure Functions with Atakora.
 
-**[Functions App Tutorial](./getting-started/functions-app.md)**
+**[Functions App Tutorial](./getting-started/004-FUNCTIONS-APP.md)**
 Getting started with Azure Functions in Atakora.
 
 **[Functions Storage](./guides/functions-storage.md)**
@@ -225,7 +225,7 @@ Deploying infrastructure to Azure Government Cloud.
 
 ## I
 
-**[Installation](./getting-started/installation.md)**
+**[Installation](./getting-started/001-INSTALLATION.md)**
 Installing the Atakora CLI and setting up your environment.
 
 ## M
@@ -259,7 +259,7 @@ Deploying infrastructure across multiple Azure regions.
 **[Naming Conventions](./reference/naming-conventions.md)**
 Azure resource naming standards and utilities.
 
-**[Next Steps](./getting-started/next-steps.md)**
+**[Next Steps](./getting-started/005-NEXT-STEPS.md)**
 What to learn after completing the quickstart.
 
 ## O
@@ -286,7 +286,7 @@ How to submit and review pull requests.
 
 ## Q
 
-**[Quickstart](./getting-started/quickstart.md)**
+**[Quickstart](./getting-started/002-QUICKSTART.md)**
 5-minute quickstart to deploy your first infrastructure.
 
 ## R
@@ -303,7 +303,7 @@ How Atakora releases are created and versioned.
 **[Resources](./guides/fundamentals/resources.md)**
 Working with Azure resources in Atakora.
 
-**[REST API - Examples](./examples/rest-api-examples.md)**
+**[REST API - Examples](./examples/002-REST-API.md)**
 Complete working examples of REST APIs.
 
 **[REST API Guide](./guides/rest-api.md)**
@@ -367,7 +367,7 @@ Common development workflows and processes.
 
 ## Y
 
-**[Your First Stack](./getting-started/your-first-stack.md)**
+**[Your First Stack](./getting-started/003-YOUR-FIRST-STACK.md)**
 Detailed tutorial for building and deploying your first Atakora stack.
 
 ---
@@ -375,33 +375,38 @@ Detailed tutorial for building and deploying your first Atakora stack.
 ## Quick Navigation
 
 **Getting Started**
-- [Installation](./getting-started/installation.md)
-- [Quickstart](./getting-started/quickstart.md)
-- [Your First Stack](./getting-started/your-first-stack.md)
-- [Next Steps](./getting-started/next-steps.md)
+
+- [Installation](./getting-started/001-INSTALLATION.md)
+- [Quickstart](./getting-started/002-QUICKSTART.md)
+- [Your First Stack](./getting-started/003-YOUR-FIRST-STACK.md)
+- [Next Steps](./getting-started/005-NEXT-STEPS.md)
 
 **Fundamentals**
+
 - [App and Stacks](./guides/fundamentals/app-and-stacks.md)
 - [Resources](./guides/fundamentals/resources.md)
 - [Synthesis](./guides/fundamentals/synthesis.md)
 - [Deployment](./guides/fundamentals/deployment.md)
 
 **Common Tasks**
+
 - [Adding Resources](./guides/workflows/adding-resources.md)
 - [Testing Infrastructure](./guides/workflows/testing-infrastructure.md)
 - [Deploying Environments](./guides/workflows/deploying-environments.md)
 - [Managing Secrets](./guides/workflows/managing-secrets.md)
 
 **Reference**
+
 - [CLI Commands](./reference/cli/README.md)
 - [API Reference](./reference/api/README.md)
 - [Error Codes](./reference/error-codes.md)
 - [Naming Conventions](./reference/naming-conventions.md)
 
 **Troubleshooting**
-- [Common Issues](./troubleshooting/common-issues.md)
-- [Deployment Failures](./troubleshooting/deployment-failures.md)
-- [CLI Troubleshooting](./troubleshooting/cli-troubleshooting.md)
+
+- [Common Issues](./troubleshooting/COMMON-ISSUES.md)
+- [Deployment Failures](./troubleshooting/DEPLOYMENT-FAILURES.md)
+- [CLI Troubleshooting](./troubleshooting/CLI-TROUBLESHOOTING.md)
 
 ## See Also
 

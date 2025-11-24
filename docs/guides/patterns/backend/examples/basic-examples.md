@@ -45,18 +45,18 @@ const backend = defineBackend({
       lastName: 'string',
       role: 'string',
       createdAt: 'timestamp',
-      updatedAt: 'timestamp'
+      updatedAt: 'timestamp',
     },
     partitionKey: '/id',
     ttl: 2592000, // 30 days
-    enableSoftDelete: true
-  })
+    enableSoftDelete: true,
+  }),
 });
 
 // Create stack
 const stack = new ResourceGroupStack(app, 'UserManagementStack', {
   resourceGroupName: 'rg-users-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 // Add backend to stack
@@ -109,65 +109,68 @@ import { App } from '@cdktf/core';
 const app = new App();
 
 // Define backend with multiple CRUD APIs
-const backend = defineBackend({
-  // User management API
-  userApi: CrudApi.define('UserApi', {
-    entityName: 'User',
-    schema: {
-      id: 'string',
-      email: 'string',
-      firstName: 'string',
-      lastName: 'string',
-      address: 'object',
-      createdAt: 'timestamp'
-    },
-    partitionKey: '/id',
-    uniqueKeys: ['/email']
-  }),
+const backend = defineBackend(
+  {
+    // User management API
+    userApi: CrudApi.define('UserApi', {
+      entityName: 'User',
+      schema: {
+        id: 'string',
+        email: 'string',
+        firstName: 'string',
+        lastName: 'string',
+        address: 'object',
+        createdAt: 'timestamp',
+      },
+      partitionKey: '/id',
+      uniqueKeys: ['/email'],
+    }),
 
-  // Product catalog API
-  productApi: CrudApi.define('ProductApi', {
-    entityName: 'Product',
-    schema: {
-      id: 'string',
-      sku: 'string',
-      name: 'string',
-      description: 'string',
-      price: 'number',
-      category: 'string',
-      inStock: 'boolean',
-      createdAt: 'timestamp',
-      updatedAt: 'timestamp'
-    },
-    partitionKey: '/category',
-    uniqueKeys: ['/sku']
-  }),
+    // Product catalog API
+    productApi: CrudApi.define('ProductApi', {
+      entityName: 'Product',
+      schema: {
+        id: 'string',
+        sku: 'string',
+        name: 'string',
+        description: 'string',
+        price: 'number',
+        category: 'string',
+        inStock: 'boolean',
+        createdAt: 'timestamp',
+        updatedAt: 'timestamp',
+      },
+      partitionKey: '/category',
+      uniqueKeys: ['/sku'],
+    }),
 
-  // Order management API
-  orderApi: CrudApi.define('OrderApi', {
-    entityName: 'Order',
-    schema: {
-      id: 'string',
-      userId: 'string',
-      items: 'array',
-      total: 'number',
-      status: 'string',
-      createdAt: 'timestamp',
-      updatedAt: 'timestamp'
-    },
-    partitionKey: '/userId',
-    ttl: 7776000 // 90 days retention
-  })
-}, {
-  // Backend configuration
-  environment: 'production',
-  location: 'eastus'
-});
+    // Order management API
+    orderApi: CrudApi.define('OrderApi', {
+      entityName: 'Order',
+      schema: {
+        id: 'string',
+        userId: 'string',
+        items: 'array',
+        total: 'number',
+        status: 'string',
+        createdAt: 'timestamp',
+        updatedAt: 'timestamp',
+      },
+      partitionKey: '/userId',
+      ttl: 7776000, // 90 days retention
+    }),
+  },
+  {
+    // Backend configuration
+    environment: 'production',
+    location: 'eastus',
+  }
+);
 
 // Create stack
 const stack = new ResourceGroupStack(app, 'EcommerceStack', {
   resourceGroupName: 'rg-ecommerce-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 backend.addToStack(stack);
@@ -191,12 +194,12 @@ app.synth();
 
 ### Cost Comparison
 
-| Resource | Traditional (3 separate) | Backend Pattern (shared) | Savings |
-|----------|-------------------------|-------------------------|---------|
-| Cosmos DB | 3 × $24 = $72 | $24 | $48/month |
-| Function App | 3 × $13 = $39 | $13 | $26/month |
-| Storage | 3 × $0.18 = $0.54 | $0.18 | $0.36/month |
-| **Total** | **$111.54/month** | **$37.18/month** | **$74.36/month (67%)** |
+| Resource     | Traditional (3 separate) | Backend Pattern (shared) | Savings                |
+| ------------ | ------------------------ | ------------------------ | ---------------------- |
+| Cosmos DB    | 3 × $24 = $72            | $24                      | $48/month              |
+| Function App | 3 × $13 = $39            | $13                      | $26/month              |
+| Storage      | 3 × $0.18 = $0.54        | $0.18                    | $0.36/month            |
+| **Total**    | **$111.54/month**        | **$37.18/month**         | **$74.36/month (67%)** |
 
 ---
 
@@ -220,77 +223,80 @@ import { App } from '@cdktf/core';
 
 const app = new App();
 
-const backend = defineBackend({
-  // CRUD API for data management
-  dataApi: CrudApi.define('DataApi', {
-    entityName: 'Data',
-    schema: {
-      id: 'string',
-      name: 'string',
-      value: 'string',
-      timestamp: 'timestamp'
-    },
-    partitionKey: '/id',
-    cors: {
-      allowedOrigins: ['https://myapp.com']
-    }
-  }),
-
-  // Background processing functions
-  processorApp: FunctionsApp.define('ProcessorApp', {
-    runtime: 'node',
-    version: '20',
-    functions: {
-      // HTTP-triggered webhook processor
-      'process-webhook': {
-        trigger: 'http',
-        methods: ['POST'],
-        authLevel: 'function'
+const backend = defineBackend(
+  {
+    // CRUD API for data management
+    dataApi: CrudApi.define('DataApi', {
+      entityName: 'Data',
+      schema: {
+        id: 'string',
+        name: 'string',
+        value: 'string',
+        timestamp: 'timestamp',
       },
-
-      // Timer-triggered batch job (runs every hour)
-      'hourly-batch': {
-        trigger: 'timer',
-        schedule: '0 0 * * * *'
+      partitionKey: '/id',
+      cors: {
+        allowedOrigins: ['https://myapp.com'],
       },
+    }),
 
-      // Queue-triggered message processor
-      'process-queue-message': {
-        trigger: 'queue',
-        queueName: 'processing-queue'
-      }
+    // Background processing functions
+    processorApp: FunctionsApp.define('ProcessorApp', {
+      runtime: 'node',
+      version: '20',
+      functions: {
+        // HTTP-triggered webhook processor
+        'process-webhook': {
+          trigger: 'http',
+          methods: ['POST'],
+          authLevel: 'function',
+        },
+
+        // Timer-triggered batch job (runs every hour)
+        'hourly-batch': {
+          trigger: 'timer',
+          schedule: '0 0 * * * *',
+        },
+
+        // Queue-triggered message processor
+        'process-queue-message': {
+          trigger: 'queue',
+          queueName: 'processing-queue',
+        },
+      },
+      environmentVariables: {
+        DATA_API_ENDPOINT: '${dataApi.apiEndpoint}',
+        LOG_LEVEL: 'info',
+      },
+    }),
+
+    // Static website frontend
+    website: StaticSiteWithCdn.define('Website', {
+      indexDocument: 'index.html',
+      errorDocument: 'error.html',
+      enableSpaMode: true,
+      customDomain: 'myapp.com',
+      dnsZoneName: 'myapp.com',
+      enableCompression: true,
+      cacheMaxAge: 86400, // 24 hours
+      cors: {
+        allowedOrigins: ['*'],
+      },
+    }),
+  },
+  {
+    environment: 'production',
+    location: 'eastus',
+    tags: {
+      project: 'myapp',
+      team: 'fullstack',
     },
-    environmentVariables: {
-      DATA_API_ENDPOINT: '${dataApi.apiEndpoint}',
-      LOG_LEVEL: 'info'
-    }
-  }),
-
-  // Static website frontend
-  website: StaticSiteWithCdn.define('Website', {
-    indexDocument: 'index.html',
-    errorDocument: 'error.html',
-    enableSpaMode: true,
-    customDomain: 'myapp.com',
-    dnsZoneName: 'myapp.com',
-    enableCompression: true,
-    cacheMaxAge: 86400, // 24 hours
-    cors: {
-      allowedOrigins: ['*']
-    }
-  })
-}, {
-  environment: 'production',
-  location: 'eastus',
-  tags: {
-    project: 'myapp',
-    team: 'fullstack'
   }
-});
+);
 
 const stack = new ResourceGroupStack(app, 'FullAppStack', {
   resourceGroupName: 'rg-myapp-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 backend.addToStack(stack);
@@ -362,25 +368,25 @@ const backend = defineBackend({
   userApi: CrudApi.define('UserApi', {
     entityName: 'User',
     schema: { id: 'string', name: 'string' },
-    partitionKey: '/id'
+    partitionKey: '/id',
   }),
 
   productApi: CrudApi.define('ProductApi', {
     entityName: 'Product',
     schema: { id: 'string', name: 'string' },
-    partitionKey: '/id'
+    partitionKey: '/id',
   }),
 
   orderApi: CrudApi.define('OrderApi', {
     entityName: 'Order',
     schema: { id: 'string', userId: 'string' },
-    partitionKey: '/userId'
-  })
+    partitionKey: '/userId',
+  }),
 });
 
 const stack = new ResourceGroupStack(app, 'SharedResourcesStack', {
   resourceGroupName: 'rg-shared-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 backend.addToStack(stack);
@@ -414,9 +420,9 @@ const userApiCosmos = backend.components.userApi.database.parent;
 const productApiCosmos = backend.components.productApi.database.parent;
 const orderApiCosmos = backend.components.orderApi.database.parent;
 
-console.log('All APIs share same Cosmos Account:',
-  userApiCosmos === productApiCosmos &&
-  productApiCosmos === orderApiCosmos
+console.log(
+  'All APIs share same Cosmos Account:',
+  userApiCosmos === productApiCosmos && productApiCosmos === orderApiCosmos
 );
 
 // All components' functions are in the same Function App
@@ -424,9 +430,10 @@ console.log('\n=== Function Sharing ===');
 console.log('User API Functions:', backend.components.userApi.functions.resourceId);
 console.log('Product API Functions:', backend.components.productApi.functions.resourceId);
 console.log('Order API Functions:', backend.components.orderApi.functions.resourceId);
-console.log('All functions in same app:',
+console.log(
+  'All functions in same app:',
   backend.components.userApi.functions.resourceId ===
-  backend.components.productApi.functions.resourceId
+    backend.components.productApi.functions.resourceId
 );
 
 app.synth();
@@ -483,9 +490,9 @@ const backend = defineBackend({
     schema: {
       id: 'string',
       email: 'string',
-      name: 'string'
+      name: 'string',
     },
-    partitionKey: '/id'
+    partitionKey: '/id',
   }),
 
   // Define processor that references the API
@@ -495,21 +502,21 @@ const backend = defineBackend({
     functions: {
       'send-welcome-email': {
         trigger: 'queue',
-        queueName: 'new-users'
-      }
+        queueName: 'new-users',
+      },
     },
     // Reference userApi endpoint in environment variables
     environmentVariables: {
       USER_API_ENDPOINT: '${userApi.apiEndpoint}',
       USER_API_KEY: '${userApi.functionKey}',
-      SENDGRID_API_KEY: process.env.SENDGRID_API_KEY || ''
-    }
-  })
+      SENDGRID_API_KEY: process.env.SENDGRID_API_KEY || '',
+    },
+  }),
 });
 
 const stack = new ResourceGroupStack(app, 'NotificationStack', {
   resourceGroupName: 'rg-notifications-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 backend.addToStack(stack);
@@ -521,12 +528,12 @@ const processorOutputs = backend.components.notificationProcessor.getOutputs();
 console.log('User API Outputs:', {
   endpoint: userApiOutputs.apiEndpoint,
   operations: userApiOutputs.operations,
-  databaseId: userApiOutputs.databaseId
+  databaseId: userApiOutputs.databaseId,
 });
 
 console.log('Processor Outputs:', {
   functionApp: processorOutputs.functionAppName,
-  functions: processorOutputs.functionNames
+  functions: processorOutputs.functionNames,
 });
 
 // Processor can now call User API
@@ -556,8 +563,8 @@ export async function handler(context, queueItem) {
 
   const response = await fetch(`${userApiEndpoint}/users/${userId}`, {
     headers: {
-      'x-functions-key': userApiKey
-    }
+      'x-functions-key': userApiKey,
+    },
   });
 
   const user = await response.json();
@@ -598,66 +605,71 @@ const envConfig = {
     location: 'eastus',
     throughput: 400,
     ttl: 86400, // 1 day
-    monitoring: false
+    monitoring: false,
   },
   staging: {
     location: 'eastus',
     throughput: 800,
     ttl: 604800, // 7 days
-    monitoring: true
+    monitoring: true,
   },
   production: {
     location: 'eastus2',
     throughput: 4000,
     ttl: 2592000, // 30 days
-    monitoring: true
-  }
+    monitoring: true,
+  },
 }[environment];
 
 // Define backend with environment-specific config
-const backend = defineBackend({
-  userApi: CrudApi.define('UserApi', {
-    entityName: 'User',
-    schema: {
-      id: 'string',
-      email: 'string',
-      name: 'string',
-      createdAt: 'timestamp'
-    },
-    partitionKey: '/id',
-    throughput: envConfig.throughput,
-    ttl: envConfig.ttl
-  }),
+const backend = defineBackend(
+  {
+    userApi: CrudApi.define('UserApi', {
+      entityName: 'User',
+      schema: {
+        id: 'string',
+        email: 'string',
+        name: 'string',
+        createdAt: 'timestamp',
+      },
+      partitionKey: '/id',
+      throughput: envConfig.throughput,
+      ttl: envConfig.ttl,
+    }),
 
-  productApi: CrudApi.define('ProductApi', {
-    entityName: 'Product',
-    schema: {
-      id: 'string',
-      name: 'string',
-      price: 'number'
-    },
-    partitionKey: '/id',
-    throughput: envConfig.throughput,
-    ttl: envConfig.ttl
-  })
-}, {
-  environment,
-  location: envConfig.location,
-  monitoring: envConfig.monitoring ? {
-    enabled: true,
-    retentionDays: environment === 'production' ? 90 : 30
-  } : false,
-  tags: {
+    productApi: CrudApi.define('ProductApi', {
+      entityName: 'Product',
+      schema: {
+        id: 'string',
+        name: 'string',
+        price: 'number',
+      },
+      partitionKey: '/id',
+      throughput: envConfig.throughput,
+      ttl: envConfig.ttl,
+    }),
+  },
+  {
     environment,
-    project: 'myapp',
-    managedBy: 'atakora'
+    location: envConfig.location,
+    monitoring: envConfig.monitoring
+      ? {
+          enabled: true,
+          retentionDays: environment === 'production' ? 90 : 30,
+        }
+      : false,
+    tags: {
+      environment,
+      project: 'myapp',
+      managedBy: 'atakora',
+    },
   }
-});
+);
 
 // Create environment-specific stack
 const stack = new ResourceGroupStack(app, `AppStack-${environment}`, {
   resourceGroupName: `rg-myapp-${environment}`,
-  location: envConfig.location
+  location: envConfig.location,
 });
 
 backend.addToStack(stack);
@@ -688,11 +700,11 @@ DEPLOY_ENV=production npx atakora deploy
 
 Each environment gets appropriately sized resources:
 
-| Environment | Location | Throughput | TTL | Monitoring | Monthly Cost |
-|-------------|----------|------------|-----|------------|--------------|
-| Dev | eastus | 400 RU/s | 1 day | No | ~$30 |
-| Staging | eastus | 800 RU/s | 7 days | Yes | ~$60 |
-| Production | eastus2 | 4000 RU/s | 30 days | Yes | ~$280 |
+| Environment | Location | Throughput | TTL     | Monitoring | Monthly Cost |
+| ----------- | -------- | ---------- | ------- | ---------- | ------------ |
+| Dev         | eastus   | 400 RU/s   | 1 day   | No         | ~$30         |
+| Staging     | eastus   | 800 RU/s   | 7 days  | Yes        | ~$60         |
+| Production  | eastus2  | 4000 RU/s  | 30 days | Yes        | ~$280        |
 
 ---
 
@@ -715,43 +727,46 @@ import { App } from '@cdktf/core';
 
 const app = new App();
 
-const backend = defineBackend({
-  userApi: CrudApi.define('UserApi', {
-    entityName: 'User',
-    schema: { id: 'string', name: 'string', email: 'string' },
-    partitionKey: '/id'
-  }),
+const backend = defineBackend(
+  {
+    userApi: CrudApi.define('UserApi', {
+      entityName: 'User',
+      schema: { id: 'string', name: 'string', email: 'string' },
+      partitionKey: '/id',
+    }),
 
-  processorApp: FunctionsApp.define('ProcessorApp', {
-    runtime: 'node',
-    version: '20',
-    functions: {
-      'process-data': {
-        trigger: 'timer',
-        schedule: '0 */5 * * * *' // Every 5 minutes
-      }
-    }
-  })
-}, {
-  // Comprehensive monitoring configuration
-  environment: 'production',
-  location: 'eastus',
-  monitoring: {
-    enabled: true,
-    retentionDays: 90,
-    samplingPercentage: 100, // 100% in production
-    workspaceName: 'myapp-workspace',
-    applicationInsightsName: 'myapp-insights'
+    processorApp: FunctionsApp.define('ProcessorApp', {
+      runtime: 'node',
+      version: '20',
+      functions: {
+        'process-data': {
+          trigger: 'timer',
+          schedule: '0 */5 * * * *', // Every 5 minutes
+        },
+      },
+    }),
   },
-  tags: {
-    project: 'myapp',
-    monitoring: 'enabled'
+  {
+    // Comprehensive monitoring configuration
+    environment: 'production',
+    location: 'eastus',
+    monitoring: {
+      enabled: true,
+      retentionDays: 90,
+      samplingPercentage: 100, // 100% in production
+      workspaceName: 'myapp-workspace',
+      applicationInsightsName: 'myapp-insights',
+    },
+    tags: {
+      project: 'myapp',
+      monitoring: 'enabled',
+    },
   }
-});
+);
 
 const stack = new ResourceGroupStack(app, 'MonitoredAppStack', {
   resourceGroupName: 'rg-myapp-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 backend.addToStack(stack);
@@ -771,6 +786,7 @@ app.synth();
 ### What You Get
 
 **Automatic Configuration:**
+
 - Application Insights resource created
 - Log Analytics workspace created
 - All Function Apps connected to Application Insights
@@ -778,6 +794,7 @@ app.synth();
 - All Storage Accounts logging enabled
 
 **Available Metrics:**
+
 - Request rates and response times
 - Failure rates and error details
 - Dependency tracking (Cosmos DB calls)
@@ -825,70 +842,71 @@ import { App } from '@cdktf/core';
 
 const app = new App();
 
-const backend = defineBackend({
-  userApi: CrudApi.define('UserApi', {
-    entityName: 'User',
-    schema: { id: 'string', name: 'string' },
-    partitionKey: '/id'
-  }),
+const backend = defineBackend(
+  {
+    userApi: CrudApi.define('UserApi', {
+      entityName: 'User',
+      schema: { id: 'string', name: 'string' },
+      partitionKey: '/id',
+    }),
 
-  productApi: CrudApi.define('ProductApi', {
-    entityName: 'Product',
-    schema: { id: 'string', name: 'string' },
-    partitionKey: '/id'
-  })
-}, {
-  environment: 'production',
-  location: 'eastus',
+    productApi: CrudApi.define('ProductApi', {
+      entityName: 'Product',
+      schema: { id: 'string', name: 'string' },
+      partitionKey: '/id',
+    }),
+  },
+  {
+    environment: 'production',
+    location: 'eastus',
 
-  // Custom naming convention
-  naming: {
-    formatResourceName: (type, backendId, suffix) => {
-      // Format: {type}-{company}-{backendId}-{suffix}
-      const company = 'acme';
-      const parts = [type, company, backendId, suffix]
-        .filter(Boolean)
-        .join('-');
-      return parts.toLowerCase().replace(/[^a-z0-9-]/g, '');
+    // Custom naming convention
+    naming: {
+      formatResourceName: (type, backendId, suffix) => {
+        // Format: {type}-{company}-{backendId}-{suffix}
+        const company = 'acme';
+        const parts = [type, company, backendId, suffix].filter(Boolean).join('-');
+        return parts.toLowerCase().replace(/[^a-z0-9-]/g, '');
+      },
+
+      formatResourceGroupName: (backendId, env) => {
+        // Format: rg-{company}-{backendId}-{env}
+        return `rg-acme-${backendId}-${env}`.toLowerCase();
+      },
     },
 
-    formatResourceGroupName: (backendId, env) => {
-      // Format: rg-{company}-{backendId}-{env}
-      return `rg-acme-${backendId}-${env}`.toLowerCase();
-    }
-  },
+    // Organization-required tags
+    tags: {
+      // Cost allocation
+      'cost-center': 'engineering',
+      project: 'customer-platform',
+      'billing-code': 'PROJ-12345',
 
-  // Organization-required tags
-  tags: {
-    // Cost allocation
-    'cost-center': 'engineering',
-    'project': 'customer-platform',
-    'billing-code': 'PROJ-12345',
+      // Ownership
+      team: 'backend-team',
+      owner: 'john.doe@acme.com',
+      'tech-lead': 'jane.smith@acme.com',
 
-    // Ownership
-    'team': 'backend-team',
-    'owner': 'john.doe@acme.com',
-    'tech-lead': 'jane.smith@acme.com',
+      // Compliance
+      'data-classification': 'internal',
+      'compliance-scope': 'sox',
 
-    // Compliance
-    'data-classification': 'internal',
-    'compliance-scope': 'sox',
+      // Environment
+      environment: 'production',
+      'deployed-by': 'ci-cd-pipeline',
+      'deployment-date': new Date().toISOString(),
 
-    // Environment
-    'environment': 'production',
-    'deployed-by': 'ci-cd-pipeline',
-    'deployment-date': new Date().toISOString(),
-
-    // Operational
-    'backup-policy': 'daily',
-    'monitoring-level': 'detailed',
-    'support-level': 'tier-1'
+      // Operational
+      'backup-policy': 'daily',
+      'monitoring-level': 'detailed',
+      'support-level': 'tier-1',
+    },
   }
-});
+);
 
 const stack = new ResourceGroupStack(app, 'PlatformStack', {
   resourceGroupName: 'rg-acme-platform-production',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 backend.addToStack(stack);
@@ -906,6 +924,7 @@ app.synth();
 ### Resource Naming Result
 
 **Default Naming:**
+
 ```
 cosmosdb-Backend-shared
 functions-Backend-shared
@@ -913,6 +932,7 @@ storage-Backend-shared
 ```
 
 **Custom Naming:**
+
 ```
 cosmos-acme-platform-production
 func-acme-platform-production
@@ -955,11 +975,12 @@ After reviewing these basic examples:
 
 - [Backend Pattern Overview](../overview.md)
 - [API Reference](../api-reference.md)
-- [Architecture Documentation](../../../../../architecture/decisions/backend-architecture-design.md)
+- [Architecture Documentation](../../../../../architecture/decisions/Backend-Architecture-Design.md)
 
 ## Complete Example Project
 
 For a complete, runnable example project, see:
+
 ```
 examples/backend-pattern-demo/
 ├── src/
@@ -972,6 +993,7 @@ examples/backend-pattern-demo/
 ```
 
 Clone and run:
+
 ```bash
 git clone https://github.com/atakora/examples
 cd examples/backend-pattern-demo

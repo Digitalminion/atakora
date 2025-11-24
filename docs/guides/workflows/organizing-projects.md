@@ -69,8 +69,8 @@ export class SecureStorageAccount extends StorageAccount {
         supportsHttpsTrafficOnly: true,
         minimumTlsVersion: 'TLS1_2',
         allowBlobPublicAccess: false,
-        ...props.properties
-      }
+        ...props.properties,
+      },
     });
   }
 }
@@ -80,7 +80,7 @@ import { SecureStorageAccount } from '@myorg/common';
 
 const storage = new SecureStorageAccount(this, 'storage', {
   resourceGroup: rg,
-  location: 'eastus'
+  location: 'eastus',
 });
 ```
 
@@ -243,9 +243,7 @@ Create `tsconfig.json`:
     "rootDir": "./src"
   },
   "include": ["src/**/*"],
-  "references": [
-    { "path": "../common" }
-  ]
+  "references": [{ "path": "../common" }]
 }
 ```
 
@@ -303,12 +301,12 @@ export class SecureStorageAccount extends StorageAccount {
         encryption: {
           services: {
             blob: { enabled: true, keyType: 'Account' },
-            file: { enabled: true, keyType: 'Account' }
+            file: { enabled: true, keyType: 'Account' },
           },
-          keySource: 'Microsoft.Storage'
+          keySource: 'Microsoft.Storage',
         },
-        ...props.properties
-      }
+        ...props.properties,
+      },
     });
   }
 }
@@ -328,25 +326,25 @@ export const baseConfig: Record<string, EnvironmentConfig> = {
     location: 'eastus',
     tags: {
       environment: 'development',
-      managedBy: 'atakora'
-    }
+      managedBy: 'atakora',
+    },
   },
   staging: {
     environment: 'staging',
     location: 'eastus2',
     tags: {
       environment: 'staging',
-      managedBy: 'atakora'
-    }
+      managedBy: 'atakora',
+    },
   },
   production: {
     environment: 'production',
     location: 'eastus',
     tags: {
       environment: 'production',
-      managedBy: 'atakora'
-    }
-  }
+      managedBy: 'atakora',
+    },
+  },
 };
 ```
 
@@ -377,13 +375,13 @@ export class WebAppStack extends Stack {
 
     const rg = new ResourceGroup(this, 'rg', {
       location: config.location,
-      tags: config.tags
+      tags: config.tags,
     });
 
     // Use shared secure storage construct
     const storage = new SecureStorageAccount(this, 'storage', {
       resourceGroup: rg,
-      location: config.location
+      location: config.location,
     });
 
     // Rest of stack...
@@ -449,8 +447,8 @@ export class WebAppStack extends Stack {
     const webApp = new WebApp(this, 'webapp', {
       // ...
       properties: {
-        virtualNetworkSubnetId: networkStack.subnetId
-      }
+        virtualNetworkSubnetId: networkStack.subnetId,
+      },
     });
   }
 }
@@ -465,9 +463,7 @@ Use npm/pnpm/yarn workspaces:
 {
   "name": "infrastructure-monorepo",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": ["packages/*"],
   "scripts": {
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces",
@@ -590,12 +586,14 @@ infrastructure/          (single repo)
 ```
 
 **Pros**:
+
 - Easier to share code
 - Atomic changes across packages
 - Simplified dependency management
 - Single CI/CD pipeline
 
 **Cons**:
+
 - Larger repository
 - All teams see all code
 - Potential for unwanted coupling
@@ -614,11 +612,13 @@ infrastructure-api/      (repo 4)
 ```
 
 **Pros**:
+
 - Clear ownership boundaries
 - Independent versioning
 - Smaller, focused repositories
 
 **Cons**:
+
 - Harder to share code
 - Complex dependency management
 - Multiple CI/CD pipelines
@@ -628,12 +628,14 @@ infrastructure-api/      (repo 4)
 ### Recommendation
 
 **Use Monorepo when**:
+
 - Single team or closely collaborating teams
 - Frequent cross-package changes
 - Shared infrastructure patterns
 - Starting a new project
 
 **Use Multi-Repo when**:
+
 - Multiple independent teams
 - Different release cycles
 - Strict ownership boundaries
@@ -653,20 +655,20 @@ export class FoundationStack extends Stack {
     super(`foundation-${env}`);
 
     const rg = new ResourceGroup(this, 'foundation-rg', {
-      location: 'eastus'
+      location: 'eastus',
     });
 
     const vnet = new VirtualNetwork(this, 'vnet', {
       resourceGroup: rg,
       location: 'eastus',
       properties: {
-        addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
-      }
+        addressSpace: { addressPrefixes: ['10.0.0.0/16'] },
+      },
     });
 
     const keyVault = new KeyVault(this, 'kv', {
       resourceGroup: rg,
-      location: 'eastus'
+      location: 'eastus',
     });
 
     this.vnetId = vnet.id;
@@ -689,8 +691,8 @@ export class ApplicationStack extends Stack {
     const webApp = new WebApp(this, 'webapp', {
       // ...
       properties: {
-        virtualNetworkSubnetId: `${foundation.vnetId}/subnets/app-subnet`
-      }
+        virtualNetworkSubnetId: `${foundation.vnetId}/subnets/app-subnet`,
+      },
     });
   }
 }
@@ -712,13 +714,13 @@ export const features: Record<string, FeatureFlags> = {
   dev: {
     enableMonitoring: false,
     enableCdn: false,
-    enableCache: false
+    enableCache: false,
   },
   production: {
     enableMonitoring: true,
     enableCdn: true,
-    enableCache: true
-  }
+    enableCache: true,
+  },
 };
 ```
 
@@ -778,12 +780,12 @@ export const config: Record<string, AppConfig> = {
     tags: { environment: 'dev', managedBy: 'atakora' },
     networking: {
       vnetAddressSpace: '10.0.0.0/16',
-      subnetAddressPrefix: '10.0.1.0/24'
+      subnetAddressPrefix: '10.0.1.0/24',
     },
     appService: {
       skuName: 'B1',
-      skuTier: 'Basic'
-    }
+      skuTier: 'Basic',
+    },
   },
   production: {
     environment: 'production',
@@ -792,13 +794,13 @@ export const config: Record<string, AppConfig> = {
     tags: { environment: 'production', managedBy: 'atakora' },
     networking: {
       vnetAddressSpace: '10.1.0.0/16',
-      subnetAddressPrefix: '10.1.1.0/24'
+      subnetAddressPrefix: '10.1.1.0/24',
     },
     appService: {
       skuName: 'P1v2',
-      skuTier: 'PremiumV2'
-    }
-  }
+      skuTier: 'PremiumV2',
+    },
+  },
 };
 ```
 
@@ -814,8 +816,8 @@ const plan = new AppServicePlan(this, 'plan', {
   location: appConfig.location,
   sku: {
     name: appConfig.appService.skuName,
-    tier: appConfig.appService.skuTier
-  }
+    tier: appConfig.appService.skuTier,
+  },
 });
 ```
 
@@ -878,15 +880,18 @@ Create comprehensive README for each package:
 # @myorg/networking
 
 ## Purpose
+
 Manages all networking infrastructure including VNets, subnets, NSGs, and routing.
 
 ## Resources Created
+
 - Virtual Networks
 - Subnets
 - Network Security Groups
 - Route Tables
 
 ## Usage
+
 \`\`\`typescript
 import { NetworkStack } from '@myorg/networking';
 
@@ -894,6 +899,7 @@ const network = new NetworkStack('production');
 \`\`\`
 
 ## Exports
+
 - `NetworkStack`: Main networking stack
 - `subnetId`: ID of application subnet
 - `vnetId`: ID of virtual network

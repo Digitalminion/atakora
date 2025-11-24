@@ -11,6 +11,7 @@ This document extends the Atakora Gen 2 design with a **unified `define*` API pa
 ## Design Philosophy
 
 Every component type uses a single `define<Type>()` function:
+
 - `defineCrudApi()` - CRUD API endpoints
 - `defineFunction()` - Azure Functions
 - `defineQueueProcessor()` - Queue-triggered processors
@@ -18,6 +19,7 @@ Every component type uses a single `define<Type>()` function:
 - `defineInfrastructure()` - Infrastructure resources
 
 **Benefits:**
+
 1. **Predictable learning curve** - Learn one pattern, use everywhere
 2. **Consistent imports** - Always `import { define<Type> } from '@atakora/component'`
 3. **Uniform configuration** - Similar structure across all component types
@@ -602,6 +604,7 @@ Next steps:
 ---
 
 **Next Steps:**
+
 1. Implement `define*` functions for all component types
 2. Add template variable resolution
 3. Create CLI generators

@@ -12,10 +12,12 @@ The Gen 2 design introduced two overlapping patterns for defining CRUD APIs:
 2. **API Definition Pattern**: `defineCrudApi()` that configures API-specific settings
 
 This creates redundancy where developers must define CRUD operations in two places:
+
 - First in `data/schema.ts` using `c.model()`
 - Then again in `apis/feedback.ts` using `defineCrudApi()`
 
 This violates our core principles:
+
 - **Zero boilerplate** - We're requiring extra definitions
 - **Single source of truth** - CRUD logic is split across files
 - **Convention over configuration** - Unclear when to use which pattern
@@ -26,6 +28,7 @@ This violates our core principles:
 **Eliminate `defineCrudApi()` and make `c.model()` the single source of truth for CRUD APIs.**
 
 The `c.model()` definition will handle:
+
 - Schema definition
 - Validation rules
 - Authorization policies
@@ -42,22 +45,21 @@ The `c.model()` definition will handle:
 export const data = defineData({
   schema: a.schema({
     // Simple CRUD - just works with defaults
-    Feedback: c.model({
-      id: a.id(),
-      text: a.string().required(),
-      rating: a.number().min(1).max(5),
-      userId: a.string().required(),
-      createdAt: a.datetime().default(a.datetime.now()),
-    })
-    .authorization(allow => [
-      allow.owner('userId'),
-      allow.groups(['admins']),
-    ]),
+    Feedback: c
+      .model({
+        id: a.id(),
+        text: a.string().required(),
+        rating: a.number().min(1).max(5),
+        userId: a.string().required(),
+        createdAt: a.datetime().default(a.datetime.now()),
+      })
+      .authorization((allow) => [allow.owner('userId'), allow.groups(['admins'])]),
   }),
 });
 ```
 
 This automatically generates:
+
 - POST /api/feedback
 - GET /api/feedback/:id
 - PUT /api/feedback/:id
@@ -170,10 +172,12 @@ export const analyzeSentiment = defineFunction({
 ### Alternative 1: Keep Both Patterns
 
 **Pros:**
+
 - Separation of concerns (data vs API)
 - Flexibility to define APIs independently
 
 **Cons:**
+
 - Redundancy and confusion
 - Violates single source of truth
 - More boilerplate code
@@ -182,10 +186,12 @@ export const analyzeSentiment = defineFunction({
 ### Alternative 2: Make `defineCrudApi()` Primary
 
 **Pros:**
+
 - Consistent with other `define*` patterns
 - Clear file organization
 
 **Cons:**
+
 - Loses connection to data schema
 - Requires duplicate field definitions
 - More verbose for simple cases
@@ -201,6 +207,7 @@ export const feedbackApi = defineCrudApi({
 ```
 
 **Cons:**
+
 - Still requires two definitions
 - Indirect connection between schema and API
 - Extra file for each CRUD API
@@ -253,6 +260,7 @@ export class CrudModel {
 ### Phase 2: Migrate Examples
 
 Update Gen 2 examples to use unified pattern:
+
 1. Remove separate `apis/*.ts` files
 2. Move API config to schema definitions
 3. Update imports in `index.ts`
@@ -321,6 +329,6 @@ const backend = defineBackend({
 
 ## References
 
-- [Gen 2 Data Layer Design](../atakora-gen2-data-layer.md)
-- [Gen 2 Define API Pattern](../atakora-gen2-define-api.md)
+- [Gen 2 Data Layer Design](../Atakora-Gen2-Data-Layer.md)
+- [Gen 2 Define API Pattern](../Atakora-Gen2-Define-Api.md)
 - [AWS Amplify Data](https://docs.amplify.aws/gen2/build-a-backend/data/) - Similar unified approach

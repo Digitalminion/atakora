@@ -8,7 +8,7 @@ This document provides the complete API design for Atakora's Azure RBAC grant pa
 
 ### IGrantable Interface
 
-```typescript
+````typescript
 /**
  * Represents an Azure identity that can be granted permissions.
  *
@@ -88,9 +88,9 @@ export enum PrincipalType {
   ForeignGroup = 'ForeignGroup',
 
   /** Azure AD device */
-  Device = 'Device'
+  Device = 'Device',
 }
-```
+````
 
 ### IResolvable Interface
 
@@ -202,20 +202,22 @@ export abstract class GrantableResource extends Resource implements IGrantable {
     if (!this.identity || this.identity.type === ManagedIdentityType.NONE) {
       throw new Error(
         `Resource '${this.node.id}' does not have a managed identity. ` +
-        `Enable a managed identity to use this resource as a grantable.`
+          `Enable a managed identity to use this resource as a grantable.`
       );
     }
 
     // For system-assigned identity, reference the principalId property
-    if (this.identity.type === ManagedIdentityType.SYSTEM_ASSIGNED ||
-        this.identity.type === ManagedIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED) {
+    if (
+      this.identity.type === ManagedIdentityType.SYSTEM_ASSIGNED ||
+      this.identity.type === ManagedIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED
+    ) {
       return new ArmReference(this.resourceId, 'identity.principalId');
     }
 
     // For user-assigned only, this resource cannot act as a grantable
     throw new Error(
       `Resource '${this.node.id}' has only user-assigned identity. ` +
-      `It cannot be used as a grantable. Use the user-assigned identity directly.`
+        `It cannot be used as a grantable. Use the user-assigned identity directly.`
     );
   }
 
@@ -255,7 +257,7 @@ export abstract class GrantableResource extends Resource implements IGrantable {
       principalId: grantable.principalId,
       principalType: grantable.principalType,
       tenantId: grantable.tenantId,
-      description
+      description,
     });
 
     return new GrantResult(roleAssignment, roleDefinitionId, grantable, this.resourceId);
@@ -281,12 +283,14 @@ export abstract class GrantableResource extends Resource implements IGrantable {
   protected ensureIdentity(): void {
     if (!this.identity || this.identity.type === ManagedIdentityType.NONE) {
       this.identity = {
-        type: ManagedIdentityType.SYSTEM_ASSIGNED
+        type: ManagedIdentityType.SYSTEM_ASSIGNED,
       };
 
       // Log for transparency
-      this.node.addMetadata('AutoEnabledIdentity',
-        'System-assigned identity was automatically enabled due to grant usage');
+      this.node.addMetadata(
+        'AutoEnabledIdentity',
+        'System-assigned identity was automatically enabled due to grant usage'
+      );
     }
   }
 }
@@ -451,9 +455,9 @@ export class RoleAssignment extends Resource {
         ...(this.props.description && { description: this.props.description }),
         ...(this.props.condition && {
           condition: this.props.condition,
-          conditionVersion: this.props.conditionVersion
-        })
-      }
+          conditionVersion: this.props.conditionVersion,
+        }),
+      },
     };
   }
 
@@ -515,91 +519,137 @@ export class WellKnownRoleIds {
   public static readonly OWNER = this.roleId('8e3af657-a8ff-443c-a75c-2fe8c4bcb635');
 
   /** Manage user access to Azure resources */
-  public static readonly USER_ACCESS_ADMINISTRATOR = this.roleId('18d7d88d-d35e-4fb5-a5c3-7773c20a72d9');
+  public static readonly USER_ACCESS_ADMINISTRATOR = this.roleId(
+    '18d7d88d-d35e-4fb5-a5c3-7773c20a72d9'
+  );
 
   // ============================================================
   // Storage Account Roles
   // ============================================================
 
   /** Read data from blobs */
-  public static readonly STORAGE_BLOB_DATA_READER = this.roleId('2a2b9908-6ea1-4ae2-8e65-a410df84e7d1');
+  public static readonly STORAGE_BLOB_DATA_READER = this.roleId(
+    '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
+  );
 
   /** Read and write blob data */
-  public static readonly STORAGE_BLOB_DATA_CONTRIBUTOR = this.roleId('ba92f5b4-2d11-453d-a403-e96b0029c9fe');
+  public static readonly STORAGE_BLOB_DATA_CONTRIBUTOR = this.roleId(
+    'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+  );
 
   /** Full access to blob data including POSIX ACLs */
-  public static readonly STORAGE_BLOB_DATA_OWNER = this.roleId('b7e6dc6d-f1e8-4753-8033-0f276bb0955b');
+  public static readonly STORAGE_BLOB_DATA_OWNER = this.roleId(
+    'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
+  );
 
   /** Read messages and metadata from queues */
-  public static readonly STORAGE_QUEUE_DATA_READER = this.roleId('19e7f393-937e-4f77-808e-94535e297925');
+  public static readonly STORAGE_QUEUE_DATA_READER = this.roleId(
+    '19e7f393-937e-4f77-808e-94535e297925'
+  );
 
   /** Process queue messages */
-  public static readonly STORAGE_QUEUE_DATA_CONTRIBUTOR = this.roleId('974c5e8b-45b9-4653-ba55-5f855dd0fb88');
+  public static readonly STORAGE_QUEUE_DATA_CONTRIBUTOR = this.roleId(
+    '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
+  );
 
   /** Send queue messages */
-  public static readonly STORAGE_QUEUE_DATA_MESSAGE_SENDER = this.roleId('c6a89b2d-59bc-44d0-9896-0f6e12d7b80a');
+  public static readonly STORAGE_QUEUE_DATA_MESSAGE_SENDER = this.roleId(
+    'c6a89b2d-59bc-44d0-9896-0f6e12d7b80a'
+  );
 
   /** Process queue messages (read and delete) */
-  public static readonly STORAGE_QUEUE_DATA_MESSAGE_PROCESSOR = this.roleId('8a0f0c08-91a1-4084-bc3d-661d67233fed');
+  public static readonly STORAGE_QUEUE_DATA_MESSAGE_PROCESSOR = this.roleId(
+    '8a0f0c08-91a1-4084-bc3d-661d67233fed'
+  );
 
   /** Read table data */
-  public static readonly STORAGE_TABLE_DATA_READER = this.roleId('76199698-9eea-4c19-bc75-cec21354c6b6');
+  public static readonly STORAGE_TABLE_DATA_READER = this.roleId(
+    '76199698-9eea-4c19-bc75-cec21354c6b6'
+  );
 
   /** Read and write table data */
-  public static readonly STORAGE_TABLE_DATA_CONTRIBUTOR = this.roleId('0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3');
+  public static readonly STORAGE_TABLE_DATA_CONTRIBUTOR = this.roleId(
+    '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'
+  );
 
   /** Read file share data */
-  public static readonly STORAGE_FILE_DATA_SMB_SHARE_READER = this.roleId('aba4ae5f-2193-4029-9191-0cb91df5e314');
+  public static readonly STORAGE_FILE_DATA_SMB_SHARE_READER = this.roleId(
+    'aba4ae5f-2193-4029-9191-0cb91df5e314'
+  );
 
   /** Read and write file share data */
-  public static readonly STORAGE_FILE_DATA_SMB_SHARE_CONTRIBUTOR = this.roleId('0c867c2a-1d8c-454a-a3db-ab2ea1bdc8bb');
+  public static readonly STORAGE_FILE_DATA_SMB_SHARE_CONTRIBUTOR = this.roleId(
+    '0c867c2a-1d8c-454a-a3db-ab2ea1bdc8bb'
+  );
 
   /** Full control of file share data */
-  public static readonly STORAGE_FILE_DATA_SMB_SHARE_ELEVATED_CONTRIBUTOR = this.roleId('a7264617-510b-434b-a828-9731dc254ea7');
+  public static readonly STORAGE_FILE_DATA_SMB_SHARE_ELEVATED_CONTRIBUTOR = this.roleId(
+    'a7264617-510b-434b-a828-9731dc254ea7'
+  );
 
   // ============================================================
   // Cosmos DB Roles
   // ============================================================
 
   /** Read Cosmos DB account metadata */
-  public static readonly COSMOS_DB_ACCOUNT_READER = this.roleId('fbdf93bf-df7d-467e-a4d2-9458aa1360c8');
+  public static readonly COSMOS_DB_ACCOUNT_READER = this.roleId(
+    'fbdf93bf-df7d-467e-a4d2-9458aa1360c8'
+  );
 
   /** Manage Cosmos DB accounts but not access data */
   public static readonly COSMOS_DB_OPERATOR = this.roleId('230815da-be43-4aae-9cb4-875f7bd000aa');
 
   /** Read Cosmos DB data (SQL API) */
-  public static readonly COSMOS_DB_DATA_READER = this.roleId('00000000-0000-0000-0000-000000000001');
+  public static readonly COSMOS_DB_DATA_READER = this.roleId(
+    '00000000-0000-0000-0000-000000000001'
+  );
 
   /** Read and write Cosmos DB data (SQL API) */
-  public static readonly COSMOS_DB_DATA_CONTRIBUTOR = this.roleId('00000000-0000-0000-0000-000000000002');
+  public static readonly COSMOS_DB_DATA_CONTRIBUTOR = this.roleId(
+    '00000000-0000-0000-0000-000000000002'
+  );
 
   // ============================================================
   // Key Vault Roles
   // ============================================================
 
   /** Read secrets from Key Vault */
-  public static readonly KEY_VAULT_SECRETS_USER = this.roleId('4633458b-17de-408a-b874-0445c86b69e6');
+  public static readonly KEY_VAULT_SECRETS_USER = this.roleId(
+    '4633458b-17de-408a-b874-0445c86b69e6'
+  );
 
   /** Manage secrets in Key Vault */
-  public static readonly KEY_VAULT_SECRETS_OFFICER = this.roleId('b86a8fe4-44ce-4948-aee5-eccb2c155cd7');
+  public static readonly KEY_VAULT_SECRETS_OFFICER = this.roleId(
+    'b86a8fe4-44ce-4948-aee5-eccb2c155cd7'
+  );
 
   /** Use cryptographic keys for operations */
-  public static readonly KEY_VAULT_CRYPTO_USER = this.roleId('12338af0-0e69-4776-bea7-57ae8d297424');
+  public static readonly KEY_VAULT_CRYPTO_USER = this.roleId(
+    '12338af0-0e69-4776-bea7-57ae8d297424'
+  );
 
   /** Manage cryptographic keys */
-  public static readonly KEY_VAULT_CRYPTO_OFFICER = this.roleId('14b46e9e-c2b7-41b4-b07b-48a6ebf60603');
+  public static readonly KEY_VAULT_CRYPTO_OFFICER = this.roleId(
+    '14b46e9e-c2b7-41b4-b07b-48a6ebf60603'
+  );
 
   /** Read certificates */
-  public static readonly KEY_VAULT_CERTIFICATES_USER = this.roleId('db79e9a7-68ee-4b58-9aeb-b90e7c24fcba');
+  public static readonly KEY_VAULT_CERTIFICATES_USER = this.roleId(
+    'db79e9a7-68ee-4b58-9aeb-b90e7c24fcba'
+  );
 
   /** Manage certificates */
-  public static readonly KEY_VAULT_CERTIFICATES_OFFICER = this.roleId('a4417e6f-fecd-4de8-b567-7b0420556985');
+  public static readonly KEY_VAULT_CERTIFICATES_OFFICER = this.roleId(
+    'a4417e6f-fecd-4de8-b567-7b0420556985'
+  );
 
   /** Read all Key Vault data */
   public static readonly KEY_VAULT_READER = this.roleId('21090545-7ca7-4776-b22c-e363652d74d2');
 
   /** Full access to Key Vault data */
-  public static readonly KEY_VAULT_ADMINISTRATOR = this.roleId('00482a5a-887f-4fb3-b363-3b7fe8e74483');
+  public static readonly KEY_VAULT_ADMINISTRATOR = this.roleId(
+    '00482a5a-887f-4fb3-b363-3b7fe8e74483'
+  );
 
   // ============================================================
   // App Service / Function Apps
@@ -622,20 +672,28 @@ export class WellKnownRoleIds {
   public static readonly SQL_SECURITY_MANAGER = this.roleId('056cd41c-7e88-42e1-933e-88ba6a50c9c3');
 
   /** Manage SQL servers */
-  public static readonly SQL_SERVER_CONTRIBUTOR = this.roleId('6d8ee4ec-f05a-4a1d-8b00-a9b17e38b437');
+  public static readonly SQL_SERVER_CONTRIBUTOR = this.roleId(
+    '6d8ee4ec-f05a-4a1d-8b00-a9b17e38b437'
+  );
 
   // ============================================================
   // Virtual Machine Roles
   // ============================================================
 
   /** Create and manage virtual machines */
-  public static readonly VIRTUAL_MACHINE_CONTRIBUTOR = this.roleId('9980e02c-c2be-4d73-94e8-173b1dc7cf3c');
+  public static readonly VIRTUAL_MACHINE_CONTRIBUTOR = this.roleId(
+    '9980e02c-c2be-4d73-94e8-173b1dc7cf3c'
+  );
 
   /** Login to VMs as administrator */
-  public static readonly VIRTUAL_MACHINE_ADMINISTRATOR_LOGIN = this.roleId('1c0163c0-47e6-4577-8991-ea5c82e286e4');
+  public static readonly VIRTUAL_MACHINE_ADMINISTRATOR_LOGIN = this.roleId(
+    '1c0163c0-47e6-4577-8991-ea5c82e286e4'
+  );
 
   /** Login to VMs as user */
-  public static readonly VIRTUAL_MACHINE_USER_LOGIN = this.roleId('fb879df8-f326-4884-b1cf-06f3ad86be52');
+  public static readonly VIRTUAL_MACHINE_USER_LOGIN = this.roleId(
+    'fb879df8-f326-4884-b1cf-06f3ad86be52'
+  );
 
   // ============================================================
   // Networking Roles
@@ -648,7 +706,9 @@ export class WellKnownRoleIds {
   public static readonly DNS_ZONE_CONTRIBUTOR = this.roleId('befefa01-2a29-4197-83a8-272ff33ce314');
 
   /** Manage Traffic Manager profiles */
-  public static readonly TRAFFIC_MANAGER_CONTRIBUTOR = this.roleId('a4b10055-b0c7-44c2-b00f-c7b5b3550cf7');
+  public static readonly TRAFFIC_MANAGER_CONTRIBUTOR = this.roleId(
+    'a4b10055-b0c7-44c2-b00f-c7b5b3550cf7'
+  );
 
   // ============================================================
   // Container Roles
@@ -692,9 +752,9 @@ export class WellKnownRoleIds {
    */
   public static getRoleByDisplayName(displayName: string): string | undefined {
     const roleMap: Record<string, string> = {
-      'Reader': this.READER,
-      'Contributor': this.CONTRIBUTOR,
-      'Owner': this.OWNER,
+      Reader: this.READER,
+      Contributor: this.CONTRIBUTOR,
+      Owner: this.OWNER,
       'Storage Blob Data Reader': this.STORAGE_BLOB_DATA_READER,
       'Storage Blob Data Contributor': this.STORAGE_BLOB_DATA_CONTRIBUTOR,
       // ... add more mappings as needed
@@ -709,7 +769,7 @@ export class WellKnownRoleIds {
 
 ### StorageAccount with Grant Methods
 
-```typescript
+````typescript
 /**
  * L2 construct for Azure Storage Account with grant capabilities.
  *
@@ -873,7 +933,7 @@ export class StorageAccount extends GrantableResource {
 
   // ... rest of StorageAccount implementation
 }
-```
+````
 
 ### KeyVault with Grant Methods
 
@@ -1072,7 +1132,7 @@ export class CustomRoleDefinition extends Resource {
 
 ## Cross-Stack Support
 
-```typescript
+````typescript
 /**
  * Helper for creating cross-stack role assignments.
  *
@@ -1113,11 +1173,11 @@ export class CrossStackGrant {
       roleDefinitionId,
       principalId: grantable.principalId,
       principalType: grantable.principalType,
-      tenantId: grantable.tenantId
+      tenantId: grantable.tenantId,
     });
   }
 }
-```
+````
 
 ## Usage Examples
 
@@ -1129,7 +1189,7 @@ import { StorageAccount, FunctionApp, KeyVault } from '@atakora/cdk';
 // Create resources
 const storage = new StorageAccount(stack, 'Storage', {
   accountName: 'mystorageaccount',
-  sku: { name: 'Standard_LRS' }
+  sku: { name: 'Standard_LRS' },
 });
 
 const functionApp = new FunctionApp(stack, 'Api', {
@@ -1139,15 +1199,15 @@ const functionApp = new FunctionApp(stack, 'Api', {
 });
 
 const keyVault = new KeyVault(stack, 'Secrets', {
-  vaultName: 'mykeyvault'
+  vaultName: 'mykeyvault',
 });
 
 // Grant permissions
-storage.grantBlobRead(functionApp);         // Read blobs
-storage.grantTableWrite(functionApp);       // Read/write tables
-storage.grantQueueProcess(functionApp);     // Process queue messages
+storage.grantBlobRead(functionApp); // Read blobs
+storage.grantTableWrite(functionApp); // Read/write tables
+storage.grantQueueProcess(functionApp); // Process queue messages
 
-keyVault.grantSecretsRead(functionApp);     // Read secrets
+keyVault.grantSecretsRead(functionApp); // Read secrets
 keyVault.grantCertificatesRead(functionApp); // Read certificates
 ```
 
@@ -1206,14 +1266,10 @@ const customRole = new CustomRoleDefinition(stack, 'BlobReaderWithList', {
   description: 'Read blobs and list containers',
   actions: [
     'Microsoft.Storage/storageAccounts/blobServices/containers/read',
-    'Microsoft.Storage/storageAccounts/blobServices/generateUserDelegationKey/action'
+    'Microsoft.Storage/storageAccounts/blobServices/generateUserDelegationKey/action',
   ],
-  dataActions: [
-    'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read'
-  ],
-  assignableScopes: [
-    `/subscriptions/${subscriptionId}`
-  ]
+  dataActions: ['Microsoft.Storage/storageAccounts/blobServices/containers/blobs/read'],
+  assignableScopes: [`/subscriptions/${subscriptionId}`],
 });
 
 // Use the custom role in a grant
@@ -1221,7 +1277,7 @@ const roleAssignment = new RoleAssignment(stack, 'CustomGrant', {
   scope: storage.resourceId,
   roleDefinitionId: customRole.roleId,
   principalId: functionApp.principalId,
-  principalType: PrincipalType.ManagedIdentity
+  principalType: PrincipalType.ManagedIdentity,
 });
 ```
 
@@ -1231,19 +1287,19 @@ const roleAssignment = new RoleAssignment(stack, 'CustomGrant', {
 // Grant to a user
 const userGrant = storage.grantBlobRead({
   principalId: 'user-object-id-from-azure-ad',
-  principalType: PrincipalType.User
+  principalType: PrincipalType.User,
 });
 
 // Grant to a group
 const groupGrant = storage.grantBlobRead({
   principalId: 'group-object-id-from-azure-ad',
-  principalType: PrincipalType.Group
+  principalType: PrincipalType.Group,
 });
 
 // Grant to a service principal
 const spGrant = storage.grantBlobRead({
   principalId: 'service-principal-object-id',
-  principalType: PrincipalType.ServicePrincipal
+  principalType: PrincipalType.ServicePrincipal,
 });
 ```
 
@@ -1332,10 +1388,11 @@ const roleAssignment = {
   name: '[guid(parameters("random"))]',
   scope: storage.id,
   properties: {
-    roleDefinitionId: '/subscriptions/.../providers/Microsoft.Authorization/roleDefinitions/2a2b9908-6ea1-4ae2-8e65-a410df84e7d1',
+    roleDefinitionId:
+      '/subscriptions/.../providers/Microsoft.Authorization/roleDefinitions/2a2b9908-6ea1-4ae2-8e65-a410df84e7d1',
     principalId: '[reference(parameters("functionAppId")).identity.principalId]',
-    principalType: 'ServicePrincipal'
-  }
+    principalType: 'ServicePrincipal',
+  },
 };
 ```
 

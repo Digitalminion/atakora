@@ -3,11 +3,13 @@
 ## Context
 
 The current event infrastructure implementation is scattered across multiple folders and namespaces:
+
 - `queue-processors/` - Storage Queue patterns
 - `event-topics/` - Event Grid patterns
 - `infrastructure/service-bus/` - Service Bus patterns
 
 **Critical Issue**: The initial attempt at unification in `events/resource.ts` still imports from these old locations:
+
 ```typescript
 import { Queue as StorageQueue } from '@atakora/component/queues';
 import { EventTopic as EventGridTopic } from '../event-topics/audit-logger/resource';
@@ -43,10 +45,7 @@ import { defineEvents } from '@atakora/component/events';
 
 export const events = defineEvents({
   // Storage Queues - simple async processing
-  dataQuality: queue('data-quality')
-    .processor(dataQualityProcessor)
-    .ttl(days(7))
-    .retries(3),
+  dataQuality: queue('data-quality').processor(dataQualityProcessor).ttl(days(7)).retries(3),
 
   // Event Grid Topics - pub/sub patterns
   auditLogs: topic('audit-logs')
@@ -73,7 +72,9 @@ export const events = defineEvents({
 Each event type will have a specialized builder that exposes type-appropriate methods while sharing common patterns:
 
 #### Common Interface
+
 All event types share:
+
 - `.processor()` - Attach handler function
 - `.ttl()` - Message/event time to live
 - `.retries()` - Retry configuration
@@ -84,23 +85,27 @@ All event types share:
 #### Type-Specific Extensions
 
 **Storage Queue**:
+
 - `.visibilityTimeout()` - Message lock duration
 - `.maxDeliveryCount()` - Attempts before dead lettering
 - `.batchSize()` - Processor concurrency
 
 **Event Grid Topic**:
+
 - `.events()` - Event type definitions
 - `.schema()` - Event schema format
 - `.subscription()` - Add subscribers
 - `.filter()` - Event filtering
 
 **Service Bus Queue**:
+
 - `.sessions()` - Message sessions
 - `.duplicateDetection()` - Deduplication window
 - `.partitioning()` - Enable partitioning
 - `.forwardTo()` - Message forwarding
 
 **Service Bus Topic**:
+
 - `.subscription()` - Named subscriptions
 - `.filter()` - SQL filters
 - `.maxSize()` - Topic size limit
@@ -139,35 +144,44 @@ criticalEvents: topic('critical-events')
 ## Alternatives Considered
 
 ### 1. Keep Current Separation
+
 **Pros**:
+
 - No migration needed
 - Each type stays specialized
 
 **Cons**:
+
 - Continued cognitive overhead
 - Inconsistent patterns
 - Scattered infrastructure
 
 ### 2. Generic Event Abstraction
+
 Create a single `event()` builder that adapts based on configuration.
 
 **Pros**:
+
 - Ultimate simplicity
 - Single API to learn
 
 **Cons**:
+
 - Loss of type safety for service-specific features
 - Unclear which backend service is used
 - Can't leverage unique capabilities
 
 ### 3. Two-Level Abstraction
+
 Separate into `messaging` (queues) and `events` (topics).
 
 **Pros**:
+
 - Clear semantic distinction
 - Somewhat simplified
 
 **Cons**:
+
 - Still requires multiple imports
 - Service Bus spans both categories
 - Doesn't achieve full consolidation
@@ -222,22 +236,26 @@ Separate into `messaging` (queues) and `events` (topics).
 ## Implementation Strategy
 
 ### Phase 1: Core Infrastructure
+
 1. Create `@atakora/component/events` module
 2. Implement `defineEvents()` wrapper
 3. Create base `EventBuilder` class with common methods
 4. Implement type-specific builders extending base
 
 ### Phase 2: Integration
+
 1. Update existing queue/topic/service-bus modules to expose builders
 2. Ensure backward compatibility during transition
 3. Create migration utilities if needed
 
 ### Phase 3: Migration
+
 1. Update backend example to use unified namespace
 2. Create migration guide with before/after examples
 3. Update documentation and examples
 
 ### Phase 4: Enhancement
+
 1. Add advanced features (streams, webhooks)
 2. Implement cross-event orchestration
 3. Add event replay and debugging capabilities

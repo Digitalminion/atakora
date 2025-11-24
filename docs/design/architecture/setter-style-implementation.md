@@ -12,7 +12,7 @@ import type {
   FunctionComponent,
   QueueComponent,
   EventTopicComponent,
-  InfrastructureComponent
+  InfrastructureComponent,
 } from './types';
 
 /**
@@ -42,7 +42,7 @@ export class Backend {
     // Use Proxy to intercept property assignments
     return new Proxy(this, {
       set: this._handleAssignment.bind(this),
-      get: this._handleAccess.bind(this)
+      get: this._handleAccess.bind(this),
     });
   }
 
@@ -78,21 +78,21 @@ export class Backend {
     // Lazy initialize configuration builders
     switch (prop) {
       case 'config':
-        return this._config ??= new ConfigBuilder(this);
+        return (this._config ??= new ConfigBuilder(this));
       case 'secrets':
-        return this._secrets ??= new SecretsBuilder(this);
+        return (this._secrets ??= new SecretsBuilder(this));
       case 'authentication':
-        return this._authentication ??= new AuthenticationBuilder(this);
+        return (this._authentication ??= new AuthenticationBuilder(this));
       case 'networking':
-        return this._networking ??= new NetworkingBuilder(this);
+        return (this._networking ??= new NetworkingBuilder(this));
       case 'performance':
-        return this._performance ??= new PerformanceBuilder(this);
+        return (this._performance ??= new PerformanceBuilder(this));
       case 'governance':
-        return this._governance ??= new GovernanceBuilder(this);
+        return (this._governance ??= new GovernanceBuilder(this));
       case 'monitoring':
-        return this._monitoring ??= new MonitoringBuilder(this);
+        return (this._monitoring ??= new MonitoringBuilder(this));
       case 'features':
-        return this._features ??= new FeaturesBuilder(this);
+        return (this._features ??= new FeaturesBuilder(this));
       default:
         return target[prop];
     }
@@ -149,10 +149,10 @@ export class ConfigBuilder {
       },
       get: (target, prop) => {
         if (prop === 'rateLimits') {
-          return this._rateLimits ??= new RateLimitsConfig();
+          return (this._rateLimits ??= new RateLimitsConfig());
         }
         return this._values.get(String(prop));
-      }
+      },
     });
   }
 
@@ -197,7 +197,7 @@ export class SecretsBuilder {
       },
       get: (target, prop) => {
         return this._secrets.get(String(prop));
-      }
+      },
     });
   }
 }
@@ -206,14 +206,14 @@ export class SecretsBuilder {
 export function required(description?: string): SecretDeclaration {
   return {
     required: true,
-    description
+    description,
   };
 }
 
 export function optional(description?: string): SecretDeclaration {
   return {
     required: false,
-    description
+    description,
   };
 }
 
@@ -444,7 +444,7 @@ class AlertBuilder {
       name: this.name,
       condition: this._condition!,
       severity: this._severity!,
-      action: this._action
+      action: this._action,
     });
     // Return parent for continued chaining
     return this.parent;
@@ -600,9 +600,9 @@ backend.networking.forcePrivate();
 backend.monitoring
   .metric('requests', 'counter')
   .alert('high-load')
-    .when('requests > 1000')
-    .severity('warning')
-    .action('scale-up');
+  .when('requests > 1000')
+  .severity('warning')
+  .action('scale-up');
 ```
 
 ### Environment-Aware Configuration
@@ -616,15 +616,15 @@ backend.data = data;
 backend.config.databaseName = 'myapp-db';
 
 // Environment-specific overrides
-backend.when('production')
-  .networking(n => n.forcePrivate())
-  .performance(p => p.functionPlan('Premium'));
+backend
+  .when('production')
+  .networking((n) => n.forcePrivate())
+  .performance((p) => p.functionPlan('Premium'));
 
-backend.when('development')
-  .features(f => {
-    f.experimental = true;
-    f.hotReload = true;
-  });
+backend.when('development').features((f) => {
+  f.experimental = true;
+  f.hotReload = true;
+});
 ```
 
 ## Benefits of This Implementation

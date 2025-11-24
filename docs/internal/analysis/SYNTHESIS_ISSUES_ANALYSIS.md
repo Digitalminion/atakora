@@ -40,16 +40,18 @@ Result: Invalid ARM Template ❌
 ## Bug #1: Unresolved Placeholder Syntax
 
 ### Location
+
 - **Source**: `packages/component/src/crud/function-generator.ts:214-217`
 - **Processing**: `packages/lib/src/synthesis/transform/resource-transformer.ts:186-237`
 
 ### Root Cause
+
 The code creates environment variables with `${...}` placeholder syntax:
 
 ```typescript
 // function-generator.ts:214-217
 const envVars: Record<string, string> = {
-  COSMOS_ENDPOINT: '${cosmosEndpoint}',          // ⚠️ Literal string!
+  COSMOS_ENDPOINT: '${cosmosEndpoint}', // ⚠️ Literal string!
   AZURE_CLIENT_ID: '${managedIdentityClientId}', // ⚠️ Literal string!
   FUNCTIONS_WORKER_RUNTIME: 'node',
   AzureWebJobsStorage: '${storageConnectionString}', // ⚠️ Literal string!
@@ -59,6 +61,7 @@ const envVars: Record<string, string> = {
 These are passed through the entire pipeline and output as-is because:
 
 **ResourceTransformer.replaceTokens()** only handles:
+
 - `{subscriptionId}` → `[subscription().subscriptionId]`
 - `{resourceGroupName}` → `[resourceGroup().name]`
 - `00000000-0000-0000-0000-000000000000` → `[subscription().tenantId]`
@@ -85,7 +88,7 @@ private replaceTokens<T extends Record<string, any>>(obj: T): T {
 ```json
 {
   "name": "COSMOS_ENDPOINT",
-  "value": "${cosmosEndpoint}"  // ❌ Literal string in ARM template!
+  "value": "${cosmosEndpoint}" // ❌ Literal string in ARM template!
 }
 ```
 
@@ -94,12 +97,14 @@ This causes JSON parsing errors because `${...}` is not valid ARM template synta
 ### Fix Required
 
 **Option 1**: Add handler to `replaceTokens()`:
+
 ```typescript
 // Replace ${cosmosEndpoint} with actual value or ARM expression
 replacedValue = replacedValue.replace(/\$\{cosmosEndpoint\}/g, '[reference(...).documentEndpoint]');
 ```
 
 **Option 2**: Don't use placeholder strings at all - pass actual ARM expressions:
+
 ```typescript
 // function-generator.ts should create:
 const envVars: Record<string, string> = {
@@ -113,6 +118,7 @@ const envVars: Record<string, string> = {
 ## Bug #2: Duplicate App Settings
 
 ### Location
+
 - **Source 1**: `packages/cdk/src/functions/function-app.ts:268-284`
 - **Source 2**: `packages/component/src/crud/function-generator.ts:217`
 
@@ -124,7 +130,7 @@ FunctionApp.toArmTemplate() always adds these app settings:
 // function-app.ts:268-284
 const appSettings: Array<{ name: string; value: string }> = [
   {
-    name: 'AzureWebJobsStorage',  // ⚠️ Added here
+    name: 'AzureWebJobsStorage', // ⚠️ Added here
     value: `[concat('DefaultEndpointsProtocol=https;...')]`,
   },
   {
@@ -132,14 +138,14 @@ const appSettings: Array<{ name: string; value: string }> = [
     value: '~4',
   },
   {
-    name: 'FUNCTIONS_WORKER_RUNTIME',  // ⚠️ Added here
+    name: 'FUNCTIONS_WORKER_RUNTIME', // ⚠️ Added here
     value: this.runtime,
   },
 ];
 
 // Then adds user-provided environment variables
 Object.entries(this.environment).forEach(([name, value]) => {
-  appSettings.push({ name, value });  // ⚠️ May include duplicates!
+  appSettings.push({ name, value }); // ⚠️ May include duplicates!
 });
 ```
 
@@ -148,8 +154,8 @@ But function-generator.ts ALSO provides:
 ```typescript
 // function-generator.ts:216-217
 const envVars: Record<string, string> = {
-  FUNCTIONS_WORKER_RUNTIME: 'node',  // ⚠️ Duplicate!
-  AzureWebJobsStorage: '${storageConnectionString}',  // ⚠️ Duplicate!
+  FUNCTIONS_WORKER_RUNTIME: 'node', // ⚠️ Duplicate!
+  AzureWebJobsStorage: '${storageConnectionString}', // ⚠️ Duplicate!
 };
 ```
 
@@ -169,11 +175,11 @@ const envVars: Record<string, string> = {
       },
       // ... other settings ...
       {
-        "name": "FUNCTIONS_WORKER_RUNTIME",  // ❌ DUPLICATE!
+        "name": "FUNCTIONS_WORKER_RUNTIME", // ❌ DUPLICATE!
         "value": "node"
       },
       {
-        "name": "AzureWebJobsStorage",  // ❌ DUPLICATE!
+        "name": "AzureWebJobsStorage", // ❌ DUPLICATE!
         "value": "${storageConnectionString}"
       }
     ]
@@ -187,7 +193,11 @@ FunctionApp.toArmTemplate() should check for duplicate keys before adding user e
 
 ```typescript
 // Add user-provided environment variables (avoid duplicates)
-const reservedKeys = new Set(['AzureWebJobsStorage', 'FUNCTIONS_EXTENSION_VERSION', 'FUNCTIONS_WORKER_RUNTIME']);
+const reservedKeys = new Set([
+  'AzureWebJobsStorage',
+  'FUNCTIONS_EXTENSION_VERSION',
+  'FUNCTIONS_WORKER_RUNTIME',
+]);
 
 Object.entries(this.environment).forEach(([name, value]) => {
   if (!reservedKeys.has(name)) {
@@ -199,6 +209,7 @@ Object.entries(this.environment).forEach(([name, value]) => {
 ## Bug #3: Cross-Template dependsOn in Child Resources
 
 ### Location
+
 - `packages/cdk/src/functions/inline-function.ts:242-244, 261-263`
 
 ### Root Cause
@@ -219,6 +230,7 @@ return {
 ```
 
 When templates are split:
+
 - Parent `Microsoft.Web/sites` → `Foundation-compute-6.json`
 - Child `Microsoft.Web/sites/functions` → `Foundation-application-7.json`
 
@@ -242,6 +254,7 @@ return {
 ## Bug #4: API Version Mismatch (Minor)
 
 ### Location
+
 - `packages/cdk/src/functions/function-app.ts:272`
 
 ### Issue
@@ -249,7 +262,10 @@ return {
 Uses API version `2025-01-01` which doesn't exist yet:
 
 ```typescript
-listKeys(resourceId('Microsoft.Storage/storageAccounts', '${this.storageAccountName}'), '2025-01-01')
+listKeys(
+  resourceId('Microsoft.Storage/storageAccounts', '${this.storageAccountName}'),
+  '2025-01-01'
+);
 ```
 
 Should use `2023-01-01` or `2023-04-01`.
@@ -276,7 +292,7 @@ To work around these bugs, we manually edited the generated templates:
 2. **Foundation.json**:
    - Pass `listKeys()` and `reference()` evaluations as parameters
 
-3. **Foundation-application-*.json** (7-16):
+3. **Foundation-application-\*.json** (7-16):
    - Removed cross-template `dependsOn` clauses
 
 These manual fixes work, but need to be implemented in the synthesis code for sustainable operation.
@@ -310,4 +326,4 @@ az deployment group validate \
 
 ---
 
-*Analysis completed: 2025-10-14*
+_Analysis completed: 2025-10-14_

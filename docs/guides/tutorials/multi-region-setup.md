@@ -114,14 +114,8 @@ import {
   TrafficManagerProfiles,
   TrafficManagerEndpoints,
 } from '@atakora/cdk/network';
-import {
-  StorageAccounts,
-  BlobServices,
-} from '@atakora/cdk/storage';
-import {
-  ServerFarms,
-  Sites,
-} from '@atakora/cdk/web';
+import { StorageAccounts, BlobServices } from '@atakora/cdk/storage';
+import { ServerFarms, Sites } from '@atakora/cdk/web';
 import {
   DatabaseAccounts as CosmosAccounts,
   SqlDatabases as CosmosDatabases,
@@ -708,13 +702,13 @@ az afd origin show \
 - **[CI/CD Pipeline](./ci-cd-pipeline.md)** - Automate multi-region deployments
 - **[Government Cloud Deployment](./government-cloud-deployment.md)** - Deploy to Azure Government
 - **[Organizing Projects](../workflows/organizing-projects.md)** - Structure large projects
-- **[Deployment Failures](../../troubleshooting/deployment-failures.md)** - Common issues
+- **[Deployment Failures](../../troubleshooting/Deployment-Failures.md)** - Common issues
 
 ## See Also
 
 - **[Deployment Guide](../fundamentals/deployment.md)** - Deployment fundamentals
 - **[Network Resources API](../../reference/api/cdk/network.md)** - Networking reference
-- **[Common Issues](../../troubleshooting/common-issues.md)** - Troubleshooting
+- **[Common Issues](../../troubleshooting/Common-Issues.md)** - Troubleshooting
 
 ---
 

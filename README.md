@@ -31,18 +31,18 @@ atakora deploy
 
 Full documentation is available in the `docs/` directory:
 
-- [Getting Started Guide](docs/usage/getting-started/) - Installation, first project, and basic examples
-- [Usage Guides](docs/usage/guides/) - Design patterns, multi-stack architectures, and best practices
+- [Getting Started Guide](docs/getting-started/) - Installation, first project, and basic examples
+- [User Guides](docs/guides/) - Design patterns, multi-stack architectures, and best practices
 - [API Reference](docs/reference/) - Complete API documentation for all packages
-- [Examples](docs/usage/examples/) - Real-world examples and code samples
-- [Architecture](docs/design/architecture/) - Architecture decision records and design documents
+- [Examples](docs/examples/) - Real-world examples and code samples
+- [Architecture](docs/architecture/) - Architecture decision records and design documents
 
 ## Packages
 
 Atakora is organized as a monorepo with the following packages:
 
 - `@atakora/lib` - Core framework, synthesis engine, and validation
-- `@atakora/cdk` - Azure resource constructs organized by Microsoft.* namespaces
+- `@atakora/cdk` - Azure resource constructs organized by Microsoft.\* namespaces
 - `@atakora/cli` - Command-line interface for project management and deployment
 
 ## Example

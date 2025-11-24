@@ -1,6 +1,6 @@
 # @atakora/cdk
 
-Azure resource constructs for Atakora - organized by Microsoft.* namespaces.
+Azure resource constructs for Atakora - organized by Microsoft.\* namespaces.
 
 ## Overview
 
@@ -46,21 +46,21 @@ const storage = new StorageAccounts(stack, 'Storage', {
 
 ## Available Namespaces
 
-| Namespace | Microsoft Provider | Key Resources |
-|-----------|-------------------|---------------|
-| `@atakora/cdk/network` | Microsoft.Network | Virtual Networks, Subnets, NSGs, Public IPs, Private Endpoints |
-| `@atakora/cdk/storage` | Microsoft.Storage | Storage Accounts |
-| `@atakora/cdk/compute` | Microsoft.Compute | Virtual Machines |
-| `@atakora/cdk/web` | Microsoft.Web | App Services, App Service Plans |
-| `@atakora/cdk/keyvault` | Microsoft.KeyVault | Key Vaults |
-| `@atakora/cdk/sql` | Microsoft.Sql | SQL Servers, Databases |
-| `@atakora/cdk/insights` | Microsoft.Insights | Application Insights, Alerts |
-| `@atakora/cdk/operationalinsights` | Microsoft.OperationalInsights | Log Analytics Workspaces |
-| `@atakora/cdk/documentdb` | Microsoft.DocumentDB | Cosmos DB |
-| `@atakora/cdk/cognitiveservices` | Microsoft.CognitiveServices | OpenAI Services |
-| `@atakora/cdk/search` | Microsoft.Search | AI Search Services |
-| `@atakora/cdk/apimanagement` | Microsoft.ApiManagement | API Management |
-| `@atakora/cdk/resources` | Microsoft.Resources | Resource Groups |
+| Namespace                          | Microsoft Provider            | Key Resources                                                  |
+| ---------------------------------- | ----------------------------- | -------------------------------------------------------------- |
+| `@atakora/cdk/network`             | Microsoft.Network             | Virtual Networks, Subnets, NSGs, Public IPs, Private Endpoints |
+| `@atakora/cdk/storage`             | Microsoft.Storage             | Storage Accounts                                               |
+| `@atakora/cdk/compute`             | Microsoft.Compute             | Virtual Machines                                               |
+| `@atakora/cdk/web`                 | Microsoft.Web                 | App Services, App Service Plans                                |
+| `@atakora/cdk/keyvault`            | Microsoft.KeyVault            | Key Vaults                                                     |
+| `@atakora/cdk/sql`                 | Microsoft.Sql                 | SQL Servers, Databases                                         |
+| `@atakora/cdk/insights`            | Microsoft.Insights            | Application Insights, Alerts                                   |
+| `@atakora/cdk/operationalinsights` | Microsoft.OperationalInsights | Log Analytics Workspaces                                       |
+| `@atakora/cdk/documentdb`          | Microsoft.DocumentDB          | Cosmos DB                                                      |
+| `@atakora/cdk/cognitiveservices`   | Microsoft.CognitiveServices   | OpenAI Services                                                |
+| `@atakora/cdk/search`              | Microsoft.Search              | AI Search Services                                             |
+| `@atakora/cdk/apimanagement`       | Microsoft.ApiManagement       | API Management                                                 |
+| `@atakora/cdk/resources`           | Microsoft.Resources           | Resource Groups                                                |
 
 ## Documentation
 
@@ -94,7 +94,7 @@ npm run build          # Production build
 
 ## Architecture Principles
 
-1. **Namespace Organization**: Resources grouped by Microsoft.* provider
+1. **Namespace Organization**: Resources grouped by Microsoft.\* provider
 2. **Subpath Exports**: Tree-shakable imports via package.json exports
 3. **Flat Structure**: No subcategories within namespaces (until 30+ resources)
 4. **Clear Boundaries**: Resources in CDK, framework in lib

@@ -25,7 +25,7 @@ export interface Duration {
   toDays(): number;
 
   // ARM format conversion (ISO 8601 duration)
-  toTimeSpan(): string;  // Returns format like "P7D" or "PT10M"
+  toTimeSpan(): string; // Returns format like "P7D" or "PT10M"
   toArmDuration(): string; // Returns format like "7.00:00:00"
 
   // Arithmetic operations
@@ -41,16 +41,19 @@ export interface Duration {
 }
 
 class DurationImpl implements Duration {
-  constructor(readonly value: number, readonly unit: TimeUnit) {}
+  constructor(
+    readonly value: number,
+    readonly unit: TimeUnit
+  ) {}
 
   toMilliseconds(): number {
     const conversions: Record<TimeUnit, number> = {
-      'ms': 1,
-      's': 1000,
-      'm': 60000,
-      'h': 3600000,
-      'd': 86400000,
-      'w': 604800000,
+      ms: 1,
+      s: 1000,
+      m: 60000,
+      h: 3600000,
+      d: 86400000,
+      w: 604800000,
     };
     return this.value * conversions[this.unit];
   }
@@ -189,12 +192,18 @@ class ThresholdImpl<T> implements Threshold<T> {
     const cmp = compare(actual, this.value);
 
     switch (this.operator) {
-      case '>': return cmp > 0;
-      case '<': return cmp < 0;
-      case '>=': return cmp >= 0;
-      case '<=': return cmp <= 0;
-      case '==': return cmp === 0;
-      case '!=': return cmp !== 0;
+      case '>':
+        return cmp > 0;
+      case '<':
+        return cmp < 0;
+      case '>=':
+        return cmp >= 0;
+      case '<=':
+        return cmp <= 0;
+      case '==':
+        return cmp === 0;
+      case '!=':
+        return cmp !== 0;
       case 'between':
         return cmp >= 0 && compare(actual, this.upperBound!) <= 0;
       case 'outside':
@@ -212,8 +221,8 @@ class ThresholdImpl<T> implements Threshold<T> {
       '<=': '>',
       '==': '!=',
       '!=': '==',
-      'between': 'outside',
-      'outside': 'between',
+      between: 'outside',
+      outside: 'between',
     };
     return new ThresholdImpl(inversions[this.operator], this.value, this.upperBound);
   }
@@ -230,39 +239,28 @@ class ThresholdImpl<T> implements Threshold<T> {
 }
 
 // Factory functions
-export const greaterThan = <T>(value: T): Threshold<T> =>
-  new ThresholdImpl('>', value);
+export const greaterThan = <T>(value: T): Threshold<T> => new ThresholdImpl('>', value);
 
-export const lessThan = <T>(value: T): Threshold<T> =>
-  new ThresholdImpl('<', value);
+export const lessThan = <T>(value: T): Threshold<T> => new ThresholdImpl('<', value);
 
-export const atLeast = <T>(value: T): Threshold<T> =>
-  new ThresholdImpl('>=', value);
+export const atLeast = <T>(value: T): Threshold<T> => new ThresholdImpl('>=', value);
 
-export const atMost = <T>(value: T): Threshold<T> =>
-  new ThresholdImpl('<=', value);
+export const atMost = <T>(value: T): Threshold<T> => new ThresholdImpl('<=', value);
 
-export const exactly = <T>(value: T): Threshold<T> =>
-  new ThresholdImpl('==', value);
+export const exactly = <T>(value: T): Threshold<T> => new ThresholdImpl('==', value);
 
-export const notEqual = <T>(value: T): Threshold<T> =>
-  new ThresholdImpl('!=', value);
+export const notEqual = <T>(value: T): Threshold<T> => new ThresholdImpl('!=', value);
 
-export const between = <T>(min: T, max: T): Threshold<T> =>
-  new ThresholdImpl('between', min, max);
+export const between = <T>(min: T, max: T): Threshold<T> => new ThresholdImpl('between', min, max);
 
-export const outside = <T>(min: T, max: T): Threshold<T> =>
-  new ThresholdImpl('outside', min, max);
+export const outside = <T>(min: T, max: T): Threshold<T> => new ThresholdImpl('outside', min, max);
 
 // Specialized for Duration
-export const olderThan = (duration: Duration): Threshold<Duration> =>
-  greaterThan(duration);
+export const olderThan = (duration: Duration): Threshold<Duration> => greaterThan(duration);
 
-export const newerThan = (duration: Duration): Threshold<Duration> =>
-  lessThan(duration);
+export const newerThan = (duration: Duration): Threshold<Duration> => lessThan(duration);
 
-export const withinLast = (duration: Duration): Threshold<Duration> =>
-  lessThan(duration);
+export const withinLast = (duration: Duration): Threshold<Duration> => lessThan(duration);
 ```
 
 ## Queue Builder Implementation
@@ -312,11 +310,11 @@ export class QueueBuilder {
   constructor(name: string) {
     this.config = {
       name,
-      ttl: days(7),        // Default: 7 days
+      ttl: days(7), // Default: 7 days
       visibility: seconds(30), // Default: 30 seconds
-      maxDeliveryCount: 3,    // Default: 3 retries
-      batchSize: 1,           // Default: 1 message at a time
-      parallelism: 1,         // Default: 1 concurrent execution
+      maxDeliveryCount: 3, // Default: 3 retries
+      batchSize: 1, // Default: 1 message at a time
+      parallelism: 1, // Default: 1 concurrent execution
     };
   }
 
@@ -776,24 +774,13 @@ export const exponentialBackoff = (): RetryPolicyBuilder => {
 
 // Preset configurations
 export const aggressive = (): RetryPolicy =>
-  exponentialBackoff()
-    .maxAttempts(10)
-    .initialDelay(seconds(1))
-    .maxDelay(minutes(10))
-    .build();
+  exponentialBackoff().maxAttempts(10).initialDelay(seconds(1)).maxDelay(minutes(10)).build();
 
 export const conservative = (): RetryPolicy =>
-  exponentialBackoff()
-    .maxAttempts(3)
-    .initialDelay(seconds(30))
-    .maxDelay(minutes(30))
-    .build();
+  exponentialBackoff().maxAttempts(3).initialDelay(seconds(30)).maxDelay(minutes(30)).build();
 
 export const immediate = (): RetryPolicy =>
-  fixedDelay(seconds(0))
-    .maxAttempts(3)
-    .withJitter(false)
-    .build();
+  fixedDelay(seconds(0)).maxAttempts(3).withJitter(false).build();
 ```
 
 ## Queue Presets
@@ -822,9 +809,8 @@ export function applyPreset(builder: QueueBuilder, preset: QueuePreset): QueueBu
         .parallelism(10)
         .visibility(seconds(30))
         .ttl(days(1))
-        .monitoring(alerts => alerts
-          .onDepth(greaterThan(10000)).warn()
-          .onDepth(greaterThan(50000)).critical()
+        .monitoring((alerts) =>
+          alerts.onDepth(greaterThan(10000)).warn().onDepth(greaterThan(50000)).critical()
         );
 
     case QueuePreset.LowLatency:
@@ -833,9 +819,12 @@ export function applyPreset(builder: QueueBuilder, preset: QueuePreset): QueueBu
         .parallelism(5)
         .visibility(seconds(10))
         .retries(1)
-        .monitoring(alerts => alerts
-          .onProcessingTime(greaterThan(seconds(5))).warn()
-          .onProcessingTime(greaterThan(seconds(10))).error()
+        .monitoring((alerts) =>
+          alerts
+            .onProcessingTime(greaterThan(seconds(5)))
+            .warn()
+            .onProcessingTime(greaterThan(seconds(10)))
+            .error()
         );
 
     case QueuePreset.LongRunning:
@@ -845,9 +834,12 @@ export function applyPreset(builder: QueueBuilder, preset: QueuePreset): QueueBu
         .ttl(days(14))
         .retries(1)
         .withDeadLetterQueue()
-        .monitoring(alerts => alerts
-          .onProcessingTime(greaterThan(hours(2))).warn()
-          .onMessageAge(olderThan(days(1))).warn()
+        .monitoring((alerts) =>
+          alerts
+            .onProcessingTime(greaterThan(hours(2)))
+            .warn()
+            .onMessageAge(olderThan(days(1)))
+            .warn()
         );
 
     case QueuePreset.Reliable:
@@ -856,19 +848,20 @@ export function applyPreset(builder: QueueBuilder, preset: QueuePreset): QueueBu
         .withDeadLetterQueue()
         .withDuplicateDetection(minutes(10))
         .retry(aggressive())
-        .monitoring(alerts => alerts
-          .onDeadLetter().error()
-          .onFailureRate(greaterThan(0.1)).critical()
-          .onPoisonMessages().critical()
+        .monitoring((alerts) =>
+          alerts
+            .onDeadLetter()
+            .error()
+            .onFailureRate(greaterThan(0.1))
+            .critical()
+            .onPoisonMessages()
+            .critical()
         );
 
     case QueuePreset.StandardRetries:
-      return builder
-        .retry(exponentialBackoff()
-          .maxAttempts(3)
-          .initialDelay(seconds(5))
-          .maxDelay(minutes(1))
-        );
+      return builder.retry(
+        exponentialBackoff().maxAttempts(3).initialDelay(seconds(5)).maxDelay(minutes(1))
+      );
 
     default:
       return builder;
@@ -884,9 +877,7 @@ import { Queue, minutes } from '@atakora/component/queues';
 import { myProcessor } from '../functions';
 
 // Minimal configuration
-export const simpleQueue = Queue('simple')
-  .processor(myProcessor)
-  .export();
+export const simpleQueue = Queue('simple').processor(myProcessor).export();
 ```
 
 ```typescript
@@ -913,9 +904,13 @@ import { eventProcessor } from '../functions';
 export const eventQueue = Queue('events')
   .processor(eventProcessor)
   .highThroughput()
-  .monitoring(alerts => alerts
-    .onDepth(greaterThan(100000)).critical().withEmail('ops@company.com')
-    .onMessageAge(olderThan(hours(1))).warn()
+  .monitoring((alerts) =>
+    alerts
+      .onDepth(greaterThan(100000))
+      .critical()
+      .withEmail('ops@company.com')
+      .onMessageAge(olderThan(hours(1)))
+      .warn()
   )
   .withMetrics()
   .withTracing()
@@ -936,25 +931,33 @@ export const dataProcessingQueue = Queue('data-processing')
   .lockDuration(minutes(15))
   .batchSize(10)
   .parallelism(5)
-  .retry(exponentialBackoff()
-    .maxAttempts(10)
-    .initialDelay(seconds(2))
-    .maxDelay(minutes(10))
-    .withJitter()
+  .retry(
+    exponentialBackoff().maxAttempts(10).initialDelay(seconds(2)).maxDelay(minutes(10)).withJitter()
   )
   .withDeadLetterQueue('data-processing-failures')
   .deadLetterAfter(5)
   .withDuplicateDetection(minutes(30))
   .withEncryption()
-  .monitoring(alerts => alerts
-    .onDepth(greaterThan(1000)).warn()
-    .onDepth(greaterThan(5000)).critical().withEmail('oncall@company.com')
-    .onMessageAge(olderThan(hours(2))).warn()
-    .onMessageAge(olderThan(hours(6))).error()
-    .onProcessingTime(between(minutes(10), minutes(20))).warn()
-    .onProcessingTime(greaterThan(minutes(20))).error()
-    .onDeadLetter().error().withWebhook('https://alerts.company.com/webhook')
-    .onFailureRate(greaterThan(0.05)).critical()
+  .monitoring((alerts) =>
+    alerts
+      .onDepth(greaterThan(1000))
+      .warn()
+      .onDepth(greaterThan(5000))
+      .critical()
+      .withEmail('oncall@company.com')
+      .onMessageAge(olderThan(hours(2)))
+      .warn()
+      .onMessageAge(olderThan(hours(6)))
+      .error()
+      .onProcessingTime(between(minutes(10), minutes(20)))
+      .warn()
+      .onProcessingTime(greaterThan(minutes(20)))
+      .error()
+      .onDeadLetter()
+      .error()
+      .withWebhook('https://alerts.company.com/webhook')
+      .onFailureRate(greaterThan(0.05))
+      .critical()
   )
   .withMetrics()
   .withTracing()
@@ -1011,10 +1014,14 @@ export const dataQualityQueue = Queue('data-quality')
   .visibility(minutes(10))
   .retries(3)
   .withDeadLetterQueue('data-quality-dlq')
-  .monitoring(alerts => alerts
-    .onDepth(greaterThan(1000)).warn()
-    .onMessageAge(olderThan(hours(1))).warn()
-    .onDeadLetter().error()
+  .monitoring((alerts) =>
+    alerts
+      .onDepth(greaterThan(1000))
+      .warn()
+      .onMessageAge(olderThan(hours(1)))
+      .warn()
+      .onDeadLetter()
+      .error()
   )
   .export();
 ```

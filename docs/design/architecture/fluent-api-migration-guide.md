@@ -45,14 +45,14 @@ export const myQueue = Queue('my-queue')
 
 ```typescript
 // Old: String-based time spans
-messageTimeToLive: '7.00:00:00'      // 7 days
-visibilityTimeout: '00:10:00'        // 10 minutes
-minimumInterval: '00:00:05'          // 5 seconds
+messageTimeToLive: '7.00:00:00'; // 7 days
+visibilityTimeout: '00:10:00'; // 10 minutes
+minimumInterval: '00:00:05'; // 5 seconds
 
 // New: Type-safe duration helpers
-ttl(days(7))
-visibility(minutes(10))
-initialDelay(seconds(5))
+ttl(days(7));
+visibility(minutes(10));
+initialDelay(seconds(5));
 ```
 
 ### Dead Letter Queue
@@ -125,8 +125,8 @@ export const simpleQueue = defineQueue({
   processor: simpleProcessor,
   queue: {
     messageTimeToLive: '7.00:00:00',
-    maxDeliveryCount: 3
-  }
+    maxDeliveryCount: 3,
+  },
 });
 
 // New
@@ -150,23 +150,23 @@ export const monitoredQueue = defineQueue({
     maxDeliveryCount: 5,
     deadLetterQueue: {
       enabled: true,
-      name: 'monitored-dlq'
-    }
+      name: 'monitored-dlq',
+    },
   },
   monitoring: {
     queueDepthAlert: {
       threshold: 500,
-      severity: 'Warning'
+      severity: 'Warning',
     },
     queueDepthCriticalAlert: {
       threshold: 1000,
-      severity: 'Critical'
+      severity: 'Critical',
     },
     deadLetterAlert: {
       enabled: true,
-      severity: 'Error'
-    }
-  }
+      severity: 'Error',
+    },
+  },
 });
 
 // New
@@ -176,10 +176,14 @@ export const monitoredQueue = Queue('monitored')
   .visibility(minutes(5))
   .retries(5)
   .withDeadLetterQueue('monitored-dlq')
-  .monitoring(alerts => alerts
-    .onDepth(greaterThan(500)).warn()
-    .onDepth(greaterThan(1000)).critical()
-    .onDeadLetter().error()
+  .monitoring((alerts) =>
+    alerts
+      .onDepth(greaterThan(500))
+      .warn()
+      .onDepth(greaterThan(1000))
+      .critical()
+      .onDeadLetter()
+      .error()
   )
   .export();
 ```
@@ -194,16 +198,16 @@ export const performanceQueue = defineQueue({
   queue: {
     messageTimeToLive: '0.01:00:00',
     visibilityTimeout: '00:00:30',
-    maxDeliveryCount: 1
+    maxDeliveryCount: 1,
   },
   scale: {
     batchSize: 32,
-    maxConcurrentExecutions: 10
+    maxConcurrentExecutions: 10,
   },
   retry: {
     strategy: 'fixed',
-    maxRetryCount: 0
-  }
+    maxRetryCount: 0,
+  },
 });
 
 // New - Option 1: Using preset
@@ -226,25 +230,25 @@ export const performanceQueue = Queue('performance')
 
 ## Mapping Reference
 
-| Old Property | New Method | Example |
-|--------------|------------|---------|
-| `name` | Constructor parameter | `Queue('my-queue')` |
-| `processor` | `.processor()` | `.processor(myFunction)` |
-| `queue.messageTimeToLive` | `.ttl()` | `.ttl(days(7))` |
-| `queue.visibilityTimeout` | `.visibility()` | `.visibility(minutes(5))` |
-| `queue.lockDuration` | `.lockDuration()` | `.lockDuration(minutes(10))` |
-| `queue.maxDeliveryCount` | `.retries()` | `.retries(3)` |
-| `queue.deadLetterQueue.enabled` | `.withDeadLetterQueue()` | `.withDeadLetterQueue()` |
-| `queue.deadLetterQueue.name` | `.withDeadLetterQueue(name)` | `.withDeadLetterQueue('dlq')` |
-| `queue.deadLetterQueue.maxDeliveryCount` | `.deadLetterAfter()` | `.deadLetterAfter(5)` |
-| `queue.requiresDuplicateDetection` | `.withDuplicateDetection()` | `.withDuplicateDetection()` |
-| `queue.duplicateDetectionWindow` | `.withDuplicateDetection(window)` | `.withDuplicateDetection(minutes(10))` |
-| `queue.requiresSession` | `.withSessions()` | `.withSessions()` |
-| `scale.batchSize` | `.batchSize()` | `.batchSize(10)` |
-| `scale.maxConcurrentExecutions` | `.parallelism()` | `.parallelism(5)` |
-| `retry.*` | `.retry()` | `.retry(exponentialBackoff()...)` |
-| `monitoring.*` | `.monitoring()` | `.monitoring(alerts => ...)` |
-| `tags` | `.tags()` | `.tags({ env: 'prod' })` |
+| Old Property                             | New Method                        | Example                                |
+| ---------------------------------------- | --------------------------------- | -------------------------------------- |
+| `name`                                   | Constructor parameter             | `Queue('my-queue')`                    |
+| `processor`                              | `.processor()`                    | `.processor(myFunction)`               |
+| `queue.messageTimeToLive`                | `.ttl()`                          | `.ttl(days(7))`                        |
+| `queue.visibilityTimeout`                | `.visibility()`                   | `.visibility(minutes(5))`              |
+| `queue.lockDuration`                     | `.lockDuration()`                 | `.lockDuration(minutes(10))`           |
+| `queue.maxDeliveryCount`                 | `.retries()`                      | `.retries(3)`                          |
+| `queue.deadLetterQueue.enabled`          | `.withDeadLetterQueue()`          | `.withDeadLetterQueue()`               |
+| `queue.deadLetterQueue.name`             | `.withDeadLetterQueue(name)`      | `.withDeadLetterQueue('dlq')`          |
+| `queue.deadLetterQueue.maxDeliveryCount` | `.deadLetterAfter()`              | `.deadLetterAfter(5)`                  |
+| `queue.requiresDuplicateDetection`       | `.withDuplicateDetection()`       | `.withDuplicateDetection()`            |
+| `queue.duplicateDetectionWindow`         | `.withDuplicateDetection(window)` | `.withDuplicateDetection(minutes(10))` |
+| `queue.requiresSession`                  | `.withSessions()`                 | `.withSessions()`                      |
+| `scale.batchSize`                        | `.batchSize()`                    | `.batchSize(10)`                       |
+| `scale.maxConcurrentExecutions`          | `.parallelism()`                  | `.parallelism(5)`                      |
+| `retry.*`                                | `.retry()`                        | `.retry(exponentialBackoff()...)`      |
+| `monitoring.*`                           | `.monitoring()`                   | `.monitoring(alerts => ...)`           |
+| `tags`                                   | `.tags()`                         | `.tags({ env: 'prod' })`               |
 
 ## Using Presets
 
@@ -254,25 +258,25 @@ Presets provide optimized configurations for common patterns:
 // High Throughput - for event streams
 Queue('events')
   .processor(eventProcessor)
-  .highThroughput()  // batchSize(32), parallelism(10), visibility(30s)
+  .highThroughput() // batchSize(32), parallelism(10), visibility(30s)
   .export();
 
 // Low Latency - for real-time processing
 Queue('realtime')
   .processor(realtimeProcessor)
-  .lowLatency()  // batchSize(1), parallelism(5), visibility(10s)
+  .lowLatency() // batchSize(1), parallelism(5), visibility(10s)
   .export();
 
 // Long Running - for batch jobs
 Queue('batch')
   .processor(batchProcessor)
-  .longRunning()  // visibility(30m), lockDuration(1h), ttl(14d)
+  .longRunning() // visibility(30m), lockDuration(1h), ttl(14d)
   .export();
 
 // Reliable - for critical operations
 Queue('critical')
   .processor(criticalProcessor)
-  .reliable()  // retries(5), DLQ, duplicate detection, aggressive retry
+  .reliable() // retries(5), DLQ, duplicate detection, aggressive retry
   .export();
 ```
 
@@ -331,15 +335,15 @@ The new API provides compile-time validation:
 ```typescript
 // These will cause TypeScript errors:
 Queue('my-queue')
-  .ttl('7.00:00:00')  // ❌ Error: Expected Duration, got string
-  .retries('3')  // ❌ Error: Expected number, got string
-  .export();  // ❌ Error: Missing required processor()
+  .ttl('7.00:00:00') // ❌ Error: Expected Duration, got string
+  .retries('3') // ❌ Error: Expected number, got string
+  .export(); // ❌ Error: Missing required processor()
 
 // Correct usage:
 Queue('my-queue')
-  .processor(myProcessor)  // ✓ Required
-  .ttl(days(7))  // ✓ Type-safe
-  .retries(3)  // ✓ Type-safe
+  .processor(myProcessor) // ✓ Required
+  .ttl(days(7)) // ✓ Type-safe
+  .retries(3) // ✓ Type-safe
   .export();
 ```
 
@@ -392,7 +396,7 @@ const paymentQueue = Queue('payments')
   .processor(paymentProcessor)
   .reliable()
   .withEncryption()
-  .withSessions()  // Process payments in order per customer
+  .withSessions() // Process payments in order per customer
   .export();
 ```
 

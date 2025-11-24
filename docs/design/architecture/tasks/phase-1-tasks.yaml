@@ -1,0 +1,647 @@
+# Phase 1: Synthesis Orchestration (Week 1-2)
+# Critical path: Create the bridge between Component package and CDK layer
+
+---
+# ============================================================================
+# FOUNDATION TASKS (Day 1-2) - Can run in parallel
+# ============================================================================
+
+- id: DEV-1-001
+  title: Create synthesis types and interfaces
+  agent: devon
+  effort: 2h
+  dependencies: []
+  phase: 1
+  description: |
+    Create the core TypeScript interfaces and types for the synthesis orchestration layer.
+    Define contracts for BackendSynthesizer, DataSynthesizer, ApiSynthesizer, and FunctionSynthesizer.
+  acceptance_criteria:
+    - SynthesisResult interface defined with armTemplate, functions, schemas properties
+    - BackendSynthesizer interface with synthesize() method signature
+    - DataResources, ApiResources, FunctionResources types defined
+    - All types exported from packages/component/src/synthesis/types.ts
+    - TypeScript compiles without errors
+    - JSDoc comments on all public types
+  files:
+    - packages/component/src/synthesis/types.ts (create)
+    - packages/component/src/synthesis/index.ts (create)
+
+- id: DEV-1-002
+  title: Create DataSynthesizer interface and types
+  agent: devon
+  effort: 1.5h
+  dependencies: []
+  phase: 1
+  description: |
+    Define the interface for DataSynthesizer class that will generate Cosmos DB resources
+    from schema definitions. Include types for Cosmos configuration and containers.
+  acceptance_criteria:
+    - DataSynthesizer interface with synthesize() method
+    - DataResources type with cosmosAccount, database, containers
+    - CosmosConfiguration type for account/database settings
+    - ContainerConfiguration type for partition keys and indexing
+    - All types properly exported
+    - JSDoc documentation complete
+  files:
+    - packages/component/src/synthesis/data-synthesizer-types.ts (create)
+    - packages/component/src/synthesis/types.ts (modify)
+
+- id: DEV-1-003
+  title: Create ApiSynthesizer interface and types
+  agent: devon
+  effort: 1.5h
+  dependencies: []
+  phase: 1
+  description: |
+    Define the interface for ApiSynthesizer class that will generate API Management
+    resources and operations. Include types for API configuration and policies.
+  acceptance_criteria:
+    - ApiSynthesizer interface with synthesize() method
+    - ApiResources type with apim, api, operations
+    - ApiConfiguration type for API Management settings
+    - OperationDefinition type for CRUD operations
+    - PolicyConfiguration type for auth/rate-limiting policies
+    - All types properly exported
+  files:
+    - packages/component/src/synthesis/api-synthesizer-types.ts (create)
+    - packages/component/src/synthesis/types.ts (modify)
+
+- id: DEV-1-004
+  title: Create FunctionSynthesizer interface and types
+  agent: devon
+  effort: 1.5h
+  dependencies: []
+  phase: 1
+  description: |
+    Define the interface for FunctionSynthesizer class that will generate Azure Function
+    resources and code. Include types for function configuration and templates.
+  acceptance_criteria:
+    - FunctionSynthesizer interface with synthesize() method
+    - FunctionResources type with functionApp, functions
+    - FunctionConfiguration type for app settings and runtime
+    - FunctionDefinition type for individual functions
+    - FunctionTemplate type for code generation
+    - All types properly exported
+  files:
+    - packages/component/src/synthesis/function-synthesizer-types.ts (create)
+    - packages/component/src/synthesis/types.ts (modify)
+
+- id: FEL-1-001
+  title: Create OpenAPI schema type definitions
+  agent: felix
+  effort: 2h
+  dependencies: []
+  phase: 1
+  description: |
+    Create TypeScript type definitions for OpenAPI 3.0 specification generation.
+    Define types for paths, operations, schemas, and components.
+  acceptance_criteria:
+    - OpenAPISpec type matching OpenAPI 3.0 schema
+    - PathDefinition and OperationDefinition types
+    - SchemaDefinition type for model schemas
+    - ComponentsDefinition type for reusable schemas
+    - SecuritySchemeDefinition type for authentication
+    - All types properly exported
+  files:
+    - packages/component/src/synthesis/schema/openapi-types.ts (create)
+    - packages/component/src/synthesis/schema/index.ts (create)
+
+- id: FEL-1-002
+  title: Create GraphQL schema type definitions
+  agent: felix
+  effort: 2h
+  dependencies: []
+  phase: 1
+  description: |
+    Create TypeScript type definitions for GraphQL schema generation.
+    Define types for GraphQL types, queries, mutations, and resolvers.
+  acceptance_criteria:
+    - GraphQLSchemaSpec type for schema definition
+    - TypeDefinition and FieldDefinition types
+    - QueryDefinition and MutationDefinition types
+    - ResolverDefinition type for resolver functions
+    - All types properly exported
+  files:
+    - packages/component/src/synthesis/schema/graphql-types.ts (create)
+    - packages/component/src/synthesis/schema/index.ts (modify)
+
+# ============================================================================
+# NAMING & UTILITIES (Day 2-3) - Can run in parallel with foundation
+# ============================================================================
+
+- id: DEV-1-005
+  title: Create resource naming utilities
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-1-001]
+  phase: 1
+  description: |
+    Create utilities for generating Azure resource names following naming conventions.
+    Support organization, project, environment, geography, and instance parameters.
+    Integrate with @atakora/lib ResourceNameGenerator.
+  acceptance_criteria:
+    - generateCosmosAccountName() function implemented
+    - generateApiManagementName() function implemented
+    - generateFunctionAppName() function implemented
+    - generateContainerName() function for Cosmos containers
+    - All names follow Azure naming restrictions (length, characters)
+    - Unit tests cover naming edge cases
+    - Uses ResourceNameGenerator from @atakora/lib
+  files:
+    - packages/component/src/synthesis/utils/naming.ts (create)
+    - packages/component/src/synthesis/utils/naming.spec.ts (create)
+    - packages/component/src/synthesis/utils/index.ts (create)
+
+- id: DEV-1-006
+  title: Create schema introspection utilities
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-1-001]
+  phase: 1
+  description: |
+    Create utilities for introspecting schema definitions to extract models,
+    fields, relationships, and metadata needed for synthesis.
+  acceptance_criteria:
+    - getCrudModelNames() function to extract model names
+    - getModel() function to retrieve model definition
+    - getModelFields() function to extract field definitions
+    - getRelationships() function to find ref fields
+    - getRequiredFields() function to identify required fields
+    - Unit tests for all utilities
+  files:
+    - packages/component/src/synthesis/utils/schema-introspection.ts (create)
+    - packages/component/src/synthesis/utils/schema-introspection.spec.ts (create)
+    - packages/component/src/synthesis/utils/index.ts (modify)
+
+- id: DEV-1-007
+  title: Create pluralization utilities
+  agent: devon
+  effort: 1h
+  dependencies: []
+  phase: 1
+  description: |
+    Create utilities for pluralizing model names for REST endpoints and container names.
+    Handle common English pluralization rules and edge cases.
+  acceptance_criteria:
+    - pluralize() function with common rules (User -> Users, Category -> Categories)
+    - singularize() function for reverse operation
+    - Handle irregular plurals (Person -> People, Child -> Children)
+    - Handle uncountable nouns (Data, Information)
+    - Unit tests for all edge cases
+    - TypeScript type-safe implementation
+  files:
+    - packages/component/src/synthesis/utils/pluralization.ts (create)
+    - packages/component/src/synthesis/utils/pluralization.spec.ts (create)
+    - packages/component/src/synthesis/utils/index.ts (modify)
+
+# ============================================================================
+# DATA SYNTHESIZER IMPLEMENTATION (Day 3-5)
+# ============================================================================
+
+- id: DEV-1-008
+  title: Implement DataSynthesizer.synthesizeCosmosAccount()
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-1-002, DEV-1-005]
+  phase: 1
+  description: |
+    Implement the method to synthesize Cosmos DB account using CDK CosmosDBAccount construct.
+    Configure consistency level, geo-replication, and backup policies based on environment.
+  acceptance_criteria:
+    - synthesizeCosmosAccount() method creates CosmosDBAccount construct
+    - Uses naming utility for account name generation
+    - Environment-aware configuration (dev: Session, prod: Strong consistency)
+    - Returns CosmosDBAccount construct reference
+    - Integration test validates CDK construct created
+    - JSDoc documentation complete
+  files:
+    - packages/component/src/synthesis/data-synthesizer.ts (create)
+    - packages/component/src/synthesis/data-synthesizer.spec.ts (create)
+
+- id: DEV-1-009
+  title: Implement DataSynthesizer.synthesizeDatabase()
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-1-008]
+  phase: 1
+  description: |
+    Implement the method to synthesize Cosmos DB database using CDK CosmosDBDatabase construct.
+    Configure throughput and autoscale settings based on environment.
+  acceptance_criteria:
+    - synthesizeDatabase() method creates CosmosDBDatabase construct
+    - Takes CosmosDBAccount as dependency
+    - Environment-aware throughput (dev: manual, prod: autoscale)
+    - Returns CosmosDBDatabase construct reference
+    - Integration test validates database created under account
+    - JSDoc documentation complete
+  files:
+    - packages/component/src/synthesis/data-synthesizer.ts (modify)
+    - packages/component/src/synthesis/data-synthesizer.spec.ts (modify)
+
+- id: DEV-1-010
+  title: Implement DataSynthesizer.generateIndexingPolicy()
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-1-006]
+  phase: 1
+  description: |
+    Implement the method to generate Cosmos DB indexing policy from model field definitions.
+    Create composite indexes for common query patterns.
+  acceptance_criteria:
+    - generateIndexingPolicy() analyzes model fields
+    - Indexes all string fields for equality queries
+    - Indexes all number/date fields for range queries
+    - Creates composite indexes for ref fields + common fields
+    - Returns IndexingPolicy object
+    - Unit tests for various model types
+  files:
+    - packages/component/src/synthesis/data-synthesizer.ts (modify)
+    - packages/component/src/synthesis/data-synthesizer.spec.ts (modify)
+
+- id: DEV-1-011
+  title: Implement DataSynthesizer.synthesizeContainer()
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-1-009, DEV-1-010, DEV-1-007]
+  phase: 1
+  description: |
+    Implement the method to synthesize Cosmos DB container for a model using CDK CosmosDBContainer construct.
+    Configure partition key and indexing policy based on model definition.
+  acceptance_criteria:
+    - synthesizeContainer() method creates CosmosDBContainer construct
+    - Uses pluralization utility for container name
+    - Configures partition key path (/id by default)
+    - Applies indexing policy from generateIndexingPolicy()
+    - Returns CosmosDBContainer construct reference
+    - Integration test validates container created
+  files:
+    - packages/component/src/synthesis/data-synthesizer.ts (modify)
+    - packages/component/src/synthesis/data-synthesizer.spec.ts (modify)
+
+- id: DEV-1-012
+  title: Implement DataSynthesizer.synthesize() orchestration
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-1-011]
+  phase: 1
+  description: |
+    Implement the main synthesize() method that orchestrates Cosmos DB resource creation.
+    Iterate over all CRUD models and create containers for each.
+  acceptance_criteria:
+    - synthesize() method creates account, database, and all containers
+    - Iterates over schema models using getCrudModelNames()
+    - Returns DataResources with all created constructs
+    - Integration test validates complete Cosmos hierarchy
+    - Error handling for invalid schema definitions
+    - JSDoc documentation complete
+  files:
+    - packages/component/src/synthesis/data-synthesizer.ts (modify)
+    - packages/component/src/synthesis/data-synthesizer.spec.ts (modify)
+
+# ============================================================================
+# BACKEND SYNTHESIZER IMPLEMENTATION (Day 5-7)
+# ============================================================================
+
+- id: DEV-1-013
+  title: Implement BackendSynthesizer constructor and setup
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-1-001, DEV-1-005]
+  phase: 1
+  description: |
+    Implement BackendSynthesizer class constructor that initializes sub-synthesizers
+    and naming utilities. Set up CDK App and Stack creation.
+  acceptance_criteria:
+    - BackendSynthesizer class created
+    - Constructor accepts BackendObject parameter
+    - Initializes DataSynthesizer instance
+    - Creates naming utility with backend settings
+    - Creates CDK App and Stack
+    - Unit test validates initialization
+  files:
+    - packages/component/src/synthesis/backend-synthesizer.ts (create)
+    - packages/component/src/synthesis/backend-synthesizer.spec.ts (create)
+    - packages/component/src/synthesis/index.ts (modify)
+
+- id: DEV-1-014
+  title: Implement BackendSynthesizer.synthesize() orchestration
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-1-013, DEV-1-012]
+  phase: 1
+  description: |
+    Implement the main synthesize() method that orchestrates all synthesis steps.
+    Currently only calls DataSynthesizer, prepared for future API and Function synthesis.
+  acceptance_criteria:
+    - synthesize() method creates CDK Stack
+    - Calls DataSynthesizer.synthesize() with schema and stack
+    - Stores DataResources for future use
+    - Calls app.synth() to generate ARM templates
+    - Returns SynthesisResult with ARM template
+    - Integration test validates end-to-end synthesis
+  files:
+    - packages/component/src/synthesis/backend-synthesizer.ts (modify)
+    - packages/component/src/synthesis/backend-synthesizer.spec.ts (modify)
+
+- id: DEV-1-015
+  title: Add synth() method to BackendObject
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-1-014]
+  phase: 1
+  description: |
+    Add synth() method to BackendObject that creates and invokes BackendSynthesizer.
+    This is the user-facing API for synthesis.
+  acceptance_criteria:
+    - synth() method added to BackendObject interface
+    - Implementation creates BackendSynthesizer instance
+    - Calls BackendSynthesizer.synthesize(this)
+    - Returns SynthesisResult
+    - Integration test from user perspective (backend.synth())
+    - Updated JSDoc on BackendObject
+  files:
+    - packages/component/src/backend/types.ts (modify)
+    - packages/component/src/backend/define-backend.ts (modify)
+    - packages/component/src/backend/define-backend.spec.ts (modify)
+
+# ============================================================================
+# TESTING TASKS (Day 6-8) - Can run in parallel with development
+# ============================================================================
+
+- id: TEST-1-001
+  title: Write unit tests for naming utilities
+  agent: charlie
+  effort: 2h
+  dependencies: [DEV-1-005]
+  phase: 1
+  description: |
+    Write comprehensive unit tests for resource naming utilities covering
+    all Azure naming conventions and edge cases.
+  acceptance_criteria:
+    - Tests for all generateX() functions
+    - Tests for maximum length enforcement
+    - Tests for special character handling
+    - Tests for global uniqueness requirements
+    - Tests for environment/geography variations
+    - 100% code coverage for naming.ts
+  files:
+    - packages/component/src/synthesis/utils/naming.spec.ts (modify)
+
+- id: TEST-1-002
+  title: Write unit tests for schema introspection utilities
+  agent: charlie
+  effort: 2h
+  dependencies: [DEV-1-006]
+  phase: 1
+  description: |
+    Write comprehensive unit tests for schema introspection utilities covering
+    various schema configurations and edge cases.
+  acceptance_criteria:
+    - Tests for getCrudModelNames() with multiple models
+    - Tests for getModel() with invalid model names
+    - Tests for getModelFields() with all field types
+    - Tests for getRelationships() with complex refs
+    - Tests for getRequiredFields() with optional fields
+    - 100% code coverage for schema-introspection.ts
+  files:
+    - packages/component/src/synthesis/utils/schema-introspection.spec.ts (modify)
+
+- id: TEST-1-003
+  title: Write unit tests for pluralization utilities
+  agent: charlie
+  effort: 1.5h
+  dependencies: [DEV-1-007]
+  phase: 1
+  description: |
+    Write comprehensive unit tests for pluralization utilities covering
+    regular, irregular, and uncountable nouns.
+  acceptance_criteria:
+    - Tests for regular pluralization (User -> Users)
+    - Tests for irregular plurals (Person -> People, Child -> Children)
+    - Tests for words ending in -y, -s, -x, -z, -ch, -sh
+    - Tests for uncountable nouns (Data, Equipment)
+    - Tests for singularize() reverse operation
+    - 100% code coverage for pluralization.ts
+  files:
+    - packages/component/src/synthesis/utils/pluralization.spec.ts (modify)
+
+- id: TEST-1-004
+  title: Write integration tests for DataSynthesizer
+  agent: charlie
+  effort: 4h
+  dependencies: [DEV-1-012]
+  phase: 1
+  description: |
+    Write integration tests for DataSynthesizer that validate complete Cosmos DB
+    resource hierarchy generation using CDK constructs.
+  acceptance_criteria:
+    - Test single model synthesis (User model -> users container)
+    - Test multiple models synthesis (User, Project -> 2 containers)
+    - Test environment-specific configuration (dev vs prod)
+    - Test indexing policy generation for various field types
+    - Test partition key configuration
+    - Validate CDK Stack contains correct resources
+  files:
+    - packages/component/src/synthesis/data-synthesizer.integration.spec.ts (create)
+
+- id: TEST-1-005
+  title: Write integration tests for BackendSynthesizer
+  agent: charlie
+  effort: 4h
+  dependencies: [DEV-1-014]
+  phase: 1
+  description: |
+    Write integration tests for BackendSynthesizer that validate end-to-end
+    synthesis from BackendObject to ARM templates.
+  acceptance_criteria:
+    - Test minimal backend synthesis (schema only)
+    - Test backend with authentication
+    - Test backend with environment variations
+    - Test backend with custom settings
+    - Validate ARM template structure
+    - Validate resource dependencies in ARM template
+  files:
+    - packages/component/src/synthesis/backend-synthesizer.integration.spec.ts (create)
+
+- id: TEST-1-006
+  title: Write E2E test for complete synthesis flow
+  agent: charlie
+  effort: 4h
+  dependencies: [DEV-1-015]
+  phase: 1
+  description: |
+    Write end-to-end test that validates complete synthesis flow from user code
+    to deployable ARM templates. Use real schema and backend definitions.
+  acceptance_criteria:
+    - Test creates real schema with User and Project models
+    - Test creates backend with defineBackend()
+    - Test calls backend.synth()
+    - Validates ARM template written to arm.out/
+    - Validates Cosmos account, database, containers in template
+    - Test cleanup removes generated files
+  files:
+    - packages/component/__tests__/synthesis/e2e-synthesis.test.ts (create)
+
+# ============================================================================
+# DOCUMENTATION TASKS (Day 7-10) - Can run in parallel with testing
+# ============================================================================
+
+- id: DOC-1-001
+  title: Create synthesis architecture documentation
+  agent: ella
+  effort: 4h
+  dependencies: [DEV-1-014]
+  phase: 1
+  description: |
+    Create comprehensive documentation explaining the synthesis orchestration architecture,
+    how BackendSynthesizer coordinates with sub-synthesizers, and the CDK integration.
+  acceptance_criteria:
+    - Architecture diagram showing synthesis flow
+    - Explanation of each synthesizer responsibility
+    - CDK integration points documented
+    - Code examples for each synthesis step
+    - Troubleshooting guide for common issues
+    - Published to docs/design/synthesis/
+  files:
+    - docs/design/synthesis/architecture.md (create)
+    - docs/design/synthesis/README.md (create)
+
+- id: DOC-1-002
+  title: Create synthesis API reference documentation
+  agent: ella
+  effort: 3h
+  dependencies: [DEV-1-015]
+  phase: 1
+  description: |
+    Create API reference documentation for all synthesis classes, methods, and types.
+    Extract JSDoc comments and generate formatted documentation.
+  acceptance_criteria:
+    - BackendSynthesizer API documented
+    - DataSynthesizer API documented
+    - All public types documented
+    - Code examples for each API method
+    - Parameter descriptions complete
+    - Return value descriptions complete
+  files:
+    - docs/api/synthesis/backend-synthesizer.md (create)
+    - docs/api/synthesis/data-synthesizer.md (create)
+    - docs/api/synthesis/types.md (create)
+
+- id: DOC-1-003
+  title: Create synthesis user guide
+  agent: ella
+  effort: 4h
+  dependencies: [TEST-1-006]
+  phase: 1
+  description: |
+    Create user guide explaining how to use synthesis from user perspective,
+    including examples, common patterns, and customization options.
+  acceptance_criteria:
+    - Quick start guide with minimal example
+    - Step-by-step synthesis walkthrough
+    - Environment configuration guide
+    - Customization patterns documented
+    - Troubleshooting section
+    - Published to docs/user-guide/synthesis.md
+  files:
+    - docs/user-guide/synthesis.md (create)
+    - docs/user-guide/README.md (modify)
+
+- id: DOC-1-004
+  title: Create synthesis debugging guide
+  agent: ella
+  effort: 2h
+  dependencies: [DEV-1-015]
+  phase: 1
+  description: |
+    Create guide for debugging synthesis issues, inspecting generated ARM templates,
+    and validating resource configurations.
+  acceptance_criteria:
+    - How to enable debug logging
+    - How to inspect CDK construct tree
+    - How to validate ARM template
+    - Common synthesis errors documented
+    - How to test synthesis locally
+    - Published to docs/debug/synthesis.md
+  files:
+    - docs/debug/synthesis.md (create)
+    - docs/debug/README.md (create)
+
+# ============================================================================
+# VALIDATION & CLEANUP (Day 9-10)
+# ============================================================================
+
+- id: DEV-1-016
+  title: Add ARM template validation
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-1-014]
+  phase: 1
+  description: |
+    Add validation step to BackendSynthesizer that validates generated ARM templates
+    against Azure Resource Manager schema before writing to disk.
+  acceptance_criteria:
+    - Validation step added to synthesis pipeline
+    - Validates ARM template structure
+    - Validates resource types and API versions
+    - Validates resource dependencies
+    - Clear error messages for validation failures
+    - Unit tests for validation logic
+  files:
+    - packages/component/src/synthesis/validation/arm-validator.ts (create)
+    - packages/component/src/synthesis/validation/arm-validator.spec.ts (create)
+    - packages/component/src/synthesis/backend-synthesizer.ts (modify)
+
+- id: DEV-1-017
+  title: Add synthesis error handling
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-1-014]
+  phase: 1
+  description: |
+    Add comprehensive error handling to synthesis pipeline with clear error messages
+    and actionable guidance for common failure scenarios.
+  acceptance_criteria:
+    - Custom error types for synthesis failures
+    - Error context includes model name, field name when applicable
+    - Actionable error messages with fix suggestions
+    - Error aggregation for multiple validation failures
+    - Unit tests for error handling
+    - JSDoc documentation for error types
+  files:
+    - packages/component/src/synthesis/errors.ts (create)
+    - packages/component/src/synthesis/errors.spec.ts (create)
+    - packages/component/src/synthesis/backend-synthesizer.ts (modify)
+
+- id: TEST-1-007
+  title: Write error handling tests
+  agent: charlie
+  effort: 2h
+  dependencies: [DEV-1-017]
+  phase: 1
+  description: |
+    Write tests for synthesis error handling covering all error scenarios
+    and validating error message quality.
+  acceptance_criteria:
+    - Tests for invalid schema definitions
+    - Tests for missing required configuration
+    - Tests for naming conflicts
+    - Tests for CDK construct creation failures
+    - Validate error messages are clear and actionable
+    - 100% coverage for error handling code
+  files:
+    - packages/component/src/synthesis/errors.spec.ts (modify)
+    - packages/component/src/synthesis/backend-synthesizer.spec.ts (modify)
+
+# ============================================================================
+# SUMMARY
+# ============================================================================
+# Total tickets: 24
+# devon: 15 tickets (38.5 hours)
+# charlie: 7 tickets (19.5 hours)
+# felix: 2 tickets (4 hours)
+# ella: 4 tickets (13 hours)
+#
+# Total estimated effort: 75 hours
+# Parallelization: ~40 hours (with 2-3 agents working simultaneously)
+# Calendar time: 10 working days (2 weeks)

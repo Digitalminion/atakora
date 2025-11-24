@@ -17,12 +17,12 @@ const app = new App({
 
 const stack = new ResourceGroupStack(app, 'Foundation', {
   resourceGroupName: 'rg-platform-prod',
-  location: 'eastus2'
+  location: 'eastus2',
 });
 
 const vnet = new VirtualNetworks(stack, 'VNet', {
   virtualNetworkName: 'vnet-platform',
-  addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
+  addressSpace: { addressPrefixes: ['10.0.0.0/16'] },
 });
 
 app.synth();
@@ -62,10 +62,11 @@ npm run deploy
 
 New to Atakora? Start here:
 
-- **[Installation](./getting-started/installation.md)** - Install the CLI and set up your environment
-- **[5-Minute Quickstart](./getting-started/quickstart.md)** - Deploy your first infrastructure in 5 minutes
-- **[Your First Stack](./getting-started/your-first-stack.md)** - Complete tutorial for building and deploying a stack
-- **[Next Steps](./getting-started/next-steps.md)** - What to learn after the basics
+- **[Installation](./getting-started/INSTALLATION.md)** - Install the CLI and set up your environment
+- **[5-Minute Quickstart](./getting-started/QUICKSTART.md)** - Deploy your first infrastructure in 5 minutes
+- **[Your First Stack](./getting-started/YOUR-FIRST-STACK.md)** - Complete tutorial for building and deploying a stack
+- **[Functions App](./getting-started/FUNCTIONS-APP.md)** - Create your first Azure Functions application
+- **[Next Steps](./getting-started/NEXT-STEPS.md)** - What to learn after the basics
 
 ### Guides
 
@@ -104,13 +105,14 @@ Technical reference documentation:
 
 - **CLI Commands**
   - [CLI Overview](./reference/cli/README.md) - Command-line interface guide
-  - [init](./reference/cli/init.md) - Initialize a new project
-  - [add](./reference/cli/add.md) - Add a package to your project
-  - [synth](./reference/cli/synth.md) - Synthesize ARM templates
-  - [deploy](./reference/cli/deploy.md) - Deploy infrastructure to Azure
-  - [diff](./reference/cli/diff.md) - Show infrastructure changes
-  - [config](./reference/cli/config.md) - Manage Azure configuration
-  - [set-default](./reference/cli/set-default.md) - Set default package
+  - [init](./reference/cli/INIT.md) - Initialize a new project
+  - [add](./reference/cli/ADD.md) - Add a package to your project
+  - [synth](./reference/cli/SYNTH.md) - Synthesize ARM templates
+  - [deploy](./reference/cli/DEPLOY.md) - Deploy infrastructure to Azure
+  - [diff](./reference/cli/DIFF.md) - Show infrastructure changes
+  - [config](./reference/cli/CONFIG.md) - Manage Azure configuration
+  - [set-default](./reference/cli/SET-DEFAULT.md) - Set default package
+  - [function](./reference/cli/FUNCTION.md) - Manage Azure Functions
 
 - **API Reference**
   - [Core API](./reference/api/core/README.md) - @atakora/cdk core exports
@@ -138,10 +140,10 @@ Understand how Atakora works:
 Help improve Atakora:
 
 - [Contribution Guide](./contributing/README.md) - How to contribute
-- [Development Setup](./contributing/development-setup.md) - Set up your dev environment
-- [Testing Guide](./contributing/testing-guide.md) - Writing and running tests
-- [PR Process](./contributing/pr-process.md) - Submitting pull requests
-- [Release Process](./contributing/release-process.md) - How releases work
+- [Development Setup](./contributing/DEVELOPMENT-SETUP.md) - Set up your dev environment
+- [Testing Guide](./contributing/TESTING-GUIDE.md) - Writing and running tests
+- [PR Process](./contributing/PR-PROCESS.md) - Submitting pull requests
+- [Release Process](./contributing/RELEASE-PROCESS.md) - How releases work
 
 ### Examples
 
@@ -155,38 +157,42 @@ Complete, working code samples:
 
 Problem-solving guides:
 
-- [Common Issues](./troubleshooting/common-issues.md) - Frequently encountered problems
-- [Debugging Synthesis](./troubleshooting/debugging-synthesis.md) - Troubleshoot template generation
-- [Deployment Failures](./troubleshooting/deployment-failures.md) - Resolve deployment errors
-- [CI/CD Problems](./troubleshooting/ci-cd-problems.md) - Fix pipeline issues
+- [Common Issues](./troubleshooting/Common-Issues.md) - Frequently encountered problems
+- [Debugging Synthesis](./troubleshooting/Debugging-Synthesis.md) - Troubleshoot template generation
+- [Deployment Failures](./troubleshooting/Deployment-Failures.md) - Resolve deployment errors
+- [CI/CD Problems](./troubleshooting/CI-CD-Problems.md) - Fix pipeline issues
 
 ## Popular Topics
 
 **Just getting started?**
-- [Installation Guide](./getting-started/installation.md)
-- [5-Minute Quickstart](./getting-started/quickstart.md)
-- [Your First Stack](./getting-started/your-first-stack.md)
+
+- [Installation Guide](./getting-started/INSTALLATION.md)
+- [5-Minute Quickstart](./getting-started/QUICKSTART.md)
+- [Your First Stack](./getting-started/YOUR-FIRST-STACK.md)
 
 **Working with resources?**
+
 - [Adding Resources Guide](./guides/workflows/adding-resources.md)
 - [Network Resources API](./reference/api/cdk/network.md)
 - [Storage Resources API](./reference/api/cdk/storage.md)
 
 **Deploying to production?**
+
 - [Multi-Environment Deployments](./guides/workflows/deploying-environments.md)
 - [CI/CD Pipeline Tutorial](./guides/tutorials/ci-cd-pipeline.md)
 - [Government Cloud Deployment](./guides/tutorials/government-cloud-deployment.md)
 
 **Troubleshooting errors?**
+
 - [Common Validation Errors](./guides/validation/common-errors.md)
 - [Error Code Reference](./reference/error-codes.md)
-- [Common Issues](./troubleshooting/common-issues.md)
+- [Common Issues](./troubleshooting/Common-Issues.md)
 
 ## Need Help?
 
 - Browse the [Guides](./guides/README.md) for conceptual documentation
 - Check the [Reference](./reference/cli/README.md) for detailed API docs
-- Review [Troubleshooting](./troubleshooting/common-issues.md) for common problems
+- Review [Troubleshooting](./troubleshooting/Common-Issues.md) for common problems
 - See [Examples](./examples/README.md) for working code samples
 
 ## Quick Reference
@@ -200,8 +206,8 @@ This documentation is for Atakora v1.x. For older versions, see the [version arc
 
 ## Contributing to Documentation
 
-Found an error or want to improve the docs? See our [documentation contribution guide](./contributing/README.md#documentation).
+Found an error or want to improve the docs? See our [documentation contribution guide](./contributing/README.md#documentation) and review our [documentation standards](./DOCUMENTATION_STANDARDS.md).
 
 ---
 
-**Next**: [Get started with Atakora](./getting-started/installation.md) or jump to the [5-minute quickstart](./getting-started/quickstart.md)
+**Next**: [Get started with Atakora](./getting-started/INSTALLATION.md) or jump to the [5-minute quickstart](./getting-started/QUICKSTART.md)

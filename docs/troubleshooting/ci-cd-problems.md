@@ -13,6 +13,7 @@ This guide helps you troubleshoot CI/CD pipeline issues.
 ### Authentication Failures
 
 **Error**:
+
 ```
 Error: Authentication failed in pipeline
 ```
@@ -20,6 +21,7 @@ Error: Authentication failed in pipeline
 **Solutions**:
 
 1. **Check secrets/variables**:
+
    ```yaml
    # GitHub Actions: Verify secrets are set
    # Settings → Secrets and variables → Actions
@@ -29,6 +31,7 @@ Error: Authentication failed in pipeline
    ```
 
 2. **Use correct secret names**:
+
    ```yaml
    env:
      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -48,6 +51,7 @@ Error: Authentication failed in pipeline
 ### Build Failures
 
 **Error**:
+
 ```
 npm ERR! code E404
 npm ERR! 404 Not Found - GET https://registry.npmjs.org/@atakora/lib
@@ -56,12 +60,14 @@ npm ERR! 404 Not Found - GET https://registry.npmjs.org/@atakora/lib
 **Solutions**:
 
 1. **Install dependencies**:
+
    ```yaml
    - name: Install dependencies
-     run: npm ci  # Use 'ci' not 'install' in CI
+     run: npm ci # Use 'ci' not 'install' in CI
    ```
 
 2. **Use correct Node version**:
+
    ```yaml
    - name: Setup Node
      uses: actions/setup-node@v3
@@ -78,6 +84,7 @@ npm ERR! 404 Not Found - GET https://registry.npmjs.org/@atakora/lib
 ### Synthesis Failures
 
 **Error**:
+
 ```
 Synthesis failed: TypeScript compilation error
 ```
@@ -85,6 +92,7 @@ Synthesis failed: TypeScript compilation error
 **Solutions**:
 
 1. **Run build before synthesis**:
+
    ```yaml
    - name: Build
      run: npm run build
@@ -94,6 +102,7 @@ Synthesis failed: TypeScript compilation error
    ```
 
 2. **Check TypeScript version**:
+
    ```yaml
    - name: Install
      run: npm ci
@@ -109,6 +118,7 @@ Synthesis failed: TypeScript compilation error
 ### Deployment Failures
 
 **Error**:
+
 ```
 Deployment failed: Resource already exists
 ```
@@ -116,14 +126,16 @@ Deployment failed: Resource already exists
 **Solutions**:
 
 1. **Use unique resource names**:
+
    ```typescript
    // Include timestamp or run number
    const storage = new StorageAccount(this, 'Storage', {
-     name: `stapp${process.env.RUN_NUMBER}`
+     name: `stapp${process.env.RUN_NUMBER}`,
    });
    ```
 
 2. **Clean up before deployment**:
+
    ```yaml
    - name: Cleanup
      run: |
@@ -138,6 +150,7 @@ Deployment failed: Resource already exists
 ### Timeout Issues
 
 **Error**:
+
 ```
 Error: The job running on runner has exceeded the maximum execution time
 ```
@@ -145,10 +158,11 @@ Error: The job running on runner has exceeded the maximum execution time
 **Solutions**:
 
 1. **Increase timeout**:
+
    ```yaml
    jobs:
      deploy:
-       timeout-minutes: 60  # Default is 360
+       timeout-minutes: 60 # Default is 360
    ```
 
 2. **Deploy asynchronously**:
@@ -269,9 +283,9 @@ steps:
 
 ## See Also
 
-- [Common Issues](./common-issues.md)
+- [Common Issues](./Common-Issues.md)
 - [CI/CD Tutorial](../guides/tutorials/ci-cd-pipeline.md)
-- [Deployment Failures](./deployment-failures.md)
+- [Deployment Failures](./Deployment-Failures.md)
 
 ---
 

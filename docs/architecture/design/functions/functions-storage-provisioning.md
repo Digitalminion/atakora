@@ -58,14 +58,14 @@ export class FunctionsApp extends Construct {
         allowBlobPublicAccess: false,
         networkAcls: {
           defaultAction: 'Allow', // Functions need access during provisioning
-          bypass: 'AzureServices'
-        }
+          bypass: 'AzureServices',
+        },
       },
       tags: {
         ...props.tags,
         'storage-purpose': 'functions-runtime',
-        'managed-by': 'functions-app'
-      }
+        'managed-by': 'functions-app',
+      },
     });
   }
 }
@@ -82,7 +82,6 @@ export function createFunctionsApp(
   // existingStorage parameter REMOVED - not needed
   logAnalyticsWorkspaceId?: string
 ): FunctionsStack {
-
   const functionsStack = new FunctionsStack(scope, 'Functions', {
     resourceGroup: platformRG,
     runtime: FunctionRuntime.NODE,
@@ -123,6 +122,7 @@ const functions = functionsApp(
 ### Naming Convention
 
 Storage accounts for Functions follow this pattern:
+
 ```
 st{type}{org}{project}{env}{geo}{instance}func
 ```
@@ -130,6 +130,7 @@ st{type}{org}{project}{env}{geo}{instance}func
 Example: `stfndigitalprodeastus2001func`
 
 Where:
+
 - `st` = Storage account prefix
 - `fn` = Functions storage type identifier
 - `digitalp` = Organization (truncated for length)
@@ -153,6 +154,7 @@ Where:
 ### Monitoring and Diagnostics
 
 Functions storage should have:
+
 - Diagnostic settings sending logs to Log Analytics
 - Metrics for queue length (scale triggers)
 - Alerts for storage account throttling
@@ -171,6 +173,7 @@ For existing deployments using shared storage:
 ## Anti-Patterns to Avoid
 
 ### ❌ DO NOT: Share Storage Between Functions Apps
+
 ```typescript
 // WRONG - Multiple Functions Apps sharing storage
 const sharedStorage = new StorageAccounts(...);
@@ -179,6 +182,7 @@ const func2 = new FunctionsApp({ existingStorage: sharedStorage });
 ```
 
 ### ❌ DO NOT: Reuse Application Data Storage
+
 ```typescript
 // WRONG - Functions using data storage
 const dataStorage = new StorageAccounts(...);
@@ -186,6 +190,7 @@ const functions = new FunctionsApp({ existingStorage: dataStorage });
 ```
 
 ### ❌ DO NOT: Create Storage Outside Component
+
 ```typescript
 // WRONG - Storage created externally
 const functionStorage = new StorageAccounts(stack, 'FuncStorage', ...);
@@ -195,15 +200,16 @@ const functions = new FunctionsApp({ existingStorage: functionStorage });
 ## Correct Pattern
 
 ### ✅ DO: Let Each Functions App Create Its Storage
+
 ```typescript
 // CORRECT - Each Functions App manages its own storage
 const functions1 = new FunctionsApp(stack, 'Api', {
-  runtime: FunctionRuntime.NODE
+  runtime: FunctionRuntime.NODE,
   // Storage created internally
 });
 
 const functions2 = new FunctionsApp(stack, 'Background', {
-  runtime: FunctionRuntime.PYTHON
+  runtime: FunctionRuntime.PYTHON,
   // Separate storage created internally
 });
 ```
@@ -211,10 +217,12 @@ const functions2 = new FunctionsApp(stack, 'Background', {
 ## Government vs Commercial Cloud
 
 Storage provisioning pattern remains consistent across:
+
 - **Commercial**: Standard storage features, all tiers available
 - **Government**: Same pattern, ensure compliance tags added
 
 Key differences:
+
 - Government clouds may have different storage endpoints
 - Encryption requirements may be stricter in Government
 - Network isolation requirements more stringent
@@ -222,6 +230,7 @@ Key differences:
 ## Testing Requirements
 
 Tests must verify:
+
 1. Each Functions App creates unique storage account
 2. Storage account has correct configuration for Functions
 3. No storage sharing between Functions Apps
@@ -238,6 +247,6 @@ Tests must verify:
 
 ## References
 
-- [ADR-001: Azure Functions App Storage Separation](../architecture/adr-001-functions-storage-separation.md)
+- [ADR-001: Azure Functions App Storage Separation](../architecture/ADR-001-Functions-Storage-Separation.md)
 - [Azure Functions Storage Requirements](https://learn.microsoft.com/azure/azure-functions/storage-considerations)
 - [Storage Account Best Practices](https://learn.microsoft.com/azure/storage/common/storage-account-overview)

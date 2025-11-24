@@ -22,6 +22,7 @@ We have successfully implemented a truly unified events namespace that consolida
 ### 1. Complete Self-Containment
 
 The events module is completely self-contained with NO dependencies on old folder structures:
+
 - ✅ No imports from `queue-processors/`
 - ✅ No imports from `event-topics/`
 - ✅ No imports from `infrastructure/service-bus/`
@@ -33,25 +34,13 @@ All builders interact directly with CDK constructs from `@atakora/cdk`.
 Each event type has a specialized builder with fluent API:
 
 ```typescript
-queue('name')
-  .processor(fn)
-  .ttl(days(7))
-  .retries(3)
-  .deadLetter()
+queue('name').processor(fn).ttl(days(7)).retries(3).deadLetter();
 
-topic('name')
-  .processor(fn)
-  .events(['Auth.*'])
-  .retention(days(90))
+topic('name').processor(fn).events(['Auth.*']).retention(days(90));
 
-serviceBusQueue('name')
-  .processor(fn)
-  .sessions()
-  .duplicateDetection(minutes(10))
+serviceBusQueue('name').processor(fn).sessions().duplicateDetection(minutes(10));
 
-serviceBusTopic('name')
-  .subscription('sub1', processor1)
-  .subscription('sub2', processor2)
+serviceBusTopic('name').subscription('sub1', processor1).subscription('sub2', processor2);
 ```
 
 ### 3. Progressive Enhancement
@@ -60,10 +49,10 @@ Start simple, add complexity as needed:
 
 ```typescript
 // Minimal
-queue('simple')
+queue('simple');
 
 // With processor
-queue('simple', processor)
+queue('simple', processor);
 
 // Full configuration
 queue('complex')
@@ -73,7 +62,7 @@ queue('complex')
   .retries(3)
   .deadLetter()
   .batchSize(16)
-  .tag('team', 'platform')
+  .tag('team', 'platform');
 ```
 
 ### 4. Unified Deployment
@@ -92,7 +81,7 @@ events.deploy(resourceGroup);
 We use interfaces (`IFunctionApp`) rather than concrete classes to avoid circular dependencies:
 
 ```typescript
-import { IFunctionApp } from '@atakora/cdk/web';  // Interface, not class
+import { IFunctionApp } from '@atakora/cdk/web'; // Interface, not class
 ```
 
 ### Runtime Type Checking
@@ -119,6 +108,7 @@ import { StorageAccounts } from '@atakora/cdk/storage';
 ### Builder Classes
 
 Each builder:
+
 1. Stores configuration in private fields
 2. Provides fluent methods returning `this`
 3. Has preset configurations (`.reliable()`, `.fifo()`, etc.)
@@ -127,6 +117,7 @@ Each builder:
 ### EventsNamespace
 
 The namespace:
+
 1. Manages shared resources (storage, service bus)
 2. Tracks processor associations
 3. Handles deployment orchestration
@@ -146,7 +137,7 @@ export function defineEvents<T extends EventsConfig>(
     get(target, prop) {
       if (prop in namespace) return namespace[prop];
       return target[prop];
-    }
+    },
   }) as T & EventsNamespace;
 }
 ```
@@ -154,16 +145,19 @@ export function defineEvents<T extends EventsConfig>(
 ## Migration Path
 
 ### Phase 1: Parallel Implementation (Current)
+
 - New unified events in `events/resource-unified.ts`
 - Old patterns still exist in legacy folders
 - Teams can migrate at their pace
 
 ### Phase 2: Migration
+
 - Update imports to use unified events
 - Test thoroughly
 - Remove references to old patterns
 
 ### Phase 3: Cleanup
+
 - Delete `queue-processors/` folder
 - Delete `event-topics/` folder
 - Delete `infrastructure/service-bus/` folder
@@ -181,16 +175,19 @@ export function defineEvents<T extends EventsConfig>(
 ## Challenges Overcome
 
 ### CDK Type Imports
+
 - Used interfaces (`IFunctionApp`) instead of classes
 - Corrected storage account naming (`StorageAccounts`)
 - Runtime type checking for interface types
 
 ### Event Grid Support
+
 - Created simplified implementation using ARM templates
 - Will enhance when Event Grid CDK module available
 - Maintained consistent API despite limitations
 
 ### Backward Compatibility
+
 - Created parallel implementation
 - Clear migration guide
 - No breaking changes to existing code
@@ -206,6 +203,7 @@ export function defineEvents<T extends EventsConfig>(
 ## Validation
 
 The implementation:
+
 - ✅ Builds successfully with TypeScript strict mode
 - ✅ Provides full IntelliSense support
 - ✅ Has no dependencies on old patterns

@@ -13,12 +13,14 @@ Infrastructure patterns provide opinionated, reusable solutions to common archit
 The Backend Pattern enables efficient resource sharing across multiple components, dramatically reducing costs and operational complexity.
 
 **What it solves:**
+
 - Resource proliferation (each component creating separate infrastructure)
 - High costs from duplicated resources
 - Management overhead from many separate resources
 - Complex cross-component coordination
 
 **Key Benefits:**
+
 - 60-70% cost reduction through intelligent resource sharing
 - 80% fewer resources to manage
 - Simplified operations and monitoring
@@ -26,15 +28,17 @@ The Backend Pattern enables efficient resource sharing across multiple component
 - 100% backward compatible with existing code
 
 **Documentation:**
-- [Overview](./backend/overview.md) - Core concepts, how it works, and benefits
-- [API Reference](./backend/api-reference.md) - Complete API documentation
-- [Migration Guide](./backend/migration-guide.md) - Migrate from traditional pattern
-- [Best Practices](./backend/best-practices.md) - Production recommendations
-- [Troubleshooting](./backend/troubleshooting.md) - Common issues and solutions
+
+- [Overview](./Backend/OVERVIEW.md) - Core concepts, how it works, and benefits
+- [API Reference](./Backend/API-REFERENCE.md) - Complete API documentation
+- [Migration Guide](./Backend/MIGRATION-GUIDE.md) - Migrate from traditional pattern
+- [Best Practices](./Backend/BEST-PRACTICES.md) - Production recommendations
+- [Troubleshooting](./Backend/TROUBLESHOOTING.md) - Common issues and solutions
 
 **Examples:**
-- [Basic Examples](./backend/examples/basic-examples.md) - Common usage patterns
-- [Advanced Examples](./backend/examples/advanced-examples.md) - Complex scenarios
+
+- [Basic Examples](./Backend/Examples/BASIC-EXAMPLES.md) - Common usage patterns
+- [Advanced Examples](./Backend/Examples/ADVANCED-EXAMPLES.md) - Complex scenarios
 
 **Quick Example:**
 
@@ -47,14 +51,14 @@ const backend = defineBackend({
   userApi: CrudApi.define('UserApi', {
     entityName: 'User',
     schema: { id: 'string', name: 'string', email: 'string' },
-    partitionKey: '/id'
+    partitionKey: '/id',
   }),
 
   productApi: CrudApi.define('ProductApi', {
     entityName: 'Product',
     schema: { id: 'string', name: 'string', price: 'number' },
-    partitionKey: '/id'
-  })
+    partitionKey: '/id',
+  }),
 });
 
 // Add to stack - creates 3 resources instead of 6
@@ -66,6 +70,7 @@ console.log(backend.components.productApi.apiEndpoint);
 ```
 
 **When to Use:**
+
 - Multiple components with similar resource requirements
 - Cost optimization is important
 - Microservices architecture

@@ -9,6 +9,7 @@ We're refactoring the ARM template synthesis pipeline to fix critical cross-temp
 ## Problem Statement
 
 Current issues documented in `SYNTHESIS_ISSUES_ANALYSIS.md`:
+
 - Unresolved placeholders (`${cosmosEndpoint}`) in templates
 - Duplicate app settings
 - Cross-template `dependsOn` references fail
@@ -33,6 +34,7 @@ Root cause: Resources generate ARM JSON with baked expressions BEFORE template s
 ## Key Deliverables
 
 ### Architecture Documentation
+
 - **ADR-018:** Context-Aware Synthesis Pipeline (`docs/design/architecture/adr-018-synthesis-pipeline-refactoring.md`)
 - **Implementation Spec:** Detailed component specifications (`docs/design/architecture/synthesis-refactor-implementation-spec.md`)
 
@@ -66,43 +68,44 @@ Root cause: Resources generate ARM JSON with baked expressions BEFORE template s
 ## Task Assignments
 
 ### Parent Task
+
 - **ID:** 1211640491521046
 - **Title:** Synthesis Pipeline Refactoring: Context-Aware ARM Generation
 - **Status:** In Progress (with 6 phases as subtasks)
 
 ### Phase 1: Core Infrastructure (8 agents working in parallel)
 
-| Agent | Task ID | Task | File |
-|-------|---------|------|------|
-| devon1 | 1211640735185080 | Design ResourceMetadata Interface | `packages/lib/src/synthesis/types.ts` |
-| devon2 | 1211640390785571 | Implement SynthesisContext Class | `packages/lib/src/synthesis/context/synthesis-context.ts` |
-| devon3 | 1211640405897990 | Create TemplateAssignments Type System | `packages/lib/src/synthesis/types.ts` |
-| devon4 | 1211640748790626 | Update Resource Base Class | `packages/lib/src/core/resource.ts` |
+| Agent  | Task ID          | Task                                   | File                                                      |
+| ------ | ---------------- | -------------------------------------- | --------------------------------------------------------- |
+| devon1 | 1211640735185080 | Design ResourceMetadata Interface      | `packages/lib/src/synthesis/types.ts`                     |
+| devon2 | 1211640390785571 | Implement SynthesisContext Class       | `packages/lib/src/synthesis/context/synthesis-context.ts` |
+| devon3 | 1211640405897990 | Create TemplateAssignments Type System | `packages/lib/src/synthesis/types.ts`                     |
+| devon4 | 1211640748790626 | Update Resource Base Class             | `packages/lib/src/core/resource.ts`                       |
 
 ### Phase 2: Template & Pipeline (parallel work)
 
-| Agent | Task ID | Task | File |
-|-------|---------|------|------|
+| Agent  | Task ID          | Task                               | File                                                       |
+| ------ | ---------------- | ---------------------------------- | ---------------------------------------------------------- |
 | grace1 | 1211640403392925 | Implement Metadata-Based Splitting | `packages/lib/src/synthesis/assembly/template-splitter.ts` |
-| grace2 | 1211640411009307 | Refactor Synthesizer Pipeline | `packages/lib/src/synthesis/synthesizer.ts` |
+| grace2 | 1211640411009307 | Refactor Synthesizer Pipeline      | `packages/lib/src/synthesis/synthesizer.ts`                |
 
 ### Phase 3: Resource Migration (parallel work)
 
-| Agent | Task ID | Task | File |
-|-------|---------|------|------|
-| devon5 | 1211640749577354 | Migrate FunctionApp | `packages/cdk/src/functions/function-app.ts` |
-| devon6 | (to create) | Migrate StorageAccount | `packages/lib/src/resources/storage/storage-account.ts` |
-| devon7 | (to create) | Migrate CosmosDbAccount | `packages/lib/src/resources/cosmos/cosmos-account.ts` |
-| devon8 | (to create) | Migrate KeyVault | `packages/lib/src/resources/security/key-vault.ts` |
+| Agent  | Task ID          | Task                    | File                                                    |
+| ------ | ---------------- | ----------------------- | ------------------------------------------------------- |
+| devon5 | 1211640749577354 | Migrate FunctionApp     | `packages/cdk/src/functions/function-app.ts`            |
+| devon6 | (to create)      | Migrate StorageAccount  | `packages/lib/src/resources/storage/storage-account.ts` |
+| devon7 | (to create)      | Migrate CosmosDbAccount | `packages/lib/src/resources/cosmos/cosmos-account.ts`   |
+| devon8 | (to create)      | Migrate KeyVault        | `packages/lib/src/resources/security/key-vault.ts`      |
 
 ### Phase 4: Testing & Validation
 
-| Agent | Task ID | Task | Files |
-|-------|---------|------|-------|
-| charlie1 | 1211640514327881 | Unit Tests for Core Components | `*.test.ts` files |
-| charlie2 | (to create) | Integration Tests | `synthesis-integration.test.ts` |
-| charlie3 | (to create) | E2E Deployment Tests | `e2e/synthesis-pipeline.test.ts` |
-| charlie4 | (to create) | Performance Benchmarks | `synthesis.bench.ts` |
+| Agent    | Task ID          | Task                           | Files                            |
+| -------- | ---------------- | ------------------------------ | -------------------------------- |
+| charlie1 | 1211640514327881 | Unit Tests for Core Components | `*.test.ts` files                |
+| charlie2 | (to create)      | Integration Tests              | `synthesis-integration.test.ts`  |
+| charlie3 | (to create)      | E2E Deployment Tests           | `e2e/synthesis-pipeline.test.ts` |
+| charlie4 | (to create)      | Performance Benchmarks         | `synthesis.bench.ts`             |
 
 ## Parallelization Strategy
 
@@ -164,11 +167,13 @@ Critical integration points that need coordination:
 For each agent:
 
 1. **Find your task:**
+
    ```bash
    npx dm list --agent <your-name> -i
    ```
 
 2. **Get task details:**
+
    ```bash
    npx dm task get <task-id>
    ```
@@ -178,6 +183,7 @@ For each agent:
    - ADR: `docs/design/architecture/adr-018-synthesis-pipeline-refactoring.md`
 
 4. **Start work and mark in progress:**
+
    ```bash
    npx dm comment add <task-id> "Starting implementation"
    ```

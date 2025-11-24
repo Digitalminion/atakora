@@ -7,6 +7,7 @@
 ## Overview
 
 This example demonstrates Azure Government Cloud deployment with compliance-focused infrastructure:
+
 - Government region deployment (US Gov Virginia)
 - Enhanced security configuration
 - Compliance tags
@@ -51,28 +52,28 @@ class GovCloudStack extends Stack {
   constructor(scope: App, id: string) {
     super(scope, id, {
       environment: 'production',
-      location: 'usgovvirginia',  // Government region
+      location: 'usgovvirginia', // Government region
       tags: {
         compliance: 'FedRAMP-High',
         classification: 'Sensitive',
-        department: 'Defense'
-      }
+        department: 'Defense',
+      },
     });
 
     const rg = new ResourceGroup(this, 'ResourceGroup', {
-      location: this.location
+      location: this.location,
     });
 
     // Virtual Network
     const vnet = new VirtualNetwork(this, 'VNet', {
       resourceGroup: rg,
-      addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
+      addressSpace: { addressPrefixes: ['10.0.0.0/16'] },
     });
 
     const privateSubnet = new Subnet(this, 'PrivateSubnet', {
       virtualNetwork: vnet,
       addressPrefix: '10.0.1.0/24',
-      privateEndpointNetworkPolicies: 'Disabled'
+      privateEndpointNetworkPolicies: 'Disabled',
     });
 
     // Storage (no public access)
@@ -81,7 +82,7 @@ class GovCloudStack extends Stack {
       sku: { name: 'Standard_GRS' },
       publicNetworkAccess: 'Disabled',
       minimumTlsVersion: 'TLS1_2',
-      allowBlobPublicAccess: false
+      allowBlobPublicAccess: false,
     });
 
     // Private Endpoint
@@ -89,7 +90,7 @@ class GovCloudStack extends Stack {
       resourceGroup: rg,
       subnet: privateSubnet,
       privateLinkServiceId: storage.id,
-      groupIds: ['blob']
+      groupIds: ['blob'],
     });
 
     // Key Vault (FIPS-compliant)
@@ -98,7 +99,7 @@ class GovCloudStack extends Stack {
       tenantId: process.env.AZURE_TENANT_ID!,
       enableRbacAuthorization: true,
       enablePurgeProtection: true,
-      softDeleteRetentionInDays: 90
+      softDeleteRetentionInDays: 90,
     });
   }
 }
@@ -135,6 +136,7 @@ az account set --subscription <gov-subscription-id>
 ## Compliance Features
 
 ### Enhanced Security
+
 - No public network access
 - Private endpoints only
 - TLS 1.2 minimum
@@ -142,6 +144,7 @@ az account set --subscription <gov-subscription-id>
 - Soft delete (90 days)
 
 ### Compliance Tags
+
 - FedRAMP level
 - Data classification
 - Department/agency
@@ -149,7 +152,9 @@ az account set --subscription <gov-subscription-id>
 - System owner
 
 ### Audit Logging
+
 All resources automatically tagged for:
+
 - Compliance tracking
 - Cost allocation
 - Access auditing
@@ -191,6 +196,7 @@ az resource list \
 ## Cost Estimate
 
 Monthly cost (US Gov Virginia):
+
 - Storage (GRS): ~$30
 - Virtual Network: ~$5
 - Private Endpoints: ~$15

@@ -11,6 +11,7 @@
 Successfully consolidated architecture documentation scattered across two locations (`/docs/architecture/` and `/docs/design/`) into a single, well-organized structure. Resolved 5 ADR numbering conflicts, created a continuous ADR sequence (001-026), and separated user-facing architecture docs from internal planning artifacts.
 
 **Key Achievements:**
+
 - ✅ Single source of truth for all ADRs
 - ✅ Continuous numbering sequence (no gaps or duplicates)
 - ✅ Clear separation of user-facing vs internal docs
@@ -25,6 +26,7 @@ Successfully consolidated architecture documentation scattered across two locati
 ### Location 1: `/docs/architecture/`
 
 **Files Found**: 16 files
+
 - 4 numbered ADRs (adr-001 through adr-004)
 - 1 capitalized ADR (ADR-001)
 - Supporting documents (recommendations, post-mortems)
@@ -35,6 +37,7 @@ Successfully consolidated architecture documentation scattered across two locati
 ### Location 2: `/docs/design/`
 
 **Files Found**: 90+ files across multiple subdirectories
+
 - `architecture/` - 63 files (ADRs and design docs)
 - `analysis/` - Technical analysis reports
 - `patterns/` - Design patterns
@@ -87,16 +90,17 @@ Successfully consolidated architecture documentation scattered across two locati
 
 **26 ADRs in continuous sequence (001-026):**
 
-| Range | Topic | Count |
-|-------|-------|-------|
-| 001-005 | Core Infrastructure & Validation | 5 |
-| 006-008 | Package Distribution & Type System | 3 |
-| 009-010 | Deployment & Resolution | 2 |
-| 011-016 | API Architecture | 6 |
-| 017-019 | Synthesis Pipeline | 3 |
-| 020-026 | Networking, Security & Advanced | 7 |
+| Range   | Topic                              | Count |
+| ------- | ---------------------------------- | ----- |
+| 001-005 | Core Infrastructure & Validation   | 5     |
+| 006-008 | Package Distribution & Type System | 3     |
+| 009-010 | Deployment & Resolution            | 2     |
+| 011-016 | API Architecture                   | 6     |
+| 017-019 | Synthesis Pipeline                 | 3     |
+| 020-026 | Networking, Security & Advanced    | 7     |
 
 **Critical ADRs (referenced in AGENT.md):**
+
 - ✅ ADR-001: Functions Storage Separation
 - ✅ ADR-017: Linked Templates Default (was ADR-016)
 - ✅ ADR-018: Backend API Redesign (was ADR-017)
@@ -205,6 +209,7 @@ internal/
 ### Navigation Paths Updated
 
 All cross-references updated to reflect new locations:
+
 - ADR index links to correct file locations
 - Gen 2 README provides navigation to all design docs
 - Internal README explains document purpose and organization
@@ -253,10 +258,12 @@ All cross-references updated to reflect new locations:
 ### File Count Verification
 
 **Before consolidation:**
+
 - `/docs/architecture/` - 16 files
 - `/docs/design/` - 90+ files
 
 **After consolidation:**
+
 - `/docs/architecture/decisions/` - 26 ADRs + 7 supporting docs
 - `/docs/architecture/design/` - 32 design docs (organized by topic)
 - `/docs/internal/` - 30 planning/analysis/task docs
@@ -323,13 +330,13 @@ All cross-references updated to reflect new locations:
 
 ### Documentation Quality Improvements
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| ADR numbering conflicts | 5 conflicts | 0 conflicts | ✅ 100% |
-| Locations with architecture docs | 2 locations | 1 location | ✅ Single source of truth |
-| Missing ADR numbers | Yes (gaps) | No (001-026 continuous) | ✅ Complete sequence |
-| User vs internal separation | Mixed | Clear | ✅ Clean separation |
-| Navigation clarity | Confusing | Clear indexes | ✅ Improved navigation |
+| Metric                           | Before      | After                   | Improvement               |
+| -------------------------------- | ----------- | ----------------------- | ------------------------- |
+| ADR numbering conflicts          | 5 conflicts | 0 conflicts             | ✅ 100%                   |
+| Locations with architecture docs | 2 locations | 1 location              | ✅ Single source of truth |
+| Missing ADR numbers              | Yes (gaps)  | No (001-026 continuous) | ✅ Complete sequence      |
+| User vs internal separation      | Mixed       | Clear                   | ✅ Clean separation       |
+| Navigation clarity               | Confusing   | Clear indexes           | ✅ Improved navigation    |
 
 ### Files Organized
 
@@ -345,34 +352,34 @@ All cross-references updated to reflect new locations:
 
 ### Original → New Number Mapping
 
-| Original File | Original # | New # | Reason |
-|---------------|------------|-------|--------|
-| functions-storage-separation.md | adr-001 | ADR-001 | Keep (AGENT.md reference) |
-| validation-architecture.md | adr-001 | ADR-002 | Conflict resolution |
-| manifest-schema.md | adr-002 | ADR-003 | Shift for conflict |
-| cdk-package-architecture.md | adr-003 | ADR-004 | Shift for conflict |
-| cross-resource-references.md | adr-004 | ADR-005 | Shift for conflict |
-| npm-package-distribution.md | adr-005 | ADR-006 | Keep sequence |
-| azure-functions-architecture.md | adr-006 | ADR-007 | Keep sequence |
-| resource-object-pattern.md | adr-007 | ADR-008 | Keep sequence |
-| deployment-orchestration.md | adr-003 | ADR-009 | Conflict resolution |
-| resolver-auto-detection.md | adr-009 | ADR-010 | Keep sequence |
-| api-stack-architecture.md | adr-010 | ADR-011 | Keep sequence |
-| graphql-resolver-architecture.md | adr-011 | ADR-012 | Keep sequence |
-| graphql-advanced-features.md | adr-012 | ADR-013 | Keep sequence |
-| azure-rbac-grant-pattern.md | adr-013 | ADR-014 | Keep sequence |
-| rest-api-architecture.md | adr-014 | ADR-015 | Keep sequence |
-| rest-advanced-features.md | adr-015 | ADR-016 | Keep sequence |
-| linked-templates-default.md | adr-016 | ADR-017 | Keep (AGENT.md reference) |
-| backend-api-redesign.md | adr-017 | ADR-018 | Keep (AGENT.md reference) |
-| synthesis-pipeline-refactoring.md | adr-018 | ADR-019 | Keep (AGENT.md reference) |
-| networking-security-strategy.md | adr-020 | ADR-020 | Keep number |
-| define-backend-pattern.md | ADR-001 | ADR-021 | Conflict resolution |
-| cdk-type-usage-standards.md | adr-001 | ADR-022 | Conflict resolution |
-| schema-type-structure.md | adr-001 | ADR-023 | Conflict resolution |
-| documentation-split-strategy.md | adr-004 | ADR-024 | Conflict resolution |
-| lib-internal-cdk-exports.md | adr-004 | ADR-025 | Conflict resolution |
-| unified-crud-definition.md | adr-025 | ADR-026 | Keep sequence |
+| Original File                     | Original # | New #   | Reason                    |
+| --------------------------------- | ---------- | ------- | ------------------------- |
+| functions-storage-separation.md   | adr-001    | ADR-001 | Keep (AGENT.md reference) |
+| validation-architecture.md        | adr-001    | ADR-002 | Conflict resolution       |
+| manifest-schema.md                | adr-002    | ADR-003 | Shift for conflict        |
+| cdk-package-architecture.md       | adr-003    | ADR-004 | Shift for conflict        |
+| cross-resource-references.md      | adr-004    | ADR-005 | Shift for conflict        |
+| npm-package-distribution.md       | adr-005    | ADR-006 | Keep sequence             |
+| azure-functions-architecture.md   | adr-006    | ADR-007 | Keep sequence             |
+| resource-object-pattern.md        | adr-007    | ADR-008 | Keep sequence             |
+| deployment-orchestration.md       | adr-003    | ADR-009 | Conflict resolution       |
+| resolver-auto-detection.md        | adr-009    | ADR-010 | Keep sequence             |
+| api-stack-architecture.md         | adr-010    | ADR-011 | Keep sequence             |
+| graphql-resolver-architecture.md  | adr-011    | ADR-012 | Keep sequence             |
+| graphql-advanced-features.md      | adr-012    | ADR-013 | Keep sequence             |
+| azure-rbac-grant-pattern.md       | adr-013    | ADR-014 | Keep sequence             |
+| rest-api-architecture.md          | adr-014    | ADR-015 | Keep sequence             |
+| rest-advanced-features.md         | adr-015    | ADR-016 | Keep sequence             |
+| linked-templates-default.md       | adr-016    | ADR-017 | Keep (AGENT.md reference) |
+| backend-api-redesign.md           | adr-017    | ADR-018 | Keep (AGENT.md reference) |
+| synthesis-pipeline-refactoring.md | adr-018    | ADR-019 | Keep (AGENT.md reference) |
+| networking-security-strategy.md   | adr-020    | ADR-020 | Keep number               |
+| define-backend-pattern.md         | ADR-001    | ADR-021 | Conflict resolution       |
+| cdk-type-usage-standards.md       | adr-001    | ADR-022 | Conflict resolution       |
+| schema-type-structure.md          | adr-001    | ADR-023 | Conflict resolution       |
+| documentation-split-strategy.md   | adr-004    | ADR-024 | Conflict resolution       |
+| lib-internal-cdk-exports.md       | adr-004    | ADR-025 | Conflict resolution       |
+| unified-crud-definition.md        | adr-025    | ADR-026 | Keep sequence             |
 
 ---
 

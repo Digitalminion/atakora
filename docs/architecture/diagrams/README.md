@@ -53,6 +53,7 @@ App
 ## Diagram Sources
 
 Diagrams are created using:
+
 - Mermaid.js for flow diagrams
 - ASCII art for simple diagrams
 - PlantUML for complex UML diagrams (future)

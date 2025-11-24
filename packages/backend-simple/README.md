@@ -1,6 +1,6 @@
 # @atakora/backend-simple
 
-A minimal Atakora backend example that uses only defaults. This package demonstrates the simplest possible setup - **just define your schema and authentication**, everything else is handled automatically with sensible defaults.
+A minimal Atakora backend package that uses sensible defaults for everything. This package provides the simplest possible setup - **just define your schema and authentication**, everything else is handled automatically.
 
 ## What You Get
 
@@ -42,6 +42,7 @@ packages/backend-simple/
 ```
 
 **What's NOT here (because defaults handle it):**
+
 - ❌ No `network/` folder - uses default VNet settings
 - ❌ No `storage/` folder - uses default Cosmos DB + Blob storage settings
 - ❌ No `compute/` folder - uses default Function App settings
@@ -57,9 +58,7 @@ packages/backend-simple/
 import { defineAuth, auth } from '@atakora/component/auth';
 
 export const authentication = defineAuth({
-  Primary: auth.entra()
-    .tenant(process.env.AZURE_TENANT_ID!)
-    .clientId(process.env.AZURE_CLIENT_ID!),
+  Primary: auth.entra().tenant(process.env.AZURE_TENANT_ID!).clientId(process.env.AZURE_CLIENT_ID!),
 });
 ```
 
@@ -71,16 +70,14 @@ import { defineSchema, a, c, e, f } from '@atakora/component';
 export const schema = defineSchema({
   schema: a.schema({
     // CRUD Model - Auto-generates 5 REST endpoints
-    User: c.model({
-      id: a.id(),
-      email: a.string().required().email(),
-      name: a.string().required(),
-      role: a.enum(['user', 'admin']).default('user'),
-    })
-      .authorization(allow => [
-        allow.owner('id'),
-        allow.groups(['admin']).all(),
-      ]),
+    User: c
+      .model({
+        id: a.id(),
+        email: a.string().required().email(),
+        name: a.string().required(),
+        role: a.enum(['user', 'admin']).default('user'),
+      })
+      .authorization((allow) => [allow.owner('id'), allow.groups(['admin']).all()]),
 
     // Event Model - Auto-generates queue + processor
     DataUploaded: e.model({
@@ -131,10 +128,12 @@ When you deploy this backend:
 ### Azure Resources (Auto-Provisioned)
 
 **Compute:**
+
 - Function App (Consumption plan in dev, Premium in prod)
 - 7 Azure Functions (5 for User CRUD, 1 for DataUploaded, 1 for GenerateReport)
 
 **Storage:**
+
 - Cosmos DB account (Serverless in dev, Autoscale in prod)
 - Cosmos DB containers: `users`
 - Storage Account
@@ -142,17 +141,20 @@ When you deploy this backend:
 - Blob containers: Auto-created as needed
 
 **Security:**
+
 - Managed Identity (for Function App)
 - Key Vault (for secrets)
 - Entra ID integration
 
 **Monitoring:**
+
 - Application Insights
 - Log Analytics workspace
 
 ### REST Endpoints (Auto-Generated)
 
 **User CRUD:**
+
 ```
 POST   /api/users           Create user
 GET    /api/users/:id       Get user
@@ -162,11 +164,13 @@ GET    /api/users           List users (with filters, pagination, sorting)
 ```
 
 **Events:**
+
 ```
 POST   /api/events/data-uploaded    Publish event
 ```
 
 **Functions:**
+
 ```
 POST   /api/functions/generate-report    Invoke function
 ```
@@ -202,6 +206,7 @@ See [design defaults documentation](../../docs/reference/backend/design/) for co
 ## When to Customize
 
 This simple setup works great for:
+
 - ✅ MVPs and prototypes
 - ✅ Small to medium applications
 - ✅ Standard CRUD + events + functions
@@ -209,6 +214,7 @@ This simple setup works great for:
 - ✅ Standard security requirements
 
 **When to add custom infrastructure:**
+
 - Need VNet integration → Add `network/resource.ts`
 - Need multi-region Cosmos DB → Add `storage/resource.ts`
 - Need larger Function App → Add `compute/resource.ts`
@@ -255,21 +261,22 @@ NODE_ENV=development
 If you need custom logic for the `DataUploaded` event:
 
 1. Create `src/event/resource.ts`:
+
 ```typescript
 import { defineEvents, configureEvent } from '@atakora/component/events';
 
 export const event = defineEvents({
-  DataUploaded: configureEvent('DataUploaded')
-    .withProcessor(async (context, event) => {
-      // Your custom processing logic
-      await context.db.datasets.update(event.datasetId, {
-        status: 'uploaded',
-      });
-    }),
+  DataUploaded: configureEvent('DataUploaded').withProcessor(async (context, event) => {
+    // Your custom processing logic
+    await context.db.datasets.update(event.datasetId, {
+      status: 'uploaded',
+    });
+  }),
 });
 ```
 
 2. Attach in `src/index.ts`:
+
 ```typescript
 backend.schema.DataUploaded.queue.attach(event.DataUploaded);
 ```
@@ -279,20 +286,21 @@ backend.schema.DataUploaded.queue.attach(event.DataUploaded);
 If you need custom logic for the `GenerateReport` function:
 
 1. Create `src/function/resource.ts`:
+
 ```typescript
 import { defineFunctions, configureFunction } from '@atakora/component/functions';
 
 export const func = defineFunctions({
-  GenerateReport: configureFunction('GenerateReport')
-    .withHandler(async (context, input) => {
-      // Your custom report generation logic
-      const reportUrl = await generateReport(input.datasetId, input.format);
-      return { reportUrl };
-    }),
+  GenerateReport: configureFunction('GenerateReport').withHandler(async (context, input) => {
+    // Your custom report generation logic
+    const reportUrl = await generateReport(input.datasetId, input.format);
+    return { reportUrl };
+  }),
 });
 ```
 
 2. Attach in `src/index.ts`:
+
 ```typescript
 backend.schema.GenerateReport.function.attach(func.GenerateReport);
 ```
@@ -308,6 +316,7 @@ If defaults don't fit your needs, add resource files:
 **Performance:** `src/performance/resource.ts`
 
 Then attach them in `src/index.ts`:
+
 ```typescript
 backend.network.primary.attach(networking.Primary);
 backend.storage.database.attach(data.Database);
@@ -316,28 +325,37 @@ backend.storage.database.attach(data.Database);
 
 ## Documentation
 
+Complete documentation for this package is available at:
+
+- **[Overview & Concepts](../../docs/guides/patterns/backend-simple/overview.md)** - Package introduction and when to use it
+- **[Getting Started Guide](../../docs/guides/patterns/backend-simple/getting-started.md)** - Deploy your first backend in 5 minutes
+- **[Common Examples](../../docs/guides/patterns/backend-simple/examples.md)** - Real-world patterns and use cases
+- **[Comparison with Full Backend](../../docs/guides/patterns/backend-simple/comparison.md)** - Understand the differences
+
+### Reference Documentation
+
 - [Backend Reference](../../docs/reference/backend/) - Complete feature documentation
 - [Schema Reference](../../docs/reference/backend/schema.md) - All model types and field types
 - [Authentication Reference](../../docs/reference/backend/authentication.md) - Auth configuration
 - [Design Defaults](../../docs/reference/backend/design/) - What happens when you don't customize
-- [Migration Guides](../backend/migration/) - Migrating from existing backends
 
 ## Comparison: Simple vs. Full Backend
 
-| Feature | backend-simple | backend (full) |
-|---------|---------------|----------------|
-| **Lines of code** | ~30 lines | ~200+ lines |
-| **Files** | 3 files | 10+ files |
-| **Customization** | Uses all defaults | Full control over all infrastructure |
-| **Best for** | MVPs, prototypes, simple apps | Production apps with specific requirements |
-| **Learning curve** | 5 minutes | 1-2 hours |
-| **Flexibility** | High (can add customizations later) | Maximum |
+| Feature            | backend-simple                      | backend (full)                             |
+| ------------------ | ----------------------------------- | ------------------------------------------ |
+| **Lines of code**  | ~30 lines                           | ~200+ lines                                |
+| **Files**          | 3 files                             | 10+ files                                  |
+| **Customization**  | Uses all defaults                   | Full control over all infrastructure       |
+| **Best for**       | MVPs, prototypes, simple apps       | Production apps with specific requirements |
+| **Learning curve** | 5 minutes                           | 1-2 hours                                  |
+| **Flexibility**    | High (can add customizations later) | Maximum                                    |
 
 **Recommendation:** Start with `backend-simple`, add customizations from `backend` as you need them.
 
 ## Example Projects
 
 See working examples in `/examples`:
+
 - `examples/simple-crud` - Basic CRUD API
 - `examples/simple-events` - Event processing
 - `examples/simple-functions` - Custom functions

@@ -20,6 +20,7 @@ Common issues and solutions when working with the Backend Pattern in @atakora/co
 ### Issue: "Cannot access components before backend initialization"
 
 **Error Message:**
+
 ```
 Error: Cannot access components before backend initialization.
 Call initialize() or addToStack() first.
@@ -29,6 +30,7 @@ Call initialize() or addToStack() first.
 Attempting to access `backend.components` before calling `addToStack()` or `initialize()`.
 
 **Solution:**
+
 ```typescript
 const backend = defineBackend({ ... });
 
@@ -48,6 +50,7 @@ console.log(backend.components.userApi.apiEndpoint);
 ### Issue: "Backend must have at least one component"
 
 **Error Message:**
+
 ```
 Error: Backend must have at least one component
 ```
@@ -56,6 +59,7 @@ Error: Backend must have at least one component
 Calling `defineBackend()` with an empty component map.
 
 **Solution:**
+
 ```typescript
 // WRONG: Empty component map
 const backend = defineBackend({});
@@ -71,6 +75,7 @@ const backend = defineBackend({
 ### Issue: Conflicting Resource Requirements
 
 **Error Message:**
+
 ```
 Error: Conflicting consistency requirements for Cosmos DB
   Component A requires: Session
@@ -82,52 +87,55 @@ Error: Conflicting consistency requirements for Cosmos DB
 Multiple components have incompatible resource requirements.
 
 **Solution 1: Align Requirements**
+
 ```typescript
 // Make all components use the same consistency level
 const backend = defineBackend({
   userApi: CrudApi.define('UserApi', {
     // ... config
-    consistency: 'Session' // Align with other components
+    consistency: 'Session', // Align with other components
   }),
 
   productApi: CrudApi.define('ProductApi', {
     // ... config
-    consistency: 'Session' // Same consistency
-  })
+    consistency: 'Session', // Same consistency
+  }),
 });
 ```
 
 **Solution 2: Use Priority**
+
 ```typescript
 // Higher priority requirement wins
 const backend = defineBackend({
   criticalApi: CrudApi.define('CriticalApi', {
     // ... config
     consistency: 'Strong',
-    priority: 30 // Higher priority
+    priority: 30, // Higher priority
   }),
 
   normalApi: CrudApi.define('NormalApi', {
     // ... config
     consistency: 'Session',
-    priority: 10 // Lower priority (will use Strong from above)
-  })
+    priority: 10, // Lower priority (will use Strong from above)
+  }),
 });
 ```
 
 **Solution 3: Separate Backends**
+
 ```typescript
 // Create separate backends for incompatible requirements
 const strongConsistencyBackend = defineBackend({
   criticalApi: CrudApi.define('CriticalApi', {
     // ... config with Strong consistency
-  })
+  }),
 });
 
 const sessionConsistencyBackend = defineBackend({
   normalApi: CrudApi.define('NormalApi', {
     // ... config with Session consistency
-  })
+  }),
 });
 ```
 
@@ -138,6 +146,7 @@ const sessionConsistencyBackend = defineBackend({
 ### Issue: Resource Limit Exceeded
 
 **Error Message:**
+
 ```
 Error: ResourceLimitError: Maximum Cosmos DB accounts exceeded
   Limit: 1
@@ -149,6 +158,7 @@ Error: ResourceLimitError: Maximum Cosmos DB accounts exceeded
 Backend configuration has resource limits that prevent additional resources from being created.
 
 **Solution 1: Increase Limits**
+
 ```typescript
 const backend = defineBackend({ ... }, {
   limits: {
@@ -160,6 +170,7 @@ const backend = defineBackend({ ... }, {
 ```
 
 **Solution 2: Share More Aggressively**
+
 ```typescript
 // Ensure components share resources
 // Check that requirementKey is the same for resources that should be shared
@@ -176,6 +187,7 @@ const backend = defineBackend({
 ```
 
 **Solution 3: Split into Multiple Backends**
+
 ```typescript
 // Create separate backends if truly need separate resources
 const backend1 = defineBackend({
@@ -192,6 +204,7 @@ const backend2 = defineBackend({
 ### Issue: Duplicate Component IDs
 
 **Error Message:**
+
 ```
 Error: DuplicateComponentError: Component with ID 'UserApi' already exists
 ```
@@ -200,6 +213,7 @@ Error: DuplicateComponentError: Component with ID 'UserApi' already exists
 Two components defined with the same ID.
 
 **Solution:**
+
 ```typescript
 // WRONG: Duplicate IDs
 const backend = defineBackend({
@@ -221,6 +235,7 @@ const backend = defineBackend({
 ### Issue: Missing Required Resources
 
 **Error Message:**
+
 ```
 ValidationError: Component 'UserApi' missing required resources
   Missing: cosmos:UserApi-cosmos
@@ -232,6 +247,7 @@ Component's resource requirements weren't met during initialization.
 **Debug Steps:**
 
 1. **Check Resource Provisioning:**
+
 ```typescript
 // Add logging to see what resources were created
 const backend = defineBackend({ ... });
@@ -243,6 +259,7 @@ console.log('Available resources:', Array.from(resources.keys()));
 ```
 
 2. **Verify Requirement Keys:**
+
 ```typescript
 // Ensure requirement keys match what's being looked up
 const userApi = CrudApi.define('UserApi', { ... });
@@ -251,6 +268,7 @@ console.log('Requirements:', requirements.map(r => r.requirementKey));
 ```
 
 3. **Check Provider Registration:**
+
 ```typescript
 // Ensure all required providers are registered
 const backend = defineBackend({ ... }, {
@@ -268,6 +286,7 @@ const backend = defineBackend({ ... }, {
 ### Issue: Provider Not Found
 
 **Error Message:**
+
 ```
 Error: MissingProviderError: No provider found for resource type 'servicebus'
   Supported types: cosmos, functions, storage
@@ -277,6 +296,7 @@ Error: MissingProviderError: No provider found for resource type 'servicebus'
 No provider registered for the required resource type.
 
 **Solution:**
+
 ```typescript
 import { ServiceBusProvider } from './custom-providers/service-bus-provider';
 
@@ -299,6 +319,7 @@ const backend = defineBackend({ ... }, {
 ### Issue: TypeScript Compilation Errors
 
 **Error Message:**
+
 ```
 error TS2339: Property 'userApi' does not exist on type 'components'
 ```
@@ -307,6 +328,7 @@ error TS2339: Property 'userApi' does not exist on type 'components'
 TypeScript can't infer component types, usually due to incorrect usage.
 
 **Solution 1: Ensure Proper Type Inference**
+
 ```typescript
 // Make sure you're using const for backend
 const backend = defineBackend({ // Use 'const', not 'let' or 'var'
@@ -318,6 +340,7 @@ backend.components.userApi; // ✓ Type safe
 ```
 
 **Solution 2: Explicit Type Annotation**
+
 ```typescript
 import type { TypedBackend, ComponentMap } from '@atakora/component/backend';
 
@@ -337,6 +360,7 @@ type MyBackend = typeof backend;
 ### Issue: "Cannot use namespace as a value"
 
 **Error Message:**
+
 ```
 error TS2349: This expression is not callable.
   Type 'typeof import("@atakora/component/backend")' has no call signatures.
@@ -346,6 +370,7 @@ error TS2349: This expression is not callable.
 Incorrect import of `defineBackend`.
 
 **Solution:**
+
 ```typescript
 // WRONG: Importing the namespace
 import * as Backend from '@atakora/component/backend';
@@ -368,6 +393,7 @@ const backend = defineBackend({ ... }); // ✓ Works
 **Causes and Solutions:**
 
 **1. Too Many Components**
+
 ```typescript
 // If you have 50+ components, consider splitting
 // SLOW: Single backend with 50 components
@@ -381,24 +407,30 @@ const backend2 = defineBackend({ api4: ..., api5: ..., api6: ... });
 ```
 
 **2. Complex Resource Requirements**
+
 ```typescript
 // Avoid overly complex configurations
 // SLOW: Too much configuration to process
 const backend = defineBackend({
   api: CrudApi.define('Api', {
-    databases: [/* 50 databases with 100 containers each */]
-  })
+    databases: [
+      /* 50 databases with 100 containers each */
+    ],
+  }),
 });
 
 // FASTER: Reasonable configuration
 const backend = defineBackend({
   api: CrudApi.define('Api', {
-    databases: [/* 5-10 databases with 10-20 containers */]
-  })
+    databases: [
+      /* 5-10 databases with 10-20 containers */
+    ],
+  }),
 });
 ```
 
 **3. Enable Parallelization**
+
 ```bash
 # Use parallel flag if available
 npx atakora synth --parallel
@@ -419,31 +451,34 @@ Cosmos DB costs higher than expected despite using Backend Pattern.
 **Debug and Fix:**
 
 **1. Check Throughput Settings**
+
 ```typescript
 // High throughput = high cost
 // Check your configuration
 const backend = defineBackend({
   api: CrudApi.define('Api', {
-    throughput: 4000 // RU/s - expensive!
-  })
+    throughput: 4000, // RU/s - expensive!
+  }),
 });
 
 // Use serverless for variable workloads
 const backend = defineBackend({
   api: CrudApi.define('Api', {
-    enableServerless: true // Pay per request
-  })
+    enableServerless: true, // Pay per request
+  }),
 });
 ```
 
 **2. Verify Resource Sharing**
+
 ```typescript
 // Ensure components are actually sharing
 backend.addToStack(stack);
 
 // Check resource count
-const cosmosResources = Array.from(backend.resources.entries())
-  .filter(([key]) => key.startsWith('cosmos:'));
+const cosmosResources = Array.from(backend.resources.entries()).filter(([key]) =>
+  key.startsWith('cosmos:')
+);
 
 console.log(`Cosmos DB resources: ${cosmosResources.length}`);
 // Should be 1 if sharing correctly
@@ -454,12 +489,13 @@ if (cosmosResources.length > 1) {
 ```
 
 **3. Enable TTL for Cleanup**
+
 ```typescript
 // Old data costs money
 const backend = defineBackend({
   api: CrudApi.define('Api', {
-    ttl: 2592000 // 30 days - auto-delete old data
-  })
+    ttl: 2592000, // 30 days - auto-delete old data
+  }),
 });
 ```
 
@@ -470,6 +506,7 @@ const backend = defineBackend({
 ### Issue: Function App Can't Connect to Cosmos DB
 
 **Error Message (in logs):**
+
 ```
 Error: Unable to connect to Cosmos DB
   Connection refused
@@ -478,6 +515,7 @@ Error: Unable to connect to Cosmos DB
 **Causes and Solutions:**
 
 **1. Firewall Rules**
+
 ```typescript
 // Ensure Function App IP is allowed
 const backend = defineBackend({ ... }, {
@@ -493,6 +531,7 @@ const backend = defineBackend({ ... }, {
 ```
 
 **2. VNet Integration Issues**
+
 ```typescript
 // If using VNet integration, ensure subnet has service endpoints
 const backend = defineBackend({ ... }, {
@@ -510,6 +549,7 @@ const backend = defineBackend({ ... }, {
 ```
 
 **3. Managed Identity Permissions**
+
 ```bash
 # Verify Function App has permissions to access Cosmos DB
 az role assignment list \
@@ -531,12 +571,14 @@ az cosmosdb sql role assignment create \
 ### Issue: CORS Errors in Browser
 
 **Error Message (browser console):**
+
 ```
 Access to fetch at 'https://func-app.azurewebsites.net/api/users' from origin 'https://myapp.com'
 has been blocked by CORS policy
 ```
 
 **Solution:**
+
 ```typescript
 const backend = defineBackend({
   userApi: CrudApi.define('UserApi', {
@@ -545,14 +587,15 @@ const backend = defineBackend({
       allowedOrigins: [
         'https://myapp.com',
         'https://www.myapp.com',
-        'http://localhost:3000' // For local development
-      ]
-    }
-  })
+        'http://localhost:3000', // For local development
+      ],
+    },
+  }),
 });
 ```
 
 **Development Override:**
+
 ```typescript
 // Allow all origins in development only
 const isDev = process.env.NODE_ENV === 'development';
@@ -560,9 +603,9 @@ const isDev = process.env.NODE_ENV === 'development';
 const backend = defineBackend({
   userApi: CrudApi.define('UserApi', {
     cors: {
-      allowedOrigins: isDev ? ['*'] : ['https://myapp.com']
-    }
-  })
+      allowedOrigins: isDev ? ['*'] : ['https://myapp.com'],
+    },
+  }),
 });
 ```
 
@@ -573,6 +616,7 @@ const backend = defineBackend({
 ### Issue: "Resource already exists"
 
 **Error Message:**
+
 ```
 Error: A resource with ID 'cosmos-myapp-prod' already exists
 ```
@@ -580,6 +624,7 @@ Error: A resource with ID 'cosmos-myapp-prod' already exists
 **Causes and Solutions:**
 
 **1. Previous Deployment Not Cleaned Up**
+
 ```bash
 # Check existing resources
 az resource list --resource-group rg-myapp-prod --output table
@@ -592,6 +637,7 @@ npx atakora destroy
 ```
 
 **2. Name Collision**
+
 ```typescript
 // Use unique names per environment
 const backend = defineBackend({ ... }, {
@@ -608,6 +654,7 @@ const backend = defineBackend({ ... }, {
 ### Issue: Deployment Timeout
 
 **Error Message:**
+
 ```
 Error: Deployment timed out after 30 minutes
 ```
@@ -615,12 +662,14 @@ Error: Deployment timed out after 30 minutes
 **Solutions:**
 
 **1. Increase Timeout**
+
 ```bash
 # Increase deployment timeout
 npx atakora deploy --timeout 60 # 60 minutes
 ```
 
 **2. Deploy in Stages**
+
 ```typescript
 // Split into multiple stacks that can deploy independently
 const dataBackend = defineBackend({
@@ -637,6 +686,7 @@ const computeBackend = defineBackend({
 ```
 
 **3. Reduce Resource Count**
+
 ```typescript
 // If creating too many resources at once, reduce batch size
 // Instead of 20 APIs in one backend, create 2 backends with 10 each
@@ -654,6 +704,7 @@ Application Insights shows no data even though backend is deployed.
 **Debug Steps:**
 
 **1. Verify Monitoring is Enabled**
+
 ```typescript
 const backend = defineBackend({ ... }, {
   monitoring: {
@@ -664,6 +715,7 @@ const backend = defineBackend({ ... }, {
 ```
 
 **2. Check Instrumentation Key**
+
 ```bash
 # Verify Function App has APPINSIGHTS_INSTRUMENTATIONKEY
 az functionapp config appsettings list \
@@ -673,6 +725,7 @@ az functionapp config appsettings list \
 ```
 
 **3. Wait for Data Ingestion**
+
 ```
 # Application Insights has latency
 # Data may take 2-5 minutes to appear
@@ -680,6 +733,7 @@ az functionapp config appsettings list \
 ```
 
 **4. Query Directly**
+
 ```kusto
 // In Application Insights, run direct query
 requests
@@ -692,6 +746,7 @@ requests
 ### Issue: Missing Component Outputs
 
 **Error:**
+
 ```typescript
 const outputs = backend.components.userApi.getOutputs();
 console.log(outputs.apiEndpoint); // undefined
@@ -701,6 +756,7 @@ console.log(outputs.apiEndpoint); // undefined
 Component hasn't implemented `getOutputs()` correctly or hasn't been initialized.
 
 **Solution:**
+
 ```typescript
 // 1. Ensure backend is initialized
 backend.addToStack(stack);
@@ -743,18 +799,18 @@ const backend = defineBackend({ ... });
 
 ## Common Error Messages Quick Reference
 
-| Error | Quick Fix |
-|-------|-----------|
+| Error                                            | Quick Fix                                               |
+| ------------------------------------------------ | ------------------------------------------------------- |
 | "Cannot access components before initialization" | Call `backend.addToStack()` before accessing components |
-| "Backend must have at least one component" | Add at least one component to `defineBackend()` |
-| "Conflicting consistency requirements" | Align component configs or use priorities |
-| "Resource limit exceeded" | Increase limits in backend config or split backends |
-| "Duplicate component ID" | Ensure all component IDs are unique |
-| "Missing required resources" | Check provider registration and requirement keys |
-| "No provider found for type X" | Register custom provider for that resource type |
-| "Property X does not exist" | Check TypeScript types and ensure proper inference |
-| "Resource already exists" | Clean up previous deployment or use unique names |
-| "Deployment timed out" | Increase timeout or split into multiple stacks |
+| "Backend must have at least one component"       | Add at least one component to `defineBackend()`         |
+| "Conflicting consistency requirements"           | Align component configs or use priorities               |
+| "Resource limit exceeded"                        | Increase limits in backend config or split backends     |
+| "Duplicate component ID"                         | Ensure all component IDs are unique                     |
+| "Missing required resources"                     | Check provider registration and requirement keys        |
+| "No provider found for type X"                   | Register custom provider for that resource type         |
+| "Property X does not exist"                      | Check TypeScript types and ensure proper inference      |
+| "Resource already exists"                        | Clean up previous deployment or use unique names        |
+| "Deployment timed out"                           | Increase timeout or split into multiple stacks          |
 
 ---
 
@@ -769,11 +825,13 @@ If you can't resolve your issue:
    - [Advanced Examples](./examples/advanced-examples.md)
 
 2. **Enable Debug Logging**
+
    ```typescript
    setGlobalLogLevel(LogLevel.DEBUG);
    ```
 
 3. **Check Validation**
+
    ```typescript
    const validation = backend.validate();
    if (!validation.valid) {
@@ -801,4 +859,4 @@ If you can't resolve your issue:
 - [API Reference](./api-reference.md)
 - [Best Practices](./best-practices.md)
 - [Migration Guide](./migration-guide.md)
-- [Architecture Documentation](../../../../architecture/decisions/backend-architecture-design.md)
+- [Architecture Documentation](../../../../architecture/decisions/Backend-Architecture-Design.md)

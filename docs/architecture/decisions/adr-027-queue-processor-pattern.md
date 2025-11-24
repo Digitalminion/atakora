@@ -5,6 +5,7 @@
 There's architectural confusion in the Gen 2 structure about queue processing. The current pattern suggests queues have "handlers" (`queues/data-quality/handler.ts`), implying direct JavaScript integration with Azure Storage Queues or Service Bus. However, this is technically inaccurate.
 
 **Azure Reality**:
+
 - Azure Storage Queues and Service Bus Queues are pure message infrastructure - they store and deliver messages
 - They have NO native JavaScript execution capability
 - Processing requires an Azure Function with a queue trigger binding
@@ -12,6 +13,7 @@ There's architectural confusion in the Gen 2 structure about queue processing. T
 - There's no "queue handler" - there's a "function triggered by a queue"
 
 **Current Misleading Pattern**:
+
 ```
 queues/
   data-quality/
@@ -20,6 +22,7 @@ queues/
 ```
 
 This structure conflates two distinct Azure resources:
+
 1. The queue infrastructure (Storage Queue or Service Bus Queue)
 2. The Azure Function that processes messages from the queue
 
@@ -76,6 +79,7 @@ functions/
 ```
 
 **Rejected because**:
+
 - Splits related concerns across folders
 - Makes it harder to understand the relationship
 - More files to manage for a single logical unit
@@ -93,6 +97,7 @@ queues/
 ```
 
 **Rejected because**:
+
 - Adds unnecessary nesting
 - Still suggests the queue "owns" the processor
 - More complex than needed
@@ -108,6 +113,7 @@ functions/
 ```
 
 **Rejected because**:
+
 - Mixes different trigger types in one folder
 - Makes queue processors less discoverable
 - Doesn't match the pattern for other event sources
@@ -157,7 +163,7 @@ export const processor = defineQueueProcessor({
   // Queue configuration
   queue: {
     name: 'data-quality',
-    type: 'storage',        // or 'servicebus'
+    type: 'storage', // or 'servicebus'
     // Queue-specific settings
   },
 
@@ -170,7 +176,7 @@ export const processor = defineQueueProcessor({
   // Resources available to handler
   environment: {
     COSMOS_ENDPOINT: cosmosDb.endpoint,
-  }
+  },
 });
 ```
 
@@ -178,7 +184,7 @@ export const processor = defineQueueProcessor({
 
 Each queue processor MUST have a README.md explaining:
 
-```markdown
+````markdown
 # Data Quality Queue Processor
 
 This processor handles data quality validation messages.
@@ -203,6 +209,8 @@ This processor handles data quality validation messages.
   "data": { ... }
 }
 ```
+````
+
 ```
 
 ## Success Criteria
@@ -239,3 +247,4 @@ For existing Gen 2 structures:
 ## Status
 
 Proposed
+```

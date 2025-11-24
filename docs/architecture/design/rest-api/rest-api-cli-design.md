@@ -21,6 +21,7 @@ atakora api <command> [options]
 ```
 
 ### Subcommands
+
 - `create` - Create new REST API in project
 - `add-operation` - Add operation to existing API
 - `export` - Export OpenAPI specification
@@ -34,11 +35,13 @@ atakora api <command> [options]
 Creates a new REST API construct in the project.
 
 **Usage**:
+
 ```bash
 atakora api create [options]
 ```
 
 **Options**:
+
 ```
 -n, --name <name>           API name (required)
 -p, --path <path>           API base path (default: /api/v1)
@@ -50,6 +53,7 @@ atakora api create [options]
 ```
 
 **Examples**:
+
 ```bash
 # Create REST API with interactive prompts
 atakora api create --name UserAPI --interactive
@@ -66,6 +70,7 @@ atakora api create \
 ```
 
 **Generated Code Example**:
+
 ```typescript
 // packages/backend/lib/user-api-stack.ts
 import { RestApiStack, get, post, put, del } from '@atakora/lib';
@@ -85,7 +90,7 @@ export class UserApiStack extends RestApiStack {
           .summary('List all users')
           .queryParams({
             limit: { type: 'integer', default: 10 },
-            offset: { type: 'integer', default: 0 }
+            offset: { type: 'integer', default: 0 },
           })
           .responses({
             200: {
@@ -94,14 +99,14 @@ export class UserApiStack extends RestApiStack {
                 'application/json': {
                   schema: {
                     type: 'array',
-                    items: { $ref: '#/components/schemas/User' }
-                  }
-                }
-              }
-            }
+                    items: { $ref: '#/components/schemas/User' },
+                  },
+                },
+              },
+            },
           })
           .build(),
-      ]
+      ],
     });
   }
 }
@@ -112,11 +117,13 @@ export class UserApiStack extends RestApiStack {
 Adds a new operation to an existing REST API.
 
 **Usage**:
+
 ```bash
 atakora api add-operation [options]
 ```
 
 **Options**:
+
 ```
 -a, --api <name>            API name (required)
 -m, --method <method>       HTTP method: GET|POST|PUT|DELETE|PATCH
@@ -129,6 +136,7 @@ atakora api add-operation [options]
 ```
 
 **Examples**:
+
 ```bash
 # Add operation interactively
 atakora api add-operation --api UserAPI --interactive
@@ -155,11 +163,13 @@ atakora api add-operation \
 Exports OpenAPI specification from synthesized templates.
 
 **Usage**:
+
 ```bash
 atakora api export [options]
 ```
 
 **Options**:
+
 ```
 -a, --api <name>            API name (required)
 -o, --output <file>         Output file (default: openapi.json)
@@ -170,6 +180,7 @@ atakora api export [options]
 ```
 
 **Examples**:
+
 ```bash
 # Export to JSON
 atakora api export --api UserAPI --output user-api.json
@@ -193,11 +204,13 @@ atakora api export \
 Validates REST API definition without synthesis.
 
 **Usage**:
+
 ```bash
 atakora api validate [options]
 ```
 
 **Options**:
+
 ```
 -a, --api <name>            API name
 --all                       Validate all APIs
@@ -206,6 +219,7 @@ atakora api validate [options]
 ```
 
 **Examples**:
+
 ```bash
 # Validate specific API
 atakora api validate --api UserAPI
@@ -222,11 +236,13 @@ atakora api validate --api ProductAPI --openapi
 Imports OpenAPI specification into RestApiStack code.
 
 **Usage**:
+
 ```bash
 atakora api import <file> [options]
 ```
 
 **Options**:
+
 ```
 -n, --name <name>           API name
 -s, --stack <file>          Target stack file
@@ -235,6 +251,7 @@ atakora api import <file> [options]
 ```
 
 **Examples**:
+
 ```bash
 # Import new API
 atakora api import petstore.yaml --name PetStore
@@ -453,10 +470,14 @@ Next Steps:
 describe('api create command', () => {
   it('should create API with valid options', async () => {
     const result = await runCommand([
-      'api', 'create',
-      '--name', 'TestAPI',
-      '--path', '/test',
-      '--service-url', 'https://test.com'
+      'api',
+      'create',
+      '--name',
+      'TestAPI',
+      '--path',
+      '/test',
+      '--service-url',
+      'https://test.com',
     ]);
 
     expect(result.exitCode).toBe(0);
@@ -478,18 +499,18 @@ describe('api create command', () => {
 describe('api workflow', () => {
   it('should complete full API creation flow', async () => {
     // Create API
-    await runCommand([
-      'api', 'create',
-      '--name', 'UserAPI',
-      '--path', '/users'
-    ]);
+    await runCommand(['api', 'create', '--name', 'UserAPI', '--path', '/users']);
 
     // Add operation
     await runCommand([
-      'api', 'add-operation',
-      '--api', 'UserAPI',
-      '--method', 'GET',
-      '--path', '/users/{id}'
+      'api',
+      'add-operation',
+      '--api',
+      'UserAPI',
+      '--method',
+      'GET',
+      '--path',
+      '/users/{id}',
     ]);
 
     // Synthesize with OpenAPI export
@@ -497,9 +518,12 @@ describe('api workflow', () => {
 
     // Export OpenAPI
     const result = await runCommand([
-      'api', 'export',
-      '--api', 'UserAPI',
-      '--output', 'test-spec.json'
+      'api',
+      'export',
+      '--api',
+      'UserAPI',
+      '--output',
+      'test-spec.json',
     ]);
 
     expect(fs.existsSync('test-spec.json')).toBe(true);
@@ -513,36 +537,46 @@ describe('api workflow', () => {
 ## Future Enhancements
 
 ### 1. API Testing Command
+
 ```bash
 atakora api test --api UserAPI --local
 ```
+
 Starts local dev server and runs API tests.
 
 ### 2. Mock Server Command
+
 ```bash
 atakora api mock --api UserAPI --port 3000
 ```
+
 Starts mock server from OpenAPI spec.
 
 ### 3. Documentation Generation
+
 ```bash
 atakora api docs --api UserAPI --output ./docs
 ```
+
 Generates API documentation from OpenAPI spec.
 
 ### 4. Client SDK Generation
+
 ```bash
 atakora api generate-client \
   --api UserAPI \
   --language typescript \
   --output ./sdk
 ```
+
 Generates type-safe client SDK.
 
 ### 5. Watch Mode
+
 ```bash
 atakora api watch --api UserAPI
 ```
+
 Watches for changes and auto-regenerates OpenAPI spec.
 
 ## References

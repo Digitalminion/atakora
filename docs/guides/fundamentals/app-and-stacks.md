@@ -71,7 +71,7 @@ const app = new AzureApp({
 // 2. Add stacks and resources
 const stack = new ResourceGroupStack(app, 'Foundation', {
   resourceGroupName: 'rg-platform-prod',
-  location: 'eastus2'
+  location: 'eastus2',
 });
 
 // 3. Synthesize to ARM templates
@@ -123,6 +123,7 @@ const stack = new ResourceGroupStack(app, 'Application', {
 ```
 
 **When to use ResourceGroupStack**:
+
 - Deploying application infrastructure (networks, storage, compute)
 - Resources scoped to a specific resource group
 - Most common use case (95% of scenarios)
@@ -155,6 +156,7 @@ const stack = new SubscriptionStack(app, 'Foundation', {
 ```
 
 **When to use SubscriptionStack**:
+
 - Creating resource groups themselves
 - Subscription-level policies and RBAC
 - Foundational infrastructure (management groups, policies)
@@ -185,6 +187,7 @@ const storage = new StorageAccounts(stack, 'AppStorage', {
 ```
 
 **Context Properties**:
+
 - **location**: Azure region for all resources
 - **subscriptionId**: Target subscription
 - **tags**: Resource tags (inherited and merged)
@@ -234,6 +237,7 @@ const subnet = new Subnets(vnet, 'WebSubnet', {
 ```
 
 The tree structure enables:
+
 - **Context Inheritance**: Child resources inherit configuration from parents
 - **Dependency Resolution**: Automatic ordering of resource deployments
 - **Resource References**: Children can reference parent properties

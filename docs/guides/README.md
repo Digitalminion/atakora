@@ -4,26 +4,26 @@ Comprehensive guides for using Atakora effectively.
 
 ## Getting Started
 
-- **[Getting Started with Atakora](./getting-started.md)** - Initialize your first project, write infrastructure code, and deploy to Azure
-- [Validation Architecture](./validation-architecture.md) - Understanding Atakora's 5-layer validation system
-- [Common Validation Errors](./common-validation-errors.md) - Troubleshooting validation errors with fixes
+- **[Getting Started with Atakora](./GETTING-STARTED.md)** - Initialize your first project, write infrastructure code, and deploy to Azure
+- [Validation Architecture](./VALIDATION-ARCHITECTURE.md) - Understanding Atakora's 5-layer validation system
+- [Common Validation Errors](./COMMON-VALIDATION-ERRORS.md) - Troubleshooting validation errors with fixes
 
 ## Project Organization
 
-- **[Multi-Package Projects](./multi-package-projects.md)** - Organize infrastructure using multiple packages for teams, environments, or deployment boundaries
+- **[Multi-Package Projects](./MULTI-PACKAGE-PROJECTS.md)** - Organize infrastructure using multiple packages for teams, environments, or deployment boundaries
 
 ## Infrastructure Patterns
 
-- **[Backend Pattern](./patterns/backend/overview.md)** - Share infrastructure resources across multiple components for 60-70% cost reduction
-- **[All Patterns](./patterns/README.md)** - Browse all production-ready infrastructure patterns
+- **[Backend Pattern](./Patterns/Backend/OVERVIEW.md)** - Share infrastructure resources across multiple components for 60-70% cost reduction
+- **[All Patterns](./Patterns/README.md)** - Browse all production-ready infrastructure patterns
 
 ## Core Concepts
 
-- **[Azure Functions](./azure-functions.md)** - Build serverless applications with type-safe handler interfaces for all 18 Azure Functions trigger types
-- **[Functions Storage Guide](./functions-storage.md)** - Deep dive into why Functions Apps need dedicated storage and how to use the FunctionsApp construct correctly
-- **[Functions Storage Quick Reference](./functions-storage-quickref.md)** - Quick reference with key concepts, decision trees, and common scenarios for Functions storage
-- **[REST APIs](./rest-api.md)** - Build type-safe REST APIs with OpenAPI support, backend integration, and reliability patterns
-- **[OpenAPI Integration](./openapi-integration.md)** - Import/export OpenAPI specs, generate TypeScript types, and validate at runtime
+- **[Azure Functions](./AZURE-FUNCTIONS.md)** - Build serverless applications with type-safe handler interfaces for all 18 Azure Functions trigger types
+- **[Functions Storage Guide](./FUNCTIONS-STORAGE.md)** - Deep dive into why Functions Apps need dedicated storage and how to use the FunctionsApp construct correctly
+- **[Functions Storage Quick Reference](./FUNCTIONS-STORAGE-QUICK-REF.md)** - Quick reference with key concepts, decision trees, and common scenarios for Functions storage
+- **[REST APIs](./REST-API.md)** - Build type-safe REST APIs with OpenAPI support, backend integration, and reliability patterns
+- **[OpenAPI Integration](./OPENAPI-INTEGRATION.md)** - Import/export OpenAPI specs, generate TypeScript types, and validate at runtime
 
 Coming soon:
 

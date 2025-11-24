@@ -10,7 +10,7 @@ Atakora provides comprehensive OpenAPI integration that enables you to:
 - Export REST operations to OpenAPI format
 - Generate TypeScript types from schemas
 - Validate requests and responses at runtime
-- Support Azure-specific extensions (x-ms-*)
+- Support Azure-specific extensions (x-ms-\*)
 
 ## Importing OpenAPI Specifications
 
@@ -43,11 +43,11 @@ const spec: OpenApiDefinition = {
   openapi: '3.1.0',
   info: {
     title: 'My API',
-    version: '1.0.0'
+    version: '1.0.0',
   },
   paths: {
     // ... your paths
-  }
+  },
 };
 
 const importer = new OpenApiImporter(spec);
@@ -64,10 +64,10 @@ import { TypeGenerator } from '@atakora/lib/synthesis/openapi';
 const generator = new TypeGenerator();
 const typeCode = await generator.generate('./api-spec.yaml', {
   output: './generated/types.ts',
-  readonly: true,              // Make all properties readonly
-  strictNullChecks: true,      // Use strict null checking
-  exportType: true,            // Export all types
-  includeConstraints: true     // Document constraints in JSDoc
+  readonly: true, // Make all properties readonly
+  strictNullChecks: true, // Use strict null checking
+  exportType: true, // Export all types
+  includeConstraints: true, // Document constraints in JSDoc
 });
 ```
 
@@ -76,6 +76,7 @@ const typeCode = await generator.generate('./api-spec.yaml', {
 #### Basic Object Type
 
 OpenAPI Schema:
+
 ```yaml
 type: object
 required: [id, name]
@@ -93,6 +94,7 @@ properties:
 ```
 
 Generated TypeScript:
+
 ```typescript
 /**
  * User object.
@@ -126,6 +128,7 @@ export interface User {
 #### Discriminated Union
 
 OpenAPI Schema:
+
 ```yaml
 oneOf:
   - type: object
@@ -151,6 +154,7 @@ discriminator:
 ```
 
 Generated TypeScript:
+
 ```typescript
 type SuccessResponse = {
   readonly type: 'success';
@@ -243,17 +247,17 @@ const operation: IRestOperation = {
           required: ['name', 'email'],
           properties: {
             name: { type: 'string', minLength: 1 },
-            email: { type: 'string', format: 'email' }
-          }
-        }
-      }
-    }
-  }
+            email: { type: 'string', format: 'email' },
+          },
+        },
+      },
+    },
+  },
 };
 
 const requestData = {
-  name: '',  // Invalid: too short
-  email: 'not-an-email'  // Invalid: wrong format
+  name: '', // Invalid: too short
+  email: 'not-an-email', // Invalid: wrong format
 };
 
 const result = validateRequest(operation, requestData);
@@ -274,12 +278,14 @@ Export your REST operations to OpenAPI format:
 ```typescript
 import { OpenApiExporter } from '@atakora/lib/synthesis/openapi';
 
-const operations: IRestOperation[] = [/* ... */];
+const operations: IRestOperation[] = [
+  /* ... */
+];
 
 const exporter = new OpenApiExporter(operations, {
   title: 'My API',
   version: '1.0.0',
-  description: 'REST API for my application'
+  description: 'REST API for my application',
 });
 
 const spec = exporter.export('3.1.0');
@@ -295,6 +301,7 @@ await fs.writeFile('./openapi.yaml', yaml.stringify(spec));
 Define enhanced enums with descriptions:
 
 OpenAPI:
+
 ```yaml
 type: string
 enum: [Standard_LRS, Standard_GRS, Premium_LRS]
@@ -311,6 +318,7 @@ x-ms-enum:
 ```
 
 Generated TypeScript:
+
 ```typescript
 /**
  * SKU name for storage account.
@@ -328,7 +336,7 @@ export enum SkuName {
   StandardGRS = 'Standard_GRS',
 
   /** Premium locally redundant storage */
-  PremiumLRS = 'Premium_LRS'
+  PremiumLRS = 'Premium_LRS',
 }
 ```
 
@@ -454,13 +462,14 @@ const importer = new OpenApiImporter('./spec.yaml', {
   // Validate schemas strictly
   strict: true,
   // Only allow local filesystem access
-  allowedPaths: ['/approved/directory']
+  allowedPaths: ['/approved/directory'],
 });
 ```
 
 ## Performance Considerations
 
 ### Type Generation
+
 - Small spec (50 paths): ~200ms
 - Medium spec (200 paths): ~800ms
 - Large spec (1000 paths): ~4s
@@ -468,6 +477,7 @@ const importer = new OpenApiImporter('./spec.yaml', {
 **Recommendation**: Run type generation at build time, not runtime.
 
 ### Validation
+
 - Simple schema: ~0.1ms per validation
 - Complex schema: ~0.5ms per validation
 - Large array (1000 items): ~50ms
@@ -475,6 +485,7 @@ const importer = new OpenApiImporter('./spec.yaml', {
 **Recommendation**: Cache compiled validators for reuse.
 
 ### Reference Resolution
+
 - Small spec (10 refs): ~50ms
 - Medium spec (100 refs): ~300ms
 - Large spec (500 refs): ~2s
@@ -502,7 +513,7 @@ const importer = new OpenApiImporter('./spec.yaml', {
 
 - Learn about [REST API patterns](./rest-api.md)
 - Explore [TypeScript type generation design](../reference/openapi-type-generation.md)
-- Review [OpenAPI library evaluation](../design/architecture/openapi-library-evaluation.md)
+- Review [OpenAPI library evaluation](../design/architecture/Openapi-Library-Evaluation.md)
 
 ## Related Documentation
 

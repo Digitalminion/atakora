@@ -32,10 +32,10 @@ We will implement a multi-layered auto-detection system with the following compo
 
 ```typescript
 // Detection Rules
-class Inventory extends Resource { }     // -> field: 'inventory'
-class UserProfile extends Resource { }   // -> field: 'userProfile'
-class APIGateway extends Resource { }    // -> field: 'apiGateway'
-class IPAddress extends Resource { }     // -> field: 'ipAddress'
+class Inventory extends Resource {} // -> field: 'inventory'
+class UserProfile extends Resource {} // -> field: 'userProfile'
+class APIGateway extends Resource {} // -> field: 'apiGateway'
+class IPAddress extends Resource {} // -> field: 'ipAddress'
 
 // Acronym Handling Rules:
 // - Standalone acronyms: lowercase entirely (API -> api)
@@ -59,20 +59,21 @@ class IPAddress extends Resource { }     // -> field: 'ipAddress'
 
 // Examples:
 interface Order {
-  userId: string;      // Auto-detected for User resolver
-  productId: string;   // Auto-detected for Product resolver
+  userId: string; // Auto-detected for User resolver
+  productId: string; // Auto-detected for Product resolver
   warehouseId: string; // Auto-detected for Warehouse resolver
 }
 
 // Ambiguity Handling:
 interface Order {
   userId: string;
-  customerId: string;  // Both could map to User
+  customerId: string; // Both could map to User
   // Resolution: Exact match wins (userId), warning logged
 }
 ```
 
 **Multiple ID Fields Handling**:
+
 - Exact match takes precedence
 - Warn when multiple possible matches exist
 - Require explicit override when ambiguous
@@ -101,6 +102,7 @@ User.manager         -> /users/{managerId}          // self-referential
 ```
 
 **Pluralization Rules**:
+
 - Standard English pluralization (product -> products)
 - Maintain custom plurals dictionary (person -> people, inventory -> inventories)
 - Support explicit plural overrides
@@ -113,13 +115,13 @@ User.manager         -> /users/{managerId}          // self-referential
 // Auto-Detection Dictionary:
 const commonMappings = {
   // Field Name -> Common Response Patterns
-  'count': ['total', 'count', 'totalCount', 'itemCount'],
-  'inventory': ['stockLevel', 'availableQuantity', 'quantity'],
-  'price': ['amount', 'price', 'cost', 'value'],
-  'status': ['state', 'status', 'condition'],
-  'name': ['title', 'name', 'displayName'],
-  'description': ['summary', 'description', 'details'],
-  'isActive': ['enabled', 'active', 'isActive', 'isEnabled'],
+  count: ['total', 'count', 'totalCount', 'itemCount'],
+  inventory: ['stockLevel', 'availableQuantity', 'quantity'],
+  price: ['amount', 'price', 'cost', 'value'],
+  status: ['state', 'status', 'condition'],
+  name: ['title', 'name', 'displayName'],
+  description: ['summary', 'description', 'details'],
+  isActive: ['enabled', 'active', 'isActive', 'isEnabled'],
 };
 
 // Detection Process:
@@ -143,20 +145,20 @@ const commonMappings = {
 ```typescript
 interface ResolverConfig {
   // All optional - auto-detected if not provided
-  field?: string;           // Override field name
-  path?: string;            // Override path template
-  idField?: string;         // Override ID field detection
-  responseField?: string;   // Override response mapping
+  field?: string; // Override field name
+  path?: string; // Override path template
+  idField?: string; // Override ID field detection
+  responseField?: string; // Override response mapping
   method?: 'GET' | 'POST'; // Override HTTP method
 
   // Disable auto-detection
-  autoDetect?: boolean;     // Default: true
+  autoDetect?: boolean; // Default: true
 }
 
 // Example: Override when conventions don't match
 new ProductInventoryResolver(product, inventory, {
-  idField: 'sku',          // Use SKU instead of productId
-  path: '/stock/{sku}',    // Custom path
+  idField: 'sku', // Use SKU instead of productId
+  path: '/stock/{sku}', // Custom path
   responseField: 'data.available_units', // Nested response
 });
 ```
@@ -164,6 +166,7 @@ new ProductInventoryResolver(product, inventory, {
 ### 6. Edge Case Handling
 
 **Self-Referential Types**:
+
 ```typescript
 // User.manager: User
 // Auto-detect: /users/{managerId} if User has managerId field
@@ -171,6 +174,7 @@ new ProductInventoryResolver(product, inventory, {
 ```
 
 **Many-to-Many Relationships**:
+
 ```typescript
 // Product.categories: Category[]
 // Auto-detect: /products/{id}/categories (junction endpoint)
@@ -179,6 +183,7 @@ new ProductInventoryResolver(product, inventory, {
 ```
 
 **Polymorphic Types**:
+
 ```typescript
 // Content.author: User | Organization
 // Resolution: Require explicit type discriminator
@@ -186,6 +191,7 @@ new ProductInventoryResolver(product, inventory, {
 ```
 
 **Union Types**:
+
 ```typescript
 // SearchResult: Product | Category | Brand
 // Resolution: Not supported by auto-detection
@@ -195,39 +201,48 @@ new ProductInventoryResolver(product, inventory, {
 ## Alternatives Considered
 
 ### Alternative 1: Attribute-Based Configuration
+
 Use decorators/attributes on Resource classes to define resolver behavior.
 
 **Pros**:
+
 - Explicit and discoverable
 - Type-safe with TypeScript decorators
 - Co-located with resource definition
 
 **Cons**:
+
 - Requires modifying Resource classes
 - More verbose for common cases
 - Couples resources to GraphQL concerns
 
 ### Alternative 2: Configuration Files
+
 Use separate YAML/JSON files to define resolver mappings.
 
 **Pros**:
+
 - Separation of concerns
 - Easy to generate/modify programmatically
 - Language-agnostic
 
 **Cons**:
+
 - Additional files to maintain
 - Can get out of sync with code
 - Less discoverable
 
 ### Alternative 3: Runtime Introspection
+
 Use runtime reflection to analyze resource relationships.
 
 **Pros**:
+
 - Very automatic
 - No configuration needed
 
 **Cons**:
+
 - Less predictable
 - Harder to debug
 - Performance overhead
@@ -283,7 +298,10 @@ Use runtime reflection to analyze resource relationships.
 ```typescript
 // Automatic detection example
 class OrderResolver extends GraphQLResolver {
-  constructor(private order: Order, private user: User) {
+  constructor(
+    private order: Order,
+    private user: User
+  ) {
     super();
     // Auto-detects:
     // - field: 'user'
@@ -295,11 +313,14 @@ class OrderResolver extends GraphQLResolver {
 
 // Override example
 class ProductInventoryResolver extends GraphQLResolver {
-  constructor(private product: Product, private inventory: Inventory) {
+  constructor(
+    private product: Product,
+    private inventory: Inventory
+  ) {
     super({
-      field: 'stockInfo',           // Override field name
-      path: '/inventory/v2/{sku}',  // Custom API path
-      idField: 'productSku',        // Different ID field
+      field: 'stockInfo', // Override field name
+      path: '/inventory/v2/{sku}', // Custom API path
+      idField: 'productSku', // Different ID field
       responseField: 'data.stock.available', // Nested response
     });
   }

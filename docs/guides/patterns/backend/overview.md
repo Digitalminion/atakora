@@ -30,17 +30,17 @@ In traditional infrastructure-as-code, each component creates its own dedicated 
 // Traditional approach - 3 separate CrudApi components
 const userApi = new CrudApi(stack, 'UserApi', {
   entityName: 'User',
-  schema: { id: 'string', name: 'string', email: 'string' }
+  schema: { id: 'string', name: 'string', email: 'string' },
 });
 
 const productApi = new CrudApi(stack, 'ProductApi', {
   entityName: 'Product',
-  schema: { id: 'string', name: 'string', price: 'number' }
+  schema: { id: 'string', name: 'string', price: 'number' },
 });
 
 const orderApi = new CrudApi(stack, 'OrderApi', {
   entityName: 'Order',
-  schema: { id: 'string', userId: 'string', total: 'number' }
+  schema: { id: 'string', userId: 'string', total: 'number' },
 });
 ```
 
@@ -50,14 +50,15 @@ const orderApi = new CrudApi(stack, 'OrderApi', {
 
 Each Azure resource has both fixed and variable costs:
 
-| Resource Type | Monthly Base Cost | Per-Component Cost (3 components) |
-|--------------|-------------------|-----------------------------------|
-| Cosmos DB Account | ~$24/month minimum | $72/month |
-| Function App | ~$13/month (consumption) | $39/month |
-| Storage Account | ~$0.18/month minimum | $0.54/month |
-| **Total** | | **~$111.54/month** |
+| Resource Type     | Monthly Base Cost        | Per-Component Cost (3 components) |
+| ----------------- | ------------------------ | --------------------------------- |
+| Cosmos DB Account | ~$24/month minimum       | $72/month                         |
+| Function App      | ~$13/month (consumption) | $39/month                         |
+| Storage Account   | ~$0.18/month minimum     | $0.54/month                       |
+| **Total**         |                          | **~$111.54/month**                |
 
 Additional hidden costs:
+
 - Management overhead: 9 resources to monitor and maintain
 - Network egress: Data transfer between separate resources
 - Complexity: 9 separate security configurations
@@ -76,24 +77,24 @@ import { CrudApi } from '@atakora/component/crud';
 const backend = defineBackend({
   userApi: CrudApi.define('UserApi', {
     entityName: 'User',
-    schema: { id: 'string', name: 'string', email: 'string' }
+    schema: { id: 'string', name: 'string', email: 'string' },
   }),
 
   productApi: CrudApi.define('ProductApi', {
     entityName: 'Product',
-    schema: { id: 'string', name: 'string', price: 'number' }
+    schema: { id: 'string', name: 'string', price: 'number' },
   }),
 
   orderApi: CrudApi.define('OrderApi', {
     entityName: 'Order',
-    schema: { id: 'string', userId: 'string', total: 'number' }
-  })
+    schema: { id: 'string', userId: 'string', total: 'number' },
+  }),
 });
 
 // Add to your CDK stack
 const stack = new ResourceGroupStack(app, 'MyStack', {
   resourceGroupName: 'rg-myapp-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 backend.addToStack(stack);
@@ -103,14 +104,15 @@ backend.addToStack(stack);
 
 ### Cost Savings
 
-| Resource Type | Backend Pattern Cost | Savings vs Traditional |
-|--------------|---------------------|------------------------|
-| Cosmos DB Account | $24/month | -$48/month (67% reduction) |
-| Function App | $13/month | -$26/month (67% reduction) |
-| Storage Account | $0.18/month | -$0.36/month (67% reduction) |
-| **Total** | **~$37.18/month** | **-$74.36/month (67% savings)** |
+| Resource Type     | Backend Pattern Cost | Savings vs Traditional          |
+| ----------------- | -------------------- | ------------------------------- |
+| Cosmos DB Account | $24/month            | -$48/month (67% reduction)      |
+| Function App      | $13/month            | -$26/month (67% reduction)      |
+| Storage Account   | $0.18/month          | -$0.36/month (67% reduction)    |
+| **Total**         | **~$37.18/month**    | **-$74.36/month (67% savings)** |
 
 Additional benefits:
+
 - Single resource to monitor
 - Reduced network egress costs
 - Simplified security configuration
@@ -134,6 +136,7 @@ const backend = defineBackend({
 ```
 
 At this stage:
+
 - No resources are created
 - Component definitions are captured
 - Type safety is established
@@ -166,6 +169,7 @@ Merged Requirements:
 ```
 
 Smart conflict resolution:
+
 - **Compatible configs**: Automatically merged (databases, containers, env vars)
 - **Conflicting configs**: Higher priority wins (with warnings)
 - **Incompatible configs**: Error with clear explanation
@@ -187,11 +191,13 @@ Resources are created and distributed to components:
 ### 1. Resource Reduction: Up to 80% Fewer Resources
 
 Traditional approach scales linearly:
+
 - 5 components = 15 resources
 - 10 components = 30 resources
 - 20 components = 60 resources
 
 Backend Pattern scales sub-linearly:
+
 - 5 components = 3 resources (80% reduction)
 - 10 components = 3-6 resources (75-80% reduction)
 - 20 components = 3-9 resources (70-85% reduction)
@@ -199,6 +205,7 @@ Backend Pattern scales sub-linearly:
 ### 2. Cost Savings: 60-70% Reduction
 
 Real-world example with 10 CRUD APIs:
+
 - Traditional: ~$370/month (10 × $37)
 - Backend Pattern: ~$110/month (1 × $110 with higher throughput)
 - **Savings: $260/month or $3,120/year**
@@ -206,6 +213,7 @@ Real-world example with 10 CRUD APIs:
 ### 3. Simplified Management
 
 Fewer resources means:
+
 - Fewer monitoring dashboards
 - Fewer security rules to maintain
 - Fewer backup configurations
@@ -215,6 +223,7 @@ Fewer resources means:
 ### 4. Improved Performance
 
 Shared resources often perform better:
+
 - Lower latency (components within same Function App)
 - Better resource utilization (shared connection pools)
 - Coordinated scaling (all components scale together)
@@ -222,6 +231,7 @@ Shared resources often perform better:
 ### 5. Backward Compatibility
 
 Existing code continues to work:
+
 ```typescript
 // Old code - still works!
 const api = new CrudApi(stack, 'UserApi', { ... });
@@ -307,6 +317,7 @@ const definition = CrudApi.define('UserApi', {
 ```
 
 A definition contains:
+
 - Component ID (unique identifier)
 - Component type (e.g., 'CrudApi')
 - Configuration (component-specific props)
@@ -330,6 +341,7 @@ Components specify their infrastructure needs:
 ```
 
 Requirements include:
+
 - Resource type (cosmos, functions, storage, etc.)
 - Unique key (for deduplication)
 - Priority (for conflict resolution)
@@ -344,6 +356,7 @@ Providers know how to create and manage specific resource types:
 - **StorageProvider**: Creates and manages Storage Accounts
 
 Providers handle:
+
 - Requirement merging (combining compatible configs)
 - Resource creation (provisioning infrastructure)
 - Conflict resolution (handling incompatibilities)
@@ -353,17 +366,21 @@ Providers handle:
 The orchestrator that manages the entire lifecycle:
 
 ```typescript
-const backend = defineBackend({
-  // Component definitions
-}, {
-  // Backend configuration
-  environment: 'prod',
-  location: 'eastus',
-  monitoring: true
-});
+const backend = defineBackend(
+  {
+    // Component definitions
+  },
+  {
+    // Backend configuration
+    environment: 'prod',
+    location: 'eastus',
+    monitoring: true,
+  }
+);
 ```
 
 Responsibilities:
+
 - Collect requirements from all components
 - Coordinate providers to create resources
 - Initialize components with shared resources
@@ -391,9 +408,9 @@ const backend = defineBackend({
     schema: {
       id: 'string',
       name: 'string',
-      email: 'string'
+      email: 'string',
     },
-    partitionKey: '/id'
+    partitionKey: '/id',
   }),
 
   productApi: CrudApi.define('ProductApi', {
@@ -402,10 +419,10 @@ const backend = defineBackend({
       id: 'string',
       name: 'string',
       price: 'number',
-      category: 'string'
+      category: 'string',
     },
-    partitionKey: '/category'
-  })
+    partitionKey: '/category',
+  }),
 });
 ```
 
@@ -415,7 +432,7 @@ const backend = defineBackend({
 // Create your CDK stack
 const stack = new ResourceGroupStack(app, 'MyStack', {
   resourceGroupName: 'rg-myapp-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 // Add backend to stack (creates resources)
@@ -457,6 +474,6 @@ That's it! You now have a fully functional backend with shared resources.
 
 ## Additional Resources
 
-- [Backend Architecture Design](../../../../architecture/decisions/backend-architecture-design.md)
+- [Backend Architecture Design](../../../../architecture/decisions/Backend-Architecture-Design.md)
 - [ADR-001: Define Backend Pattern](../../../../architecture/decisions/ADR-001-define-backend-pattern.md)
-- [Implementation Guide](../../../../architecture/decisions/backend-implementation-guide.md)
+- [Implementation Guide](../../../../architecture/decisions/Backend-Implementation-Guide.md)

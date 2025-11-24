@@ -79,7 +79,7 @@ class FunctionDiscoveryPhase implements ISynthesisPhase {
 
     return {
       functionsDiscovered: registry.size,
-      registry
+      registry,
     };
   }
 
@@ -101,7 +101,7 @@ class FunctionDiscoveryPhase implements ISynthesisPhase {
             name: entry.name,
             path: functionPath,
             handlerPath: path.join(functionPath, 'handler.ts'),
-            resourcePath: path.join(functionPath, 'resource.ts')
+            resourcePath: path.join(functionPath, 'resource.ts'),
           });
         }
       }
@@ -132,8 +132,8 @@ class FunctionDiscoveryPhase implements ISynthesisPhase {
           metadata: {
             discoveredAt: Date.now(),
             functionName: dir.name,
-            hasTypedEnvironment: !!config.config.environment
-          }
+            hasTypedEnvironment: !!config.config.environment,
+          },
         });
       } catch (error) {
         throw new DiscoveryError(
@@ -228,9 +228,7 @@ class EnvironmentResolver {
             const replacement = appEnvironment[placeholderKey];
             resolvedValue = resolvedValue.replace(
               match,
-              typeof replacement === 'string'
-                ? replacement
-                : replacement.toString()
+              typeof replacement === 'string' ? replacement : replacement.toString()
             );
           }
 
@@ -245,9 +243,7 @@ class EnvironmentResolver {
     // Add any additional environment variables from app.ts
     for (const [key, value] of Object.entries(appEnvironment)) {
       if (!(key in resolved)) {
-        resolved[key] = typeof value === 'string'
-          ? value
-          : value.toString();
+        resolved[key] = typeof value === 'string' ? value : value.toString();
       }
     }
 
@@ -278,14 +274,14 @@ class DependencyTracker {
       if (typeof value === 'string' && value.includes('${')) {
         // Extract resource references
         const resourceRefs = this.extractResourceReferences(value);
-        resourceRefs.forEach(ref => dependencies.add(ref));
+        resourceRefs.forEach((ref) => dependencies.add(ref));
       }
     }
 
     // Track dependencies from bindings
     const bindings = [
       ...(functionConfig.definition.config.inputBindings || []),
-      ...(functionConfig.definition.config.outputBindings || [])
+      ...(functionConfig.definition.config.outputBindings || []),
     ];
 
     for (const binding of bindings) {
@@ -324,7 +320,7 @@ The Prepare phase remains unchanged but now identifies Azure Function constructs
 interface PrepareResult {
   readonly stackInfoMap: Map<string, StackInfo>;
   readonly traversalResult: TraversalResult;
-  readonly functionConstructs: AzureFunction[];  // NEW
+  readonly functionConstructs: AzureFunction[]; // NEW
 }
 
 class ResourceCollector {
@@ -332,7 +328,7 @@ class ResourceCollector {
     // Existing logic...
 
     // Identify function constructs for build phase
-    const functions = constructs.filter(c => c instanceof AzureFunction);
+    const functions = constructs.filter((c) => c instanceof AzureFunction);
     this.context.setFunctions(functions);
 
     return stackInfoMap;
@@ -379,7 +375,7 @@ class FunctionBuildPhase implements ISynthesisPhase {
 
     for (const fn of functions) {
       const handlerPath = path.resolve(fn.handler);
-      if (!await fs.pathExists(handlerPath)) {
+      if (!(await fs.pathExists(handlerPath))) {
         errors.push(`Handler not found: ${fn.handler} for function ${fn.node.id}`);
       }
     }
@@ -389,14 +385,12 @@ class FunctionBuildPhase implements ISynthesisPhase {
     }
   }
 
-  private async buildFunctions(
-    functions: AzureFunction[]
-  ): Promise<Map<string, BuildArtifact>> {
+  private async buildFunctions(functions: AzureFunction[]): Promise<Map<string, BuildArtifact>> {
     const artifacts = new Map<string, BuildArtifact>();
 
     // Build in parallel with concurrency limit
     const pool = new PromisePool(
-      functions.map(fn => () => this.buildSingleFunction(fn)),
+      functions.map((fn) => () => this.buildSingleFunction(fn)),
       { concurrency: 4 }
     );
 
@@ -443,7 +437,7 @@ class FunctionBuildPhase implements ISynthesisPhase {
         buildTime: Date.now(),
         hash: await this.computeHash(result.outputFiles[0].contents),
         dependencies: await this.extractDependencies(fn.handler),
-      }
+      },
     };
 
     // Cache the result
@@ -496,10 +490,10 @@ interface FunctionPackage {
 
 interface DeploymentConfig {
   readonly type: 'inline' | 'storage' | 'container' | 'external';
-  readonly location?: string;     // Storage URL or container image
-  readonly inline?: string;        // Base64 encoded for inline
-  readonly sasToken?: string;      // For storage deployments
-  readonly integrity?: string;     // SHA256 hash for verification
+  readonly location?: string; // Storage URL or container image
+  readonly inline?: string; // Base64 encoded for inline
+  readonly sasToken?: string; // For storage deployments
+  readonly integrity?: string; // SHA256 hash for verification
 }
 ```
 
@@ -520,19 +514,16 @@ class BuildCache {
       await this.getFileHash(fn.handler),
       JSON.stringify(fn.buildOptions),
       await this.getDependencyHash(fn.handler),
-      process.version
+      process.version,
     ];
 
-    return crypto
-      .createHash('sha256')
-      .update(factors.join('|'))
-      .digest('hex');
+    return crypto.createHash('sha256').update(factors.join('|')).digest('hex');
   }
 
   async get(key: string): Promise<BuildArtifact | null> {
     const cachePath = path.join(this.cacheDir, `${key}.json`);
 
-    if (!await fs.pathExists(cachePath)) {
+    if (!(await fs.pathExists(cachePath))) {
       return null;
     }
 
@@ -557,8 +548,8 @@ class BuildCache {
     if (pattern) {
       // Invalidate matching keys
       const files = await fs.readdir(this.cacheDir);
-      const matching = files.filter(f => f.includes(pattern));
-      await Promise.all(matching.map(f => fs.remove(path.join(this.cacheDir, f))));
+      const matching = files.filter((f) => f.includes(pattern));
+      await Promise.all(matching.map((f) => fs.remove(path.join(this.cacheDir, f))));
     } else {
       // Clear entire cache
       await fs.emptyDir(this.cacheDir);
@@ -592,10 +583,7 @@ class FunctionPackager {
     return PackagingStrategy.STORAGE;
   }
 
-  async package(
-    artifact: BuildArtifact,
-    strategy: PackagingStrategy
-  ): Promise<FunctionPackage> {
+  async package(artifact: BuildArtifact, strategy: PackagingStrategy): Promise<FunctionPackage> {
     switch (strategy) {
       case PackagingStrategy.INLINE:
         return this.packageInline(artifact);
@@ -623,8 +611,8 @@ class FunctionPackager {
       deployment: {
         type: 'inline',
         inline: encoded,
-        integrity: await this.computeIntegrity(artifact.bundle)
-      }
+        integrity: await this.computeIntegrity(artifact.bundle),
+      },
     };
   }
 
@@ -637,8 +625,8 @@ class FunctionPackager {
       deployment: {
         type: 'storage',
         // Location and SAS token will be set in Assembly phase
-        integrity: await this.computeIntegrity(artifact.bundle)
-      }
+        integrity: await this.computeIntegrity(artifact.bundle),
+      },
     };
   }
 
@@ -652,8 +640,8 @@ class FunctionPackager {
       deployment: {
         type: 'container',
         // Container image URL will be set after build/push
-        integrity: await this.computeIntegrity(artifact.bundle)
-      }
+        integrity: await this.computeIntegrity(artifact.bundle),
+      },
     };
   }
 
@@ -733,18 +721,18 @@ class ResourceTransformer {
 
     // Add input bindings
     if (fn.inputBindings) {
-      bindings.push(...fn.inputBindings.map(b => this.toArmBinding(b)));
+      bindings.push(...fn.inputBindings.map((b) => this.toArmBinding(b)));
     }
 
     // Add output bindings
     if (fn.outputBindings) {
-      bindings.push(...fn.outputBindings.map(b => this.toArmBinding(b)));
+      bindings.push(...fn.outputBindings.map((b) => this.toArmBinding(b)));
     }
 
     return {
       bindings,
       disabled: false,
-      scriptFile: 'index.js'
+      scriptFile: 'index.js',
     };
   }
 
@@ -761,11 +749,11 @@ class ResourceTransformer {
         config: functionJson,
         files: {
           'index.js': pkg.deployment.inline,
-          'function.json': JSON.stringify(functionJson)
+          'function.json': JSON.stringify(functionJson),
         },
         language: 'javascript',
-        isDisabled: false
-      }
+        isDisabled: false,
+      },
     };
   }
 
@@ -782,10 +770,10 @@ class ResourceTransformer {
       name: `[concat(parameters('functionAppName'), '/', '${fn.functionName}')]`,
       properties: {
         config: functionJson,
-        packageUri: '[parameters(\'functionPackageUri\')]',
+        packageUri: "[parameters('functionPackageUri')]",
         language: 'javascript',
-        isDisabled: false
-      }
+        isDisabled: false,
+      },
     };
   }
 }
@@ -797,10 +785,7 @@ Add function-specific validators:
 
 ```typescript
 class FunctionValidator implements IValidator {
-  async validate(
-    resources: Resource[],
-    template: ArmTemplate
-  ): Promise<ValidationResult> {
+  async validate(resources: Resource[], template: ArmTemplate): Promise<ValidationResult> {
     const errors: ValidationIssue[] = [];
     const warnings: ValidationIssue[] = [];
 
@@ -829,7 +814,7 @@ class FunctionValidator implements IValidator {
       errors.push({
         path: `${fn.node.path}.functionName`,
         message: 'Function name must be 128 characters or less',
-        suggestion: 'Shorten the function name'
+        suggestion: 'Shorten the function name',
       });
     }
 
@@ -838,7 +823,7 @@ class FunctionValidator implements IValidator {
       warnings.push({
         path: `${fn.node.path}.timeout`,
         message: 'Function timeout exceeds 10 minutes (Consumption plan limit)',
-        suggestion: 'Consider using Premium or Dedicated plan for longer timeouts'
+        suggestion: 'Consider using Premium or Dedicated plan for longer timeouts',
       });
     }
 
@@ -848,7 +833,7 @@ class FunctionValidator implements IValidator {
       errors.push({
         path: `${fn.node.path}.environment`,
         message: `Too many environment variables (${envVarCount}/100)`,
-        suggestion: 'Reduce environment variables or use App Configuration'
+        suggestion: 'Reduce environment variables or use App Configuration',
       });
     }
 
@@ -904,9 +889,7 @@ class FileWriter {
     // Write ARM templates (existing logic)
     for (const [stackName, template] of templates) {
       const filePath = path.join(outdir, `${stackName}.json`);
-      const content = prettyPrint
-        ? JSON.stringify(template, null, 2)
-        : JSON.stringify(template);
+      const content = prettyPrint ? JSON.stringify(template, null, 2) : JSON.stringify(template);
 
       await fs.writeFile(filePath, content);
     }
@@ -918,7 +901,7 @@ class FileWriter {
     return {
       directory: outdir,
       manifest,
-      stacks: Array.from(templates.keys())
+      stacks: Array.from(templates.keys()),
     };
   }
 
@@ -945,10 +928,7 @@ class FileWriter {
     }
   }
 
-  private async createFunctionZip(
-    pkg: FunctionPackage,
-    outputPath: string
-  ): Promise<void> {
+  private async createFunctionZip(pkg: FunctionPackage, outputPath: string): Promise<void> {
     const zip = new JSZip();
 
     // Add function code
@@ -968,7 +948,7 @@ class FileWriter {
     const content = await zip.generateAsync({
       type: 'nodebuffer',
       compression: 'DEFLATE',
-      compressionOptions: { level: 9 }
+      compressionOptions: { level: 9 },
     });
 
     await fs.writeFile(outputPath, content);
@@ -1040,12 +1020,7 @@ export class Synthesizer {
     options: SynthesisOptions
   ): CloudAssembly {
     // Enhanced assembly with function packages
-    return this.fileWriter.write(
-      options.outdir,
-      templates,
-      options.prettyPrint,
-      functionPackages
-    );
+    return this.fileWriter.write(options.outdir, templates, options.prettyPrint, functionPackages);
   }
 }
 ```
@@ -1108,9 +1083,7 @@ class ParallelBuilder {
   async buildAll(functions: AzureFunction[]): Promise<BuildArtifact[]> {
     const queue = new PQueue({ concurrency: this.maxConcurrency });
 
-    const promises = functions.map(fn =>
-      queue.add(() => this.buildWithRetry(fn))
-    );
+    const promises = functions.map((fn) => queue.add(() => this.buildWithRetry(fn)));
 
     return await Promise.all(promises);
   }
@@ -1148,10 +1121,10 @@ class IncrementalBuilder {
 
     for (const file of changed) {
       const dependents = this.dependencyGraph.get(file) || new Set();
-      dependents.forEach(d => affected.add(d));
+      dependents.forEach((d) => affected.add(d));
     }
 
-    return Array.from(affected).map(id => this.getFunctionById(id));
+    return Array.from(affected).map((id) => this.getFunctionById(id));
   }
 }
 ```
@@ -1189,7 +1162,7 @@ class TelemetryCollector {
       successRate: this.calculateSuccessRate(),
       averageBuildTime: this.calculateAverageBuildTime(),
       cacheHitRate: this.calculateCacheHitRate(),
-      strategyDistribution: this.getStrategyDistribution()
+      strategyDistribution: this.getStrategyDistribution(),
     };
   }
 }

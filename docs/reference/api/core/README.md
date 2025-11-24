@@ -41,10 +41,10 @@ class App extends Construct {
 
 #### Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `stacks` | `Stack[]` | All stacks in this app |
-| `outdir` | `string` | Output directory for synthesis |
+| Property | Type      | Description                    |
+| -------- | --------- | ------------------------------ |
+| `stacks` | `Stack[]` | All stacks in this app         |
+| `outdir` | `string`  | Output directory for synthesis |
 
 #### Methods
 
@@ -55,6 +55,7 @@ Synthesizes all stacks to ARM templates.
 **Returns**: `SynthesisResult`
 
 **Example**:
+
 ```typescript
 const app = new App();
 new MyStack(app, 'my-stack');
@@ -66,6 +67,7 @@ console.log(`Generated ${result.stacks.length} stacks`);
 #### Usage Examples
 
 **Basic App**:
+
 ```typescript
 import { App } from '@atakora/lib';
 
@@ -75,6 +77,7 @@ app.synth();
 ```
 
 **Multiple Stacks**:
+
 ```typescript
 const app = new App();
 new DevStack(app, 'dev');
@@ -84,6 +87,7 @@ app.synth();
 ```
 
 **Custom Output Directory**:
+
 ```typescript
 const app = new App();
 app.outdir = './build/arm';
@@ -106,21 +110,21 @@ class Stack extends Construct {
 
 #### Constructor Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `scope` | `App` | Yes | Parent app |
-| `id` | `string` | Yes | Stack identifier |
-| `props` | `StackProps` | No | Stack configuration |
+| Parameter | Type         | Required | Description         |
+| --------- | ------------ | -------- | ------------------- |
+| `scope`   | `App`        | Yes      | Parent app          |
+| `id`      | `string`     | Yes      | Stack identifier    |
+| `props`   | `StackProps` | No       | Stack configuration |
 
 #### Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `environment` | `string` | Environment name (dev, staging, production) |
-| `location` | `string` | Azure region |
-| `stackName` | `string` | Generated stack name |
-| `tags` | `Record<string, string>` | Stack-level tags |
-| `resources` | `Resource[]` | All resources in stack |
+| Property      | Type                     | Description                                 |
+| ------------- | ------------------------ | ------------------------------------------- |
+| `environment` | `string`                 | Environment name (dev, staging, production) |
+| `location`    | `string`                 | Azure region                                |
+| `stackName`   | `string`                 | Generated stack name                        |
+| `tags`        | `Record<string, string>` | Stack-level tags                            |
+| `resources`   | `Resource[]`             | All resources in stack                      |
 
 #### StackProps Interface
 
@@ -159,9 +163,11 @@ interface StackProps {
 Adds a resource to this stack.
 
 **Parameters**:
+
 - `resource`: Resource to add
 
 **Example**:
+
 ```typescript
 const resource = new Resource(this, 'MyResource', {});
 this.addResource(resource);
@@ -172,6 +178,7 @@ this.addResource(resource);
 Retrieves a resource by ID.
 
 **Parameters**:
+
 - `id`: Resource identifier
 
 **Returns**: Resource if found, undefined otherwise
@@ -185,6 +192,7 @@ Synthesizes this stack to ARM template.
 #### Usage Examples
 
 **Basic Stack**:
+
 ```typescript
 import { App, Stack } from '@atakora/lib';
 
@@ -192,7 +200,7 @@ class MyStack extends Stack {
   constructor(scope: App, id: string) {
     super(scope, id, {
       environment: 'production',
-      location: 'eastus'
+      location: 'eastus',
     });
 
     // Add resources...
@@ -205,6 +213,7 @@ app.synth();
 ```
 
 **Multi-Region Stack**:
+
 ```typescript
 class RegionalStack extends Stack {
   constructor(scope: App, id: string, region: string) {
@@ -213,8 +222,8 @@ class RegionalStack extends Stack {
       location: region,
       tags: {
         region: region,
-        deploymentType: 'regional'
-      }
+        deploymentType: 'regional',
+      },
     });
   }
 }
@@ -226,6 +235,7 @@ app.synth();
 ```
 
 **Environment-Specific Stack**:
+
 ```typescript
 interface EnvStackProps extends StackProps {
   readonly dbSku: string;
@@ -247,7 +257,7 @@ new EnvironmentStack(app, 'dev', {
   environment: 'development',
   location: 'eastus',
   dbSku: 'Basic',
-  appServicePlan: 'B1'
+  appServicePlan: 'B1',
 });
 
 // Production
@@ -255,7 +265,7 @@ new EnvironmentStack(app, 'prod', {
   environment: 'production',
   location: 'eastus',
   dbSku: 'S3',
-  appServicePlan: 'P2v2'
+  appServicePlan: 'P2v2',
 });
 ```
 
@@ -275,25 +285,25 @@ abstract class Construct {
 
 #### Constructor Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `scope` | `Construct` | Yes | Parent construct |
-| `id` | `string` | Yes | Construct identifier |
+| Parameter | Type        | Required | Description          |
+| --------- | ----------- | -------- | -------------------- |
+| `scope`   | `Construct` | Yes      | Parent construct     |
+| `id`      | `string`    | Yes      | Construct identifier |
 
 #### Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `node` | `ConstructNode` | Construct tree node |
-| `scope` | `Construct` | Parent construct |
+| Property | Type            | Description         |
+| -------- | --------------- | ------------------- |
+| `node`   | `ConstructNode` | Construct tree node |
+| `scope`  | `Construct`     | Parent construct    |
 
 #### ConstructNode Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `id` | `string` | Construct ID |
-| `path` | `string` | Full path in tree |
-| `children` | `Construct[]` | Child constructs |
+| Property   | Type              | Description        |
+| ---------- | ----------------- | ------------------ |
+| `id`       | `string`          | Construct ID       |
+| `path`     | `string`          | Full path in tree  |
+| `children` | `Construct[]`     | Child constructs   |
 | `metadata` | `MetadataEntry[]` | Construct metadata |
 
 #### Methods
@@ -313,6 +323,7 @@ Validates construct configuration.
 #### Usage Examples
 
 **Custom Construct**:
+
 ```typescript
 import { Construct } from '@atakora/lib';
 import { VirtualNetwork, Subnet } from '@atakora/cdk/network';
@@ -326,17 +337,17 @@ class NetworkStack extends Construct {
     super(scope, id);
 
     this.vnet = new VirtualNetwork(this, 'VNet', {
-      addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
+      addressSpace: { addressPrefixes: ['10.0.0.0/16'] },
     });
 
     this.appSubnet = new Subnet(this, 'AppSubnet', {
       virtualNetwork: this.vnet,
-      addressPrefix: '10.0.1.0/24'
+      addressPrefix: '10.0.1.0/24',
     });
 
     this.dataSubnet = new Subnet(this, 'DataSubnet', {
       virtualNetwork: this.vnet,
-      addressPrefix: '10.0.2.0/24'
+      addressPrefix: '10.0.2.0/24',
     });
   }
 }
@@ -347,6 +358,7 @@ const network = new NetworkStack(stack, 'Network');
 ```
 
 **Reusable Component**:
+
 ```typescript
 interface WebAppComponentProps {
   readonly sku: string;
@@ -361,14 +373,14 @@ class WebAppComponent extends Construct {
     super(scope, id);
 
     this.plan = new AppServicePlan(this, 'Plan', {
-      sku: { name: props.sku }
+      sku: { name: props.sku },
     });
 
     this.webapp = new WebApp(this, 'WebApp', {
       serverFarmId: this.plan.id,
       siteConfig: {
-        numberOfWorkers: props.instances
-      }
+        numberOfWorkers: props.instances,
+      },
     });
   }
 }
@@ -376,7 +388,7 @@ class WebAppComponent extends Construct {
 // Usage
 const component = new WebAppComponent(stack, 'MyApp', {
   sku: 'P1v2',
-  instances: 3
+  instances: 3,
 });
 ```
 
@@ -396,21 +408,21 @@ abstract class Resource extends Construct {
 
 #### Constructor Parameters
 
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `scope` | `Construct` | Yes | Parent construct |
-| `id` | `string` | Yes | Resource identifier |
-| `props` | `ResourceProps` | No | Resource configuration |
+| Parameter | Type            | Required | Description            |
+| --------- | --------------- | -------- | ---------------------- |
+| `scope`   | `Construct`     | Yes      | Parent construct       |
+| `id`      | `string`        | Yes      | Resource identifier    |
+| `props`   | `ResourceProps` | No       | Resource configuration |
 
 #### Properties
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `resourceType` | `string` | Azure resource type (e.g., Microsoft.Network/virtualNetworks) |
-| `name` | `string` | Resource name |
-| `id` | `string` | ARM resource ID |
-| `location` | `string` | Azure region |
-| `tags` | `Record<string, string>` | Resource tags |
+| Property       | Type                     | Description                                                   |
+| -------------- | ------------------------ | ------------------------------------------------------------- |
+| `resourceType` | `string`                 | Azure resource type (e.g., Microsoft.Network/virtualNetworks) |
+| `name`         | `string`                 | Resource name                                                 |
+| `id`           | `string`                 | ARM resource ID                                               |
+| `location`     | `string`                 | Azure region                                                  |
+| `tags`         | `Record<string, string>` | Resource tags                                                 |
 
 #### ResourceProps Interface
 
@@ -453,6 +465,7 @@ Validates resource configuration.
 #### Usage Examples
 
 **Custom Resource**:
+
 ```typescript
 import { Resource, ResourceProps } from '@atakora/lib';
 
@@ -487,7 +500,7 @@ class CustomResource extends Resource {
       tags: this.tags,
       properties: {
         // Custom properties
-      }
+      },
     };
   }
 }
@@ -513,15 +526,11 @@ function generateResourceName(
 ```
 
 **Example**:
+
 ```typescript
 import { generateResourceName } from '@atakora/lib/utils';
 
-const name = generateResourceName(
-  'virtualNetwork',
-  'MyVNet',
-  'production',
-  'eastus'
-);
+const name = generateResourceName('virtualNetwork', 'MyVNet', 'production', 'eastus');
 // Returns: vnet-myvnet-prod-eastus
 ```
 
@@ -530,13 +539,11 @@ const name = generateResourceName(
 Generates storage account names (24 chars, alphanumeric).
 
 ```typescript
-function generateStorageAccountName(
-  id: string,
-  environment: string
-): string;
+function generateStorageAccountName(id: string, environment: string): string;
 ```
 
 **Example**:
+
 ```typescript
 import { generateStorageAccountName } from '@atakora/lib/utils';
 
@@ -551,12 +558,11 @@ const name = generateStorageAccountName('MyStorage', 'production');
 Merges tag objects with precedence.
 
 ```typescript
-function mergeTags(
-  ...tagSets: Array<Record<string, string> | undefined>
-): Record<string, string>;
+function mergeTags(...tagSets: Array<Record<string, string> | undefined>): Record<string, string>;
 ```
 
 **Example**:
+
 ```typescript
 import { mergeTags } from '@atakora/lib/utils';
 
@@ -574,20 +580,15 @@ const merged = mergeTags(stackTags, resourceTags);
 Validates Azure resource name against rules.
 
 ```typescript
-function validateAzureResourceName(
-  name: string,
-  resourceType: string
-): ValidationResult;
+function validateAzureResourceName(name: string, resourceType: string): ValidationResult;
 ```
 
 **Example**:
+
 ```typescript
 import { validateAzureResourceName } from '@atakora/lib/utils';
 
-const result = validateAzureResourceName(
-  'my-vnet',
-  'Microsoft.Network/virtualNetworks'
-);
+const result = validateAzureResourceName('my-vnet', 'Microsoft.Network/virtualNetworks');
 
 if (!result.valid) {
   console.error(result.errors);
@@ -674,6 +675,7 @@ class ValidationError extends Error {
 ```
 
 **Example**:
+
 ```typescript
 import { ValidationError } from '@atakora/lib';
 
@@ -682,7 +684,7 @@ try {
 } catch (error) {
   if (error instanceof ValidationError) {
     console.error(`Validation failed for ${error.resource}:`);
-    error.errors.forEach(err => console.error(`  - ${err}`));
+    error.errors.forEach((err) => console.error(`  - ${err}`));
   }
 }
 ```
@@ -724,8 +726,8 @@ abstract class OrgStack extends Stack {
         ...props.tags,
         costCenter: props.costCenter,
         owner: props.owner,
-        organization: 'Acme Corp'
-      }
+        organization: 'Acme Corp',
+      },
     });
   }
 }
@@ -737,7 +739,7 @@ class ProductionStack extends OrgStack {
       environment: 'production',
       location: 'eastus',
       costCenter: 'CC-1234',
-      owner: 'platform-team@acme.com'
+      owner: 'platform-team@acme.com',
     });
   }
 }
@@ -762,10 +764,12 @@ class TaggingAspect implements IAspect {
 
 // Apply to all resources
 const app = new App();
-app.node.applyAspect(new TaggingAspect({
-  compliance: 'SOC2',
-  dataClassification: 'confidential'
-}));
+app.node.applyAspect(
+  new TaggingAspect({
+    compliance: 'SOC2',
+    dataClassification: 'confidential',
+  })
+);
 ```
 
 ## See Also

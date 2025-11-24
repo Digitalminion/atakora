@@ -20,6 +20,7 @@ The `InlineFunction` construct currently embeds entire JavaScript code in ARM te
 ```
 
 This approach:
+
 - Bloats ARM templates beyond Azure's 4MB limit
 - Mixes infrastructure definition with application code
 - Makes code updates require full template redeployment
@@ -189,7 +190,7 @@ class AzureFunctionPackager implements FunctionPackager {
         packagePath,
         packageSize: await this.getFileSize(packagePath),
         checksum,
-        functions: functions.map(f => f.functionName)
+        functions: functions.map((f) => f.functionName),
       };
     } finally {
       await this.cleanup(tempDir);
@@ -202,18 +203,12 @@ class AzureFunctionPackager implements FunctionPackager {
 
     // Write function.json
     const functionJson = {
-      bindings: this.generateBindings(func)
+      bindings: this.generateBindings(func),
     };
-    await fs.writeFile(
-      path.join(funcDir, 'function.json'),
-      JSON.stringify(functionJson, null, 2)
-    );
+    await fs.writeFile(path.join(funcDir, 'function.json'), JSON.stringify(functionJson, null, 2));
 
     // Write index.js
-    await fs.writeFile(
-      path.join(funcDir, 'index.js'),
-      func.code
-    );
+    await fs.writeFile(path.join(funcDir, 'index.js'), func.code);
   }
 }
 ```
@@ -249,8 +244,8 @@ class AzureStorageUploader implements StorageUploader {
     const blobClient = this.containerClient.getBlockBlobClient(blobName);
     await blobClient.uploadFile(packagePath, {
       blobHTTPHeaders: {
-        blobContentType: 'application/zip'
-      }
+        blobContentType: 'application/zip',
+      },
     });
 
     // Generate SAS token (24 hour validity for runtime access)
@@ -259,7 +254,7 @@ class AzureStorageUploader implements StorageUploader {
     return {
       blobUri: blobClient.url,
       sasToken,
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
     };
   }
 
@@ -299,27 +294,27 @@ class FunctionAppTemplateGenerator {
           appSettings: [
             {
               name: 'FUNCTIONS_EXTENSION_VERSION',
-              value: '~4'
+              value: '~4',
             },
             {
               name: 'FUNCTIONS_WORKER_RUNTIME',
-              value: 'node'
+              value: 'node',
             },
             {
               name: 'WEBSITE_NODE_DEFAULT_VERSION',
-              value: '~18'
+              value: '~18',
             },
             {
               name: 'WEBSITE_RUN_FROM_PACKAGE',
-              value: packageUri  // SAS URL to ZIP package
+              value: packageUri, // SAS URL to ZIP package
             },
             // Other app settings...
           ],
           cors: {
-            allowedOrigins: ['*']
-          }
-        }
-      }
+            allowedOrigins: ['*'],
+          },
+        },
+      },
     };
   }
 }
@@ -398,27 +393,27 @@ sequenceDiagram
 ```typescript
 interface SasTokenPolicy {
   // Permissions
-  permissions: 'r';  // Read-only for packages
+  permissions: 'r'; // Read-only for packages
 
   // Lifetime
   duration: {
-    deployment: '1h';   // Short-lived for deployment
-    runtime: '24h';     // Longer for function runtime
-    maximum: '7d';      // Absolute maximum
+    deployment: '1h'; // Short-lived for deployment
+    runtime: '24h'; // Longer for function runtime
+    maximum: '7d'; // Absolute maximum
   };
 
   // Restrictions
   restrictions: {
-    protocol: 'https';        // HTTPS only
-    ipRange?: string;         // Optional IP restrictions
-    correlationId?: string;   // Track token usage
+    protocol: 'https'; // HTTPS only
+    ipRange?: string; // Optional IP restrictions
+    correlationId?: string; // Track token usage
   };
 
   // Rotation
   rotation: {
     automatic: true;
-    warningPeriod: '6h';  // Warn before expiration
-    gracePeriod: '1h';    // Overlap for rotation
+    warningPeriod: '6h'; // Warn before expiration
+    gracePeriod: '1h'; // Overlap for rotation
   };
 }
 ```
@@ -430,7 +425,7 @@ interface PackageIntegrity {
   // Checksum validation
   checksum: {
     algorithm: 'sha256';
-    validate: boolean;  // Always true in production
+    validate: boolean; // Always true in production
   };
 
   // Signature (future enhancement)
@@ -441,8 +436,8 @@ interface PackageIntegrity {
 
   // Scanning
   scanning: {
-    malware: boolean;     // Scan for malware
-    vulnerabilities: boolean;  // Scan dependencies
+    malware: boolean; // Scan for malware
+    vulnerabilities: boolean; // Scan dependencies
   };
 }
 ```
@@ -459,16 +454,16 @@ class PackageOptimizer {
 
     // 2. Remove unnecessary files
     await this.removeUnnecessaryFiles(packagePath, [
-      '**/*.map',     // Source maps
-      '**/*.ts',      // TypeScript sources
-      '**/test/**',   // Test files
-      '**/docs/**',   // Documentation
+      '**/*.map', // Source maps
+      '**/*.ts', // TypeScript sources
+      '**/test/**', // Test files
+      '**/docs/**', // Documentation
     ]);
 
     // 3. Compress with maximum compression
     await this.recompress(packagePath, {
-      level: 9,  // Maximum compression
-      memLevel: 9
+      level: 9, // Maximum compression
+      memLevel: 9,
     });
   }
 
@@ -480,7 +475,7 @@ class PackageOptimizer {
       const code = await fs.readFile(file, 'utf-8');
       const minified = await terser.minify(code, {
         compress: true,
-        mangle: true
+        mangle: true,
       });
       await fs.writeFile(file, minified.code);
     }
@@ -494,15 +489,15 @@ class PackageOptimizer {
 interface CacheStrategy {
   // Package caching
   packages: {
-    key: string;  // Hash of function code + dependencies
+    key: string; // Hash of function code + dependencies
     duration: '30d';
     storage: 'local' | 'remote';
   };
 
   // Deployment caching
   deployments: {
-    reuseUnchanged: boolean;  // Skip upload if package unchanged
-    validateChecksum: boolean;  // Verify integrity
+    reuseUnchanged: boolean; // Skip upload if package unchanged
+    validateChecksum: boolean; // Verify integrity
   };
 }
 
@@ -510,7 +505,7 @@ class PackageCache {
   async getOrCreate(key: string, creator: () => Promise<Package>): Promise<Package> {
     // Check cache
     const cached = await this.get(key);
-    if (cached && await this.isValid(cached)) {
+    if (cached && (await this.isValid(cached))) {
       return cached;
     }
 
@@ -530,14 +525,14 @@ class PackageCache {
 interface RetentionPolicy {
   // Keep packages for rollback
   production: {
-    keepLast: 10;         // Keep last 10 versions
-    keepDays: 90;         // Keep for 90 days
-    keepTagged: true;     // Keep tagged versions forever
+    keepLast: 10; // Keep last 10 versions
+    keepDays: 90; // Keep for 90 days
+    keepTagged: true; // Keep tagged versions forever
   };
 
   // Clean up old packages
   cleanup: {
-    schedule: '0 2 * * *';  // Daily at 2 AM
+    schedule: '0 2 * * *'; // Daily at 2 AM
     dryRun: false;
     notify: true;
   };
@@ -580,7 +575,8 @@ class FunctionRollback {
     const sasToken = await this.generateSasToken(package.uri);
 
     // 3. Update Function App setting
-    await this.updateAppSetting(functionApp,
+    await this.updateAppSetting(
+      functionApp,
       'WEBSITE_RUN_FROM_PACKAGE',
       `${package.uri}?${sasToken}`
     );
@@ -602,9 +598,9 @@ class FunctionRollback {
 interface DeploymentMetrics {
   // Upload metrics
   upload: {
-    duration: number;      // Time to upload
-    size: number;         // Package size
-    speed: number;        // Upload speed
+    duration: number; // Time to upload
+    size: number; // Package size
+    speed: number; // Upload speed
   };
 
   // Deployment metrics
@@ -617,9 +613,9 @@ interface DeploymentMetrics {
 
   // Runtime metrics
   runtime: {
-    mountTime: number;    // Time to mount package
-    coldStart: number;    // Cold start duration
-    errors: number;       // Package-related errors
+    mountTime: number; // Time to mount package
+    coldStart: number; // Cold start duration
+    errors: number; // Package-related errors
   };
 }
 ```
@@ -630,7 +626,7 @@ interface DeploymentMetrics {
 interface DebugSupport {
   // Package inspection
   inspect: {
-    listContents: boolean;     // List files in package
+    listContents: boolean; // List files in package
     validateStructure: boolean; // Check package structure
     verifyDependencies: boolean; // Check dependencies
   };
@@ -663,7 +659,7 @@ class InlineFunctionMigration {
       trigger: this.convertTrigger(inlineFunction.httpTrigger),
       code: inlineFunction.code,
       // No longer embedded in ARM template
-      deployment: 'package'  // Instead of 'inline'
+      deployment: 'package', // Instead of 'inline'
     };
   }
 }

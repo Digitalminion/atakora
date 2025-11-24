@@ -25,9 +25,10 @@ Atakora Gen 2 represents a complete redesign of the backend component API focuse
 
 ### 1. Foundation: Core Architecture
 
-**[Atakora Gen 2 Design](./atakora-gen2-design.md)** - The foundation document
+**[Atakora Gen 2 Design](./ATAKORA-GEN2-Design.md)** - The foundation document
 
 Defines the core vision and architecture:
+
 - `defineBackend()` - Single function that does everything
 - Component self-description via `componentType` property
 - Automatic App/SubscriptionStack creation
@@ -39,9 +40,10 @@ Defines the core vision and architecture:
 
 ### 2. Component API
 
-**[Unified `define*` API Pattern](./atakora-gen2-define-api.md)**
+**[Unified `define*` API Pattern](./ATAKORA-GEN2-Define-Api.md)**
 
 Consistent API across all component types:
+
 - `defineCrudApi()` - CRUD API endpoints
 - `defineFunction()` - Azure Functions
 - `defineQueueProcessor()` - Queue-triggered processors
@@ -54,9 +56,10 @@ Consistent API across all component types:
 
 ### 3. Data Layer
 
-**[Universal Data Layer](./atakora-gen2-data-layer.md)**
+**[Universal Data Layer](./ATAKORA-GEN2-Data-Layer.md)**
 
 Unified schema system supporting both CRUD and GraphQL:
+
 - `a.schema()` - Universal schema definition
 - `c.model()` - Simple CRUD REST APIs
 - `g.model()` - Full GraphQL with resolvers
@@ -69,9 +72,10 @@ Unified schema system supporting both CRUD and GraphQL:
 
 ### 4. Infrastructure
 
-**[Default Backend Infrastructure](./atakora-gen2-default-backend-infrastructure.md)**
+**[Default Backend Infrastructure](./ATAKORA-GEN2-Default-Backend-Infrastructure.md)**
 
 What gets provisioned automatically with `defineBackend()`:
+
 - Essential components (Function App, Storage, Cosmos, etc.)
 - Highly recommended components (VNet, APIM, Service Bus)
 - Optional components (Redis, CDN, B2C)
@@ -83,9 +87,10 @@ What gets provisioned automatically with `defineBackend()`:
 
 ### 5. Tagging & Metadata
 
-**[Dynamic Rule-Driven Tagging System](./atakora-gen2-dynamic-tagging-system.md)**
+**[Dynamic Rule-Driven Tagging System](./ATAKORA-GEN2-Dynamic-Tagging-System.md)**
 
 Comprehensive tagging that cascades from manifest to resources:
+
 - Dynamic manifest tags (any field becomes a tag)
 - Package-level tags
 - Backend instance hash
@@ -98,9 +103,10 @@ Comprehensive tagging that cascades from manifest to resources:
 
 ### 6. Governance & Compliance
 
-**[Governance, Compliance & Policy Management](./atakora-gen2-governance-compliance.md)**
+**[Governance, Compliance & Policy Management](./ATAKORA-GEN2-Governance-Compliance.md)**
 
 Automatic governance and compliance:
+
 - Azure Policy integration
 - Comprehensive audit logging
 - Compliance framework policies (SOC 2, HIPAA, PCI DSS)
@@ -113,9 +119,10 @@ Automatic governance and compliance:
 
 ### 7. Authentication & Authorization
 
-**[Authentication & Authorization](./atakora-gen2-authentication.md)**
+**[Authentication & Authorization](./ATAKORA-GEN2-Authentication.md)**
 
 Zero-config authentication with declarative authorization:
+
 - Zero-config Entra ID
 - Multi-provider support
 - Declarative authorization rules
@@ -128,12 +135,12 @@ Zero-config authentication with declarative authorization:
 
 ### 8. Additional Topics
 
-| Document | Description |
-|----------|-------------|
-| [Deployment & State Management](./atakora-gen2-deployment-state-management.md) | Deployment orchestration and state tracking |
-| [Secrets & Config Management](./atakora-gen2-secrets-config-management.md) | Secrets management and configuration |
-| [Type Generation & IntelliSense](./atakora-gen2-type-generation-intellisense.md) | Type generation and IDE support |
-| [Networking & Security](./atakora-gen2-networking-security.md) | Network isolation and security patterns |
+| Document                                                                         | Description                                 |
+| -------------------------------------------------------------------------------- | ------------------------------------------- |
+| [Deployment & State Management](./ATAKORA-GEN2-Deployment-State-Management.md)   | Deployment orchestration and state tracking |
+| [Secrets & Config Management](./ATAKORA-GEN2-Secrets-Config-Management.md)       | Secrets management and configuration        |
+| [Type Generation & IntelliSense](./ATAKORA-GEN2-Type-Generation-Intellisense.md) | Type generation and IDE support             |
+| [Networking & Security](./ATAKORA-GEN2-Networking-Security.md)                   | Network isolation and security patterns     |
 
 ## Quick Start (Gen 2 Preview)
 
@@ -144,6 +151,7 @@ atakora init
 ```
 
 Creates `.atakora/manifest.json`:
+
 ```json
 {
   "version": "2.0.0",
@@ -166,6 +174,7 @@ export { backend };
 ```
 
 This automatically provisions:
+
 - Function App
 - Storage Account
 - Cosmos DB
@@ -204,12 +213,12 @@ atakora deploy
 
 ### Developer Experience
 
-| Metric | Gen 1 | Gen 2 | Improvement |
-|--------|-------|-------|-------------|
-| Lines of boilerplate | 80-100 | <10 | 90% reduction |
-| Time to add CRUD API | 15 min | <5 min | 66% faster |
-| Time to add function | 10 min | <3 min | 70% faster |
-| Onboarding time | 2 days | <4 hours | 75% faster |
+| Metric               | Gen 1  | Gen 2    | Improvement   |
+| -------------------- | ------ | -------- | ------------- |
+| Lines of boilerplate | 80-100 | <10      | 90% reduction |
+| Time to add CRUD API | 15 min | <5 min   | 66% faster    |
+| Time to add function | 10 min | <3 min   | 70% faster    |
+| Onboarding time      | 2 days | <4 hours | 75% faster    |
 
 ### Security & Compliance
 
@@ -221,34 +230,42 @@ atakora deploy
 ## Implementation Roadmap
 
 ### Phase 1: Foundation (Weeks 1-2)
+
 - Type system and configuration infrastructure
 - Component self-identification
 
 ### Phase 2: Backend Auto-Initialization (Weeks 3-4)
+
 - `defineBackend()` implementation
 - Default infrastructure provisioning
 
 ### Phase 3: Unified API Pattern (Weeks 5-6)
+
 - All `define*` functions
 - Template variable resolution
 
 ### Phase 4: Data Layer (Weeks 7-8)
+
 - Schema builder
 - CRUD and GraphQL generation
 
 ### Phase 5: Governance & Compliance (Weeks 9-10)
+
 - Azure Policy integration
 - Audit logging and reporting
 
 ### Phase 6: CLI & Generators (Weeks 11-12)
+
 - CLI updates for Gen 2
 - Code generators
 
 ### Phase 7: Testing & Refinement (Weeks 13-14)
+
 - Comprehensive testing
 - Performance optimization
 
 ### Phase 8: Documentation & Migration (Weeks 15-16)
+
 - Complete documentation
 - Migration guide and tools
 

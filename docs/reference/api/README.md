@@ -22,6 +22,7 @@ Core constructs and primitives for building infrastructure:
 - **Interfaces** - Common interfaces and types
 
 **Import**:
+
 ```typescript
 import { App, Stack, Construct, Resource } from '@atakora/lib';
 ```
@@ -31,35 +32,43 @@ import { App, Stack, Construct, Resource } from '@atakora/lib';
 Azure service-specific constructs organized by namespace:
 
 #### Core Resources
-- **[@atakora/cdk/resources](./cdk/resources.md)** - Resource Groups and management resources
-- **[@atakora/cdk/managedidentity](./cdk/managedidentity.md)** - Managed Identities for Azure resources
-- **[@atakora/cdk/authorization](./cdk/authorization.md)** - Role-Based Access Control (RBAC)
-- **[RBAC Grant Pattern](./cdk/rbac-grants.md)** - Type-safe permission grants between resources
+
+- **[@atakora/cdk/resources](./cdk/Resources.md)** - Resource Groups and management resources
+- **[@atakora/cdk/managedidentity](./cdk/Managed-Identity.md)** - Managed Identities for Azure resources
+- **[@atakora/cdk/authorization](./cdk/Authorization.md)** - Role-Based Access Control (RBAC)
+- **[RBAC Grant Pattern](./cdk/RBAC-Grants.md)** - Type-safe permission grants between resources
 
 #### Networking
-- **[@atakora/cdk/network](./cdk/network.md)** - Virtual networks, subnets, NSGs, private endpoints, application gateways
+
+- **[@atakora/cdk/network](./cdk/Network.md)** - Virtual networks, subnets, NSGs, private endpoints, application gateways
 
 #### Compute & Hosting
+
 - **[@atakora/cdk/compute](./cdk/compute.md)** - Virtual Machines, VM Scale Sets
-- **[@atakora/cdk/web](./cdk/web.md)** - App Services, Function Apps, Static Web Apps
+- **[@atakora/cdk/web](./cdk/Web.md)** - App Services, Function Apps, Static Web Apps
 
 #### Data & Storage
-- **[@atakora/cdk/storage](./cdk/storage.md)** - Storage Accounts, blobs, queues, tables, files
-- **[@atakora/cdk/sql](./cdk/sql.md)** - Azure SQL Server and SQL Database
-- **[@atakora/cdk/documentdb](./cdk/documentdb.md)** - Cosmos DB (SQL API, MongoDB API)
+
+- **[@atakora/cdk/storage](./cdk/Storage.md)** - Storage Accounts, blobs, queues, tables, files
+- **[@atakora/cdk/sql](./cdk/SQL.md)** - Azure SQL Server and SQL Database
+- **[@atakora/cdk/documentdb](./cdk/Document-DB.md)** - Cosmos DB (SQL API, MongoDB API)
 
 #### Security & Management
-- **[@atakora/cdk/keyvault](./cdk/keyvault.md)** - Key Vault for secrets, keys, and certificates
+
+- **[@atakora/cdk/keyvault](./cdk/Key-Vault.md)** - Key Vault for secrets, keys, and certificates
 
 #### Monitoring & Operations
-- **[@atakora/cdk/insights](./cdk/insights.md)** - Application Insights, metric alerts, action groups, autoscale, diagnostics
-- **[@atakora/cdk/operationalinsights](./cdk/operationalinsights.md)** - Log Analytics Workspaces
+
+- **[@atakora/cdk/insights](./cdk/Insights.md)** - Application Insights, metric alerts, action groups, autoscale, diagnostics
+- **[@atakora/cdk/operationalinsights](./cdk/Operational-Insights.md)** - Log Analytics Workspaces
 
 #### Integration & AI
-- **[@atakora/cdk/apimanagement](./cdk/apimanagement.md)** - API Management service, APIs, products, policies
-- **[@atakora/cdk/cognitiveservices](./cdk/cognitiveservices.md)** - Azure OpenAI and Cognitive Services
+
+- **[@atakora/cdk/apimanagement](./cdk/API-Management.md)** - API Management service, APIs, products, policies
+- **[@atakora/cdk/cognitiveservices](./cdk/Cognitive-Services.md)** - Azure OpenAI and Cognitive Services
 
 **Import**:
+
 ```typescript
 import { VirtualNetwork } from '@atakora/cdk/network';
 import { StorageAccount } from '@atakora/cdk/storage';
@@ -72,6 +81,7 @@ Each service namespace documentation includes:
 ### Class Reference
 
 All exported classes with:
+
 - Constructor signatures
 - Public properties
 - Public methods
@@ -80,6 +90,7 @@ All exported classes with:
 ### Type Reference
 
 TypeScript interfaces and types:
+
 - Property interfaces (`VirtualNetworkProps`, etc.)
 - Resource interfaces (`IVirtualNetwork`, etc.)
 - Configuration types
@@ -88,6 +99,7 @@ TypeScript interfaces and types:
 ### Examples
 
 Working code examples for:
+
 - Basic usage
 - Common patterns
 - Advanced scenarios
@@ -112,6 +124,7 @@ App (root)
 ### L1 vs L2 Constructs
 
 **L1 Constructs** (Arm prefix):
+
 - Direct ARM template mapping
 - All properties explicit
 - Maximum control
@@ -125,16 +138,17 @@ new ArmVirtualNetwork(this, 'VNet', {
   location: 'eastus',
   properties: {
     addressSpace: {
-      addressPrefixes: ['10.0.0.0/16']
-    }
+      addressPrefixes: ['10.0.0.0/16'],
+    },
   },
   tags: {
-    environment: 'production'
-  }
+    environment: 'production',
+  },
 });
 ```
 
 **L2 Constructs** (no prefix):
+
 - Intent-based API
 - Auto-generates names
 - Sensible defaults
@@ -146,8 +160,8 @@ import { VirtualNetwork } from '@atakora/cdk/network';
 
 new VirtualNetwork(this, 'VNet', {
   addressSpace: {
-    addressPrefixes: ['10.0.0.0/16']
-  }
+    addressPrefixes: ['10.0.0.0/16'],
+  },
   // Name auto-generated: vnet-myapp-prod-eastus
   // Location from stack
   // Tags merged from parent
@@ -165,18 +179,18 @@ import { StorageAccount } from '@atakora/cdk/storage';
 
 // Create resource group
 const rg = new ResourceGroup(this, 'ResourceGroup', {
-  location: 'eastus'
+  location: 'eastus',
 });
 
 // Reference resource group
 const vnet = new VirtualNetwork(this, 'VNet', {
-  resourceGroup: rg,  // TypeScript reference
-  addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
+  resourceGroup: rg, // TypeScript reference
+  addressSpace: { addressPrefixes: ['10.0.0.0/16'] },
 });
 
 // Chain references
 const storage = new StorageAccount(this, 'Storage', {
-  resourceGroup: rg  // Same reference
+  resourceGroup: rg, // Same reference
 });
 ```
 
@@ -186,17 +200,17 @@ Properties are resolved at synthesis time:
 
 ```typescript
 const storage = new StorageAccount(this, 'Storage', {
-  resourceGroup: rg
+  resourceGroup: rg,
 });
 
 // Access resolved properties
-console.log(storage.name);  // stmyappprod
-console.log(storage.id);    // /subscriptions/.../storageAccounts/stmyappprod
+console.log(storage.name); // stmyappprod
+console.log(storage.id); // /subscriptions/.../storageAccounts/stmyappprod
 
 // Use in other resources
 const container = new BlobContainer(this, 'Container', {
   storageAccount: storage,
-  name: 'assets'
+  name: 'assets',
 });
 ```
 
@@ -213,21 +227,21 @@ class InfraStack extends Stack {
   constructor(scope: App, id: string) {
     super(scope, id, {
       environment: 'production',
-      location: 'eastus'
+      location: 'eastus',
     });
 
     const rg = new ResourceGroup(this, 'RG', {
-      location: this.location
+      location: this.location,
     });
 
     const vnet = new VirtualNetwork(this, 'VNet', {
       resourceGroup: rg,
-      addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
+      addressSpace: { addressPrefixes: ['10.0.0.0/16'] },
     });
 
     new Subnet(this, 'AppSubnet', {
       virtualNetwork: vnet,
-      addressPrefix: '10.0.1.0/24'
+      addressPrefix: '10.0.1.0/24',
     });
   }
 }
@@ -250,42 +264,42 @@ class WebAppStack extends Stack {
   constructor(scope: App, id: string) {
     super(scope, id, {
       environment: 'production',
-      location: 'eastus'
+      location: 'eastus',
     });
 
     const rg = new ResourceGroup(this, 'RG', {
-      location: this.location
+      location: this.location,
     });
 
     // App Service
     const plan = new AppServicePlan(this, 'Plan', {
       resourceGroup: rg,
-      sku: { name: 'P1v2', tier: 'PremiumV2' }
+      sku: { name: 'P1v2', tier: 'PremiumV2' },
     });
 
     const webapp = new WebApp(this, 'WebApp', {
       resourceGroup: rg,
       serverFarmId: plan.id,
-      httpsOnly: true
+      httpsOnly: true,
     });
 
     // Database
     const sqlServer = new SqlServer(this, 'SqlServer', {
       resourceGroup: rg,
       administratorLogin: 'sqladmin',
-      administratorLoginPassword: process.env.SQL_PASSWORD!
+      administratorLoginPassword: process.env.SQL_PASSWORD!,
     });
 
     new SqlDatabase(this, 'Database', {
       resourceGroup: rg,
       server: sqlServer,
-      sku: { name: 'S1' }
+      sku: { name: 'S1' },
     });
 
     // Monitoring
     new ApplicationInsights(this, 'AppInsights', {
       resourceGroup: rg,
-      applicationType: 'web'
+      applicationType: 'web',
     });
   }
 }
@@ -308,48 +322,48 @@ class SecureStack extends Stack {
   constructor(scope: App, id: string) {
     super(scope, id, {
       environment: 'production',
-      location: 'eastus'
+      location: 'eastus',
     });
 
     const rg = new ResourceGroup(this, 'RG', {
-      location: this.location
+      location: this.location,
     });
 
     // Network
     const vnet = new VirtualNetwork(this, 'VNet', {
       resourceGroup: rg,
-      addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
+      addressSpace: { addressPrefixes: ['10.0.0.0/16'] },
     });
 
     const subnet = new Subnet(this, 'PrivateSubnet', {
       virtualNetwork: vnet,
       addressPrefix: '10.0.1.0/24',
-      privateEndpointNetworkPolicies: 'Disabled'
+      privateEndpointNetworkPolicies: 'Disabled',
     });
 
     // Storage with private endpoint
     const storage = new StorageAccount(this, 'Storage', {
       resourceGroup: rg,
-      publicNetworkAccess: 'Disabled'
+      publicNetworkAccess: 'Disabled',
     });
 
     new PrivateEndpoint(this, 'StorageEndpoint', {
       resourceGroup: rg,
       subnet: subnet,
       privateLinkServiceId: storage.id,
-      groupIds: ['blob']
+      groupIds: ['blob'],
     });
 
     // Key Vault
     const vault = new KeyVault(this, 'Vault', {
       resourceGroup: rg,
       tenantId: process.env.AZURE_TENANT_ID!,
-      enableRbacAuthorization: true
+      enableRbacAuthorization: true,
     });
 
     new Secret(this, 'ConnectionString', {
       keyVault: vault,
-      value: storage.primaryConnectionString
+      value: storage.primaryConnectionString,
     });
   }
 }
@@ -411,7 +425,7 @@ enum StorageAccountKind {
   StorageV2 = 'StorageV2',
   BlobStorage = 'BlobStorage',
   FileStorage = 'FileStorage',
-  BlockBlobStorage = 'BlockBlobStorage'
+  BlockBlobStorage = 'BlockBlobStorage',
 }
 ```
 
@@ -427,14 +441,14 @@ new VirtualNetwork(this, 'VNet', {
 
 // Invalid value
 new StorageAccount(this, 'Storage', {
-  sku: { name: 'Invalid_SKU' }  // Error: Invalid SKU name
+  sku: { name: 'Invalid_SKU' }, // Error: Invalid SKU name
 });
 
 // Invalid reference
 const vnet: IVirtualNetwork = undefined!;
 new Subnet(this, 'Subnet', {
-  virtualNetwork: vnet,  // Error: Cannot resolve undefined reference
-  addressPrefix: '10.0.1.0/24'
+  virtualNetwork: vnet, // Error: Cannot resolve undefined reference
+  addressPrefix: '10.0.1.0/24',
 });
 ```
 
@@ -460,12 +474,14 @@ Atakora follows semantic versioning (semver):
 ### Deprecation Policy
 
 Deprecated APIs are:
+
 1. Marked with `@deprecated` JSDoc tag
 2. Documented with migration path
 3. Maintained for at least one major version
 4. Removed in next major version
 
 Example:
+
 ```typescript
 /**
  * @deprecated Use VirtualNetwork instead
@@ -481,31 +497,37 @@ export class LegacyVirtualNetwork extends Construct {
 ### By Package
 
 #### Core
+
 - **[Core Library](./core/README.md)** - App, Stack, Construct, Resource
 
 #### Infrastructure & Resources
-- **[Resources](./cdk/resources.md)** - Resource Groups
-- **[Managed Identity](./cdk/managedidentity.md)** - Managed Identities
-- **[Authorization](./cdk/authorization.md)** - RBAC and Role Assignments
-- **[Network](./cdk/network.md)** - VNet, Subnet, NSG, Private Endpoints
-- **[Storage](./cdk/storage.md)** - Storage Accounts, Blobs, Queues, Tables
-- **[Key Vault](./cdk/keyvault.md)** - Secrets, Keys, Certificates
+
+- **[Resources](./cdk/Resources.md)** - Resource Groups
+- **[Managed Identity](./cdk/Managed-Identity.md)** - Managed Identities
+- **[Authorization](./cdk/Authorization.md)** - RBAC and Role Assignments
+- **[Network](./cdk/Network.md)** - VNet, Subnet, NSG, Private Endpoints
+- **[Storage](./cdk/Storage.md)** - Storage Accounts, Blobs, Queues, Tables
+- **[Key Vault](./cdk/Key-Vault.md)** - Secrets, Keys, Certificates
 
 #### Compute & Hosting
+
 - **[Compute](./cdk/compute.md)** - Virtual Machines, VM Scale Sets
-- **[Web](./cdk/web.md)** - App Services, Function Apps, Static Web Apps
+- **[Web](./cdk/Web.md)** - App Services, Function Apps, Static Web Apps
 
 #### Data
-- **[SQL](./cdk/sql.md)** - Azure SQL Server and Databases
-- **[DocumentDB](./cdk/documentdb.md)** - Cosmos DB
+
+- **[SQL](./cdk/SQL.md)** - Azure SQL Server and Databases
+- **[DocumentDB](./cdk/Document-DB.md)** - Cosmos DB
 
 #### Monitoring & Operations
-- **[Insights](./cdk/insights.md)** - Application Insights, Alerts, Diagnostics
-- **[Operational Insights](./cdk/operationalinsights.md)** - Log Analytics Workspaces
+
+- **[Insights](./cdk/Insights.md)** - Application Insights, Alerts, Diagnostics
+- **[Operational Insights](./cdk/Operational-Insights.md)** - Log Analytics Workspaces
 
 #### Integration & AI
-- **[API Management](./cdk/apimanagement.md)** - API Gateway and Management
-- **[Cognitive Services](./cdk/cognitiveservices.md)** - Azure OpenAI and AI Services
+
+- **[API Management](./cdk/API-Management.md)** - API Gateway and Management
+- **[Cognitive Services](./cdk/Cognitive-Services.md)** - Azure OpenAI and AI Services
 
 ### By Use Case
 

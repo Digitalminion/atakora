@@ -33,6 +33,7 @@ code .
 ### Reporting Bugs
 
 Found a bug? Please [create an issue](https://github.com/Digital-Minion/atakora/issues/new) with:
+
 - Clear title and description
 - Steps to reproduce
 - Expected vs. actual behavior
@@ -42,6 +43,7 @@ Found a bug? Please [create an issue](https://github.com/Digital-Minion/atakora/
 ### Suggesting Enhancements
 
 Have an idea? [Open a feature request](https://github.com/Digital-Minion/atakora/issues/new) with:
+
 - Use case description
 - Proposed solution
 - Alternatives considered
@@ -60,6 +62,7 @@ See [PR Process](./pr-process.md) for details.
 ### Improving Documentation
 
 Documentation improvements are always welcome:
+
 - Fix typos
 - Clarify explanations
 - Add examples

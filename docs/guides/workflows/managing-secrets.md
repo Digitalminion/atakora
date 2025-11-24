@@ -58,7 +58,7 @@ export class SecurityStack extends Stack {
 
     const rg = new ResourceGroup(this, 'security-rg', {
       location: 'eastus',
-      tags: { environment }
+      tags: { environment },
     });
 
     this.keyVault = new KeyVault(this, 'secrets-kv', {
@@ -67,7 +67,7 @@ export class SecurityStack extends Stack {
       properties: {
         sku: {
           family: 'A',
-          name: 'standard'
+          name: 'standard',
         },
         tenantId: '${tenantId}',
         enabledForDeployment: true,
@@ -75,8 +75,8 @@ export class SecurityStack extends Stack {
         enableSoftDelete: true,
         softDeleteRetentionInDays: 90,
         enablePurgeProtection: true,
-        accessPolicies: []
-      }
+        accessPolicies: [],
+      },
     });
   }
 }
@@ -99,24 +99,24 @@ export class ApplicationStack extends Stack {
     const dbPasswordSecret = new Secret(this, 'db-password', {
       keyVaultId: securityStack.keyVault.id,
       properties: {
-        value: '${secretValue:dbPassword}' // Provided at deployment
-      }
+        value: '${secretValue:dbPassword}', // Provided at deployment
+      },
     });
 
     // Store API key
     const apiKeySecret = new Secret(this, 'api-key', {
       keyVaultId: securityStack.keyVault.id,
       properties: {
-        value: '${secretValue:apiKey}'
-      }
+        value: '${secretValue:apiKey}',
+      },
     });
 
     // Store connection string
     const storageConnSecret = new Secret(this, 'storage-connection', {
       keyVaultId: securityStack.keyVault.id,
       properties: {
-        value: '${secretValue:storageConnection}'
-      }
+        value: '${secretValue:storageConnection}',
+      },
     });
   }
 }
@@ -132,13 +132,13 @@ export class WebAppStack extends Stack {
     super(`webapp-${environment}`);
 
     const rg = new ResourceGroup(this, 'app-rg', {
-      location: 'eastus'
+      location: 'eastus',
     });
 
     // Create managed identity for web app
     const identity = new ManagedIdentity(this, 'webapp-identity', {
       resourceGroup: rg,
-      location: rg.location
+      location: rg.location,
     });
 
     const securityStack = new SecurityStack(environment);
@@ -149,8 +149,8 @@ export class WebAppStack extends Stack {
       tenantId: '${tenantId}',
       objectId: identity.principalId,
       permissions: {
-        secrets: ['get', 'list']
-      }
+        secrets: ['get', 'list'],
+      },
     });
 
     const webApp = new WebApp(this, 'webapp', {
@@ -160,9 +160,9 @@ export class WebAppStack extends Stack {
       identity: {
         type: 'UserAssigned',
         userAssignedIdentities: {
-          [identity.id]: {}
-        }
-      }
+          [identity.id]: {},
+        },
+      },
     });
   }
 }
@@ -190,22 +190,22 @@ export class WebAppStack extends Stack {
           appSettings: [
             {
               name: 'DatabasePassword',
-              value: `@Microsoft.KeyVault(SecretUri=${securityStack.keyVault.vaultUri}secrets/db-password/)`
+              value: `@Microsoft.KeyVault(SecretUri=${securityStack.keyVault.vaultUri}secrets/db-password/)`,
             },
             {
               name: 'ApiKey',
-              value: `@Microsoft.KeyVault(SecretUri=${securityStack.keyVault.vaultUri}secrets/api-key/)`
-            }
+              value: `@Microsoft.KeyVault(SecretUri=${securityStack.keyVault.vaultUri}secrets/api-key/)`,
+            },
           ],
           connectionStrings: [
             {
               name: 'DefaultConnection',
               connectionString: `@Microsoft.KeyVault(SecretUri=${securityStack.keyVault.vaultUri}secrets/storage-connection/)`,
-              type: 'Custom'
-            }
-          ]
-        }
-      }
+              type: 'Custom',
+            },
+          ],
+        },
+      },
     });
   }
 }
@@ -231,10 +231,10 @@ const webApp = new WebApp(this, 'webapp', {
     siteConfig: {
       appSettings: [
         { name: 'SECRET_LATEST', value: latestSecret },
-        { name: 'SECRET_PINNED', value: versionedSecret }
-      ]
-    }
-  }
+        { name: 'SECRET_PINNED', value: versionedSecret },
+      ],
+    },
+  },
 });
 ```
 
@@ -258,8 +258,8 @@ export class DatabaseStack extends Stack {
     const passwordSecret = new Secret(this, 'sql-admin-password', {
       keyVaultId: securityStack.keyVault.id,
       properties: {
-        value: adminPassword
-      }
+        value: adminPassword,
+      },
     });
 
     const sqlServer = new SqlServer(this, 'sql-server', {
@@ -267,8 +267,8 @@ export class DatabaseStack extends Stack {
       location: 'eastus',
       properties: {
         administratorLogin: 'sqladmin',
-        administratorLoginPassword: `@Microsoft.KeyVault(SecretUri=${passwordSecret.secretUri})`
-      }
+        administratorLoginPassword: `@Microsoft.KeyVault(SecretUri=${passwordSecret.secretUri})`,
+      },
     });
   }
 }
@@ -295,7 +295,7 @@ export class EnvironmentSecrets {
       const stack = new Stack(`secrets-${env}`);
       const rg = new ResourceGroup(stack, `secrets-rg-${env}`, {
         location: 'eastus',
-        tags: { environment: env }
+        tags: { environment: env },
       });
 
       const kv = new KeyVault(stack, `kv-${env}`, {
@@ -305,8 +305,8 @@ export class EnvironmentSecrets {
           sku: { family: 'A', name: 'standard' },
           tenantId: '${tenantId}',
           enableSoftDelete: true,
-          enablePurgeProtection: env === 'production'
-        }
+          enablePurgeProtection: env === 'production',
+        },
       });
 
       this.keyVaults.set(env, kv);
@@ -344,17 +344,17 @@ export const secretConfig: Record<string, SecretConfig> = {
     secrets: {
       databasePassword: 'db-password-dev',
       apiKey: 'api-key-dev',
-      storageConnection: 'storage-connection-dev'
-    }
+      storageConnection: 'storage-connection-dev',
+    },
   },
   production: {
     keyVaultName: 'kv-prod-xyz789',
     secrets: {
       databasePassword: 'db-password-prod',
       apiKey: 'api-key-prod',
-      storageConnection: 'storage-connection-prod'
-    }
-  }
+      storageConnection: 'storage-connection-prod',
+    },
+  },
 };
 ```
 
@@ -379,11 +379,11 @@ export class WebAppStack extends Stack {
           appSettings: [
             {
               name: 'DatabasePassword',
-              value: `@Microsoft.KeyVault(SecretUri=${keyVaultUri}secrets/${config.secrets.databasePassword}/)`
-            }
-          ]
-        }
-      }
+              value: `@Microsoft.KeyVault(SecretUri=${keyVaultUri}secrets/${config.secrets.databasePassword}/)`,
+            },
+          ],
+        },
+      },
     });
   }
 }
@@ -453,7 +453,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  - group: production-secrets  # Variable group linked to Key Vault
+  - group: production-secrets # Variable group linked to Key Vault
 
 steps:
   - task: NodeTool@0
@@ -527,12 +527,12 @@ export const env = {
   storageConnection: process.env.STORAGE_CONNECTION || '',
   azureTenantId: process.env.AZURE_TENANT_ID || '',
   azureClientId: process.env.AZURE_CLIENT_ID || '',
-  azureClientSecret: process.env.AZURE_CLIENT_SECRET || ''
+  azureClientSecret: process.env.AZURE_CLIENT_SECRET || '',
 };
 
 // Validate required secrets
 const requiredEnvVars = ['DB_PASSWORD', 'API_KEY', 'STORAGE_CONNECTION'];
-const missing = requiredEnvVars.filter(v => !process.env[v]);
+const missing = requiredEnvVars.filter((v) => !process.env[v]);
 
 if (missing.length > 0) {
   throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
@@ -581,7 +581,7 @@ Use mock secrets in tests:
 export const mockSecrets = {
   dbPassword: 'test-password-123',
   apiKey: 'test-key-abc',
-  storageConnection: 'test-connection-string'
+  storageConnection: 'test-connection-string',
 };
 
 export function setupMockSecrets() {
@@ -605,10 +605,10 @@ describe('WebAppStack', () => {
     const stack = new WebAppStack('test');
     const template = stack.toTemplate();
 
-    const webApp = template.resources.find(r => r.type === 'Microsoft.Web/sites');
+    const webApp = template.resources.find((r) => r.type === 'Microsoft.Web/sites');
     const appSettings = webApp.properties.siteConfig.appSettings;
 
-    const dbPasswordSetting = appSettings.find(s => s.name === 'DatabasePassword');
+    const dbPasswordSetting = appSettings.find((s) => s.name === 'DatabasePassword');
     expect(dbPasswordSetting).toBeDefined();
   });
 });
@@ -644,26 +644,24 @@ const webApp = new WebApp(this, 'webapp', {
   location: 'eastus',
   serverFarmId: plan.id,
   identity: {
-    type: 'SystemAssigned'
-  }
+    type: 'SystemAssigned',
+  },
 });
 
 // Grant access to resources without credentials
 const roleAssignment = new RoleAssignment(this, 'storage-access', {
   scope: storage.id,
   roleDefinitionId: 'Storage Blob Data Contributor',
-  principalId: webApp.identity.principalId
+  principalId: webApp.identity.principalId,
 });
 
 // ❌ Avoid: Storing credentials in app settings
 const webApp = new WebApp(this, 'webapp', {
   properties: {
     siteConfig: {
-      appSettings: [
-        { name: 'STORAGE_ACCOUNT_KEY', value: 'hardcoded-key-123' }
-      ]
-    }
-  }
+      appSettings: [{ name: 'STORAGE_ACCOUNT_KEY', value: 'hardcoded-key-123' }],
+    },
+  },
 });
 ```
 
@@ -684,9 +682,12 @@ export class SecretRotation {
     await this.verifySecret(secretName);
 
     // Delete old version after grace period
-    setTimeout(() => {
-      this.deleteOldSecretVersion(secretName);
-    }, 7 * 24 * 60 * 60 * 1000); // 7 days
+    setTimeout(
+      () => {
+        this.deleteOldSecretVersion(secretName);
+      },
+      7 * 24 * 60 * 60 * 1000
+    ); // 7 days
   }
 
   private generateStrongSecret(): string {
@@ -710,10 +711,10 @@ const diagnostics = new DiagnosticSetting(this, 'kv-diagnostics', {
       enabled: true,
       retentionPolicy: {
         enabled: true,
-        days: 365
-      }
-    }
-  ]
+        days: 365,
+      },
+    },
+  ],
 });
 ```
 
@@ -726,8 +727,8 @@ const accessPolicy = new KeyVaultAccessPolicy(this, 'app-access', {
   tenantId: '${tenantId}',
   objectId: identity.principalId,
   permissions: {
-    secrets: ['get', 'list']  // Read-only
-  }
+    secrets: ['get', 'list'], // Read-only
+  },
 });
 
 // ❌ Avoid: Overly permissive access
@@ -736,8 +737,8 @@ const accessPolicy = new KeyVaultAccessPolicy(this, 'app-access', {
   tenantId: '${tenantId}',
   objectId: identity.principalId,
   permissions: {
-    secrets: ['all']  // Too permissive
-  }
+    secrets: ['all'], // Too permissive
+  },
 });
 ```
 
@@ -760,7 +761,7 @@ export class SecureConnectionString {
       `Server=@Microsoft.KeyVault(SecretUri=${kvUri}secrets/${this.secretPrefix}-server/)`,
       `Database=@Microsoft.KeyVault(SecretUri=${kvUri}secrets/${this.secretPrefix}-database/)`,
       `User Id=@Microsoft.KeyVault(SecretUri=${kvUri}secrets/${this.secretPrefix}-username/)`,
-      `Password=@Microsoft.KeyVault(SecretUri=${kvUri}secrets/${this.secretPrefix}-password/)`
+      `Password=@Microsoft.KeyVault(SecretUri=${kvUri}secrets/${this.secretPrefix}-password/)`,
     ].join(';');
   }
 
@@ -834,7 +835,7 @@ Before deploying to production:
 
 - [Azure Key Vault](../../getting-started/common-resources/key-vault.md) - Key Vault resource guide
 - [Security Patterns](../patterns/security-patterns.md) - Security best practices
-- [Troubleshooting](../../troubleshooting/common-issues.md) - Secret-related issues
+- [Troubleshooting](../../troubleshooting/Common-Issues.md) - Secret-related issues
 
 ---
 

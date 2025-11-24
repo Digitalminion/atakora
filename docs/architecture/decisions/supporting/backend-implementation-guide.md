@@ -11,9 +11,11 @@ The `defineBackend()` pattern provides a sophisticated resource orchestration sy
 Instead of each component creating its own Azure resources, components declare their requirements and the backend orchestrator provisions shared resources intelligently.
 
 **Traditional Approach:**
+
 - 5 CrudApi components = 5 Cosmos DB accounts + 5 Function Apps + 5 Storage Accounts
 
 **Backend Pattern:**
+
 - 5 CrudApi components = 1 Cosmos DB account + 1 Function App + 1 Storage Account
 
 ### Three-Phase Process
@@ -29,12 +31,14 @@ Instead of each component creating its own Azure resources, components declare t
 **Owner: Devon**
 
 **Files to Create:**
+
 - `packages/component/src/backend/index.ts` - Main exports
 - `packages/component/src/backend/interfaces.ts` - Type definitions
 - `packages/component/src/backend/backend.ts` - Backend class implementation
 - `packages/component/src/backend/registry.ts` - Provider registry
 
 **Key Tasks:**
+
 1. Implement IResourceRequirement hierarchy
 2. Create Backend base class with component management
 3. Build provider registry system
@@ -47,12 +51,14 @@ Instead of each component creating its own Azure resources, components declare t
 **Owner: Grace**
 
 **Files to Create:**
+
 - `packages/component/src/backend/providers/cosmos-provider.ts`
 - `packages/component/src/backend/providers/functions-provider.ts`
 - `packages/component/src/backend/providers/storage-provider.ts`
 - `packages/component/src/backend/providers/base-provider.ts`
 
 **Key Tasks:**
+
 1. Create base provider abstract class
 2. Implement Cosmos DB provider with database/container merging
 3. Implement Function App provider with environment variable merging
@@ -66,11 +72,13 @@ Instead of each component creating its own Azure resources, components declare t
 **Owner: Felix**
 
 **Files to Create:**
+
 - `packages/component/src/backend/merger/index.ts`
 - `packages/component/src/backend/merger/strategies.ts`
 - `packages/component/src/backend/merger/validators.ts`
 
 **Key Tasks:**
+
 1. Implement merge strategies (union, intersection, maximum, priority)
 2. Create conflict resolution system
 3. Build validation framework
@@ -83,18 +91,21 @@ Instead of each component creating its own Azure resources, components declare t
 **Owner: Devon**
 
 **Files to Update:**
+
 - `packages/component/src/crud/crud-api.ts`
 - `packages/component/src/functions/functions-app.ts`
 - `packages/component/src/web/static-site.ts`
 - `packages/component/src/data/data-stack.ts`
 
 **Key Tasks:**
+
 1. Add static `define()` method to each component
 2. Implement `getRequirements()` method
 3. Update constructors to support resource injection
 4. Maintain backward compatibility
 
 **Example Update for CrudApi:**
+
 ```typescript
 export class CrudApi extends Construct implements IBackendComponent<CrudApiProps> {
   // Existing constructor for backward compatibility
@@ -119,7 +130,7 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
         const instance = new CrudApi(scope, id, config);
         instance.useSharedResources(resources);
         return instance;
-      }
+      },
     };
   }
 
@@ -136,10 +147,12 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
 **Owner: Grace**
 
 **Files to Create:**
+
 - `packages/component/src/backend/define-backend.ts`
 - `packages/component/src/backend/builder.ts`
 
 **Key Tasks:**
+
 1. Implement main `defineBackend()` function
 2. Create builder pattern alternative
 3. Add TypeScript type inference
@@ -152,12 +165,14 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
 **Owner: Charlie**
 
 **Files to Create:**
+
 - `packages/component/test/backend/backend.test.ts`
 - `packages/component/test/backend/providers.test.ts`
 - `packages/component/test/backend/merger.test.ts`
 - `packages/component/test/backend/integration.test.ts`
 
 **Key Tasks:**
+
 1. Unit tests for all backend classes
 2. Provider integration tests
 3. Configuration merging tests
@@ -171,12 +186,14 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
 **Owner: Ella**
 
 **Files to Create:**
+
 - `packages/component/docs/backend-pattern.md`
 - `packages/component/docs/migration-guide.md`
 - `packages/component/docs/examples/`
 - API documentation updates
 
 **Key Tasks:**
+
 1. Write conceptual documentation
 2. Create migration guide from old pattern
 3. Document all examples
@@ -191,6 +208,7 @@ export class CrudApi extends Construct implements IBackendComponent<CrudApiProps
 Use consistent key format: `{resourceType}:{requirementKey}`
 
 Examples:
+
 - `cosmos:shared-database`
 - `functions:api-functions`
 - `storage:static-content`
@@ -198,6 +216,7 @@ Examples:
 ### 2. Requirement Priority
 
 Higher priority wins conflicts:
+
 - Default: 10
 - Component-specific: 20
 - User-override: 30
@@ -205,30 +224,34 @@ Higher priority wins conflicts:
 ### 3. Resource Limits
 
 Respect Azure limits:
+
 - Max 200 functions per Function App
 - Max 25 databases per Cosmos account
 - Max 250 storage containers per account
 
 When limits exceeded, provision additional resources with suffix:
+
 - `cosmos:shared-database-2`
 - `functions:api-functions-2`
 
 ### 4. Environment Variable Namespacing
 
 Prevent conflicts with prefixing:
+
 ```typescript
 // Component: UserApi
-USER_API_COSMOS_ENDPOINT
-USER_API_DATABASE_NAME
+USER_API_COSMOS_ENDPOINT;
+USER_API_DATABASE_NAME;
 
 // Component: ProductApi
-PRODUCT_API_COSMOS_ENDPOINT
-PRODUCT_API_DATABASE_NAME
+PRODUCT_API_COSMOS_ENDPOINT;
+PRODUCT_API_DATABASE_NAME;
 ```
 
 ### 5. Backward Compatibility
 
 Use scope inspection to determine mode:
+
 ```typescript
 function isBackendManaged(scope: Construct): boolean {
   return scope.node.tryGetContext('backend-managed') === true;
@@ -238,48 +261,55 @@ function isBackendManaged(scope: Construct): boolean {
 ## Testing Strategy
 
 ### Unit Tests
+
 - Each provider tested independently
 - Merger strategies tested with various inputs
 - Component requirement generation tested
 
 ### Integration Tests
+
 ```typescript
 it('should share Cosmos DB across multiple CrudApis', () => {
   const backend = defineBackend({
     userApi: CrudApi.define('UserApi', config1),
-    productApi: CrudApi.define('ProductApi', config2)
+    productApi: CrudApi.define('ProductApi', config2),
   });
 
   backend.initialize(scope);
 
   // Assert single Cosmos DB account created
-  const cosmosAccounts = backend.resources.filter(r => r.type === 'cosmos');
+  const cosmosAccounts = backend.resources.filter((r) => r.type === 'cosmos');
   expect(cosmosAccounts).toHaveLength(1);
 });
 ```
 
 ### Performance Tests
+
 - Measure CDK synthesis time with/without backend pattern
 - Target: < 5% overhead for typical applications
 
 ## Migration Path
 
 ### Phase 1: Opt-in (Months 1-3)
+
 - Backend pattern available but optional
 - Documentation and examples published
 - Early adopters provide feedback
 
 ### Phase 2: Recommended (Months 4-6)
+
 - Backend pattern becomes recommended approach
 - Templates and scaffolding updated
 - Deprecation warnings added to old pattern
 
 ### Phase 3: Default (Months 7-12)
+
 - New projects default to backend pattern
 - Migration tooling provided
 - Old pattern still supported
 
 ### Phase 4: Deprecation (Month 13+)
+
 - Old pattern officially deprecated
 - Clear migration path documented
 - Support timeline communicated
@@ -296,18 +326,23 @@ it('should share Cosmos DB across multiple CrudApis', () => {
 ## Risk Mitigation
 
 ### Risk 1: Breaking Changes
+
 **Mitigation**: Comprehensive backward compatibility layer
 
 ### Risk 2: Complex Debugging
+
 **Mitigation**: Detailed logging and resource tracing
 
 ### Risk 3: Resource Limit Exceeded
+
 **Mitigation**: Automatic resource splitting with clear naming
 
 ### Risk 4: Configuration Conflicts
+
 **Mitigation**: Clear priority system and conflict resolution
 
 ### Risk 5: Performance Impact
+
 **Mitigation**: Lazy loading and caching strategies
 
 ## Next Steps

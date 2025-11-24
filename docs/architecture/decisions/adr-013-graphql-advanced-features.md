@@ -7,6 +7,7 @@ Building on the resolver architecture defined in ADR-011, we need to implement a
 Azure API Management provides some of these capabilities natively, but we need to design how they integrate with our TypeScript-first approach and ensure they work seamlessly in both Government and Commercial clouds.
 
 Current requirements:
+
 - Field-level authorization beyond simple role-based access
 - Real-time subscriptions using Azure WebSocket and SignalR
 - Query complexity analysis to prevent expensive operations
@@ -34,8 +35,8 @@ export interface FieldAuthorization {
 }
 
 export type AuthorizationStrategy =
-  | 'any'    // Any rule passes
-  | 'all'    // All rules must pass
+  | 'any' // Any rule passes
+  | 'all' // All rules must pass
   | 'custom'; // Custom logic
 
 export interface AuthorizationRule {
@@ -44,11 +45,11 @@ export interface AuthorizationRule {
 }
 
 export type AuthorizationType =
-  | 'role'       // Role-based access control
-  | 'claim'      // Claim-based access control
-  | 'attribute'  // Attribute-based access control
-  | 'policy'     // Azure Policy-based
-  | 'custom';    // Custom authorization
+  | 'role' // Role-based access control
+  | 'claim' // Claim-based access control
+  | 'attribute' // Attribute-based access control
+  | 'policy' // Azure Policy-based
+  | 'custom'; // Custom authorization
 
 // Role-based authorization
 export interface RoleAuthorization {
@@ -78,7 +79,7 @@ export interface AttributeAuthorization {
 }
 
 export interface AttributeRule {
-  readonly subject: string;    // user.department
+  readonly subject: string; // user.department
   readonly operator: 'eq' | 'ne' | 'in' | 'nin' | 'gt' | 'lt';
   readonly value: any;
 }
@@ -115,13 +116,7 @@ export class AuthorizationDirective extends SchemaDirectiveVisitor {
 
     field.resolve = async (source, args, context, info) => {
       // Check authorization
-      const authorized = await this.checkAuthorization(
-        authorization,
-        context,
-        source,
-        args,
-        info
-      );
+      const authorized = await this.checkAuthorization(authorization, context, source, args, info);
 
       if (!authorized) {
         throw new GraphQLAzureError(
@@ -143,16 +138,14 @@ export class AuthorizationDirective extends SchemaDirectiveVisitor {
     info: GraphQLResolveInfo
   ): Promise<boolean> {
     const results = await Promise.all(
-      authorization.rules.map(rule =>
-        this.checkRule(rule, context, source, args, info)
-      )
+      authorization.rules.map((rule) => this.checkRule(rule, context, source, args, info))
     );
 
     switch (authorization.strategy) {
       case 'any':
-        return results.some(r => r);
+        return results.some((r) => r);
       case 'all':
-        return results.every(r => r);
+        return results.every((r) => r);
       case 'custom':
         // Custom strategy implementation
         return true;
@@ -174,7 +167,11 @@ export class AuthorizationDirective extends SchemaDirectiveVisitor {
       case 'claim':
         return this.checkClaimAuthorization(rule.config as ClaimAuthorization['config'], context);
       case 'attribute':
-        return this.checkAttributeAuthorization(rule.config as AttributeAuthorization['config'], context, source);
+        return this.checkAttributeAuthorization(
+          rule.config as AttributeAuthorization['config'],
+          context,
+          source
+        );
       case 'policy':
         return this.checkPolicyAuthorization(rule.config as PolicyAuthorization['config'], context);
       case 'custom':
@@ -192,9 +189,9 @@ export class AuthorizationDirective extends SchemaDirectiveVisitor {
 
     const userRoles = context.user.roles || [];
     if (config.requireAll) {
-      return config.roles.every(role => userRoles.includes(role));
+      return config.roles.every((role) => userRoles.includes(role));
     }
-    return config.roles.some(role => userRoles.includes(role));
+    return config.roles.some((role) => userRoles.includes(role));
   }
 
   private checkClaimAuthorization(
@@ -231,14 +228,12 @@ export class AuthorizationDirective extends SchemaDirectiveVisitor {
     context: GraphQLResolverContext,
     source: any
   ): boolean {
-    const results = config.attributes.map(attr => {
+    const results = config.attributes.map((attr) => {
       const value = this.getAttributeValue(attr.subject, context, source);
       return this.evaluateOperator(value, attr.operator, attr.value);
     });
 
-    return config.combinator === 'OR'
-      ? results.some(r => r)
-      : results.every(r => r);
+    return config.combinator === 'OR' ? results.some((r) => r) : results.every((r) => r);
   }
 
   private async checkPolicyAuthorization(
@@ -277,13 +272,20 @@ export class AuthorizationDirective extends SchemaDirectiveVisitor {
 
   private evaluateOperator(value: any, operator: string, target: any): boolean {
     switch (operator) {
-      case 'eq': return value === target;
-      case 'ne': return value !== target;
-      case 'in': return Array.isArray(target) && target.includes(value);
-      case 'nin': return Array.isArray(target) && !target.includes(value);
-      case 'gt': return value > target;
-      case 'lt': return value < target;
-      default: return false;
+      case 'eq':
+        return value === target;
+      case 'ne':
+        return value !== target;
+      case 'in':
+        return Array.isArray(target) && target.includes(value);
+      case 'nin':
+        return Array.isArray(target) && !target.includes(value);
+      case 'gt':
+        return value > target;
+      case 'lt':
+        return value < target;
+      default:
+        return false;
     }
   }
 }
@@ -313,10 +315,10 @@ export interface SubscriptionConfig {
 }
 
 export type SubscriptionTransport =
-  | 'websocket'    // Raw WebSocket
-  | 'signalr'      // Azure SignalR Service
-  | 'eventgrid'    // Azure Event Grid
-  | 'servicebus';  // Azure Service Bus
+  | 'websocket' // Raw WebSocket
+  | 'signalr' // Azure SignalR Service
+  | 'eventgrid' // Azure Event Grid
+  | 'servicebus'; // Azure Service Bus
 
 // WebSocket subscription handler
 export class WebSocketSubscriptionHandler {
@@ -338,7 +340,7 @@ export class WebSocketSubscriptionHandler {
       ws,
       context,
       subscriptions: new Set(),
-      isAlive: true
+      isAlive: true,
     };
 
     this.connections.set(connectionId, connection);
@@ -354,7 +356,7 @@ export class WebSocketSubscriptionHandler {
     // Send connection acknowledgment
     this.sendMessage(connectionId, {
       type: 'connection_ack',
-      payload: { connectionId }
+      payload: { connectionId },
     });
   }
 
@@ -402,7 +404,7 @@ export class WebSocketSubscriptionHandler {
         variableValues: variables,
         operationName,
         contextValue: connection.context,
-        rootValue: {}
+        rootValue: {},
       });
 
       if (isAsyncIterable(result)) {
@@ -414,14 +416,14 @@ export class WebSocketSubscriptionHandler {
         this.sendMessage(connectionId, {
           id: subscriptionId,
           type: 'error',
-          payload: result.errors
+          payload: result.errors,
         });
       }
     } catch (error) {
       this.sendMessage(connectionId, {
         id: subscriptionId,
         type: 'error',
-        payload: [{ message: error.message }]
+        payload: [{ message: error.message }],
       });
     }
   }
@@ -442,14 +444,14 @@ export class WebSocketSubscriptionHandler {
         this.sendMessage(connectionId, {
           id: subscriptionId,
           type: 'data',
-          payload: result
+          payload: result,
         });
       }
     } catch (error) {
       this.sendMessage(connectionId, {
         id: subscriptionId,
         type: 'error',
-        payload: [{ message: error.message }]
+        payload: [{ message: error.message }],
       });
     } finally {
       this.handleSubscriptionStop(connectionId, subscriptionId);
@@ -468,7 +470,7 @@ export class WebSocketSubscriptionHandler {
 
     this.sendMessage(connectionId, {
       id: subscriptionId,
-      type: 'complete'
+      type: 'complete',
     });
   }
 
@@ -524,7 +526,7 @@ export class SignalRSubscriptionHandler {
   ) {
     this.hub = new HubConnectionBuilder()
       .withUrl(config.hubUrl, {
-        accessTokenFactory: () => this.getAccessToken()
+        accessTokenFactory: () => this.getAccessToken(),
       })
       .withAutomaticReconnect()
       .build();
@@ -588,14 +590,16 @@ export class AzurePubSub implements PubSubEngine {
   async publish(triggerName: string, payload: any): Promise<void> {
     // Publish to Azure service
     if (this.eventHub) {
-      await this.eventHub.sendBatch([{
-        body: { trigger: triggerName, payload }
-      }]);
+      await this.eventHub.sendBatch([
+        {
+          body: { trigger: triggerName, payload },
+        },
+      ]);
     } else if (this.serviceBus) {
       const sender = this.serviceBus.createSender(this.config.topicName);
       await sender.sendMessages({
         subject: triggerName,
-        body: payload
+        body: payload,
       });
     }
 
@@ -608,10 +612,7 @@ export class AzurePubSub implements PubSubEngine {
     }
   }
 
-  subscribe(
-    triggerName: string,
-    onMessage: SubscriptionHandler
-  ): Promise<number> {
+  subscribe(triggerName: string, onMessage: SubscriptionHandler): Promise<number> {
     if (!this.subscribers.has(triggerName)) {
       this.subscribers.set(triggerName, new Set());
     }
@@ -642,10 +643,7 @@ export interface ComplexityConfig {
   readonly customCalculators?: Map<string, ComplexityCalculator>;
 }
 
-export type ComplexityCalculator = (
-  args: any,
-  childComplexity: number
-) => number;
+export type ComplexityCalculator = (args: any, childComplexity: number) => number;
 
 // Query complexity analyzer
 export class QueryComplexityAnalyzer {
@@ -661,7 +659,7 @@ export class QueryComplexityAnalyzer {
       complexity: 0,
       depth: 0,
       maxDepth: 0,
-      errors: []
+      errors: [],
     };
 
     visit(
@@ -669,8 +667,8 @@ export class QueryComplexityAnalyzer {
       visitWithTypeInfo(typeInfo, {
         Field: {
           enter: (node) => this.enterField(node, typeInfo, context, variables),
-          leave: (node) => this.leaveField(node, context)
-        }
+          leave: (node) => this.leaveField(node, context),
+        },
       })
     );
 
@@ -678,7 +676,7 @@ export class QueryComplexityAnalyzer {
       complexity: context.complexity,
       depth: context.maxDepth,
       errors: context.errors,
-      isValid: this.isValid(context)
+      isValid: this.isValid(context),
     };
   }
 
@@ -695,7 +693,7 @@ export class QueryComplexityAnalyzer {
     if (this.config.depthLimit && context.depth > this.config.depthLimit) {
       context.errors.push({
         message: `Query depth ${context.depth} exceeds maximum depth ${this.config.depthLimit}`,
-        field: node.name.value
+        field: node.name.value,
       });
     }
 
@@ -703,11 +701,7 @@ export class QueryComplexityAnalyzer {
     const fieldDef = typeInfo.getFieldDef();
     if (!fieldDef) return;
 
-    let fieldComplexity = this.getFieldComplexity(
-      fieldDef,
-      node,
-      variables
-    );
+    let fieldComplexity = this.getFieldComplexity(fieldDef, node, variables);
 
     // Apply list factor for array types
     const fieldType = typeInfo.getType();
@@ -740,7 +734,7 @@ export class QueryComplexityAnalyzer {
 
     // Check for complexity directive
     const complexityDirective = fieldDef.astNode?.directives?.find(
-      d => d.name.value === 'complexity'
+      (d) => d.name.value === 'complexity'
     );
 
     if (complexityDirective) {
@@ -762,13 +756,10 @@ export class QueryComplexityAnalyzer {
     return args.first || args.last || args.limit || 10;
   }
 
-  private getArgumentValues(
-    node: FieldNode,
-    variables?: Record<string, any>
-  ): Record<string, any> {
+  private getArgumentValues(node: FieldNode, variables?: Record<string, any>): Record<string, any> {
     const args: Record<string, any> = {};
 
-    node.arguments?.forEach(arg => {
+    node.arguments?.forEach((arg) => {
       const value = arg.value;
 
       if (value.kind === 'Variable') {
@@ -794,10 +785,10 @@ export class QueryComplexityAnalyzer {
       case 'NullValue':
         return null;
       case 'ListValue':
-        return value.values.map(v => this.parseValue(v));
+        return value.values.map((v) => this.parseValue(v));
       case 'ObjectValue':
         const obj: Record<string, any> = {};
-        value.fields.forEach(field => {
+        value.fields.forEach((field) => {
           obj[field.name.value] = this.parseValue(field.value);
         });
         return obj;
@@ -811,7 +802,7 @@ export class QueryComplexityAnalyzer {
     node: FieldNode,
     variables?: Record<string, any>
   ): number {
-    const valueArg = directive.arguments?.find(a => a.name.value === 'value');
+    const valueArg = directive.arguments?.find((a) => a.name.value === 'value');
     if (!valueArg) return 1;
 
     if (valueArg.value.kind === 'IntValue') {
@@ -819,12 +810,12 @@ export class QueryComplexityAnalyzer {
     }
 
     // Support multiplier syntax
-    const multiplierArg = directive.arguments?.find(a => a.name.value === 'multipliers');
+    const multiplierArg = directive.arguments?.find((a) => a.name.value === 'multipliers');
     if (multiplierArg && multiplierArg.value.kind === 'ListValue') {
       const args = this.getArgumentValues(node, variables);
       let complexity = 1;
 
-      multiplierArg.value.values.forEach(multiplier => {
+      multiplierArg.value.values.forEach((multiplier) => {
         if (multiplier.kind === 'StringValue') {
           const argName = multiplier.value;
           complexity *= args[argName] || 1;
@@ -853,13 +844,13 @@ export const complexityDirective = new GraphQLDirective({
   args: {
     value: {
       type: GraphQLInt,
-      description: 'Static complexity value'
+      description: 'Static complexity value',
     },
     multipliers: {
       type: new GraphQLList(GraphQLString),
-      description: 'Field arguments that multiply complexity'
-    }
-  }
+      description: 'Field arguments that multiply complexity',
+    },
+  },
 });
 
 // Usage in schema
@@ -872,7 +863,8 @@ const typeDefs = gql`
     users(first: Int = 10): [User!]! @complexity(multipliers: ["first"])
 
     # Complex search with high cost
-    searchUsers(query: String!, limit: Int = 100): [User!]! @complexity(value: 10, multipliers: ["limit"])
+    searchUsers(query: String!, limit: Int = 100): [User!]!
+      @complexity(value: 10, multipliers: ["limit"])
   }
 `;
 
@@ -887,11 +879,7 @@ export function createComplexityMiddleware(config: ComplexityConfig) {
   ) => {
     // Analyze query complexity
     const analyzer = new QueryComplexityAnalyzer(config);
-    const result = analyzer.analyze(
-      info.operation,
-      info.schema,
-      info.variableValues
-    );
+    const result = analyzer.analyze(info.operation, info.schema, info.variableValues);
 
     if (!result.isValid) {
       throw new GraphQLAzureError(
@@ -902,7 +890,7 @@ export function createComplexityMiddleware(config: ComplexityConfig) {
           complexity: result.complexity,
           maxComplexity: config.maxComplexity,
           depth: result.depth,
-          errors: result.errors
+          errors: result.errors,
         }
       );
     }
@@ -910,7 +898,7 @@ export function createComplexityMiddleware(config: ComplexityConfig) {
     // Log complexity metrics
     context.metrics.record('graphql.query.complexity', result.complexity, {
       operation: info.operation.name?.value,
-      depth: result.depth
+      depth: result.depth,
     });
 
     return resolve(parent, args, context, info);
@@ -925,11 +913,11 @@ Intelligent caching at the field level:
 ```typescript
 // Field caching configuration
 export interface FieldCachingStrategy {
-  readonly ttl: number;              // Time to live in seconds
-  readonly scope: CacheScope;        // private or public
-  readonly key?: CacheKeyGenerator;  // Custom cache key
-  readonly tags?: string[];          // Cache tags for invalidation
-  readonly vary?: string[];          // Vary by headers/context
+  readonly ttl: number; // Time to live in seconds
+  readonly scope: CacheScope; // private or public
+  readonly key?: CacheKeyGenerator; // Custom cache key
+  readonly tags?: string[]; // Cache tags for invalidation
+  readonly vary?: string[]; // Vary by headers/context
 }
 
 export type CacheScope = 'private' | 'public';
@@ -950,7 +938,7 @@ export class FieldLevelCache {
       host: config.redisHost,
       port: config.redisPort,
       password: config.redisPassword,
-      db: config.redisDb
+      db: config.redisDb,
     });
   }
 
@@ -975,25 +963,17 @@ export class FieldLevelCache {
     return null;
   }
 
-  async set<T>(
-    key: string,
-    value: T,
-    options: CacheSetOptions
-  ): Promise<void> {
+  async set<T>(key: string, value: T, options: CacheSetOptions): Promise<void> {
     const entry: CacheEntry = {
       value,
       ttl: options.ttl,
       timestamp: Date.now(),
       tags: options.tags || [],
-      scope: options.scope || 'private'
+      scope: options.scope || 'private',
     };
 
     // Set in Redis with TTL
-    await this.redis.setex(
-      key,
-      options.ttl,
-      JSON.stringify(entry)
-    );
+    await this.redis.setex(key, options.ttl, JSON.stringify(entry));
 
     // Set in local cache
     this.localCache.set(key, entry);
@@ -1011,7 +991,7 @@ export class FieldLevelCache {
     const keys = await this.redis.keys(pattern);
     if (keys.length > 0) {
       await this.redis.del(...keys);
-      keys.forEach(key => this.localCache.delete(key));
+      keys.forEach((key) => this.localCache.delete(key));
     }
   }
 
@@ -1020,13 +1000,13 @@ export class FieldLevelCache {
     const keys = await this.redis.smembers(`tag:${tag}`);
     if (keys.length > 0) {
       await this.redis.del(...keys);
-      keys.forEach(key => this.localCache.delete(key));
+      keys.forEach((key) => this.localCache.delete(key));
     }
     await this.redis.del(`tag:${tag}`);
   }
 
   private isExpired(entry: CacheEntry): boolean {
-    return Date.now() > entry.timestamp + (entry.ttl * 1000);
+    return Date.now() > entry.timestamp + entry.ttl * 1000;
   }
 }
 
@@ -1038,18 +1018,13 @@ export class CacheDirective extends SchemaDirectiveVisitor {
 
     field.resolve = async (source, args, context, info) => {
       // Generate cache key
-      const cacheKey = this.generateCacheKey(
-        cacheConfig,
-        args,
-        context,
-        info
-      );
+      const cacheKey = this.generateCacheKey(cacheConfig, args, context, info);
 
       // Check cache
       const cached = await context.cache.get(cacheKey);
       if (cached !== null) {
         context.metrics.increment('graphql.cache.hit', {
-          field: `${info.parentType.name}.${info.fieldName}`
+          field: `${info.parentType.name}.${info.fieldName}`,
         });
         return cached;
       }
@@ -1062,7 +1037,7 @@ export class CacheDirective extends SchemaDirectiveVisitor {
         await context.cache.set(cacheKey, result, {
           ttl: cacheConfig.ttl,
           scope: cacheConfig.scope,
-          tags: cacheConfig.tags
+          tags: cacheConfig.tags,
         });
 
         // Set cache control headers
@@ -1070,7 +1045,7 @@ export class CacheDirective extends SchemaDirectiveVisitor {
       }
 
       context.metrics.increment('graphql.cache.miss', {
-        field: `${info.parentType.name}.${info.fieldName}`
+        field: `${info.parentType.name}.${info.fieldName}`,
       });
 
       return result;
@@ -1087,11 +1062,7 @@ export class CacheDirective extends SchemaDirectiveVisitor {
       return config.key(args, context, info);
     }
 
-    const parts = [
-      info.parentType.name,
-      info.fieldName,
-      JSON.stringify(args)
-    ];
+    const parts = [info.parentType.name, info.fieldName, JSON.stringify(args)];
 
     // Add vary parameters
     if (config.vary) {
@@ -1110,10 +1081,7 @@ export class CacheDirective extends SchemaDirectiveVisitor {
       parts.push(`user:${context.user.id}`);
     }
 
-    return crypto
-      .createHash('sha256')
-      .update(parts.join(':'))
-      .digest('hex');
+    return crypto.createHash('sha256').update(parts.join(':')).digest('hex');
   }
 
   private setCacheControlHeaders(
@@ -1132,10 +1100,7 @@ export class CacheDirective extends SchemaDirectiveVisitor {
 
     cacheControl.push(`max-age=${config.ttl}`);
 
-    context.response.setHeader(
-      'Cache-Control',
-      cacheControl.join(', ')
-    );
+    context.response.setHeader('Cache-Control', cacheControl.join(', '));
   }
 }
 
@@ -1144,10 +1109,7 @@ export class CacheInvalidationManager {
   constructor(private readonly cache: FieldLevelCache) {}
 
   // Invalidate on mutation
-  async invalidateOnMutation(
-    mutationType: string,
-    args: any
-  ): Promise<void> {
+  async invalidateOnMutation(mutationType: string, args: any): Promise<void> {
     const patterns = this.getInvalidationPatterns(mutationType);
 
     for (const pattern of patterns) {
@@ -1156,10 +1118,7 @@ export class CacheInvalidationManager {
   }
 
   // Invalidate by entity
-  async invalidateEntity(
-    entityType: string,
-    entityId: string
-  ): Promise<void> {
+  async invalidateEntity(entityType: string, entityId: string): Promise<void> {
     await this.cache.invalidateByTag(`${entityType}:${entityId}`);
   }
 
@@ -1174,9 +1133,9 @@ export class CacheInvalidationManager {
   private getInvalidationPatterns(mutationType: string): string[] {
     // Map mutation types to cache patterns
     const patterns: Record<string, string[]> = {
-      'createUser': ['Query.users*', 'Query.userCount*'],
-      'updateUser': ['Query.user:*', 'User.*'],
-      'deleteUser': ['Query.user:*', 'Query.users*', 'Query.userCount*']
+      createUser: ['Query.users*', 'Query.userCount*'],
+      updateUser: ['Query.user:*', 'User.*'],
+      deleteUser: ['Query.user:*', 'Query.users*', 'Query.userCount*'],
     };
 
     return patterns[mutationType] || [];
@@ -1194,32 +1153,25 @@ export class DataLoaderFactory {
   private loaders: Map<string, DataLoader<any, any>> = new Map();
 
   // Create Cosmos DB loader
-  createCosmosLoader<K, V>(
-    container: Container,
-    options?: CosmosLoaderOptions
-  ): DataLoader<K, V> {
+  createCosmosLoader<K, V>(container: Container, options?: CosmosLoaderOptions): DataLoader<K, V> {
     const batchFn: BatchLoadFn<K, V> = async (keys) => {
       const query = this.buildCosmosQuery(keys, options);
-      const { resources } = await container.items
-        .query<V>(query)
-        .fetchAll();
+      const { resources } = await container.items.query<V>(query).fetchAll();
 
       // Map results back to keys
       const resultMap = new Map<K, V>();
-      resources.forEach(item => {
-        const key = options?.keyField
-          ? item[options.keyField]
-          : item.id;
+      resources.forEach((item) => {
+        const key = options?.keyField ? item[options.keyField] : item.id;
         resultMap.set(key, item);
       });
 
-      return keys.map(key => resultMap.get(key) || null);
+      return keys.map((key) => resultMap.get(key) || null);
     };
 
     return new DataLoader(batchFn, {
       cache: options?.cache !== false,
       maxBatchSize: options?.maxBatchSize || 100,
-      batchScheduleFn: options?.batchScheduleFn
+      batchScheduleFn: options?.batchScheduleFn,
     });
   }
 
@@ -1235,19 +1187,17 @@ export class DataLoaderFactory {
 
       // Map results back to keys
       const resultMap = new Map<K, V>();
-      result.forEach(row => {
-        const key = options?.keyField
-          ? row[options.keyField]
-          : row.id;
+      result.forEach((row) => {
+        const key = options?.keyField ? row[options.keyField] : row.id;
         resultMap.set(key, row);
       });
 
-      return keys.map(key => resultMap.get(key) || null);
+      return keys.map((key) => resultMap.get(key) || null);
     };
 
     return new DataLoader(batchFn, {
       cache: options?.cache !== false,
-      maxBatchSize: options?.maxBatchSize || 1000
+      maxBatchSize: options?.maxBatchSize || 1000,
     });
   }
 
@@ -1274,7 +1224,7 @@ export class DataLoaderFactory {
 
     return new DataLoader(batchFn, {
       cache: options?.cache !== false,
-      maxBatchSize: options?.maxBatchSize || 10
+      maxBatchSize: options?.maxBatchSize || 10,
     });
   }
 
@@ -1288,16 +1238,16 @@ export class DataLoaderFactory {
       const messages = await receiver.peekMessages(keys.length);
 
       const messageMap = new Map<string, ServiceBusMessage>();
-      messages.forEach(msg => {
+      messages.forEach((msg) => {
         messageMap.set(msg.messageId!, msg);
       });
 
-      return keys.map(key => messageMap.get(key) || null);
+      return keys.map((key) => messageMap.get(key) || null);
     };
 
     return new DataLoader(batchFn, {
       cache: false, // Messages should not be cached
-      maxBatchSize: options?.maxBatchSize || 100
+      maxBatchSize: options?.maxBatchSize || 100,
     });
   }
 
@@ -1306,14 +1256,14 @@ export class DataLoaderFactory {
     const keyField = options?.keyField || 'id';
     const parameters = keys.map((key, index) => ({
       name: `@key${index}`,
-      value: key
+      value: key,
     }));
 
-    const parameterNames = parameters.map(p => p.name).join(', ');
+    const parameterNames = parameters.map((p) => p.name).join(', ');
 
     return {
       query: `SELECT * FROM c WHERE c.${keyField} IN (${parameterNames})`,
-      parameters
+      parameters,
     };
   }
 
@@ -1328,7 +1278,7 @@ export class DataLoaderFactory {
   private async streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
     const chunks: Buffer[] = [];
     return new Promise((resolve, reject) => {
-      stream.on('data', chunk => chunks.push(chunk));
+      stream.on('data', (chunk) => chunks.push(chunk));
       stream.on('end', () => resolve(Buffer.concat(chunks)));
       stream.on('error', reject);
     });
@@ -1360,10 +1310,7 @@ export function createDataLoaderContext(): DataLoaderRegistry {
     },
 
     // Azure-specific loaders
-    cosmos<K, V>(
-      container: Container,
-      options?: CosmosLoaderOptions
-    ): DataLoader<K, V> {
+    cosmos<K, V>(container: Container, options?: CosmosLoaderOptions): DataLoader<K, V> {
       const key = `cosmos:${container.id}`;
       let loader = registry.get(key) as DataLoader<K, V>;
 
@@ -1389,7 +1336,7 @@ export function createDataLoaderContext(): DataLoaderRegistry {
       }
 
       return loader;
-    }
+    },
   };
 }
 ```
@@ -1423,11 +1370,13 @@ export class GraphQLSchemaValidator {
     // Validate schema syntax
     const syntaxErrors = validateSchema(schema);
     if (syntaxErrors.length > 0) {
-      errors.push(...syntaxErrors.map(e => ({
-        type: 'syntax',
-        message: e.message,
-        location: e.locations?.[0]
-      })));
+      errors.push(
+        ...syntaxErrors.map((e) => ({
+          type: 'syntax',
+          message: e.message,
+          location: e.locations?.[0],
+        }))
+      );
     }
 
     // Load resolvers
@@ -1466,7 +1415,7 @@ export class GraphQLSchemaValidator {
             warnings.push({
               type: 'missing-resolver',
               message: `Missing resolver for ${typeName}.${fieldName}`,
-              location: { type: typeName, field: fieldName }
+              location: { type: typeName, field: fieldName },
             });
           }
         }
@@ -1498,7 +1447,7 @@ export class GraphQLSchemaValidator {
       errors.push({
         type: 'breaking-change',
         message: change.description,
-        location: { type: change.type }
+        location: { type: change.type },
       });
     }
   }
@@ -1571,9 +1520,7 @@ export class GraphQLTypeGenerator {
       const fieldType = this.getTypeScriptType(field.type);
       const nullable = !isNonNullType(field.type);
 
-      fieldTypes.push(
-        `  ${fieldName}${nullable ? '?' : ''}: ${fieldType};`
-      );
+      fieldTypes.push(`  ${fieldName}${nullable ? '?' : ''}: ${fieldType};`);
     }
 
     return `export interface ${type.name} {\n${fieldTypes.join('\n')}\n}`;
@@ -1631,7 +1578,7 @@ ${resolverFields.join('\n')}
       Int: 'number',
       Float: 'number',
       Boolean: 'boolean',
-      ...this.config.customScalars
+      ...this.config.customScalars,
     };
 
     return scalarMap[name] || 'any';
@@ -1669,7 +1616,7 @@ export class IntrospectionMiddleware {
   private disableIntrospection(schema: GraphQLSchema): GraphQLSchema {
     return new GraphQLSchema({
       ...schema.toConfig(),
-      query: this.wrapQueryType(schema.getQueryType()!, false)
+      query: this.wrapQueryType(schema.getQueryType()!, false),
     });
   }
 
@@ -1678,9 +1625,7 @@ export class IntrospectionMiddleware {
 
     // Filter types
     if (this.config.hiddenTypes) {
-      config.types = config.types?.filter(
-        type => !this.config.hiddenTypes!.includes(type.name)
-      );
+      config.types = config.types?.filter((type) => !this.config.hiddenTypes!.includes(type.name));
     }
 
     // Filter fields
@@ -1710,13 +1655,13 @@ export class IntrospectionMiddleware {
 
       wrappedFields[fieldName] = {
         ...field,
-        resolve: this.wrapResolver(field.resolve || defaultFieldResolver)
+        resolve: this.wrapResolver(field.resolve || defaultFieldResolver),
       };
     }
 
     return new GraphQLObjectType({
       name: queryType.name,
-      fields: wrappedFields
+      fields: wrappedFields,
     });
   }
 
@@ -1753,9 +1698,7 @@ export class IntrospectionMiddleware {
 
     // Check roles
     if (this.config.allowedRoles && context.user) {
-      const hasRole = this.config.allowedRoles.some(
-        role => context.user!.roles.includes(role)
-      );
+      const hasRole = this.config.allowedRoles.some((role) => context.user!.roles.includes(role));
       if (!hasRole) {
         return false;
       }
@@ -1820,10 +1763,7 @@ export class DirectiveRegistry {
       schemaDirectives[name] = implementation;
     }
 
-    return SchemaDirectiveVisitor.visitSchemaDirectives(
-      schema,
-      schemaDirectives
-    );
+    return SchemaDirectiveVisitor.visitSchemaDirectives(schema, schemaDirectives);
   }
 }
 
@@ -1846,15 +1786,8 @@ export class RateLimitDirective extends SchemaDirectiveVisitor {
     };
   }
 
-  private getRateLimitKey(
-    context: GraphQLResolverContext,
-    info: GraphQLResolveInfo
-  ): string {
-    const parts = [
-      info.parentType.name,
-      info.fieldName,
-      context.user?.id || context.requestId
-    ];
+  private getRateLimitKey(context: GraphQLResolverContext, info: GraphQLResolveInfo): string {
+    const parts = [info.parentType.name, info.fieldName, context.user?.id || context.requestId];
 
     return parts.join(':');
   }
@@ -1868,7 +1801,7 @@ export class ValidateDirective extends SchemaDirectiveVisitor {
     // Add validation metadata
     argument.extensions = {
       ...argument.extensions,
-      validation: { pattern, min, max, required }
+      validation: { pattern, min, max, required },
     };
   }
 
@@ -1878,7 +1811,7 @@ export class ValidateDirective extends SchemaDirectiveVisitor {
     field.resolve = async (source, args, context, info) => {
       // Validate arguments
       for (const [argName, argValue] of Object.entries(args)) {
-        const argDef = field.args.find(a => a.name === argName);
+        const argDef = field.args.find((a) => a.name === argName);
         if (!argDef) continue;
 
         const validation = argDef.extensions?.validation;
@@ -1924,9 +1857,7 @@ export class ValidateDirective extends SchemaDirectiveVisitor {
     }
 
     if (errors.length > 0) {
-      throw GraphQLAzureError.validationFailed(
-        errors.map(message => ({ field: name, message }))
-      );
+      throw GraphQLAzureError.validationFailed(errors.map((message) => ({ field: name, message })));
     }
   }
 }
@@ -1963,7 +1894,7 @@ export class TransformDirective extends SchemaDirectiveVisitor {
       case 'currency':
         return new Intl.NumberFormat('en-US', {
           style: 'currency',
-          currency: 'USD'
+          currency: 'USD',
         }).format(value);
       default:
         return value;
@@ -1984,8 +1915,8 @@ const authDirectiveDefinition = new GraphQLDirective({
   args: {
     role: { type: GraphQLString },
     roles: { type: new GraphQLList(GraphQLString) },
-    requireAll: { type: GraphQLBoolean }
-  }
+    requireAll: { type: GraphQLBoolean },
+  },
 });
 
 const cacheDirectiveDefinition = new GraphQLDirective({
@@ -1995,8 +1926,8 @@ const cacheDirectiveDefinition = new GraphQLDirective({
   args: {
     ttl: { type: new GraphQLNonNull(GraphQLInt) },
     scope: { type: GraphQLString },
-    tags: { type: new GraphQLList(GraphQLString) }
-  }
+    tags: { type: new GraphQLList(GraphQLString) },
+  },
 });
 
 const rateLimitDirectiveDefinition = new GraphQLDirective({
@@ -2005,8 +1936,8 @@ const rateLimitDirectiveDefinition = new GraphQLDirective({
   locations: [DirectiveLocation.FIELD_DEFINITION],
   args: {
     limit: { type: new GraphQLNonNull(GraphQLInt) },
-    window: { type: new GraphQLNonNull(GraphQLString) }
-  }
+    window: { type: new GraphQLNonNull(GraphQLString) },
+  },
 });
 ```
 
@@ -2017,6 +1948,7 @@ const rateLimitDirectiveDefinition = new GraphQLDirective({
 Rely entirely on Azure API Management's built-in GraphQL features:
 
 **Rejected because:**
+
 - Limited customization options
 - No TypeScript type safety
 - Difficult to test locally
@@ -2027,6 +1959,7 @@ Rely entirely on Azure API Management's built-in GraphQL features:
 Use Apollo Server or similar third-party GraphQL frameworks:
 
 **Rejected because:**
+
 - Not optimized for Azure services
 - Additional dependencies and complexity
 - May not support Government cloud
@@ -2037,6 +1970,7 @@ Use Apollo Server or similar third-party GraphQL frameworks:
 Implement only basic GraphQL features without advanced capabilities:
 
 **Rejected because:**
+
 - Insufficient for production use cases
 - Security vulnerabilities without proper authorization
 - Performance issues without caching and batching
@@ -2072,21 +2006,25 @@ Implement only basic GraphQL features without advanced capabilities:
 ## Implementation Roadmap
 
 ### Phase 1: Authorization & Security (Week 1)
+
 - Field-level authorization
 - Introspection control
 - Basic security directives
 
 ### Phase 2: Performance Features (Week 2)
+
 - Query complexity analysis
 - Field-level caching
 - DataLoader implementation
 
 ### Phase 3: Real-time & Subscriptions (Week 3)
+
 - WebSocket handler
 - SignalR integration
 - PubSub implementation
 
 ### Phase 4: Developer Tools (Week 4)
+
 - Schema validation
 - Code generation
 - Custom directives

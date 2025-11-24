@@ -19,6 +19,7 @@ This document summarizes the Phase 3 implementation of REST API synthesis compon
 **Purpose**: Type-safe interfaces for REST API synthesis process
 
 **Key Types**:
+
 - `RestApiSynthesisOptions` - Configuration for synthesis behavior
 - `RestApiSynthesisResult` - Output from synthesis process
 - `ArmOperationProperties` - ARM operation resource properties
@@ -29,6 +30,7 @@ This document summarizes the Phase 3 implementation of REST API synthesis compon
 - `SynthesisError` - Enhanced error type with actionable context
 
 **Features**:
+
 - Full TypeScript type safety
 - Aligned with ARM API Management schema (2021-08-01)
 - Supports OpenAPI 3.0.3 and 3.1.0
@@ -41,6 +43,7 @@ This document summarizes the Phase 3 implementation of REST API synthesis compon
 **Purpose**: Convert `IRestOperation` to ARM operation resources
 
 **Capabilities**:
+
 - Synthesizes `Microsoft.ApiManagement/service/apis/operations` resources
 - Generates operation policies for backends
 - Maps path, query, and header parameters to ARM format
@@ -49,20 +52,23 @@ This document summarizes the Phase 3 implementation of REST API synthesis compon
 - Handles JSON Schema to ARM type conversion
 
 **Key Methods**:
+
 ```typescript
 class OperationSynthesizer {
-  synthesize(apiManagementServiceName, apiResourceId): ArmResource[]
+  synthesize(apiManagementServiceName, apiResourceId): ArmResource[];
   // Returns [operationResource, policyResource?]
 }
 ```
 
 **Validation**:
+
 - Ensures path parameters match URL template
 - Validates {param} syntax (not :param or <param>)
 - Checks all path params are defined in schema
 - Ensures at least one response exists (ARM requirement)
 
 **Error Handling**:
+
 - Clear error messages with operation context
 - Actionable suggestions for fixes
 - Path information for debugging
@@ -74,6 +80,7 @@ class OperationSynthesizer {
 **Purpose**: Convert backend configurations to ARM backend resources
 
 **Supported Backends**:
+
 1. **Azure Functions** (`azureFunction`)
    - Automatic function key retrieval via ARM expressions
    - Support for anonymous, function, and admin auth levels
@@ -94,6 +101,7 @@ class OperationSynthesizer {
    - Port configuration
 
 **Features**:
+
 - Backend deduplication (same backend used by multiple operations)
 - Circuit breaker support with ARM circuit breaker rules
 - TLS certificate validation configuration
@@ -101,16 +109,18 @@ class OperationSynthesizer {
 - Resource dependency management
 
 **Key Methods**:
+
 ```typescript
 class BackendSynthesizer {
-  registerBackend(backendId, config): void
-  synthesize(apiManagementServiceName, apimServiceResourceId): ArmResource[]
-  getBackendResourceId(backendId): BackendResourceIdentifier
-  hasBackend(backendId): boolean
+  registerBackend(backendId, config): void;
+  synthesize(apiManagementServiceName, apimServiceResourceId): ArmResource[];
+  getBackendResourceId(backendId): BackendResourceIdentifier;
+  hasBackend(backendId): boolean;
 }
 ```
 
 **ARM Integration**:
+
 - Uses `listKeys()` for Azure Function authentication
 - Uses `reference()` for resource URL resolution
 - Proper `dependsOn` arrays for deployment ordering
@@ -123,6 +133,7 @@ class BackendSynthesizer {
 **Purpose**: Main orchestrator for REST API synthesis
 
 **Responsibilities**:
+
 - Coordinate operation and backend synthesis
 - Register and deduplicate backends across operations
 - Generate OpenAPI artifacts (path preparation)
@@ -130,6 +141,7 @@ class BackendSynthesizer {
 - Provide synthesis statistics
 
 **Synthesis Flow**:
+
 ```
 RestApiSynthesizer.synthesize()
   │
@@ -148,22 +160,25 @@ RestApiSynthesizer.synthesize()
 ```
 
 **Key Methods**:
+
 ```typescript
 class RestApiSynthesizer {
-  constructor(apiName, operations, options)
-  synthesize(apiManagementServiceName, apiResourceId, outputDir): RestApiSynthesisResult
-  validate(): void
-  getOperationCount(): number
-  getBackendCount(): number
+  constructor(apiName, operations, options);
+  synthesize(apiManagementServiceName, apiResourceId, outputDir): RestApiSynthesisResult;
+  validate(): void;
+  getOperationCount(): number;
+  getBackendCount(): number;
 }
 ```
 
 **Backend Registration**:
+
 - Automatic backend discovery from operations
 - Smart backend ID generation (function-{name}, webapp-{name}, http-{hash})
 - Prevents duplicate backend resources
 
 **Validation**:
+
 - Unique operation IDs
 - Valid backend references
 - Consistent configuration
@@ -175,6 +190,7 @@ class RestApiSynthesizer {
 **Purpose**: Clean public API for synthesis infrastructure
 
 **Exports**:
+
 ```typescript
 // Main synthesizer
 export { RestApiSynthesizer }
@@ -287,19 +303,19 @@ For a REST API with 2 operations:
 
 All mappings follow ARM-MAPPING.md specifications:
 
-| IRestOperation Field | ARM Field | Implementation |
-|---------------------|-----------|----------------|
-| `method` | `properties.method` | ✅ Direct copy |
-| `path` | `properties.urlTemplate` | ✅ Direct copy |
-| `operationId` | Resource name component | ✅ Auto-generated if missing |
-| `summary` | `properties.displayName` | ✅ With fallback to operationId |
-| `description` | `properties.description` | ✅ Optional |
-| `pathParameters` | `properties.templateParameters` | ✅ Schema to ARM mapping |
-| `queryParameters` | `properties.request.queryParameters` | ✅ Schema to ARM mapping |
-| `headerParameters` | `properties.request.headers` | ✅ Schema to ARM mapping |
-| `requestBody` | `properties.request.representations` | ✅ Content type mapping |
-| `responses` | `properties.responses` | ✅ Status code mapping |
-| `backend` | Separate backend resource | ✅ Dedicated synthesizer |
+| IRestOperation Field | ARM Field                            | Implementation                  |
+| -------------------- | ------------------------------------ | ------------------------------- |
+| `method`             | `properties.method`                  | ✅ Direct copy                  |
+| `path`               | `properties.urlTemplate`             | ✅ Direct copy                  |
+| `operationId`        | Resource name component              | ✅ Auto-generated if missing    |
+| `summary`            | `properties.displayName`             | ✅ With fallback to operationId |
+| `description`        | `properties.description`             | ✅ Optional                     |
+| `pathParameters`     | `properties.templateParameters`      | ✅ Schema to ARM mapping        |
+| `queryParameters`    | `properties.request.queryParameters` | ✅ Schema to ARM mapping        |
+| `headerParameters`   | `properties.request.headers`         | ✅ Schema to ARM mapping        |
+| `requestBody`        | `properties.request.representations` | ✅ Content type mapping         |
+| `responses`          | `properties.responses`               | ✅ Status code mapping          |
+| `backend`            | Separate backend resource            | ✅ Dedicated synthesizer        |
 
 ## Next Steps
 
@@ -407,6 +423,7 @@ packages/lib/src/synthesis/rest/
 ## Conclusion
 
 Phase 3 core synthesis infrastructure is complete and ready for:
+
 1. RestApiStack construct integration
 2. Testing and validation
 3. OpenAPI export integration

@@ -56,8 +56,8 @@ export class MyInfrastructureStack extends Stack {
       location: 'eastus',
       tags: {
         environment: 'production',
-        project: 'myapp'
-      }
+        project: 'myapp',
+      },
     });
 
     // Add storage account
@@ -65,14 +65,14 @@ export class MyInfrastructureStack extends Stack {
       resourceGroup: rg,
       location: rg.location,
       sku: {
-        name: 'Standard_LRS'
+        name: 'Standard_LRS',
       },
       kind: 'StorageV2',
       properties: {
         accessTier: 'Hot',
         supportsHttpsTrafficOnly: true,
-        minimumTlsVersion: 'TLS1_2'
-      }
+        minimumTlsVersion: 'TLS1_2',
+      },
     });
   }
 }
@@ -105,9 +105,9 @@ These must be provided for the resource to be created:
 
 ```typescript
 const webApp = new WebApp(this, 'my-webapp', {
-  resourceGroup: rg,        // Required: where to deploy
-  location: 'eastus',       // Required: Azure region
-  serverFarmId: plan.id     // Required: hosting plan reference
+  resourceGroup: rg, // Required: where to deploy
+  location: 'eastus', // Required: Azure region
+  serverFarmId: plan.id, // Required: hosting plan reference
 });
 ```
 
@@ -119,11 +119,11 @@ These have defaults but can be overridden:
 const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
-  sku: { name: 'Standard_LRS' },  // Optional: defaults to Standard_LRS
-  kind: 'StorageV2',               // Optional: defaults to StorageV2
+  sku: { name: 'Standard_LRS' }, // Optional: defaults to Standard_LRS
+  kind: 'StorageV2', // Optional: defaults to StorageV2
   properties: {
-    supportsHttpsTrafficOnly: true // Optional: defaults to true
-  }
+    supportsHttpsTrafficOnly: true, // Optional: defaults to true
+  },
 });
 ```
 
@@ -144,12 +144,12 @@ const webApp = new WebApp(this, 'webapp', {
       minTlsVersion: '1.2',
       appSettings: [
         { name: 'WEBSITE_NODE_DEFAULT_VERSION', value: '18-lts' },
-        { name: 'NODE_ENV', value: 'production' }
-      ]
+        { name: 'NODE_ENV', value: 'production' },
+      ],
     },
     httpsOnly: true,
-    clientAffinityEnabled: false
-  }
+    clientAffinityEnabled: false,
+  },
 });
 ```
 
@@ -172,8 +172,8 @@ const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   sku: {
-    name: 'Standard_LRS' // Type-checked against valid SKU values
-  }
+    name: 'Standard_LRS', // Type-checked against valid SKU values
+  },
 });
 
 // ❌ Type error: invalid SKU name
@@ -181,8 +181,8 @@ const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   sku: {
-    name: 'Invalid_SKU' // TypeScript compilation error
-  }
+    name: 'Invalid_SKU', // TypeScript compilation error
+  },
 });
 ```
 
@@ -195,27 +195,27 @@ When one resource depends on another, Atakora automatically manages deployment o
 ```typescript
 // Resource group must exist before storage
 const rg = new ResourceGroup(this, 'rg', {
-  location: 'eastus'
+  location: 'eastus',
 });
 
 // Storage account references resource group
 // Atakora ensures rg deploys first
 const storage = new StorageAccount(this, 'storage', {
-  resourceGroup: rg,  // Explicit dependency
-  location: rg.location
+  resourceGroup: rg, // Explicit dependency
+  location: rg.location,
 });
 
 // Web app depends on app service plan
 const plan = new AppServicePlan(this, 'plan', {
   resourceGroup: rg,
   location: 'eastus',
-  sku: { name: 'B1', tier: 'Basic' }
+  sku: { name: 'B1', tier: 'Basic' },
 });
 
 const webApp = new WebApp(this, 'webapp', {
   resourceGroup: rg,
   location: 'eastus',
-  serverFarmId: plan.id  // Explicit dependency
+  serverFarmId: plan.id, // Explicit dependency
 });
 ```
 
@@ -229,17 +229,17 @@ const vnet = new VirtualNetwork(this, 'vnet', {
   location: 'eastus',
   properties: {
     addressSpace: {
-      addressPrefixes: ['10.0.0.0/16']
-    }
-  }
+      addressPrefixes: ['10.0.0.0/16'],
+    },
+  },
 });
 
 const subnet = new Subnet(this, 'subnet', {
   resourceGroup: rg,
-  virtualNetworkName: vnet.name,  // Implicit dependency
+  virtualNetworkName: vnet.name, // Implicit dependency
   properties: {
-    addressPrefix: '10.0.1.0/24'
-  }
+    addressPrefix: '10.0.1.0/24',
+  },
 });
 
 // Network interface depends on subnet
@@ -247,15 +247,17 @@ const nic = new NetworkInterface(this, 'nic', {
   resourceGroup: rg,
   location: 'eastus',
   properties: {
-    ipConfigurations: [{
-      name: 'ipconfig1',
-      properties: {
-        subnet: {
-          id: subnet.id  // Implicit dependency through reference
-        }
-      }
-    }]
-  }
+    ipConfigurations: [
+      {
+        name: 'ipconfig1',
+        properties: {
+          subnet: {
+            id: subnet.id, // Implicit dependency through reference
+          },
+        },
+      },
+    ],
+  },
 });
 ```
 
@@ -267,7 +269,7 @@ In rare cases, you might need to add manual dependencies:
 const roleAssignment = new RoleAssignment(this, 'role', {
   scope: storage.id,
   roleDefinitionId: 'roleDefId',
-  principalId: 'principalId'
+  principalId: 'principalId',
 });
 
 // Ensure role assignment happens after storage is fully configured
@@ -283,13 +285,13 @@ All constructs expose properties you can reference:
 ```typescript
 const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
-  location: 'eastus'
+  location: 'eastus',
 });
 
 // Access properties
-console.log(storage.name);      // e.g., "storage-abc123"
-console.log(storage.id);        // Full Azure resource ID
-console.log(storage.location);  // "eastus"
+console.log(storage.name); // e.g., "storage-abc123"
+console.log(storage.id); // Full Azure resource ID
+console.log(storage.location); // "eastus"
 ```
 
 ### Using Outputs in Other Resources
@@ -300,23 +302,23 @@ Pass resource references to configure relationships:
 const plan = new AppServicePlan(this, 'plan', {
   resourceGroup: rg,
   location: 'eastus',
-  sku: { name: 'B1', tier: 'Basic' }
+  sku: { name: 'B1', tier: 'Basic' },
 });
 
 const webApp = new WebApp(this, 'webapp', {
   resourceGroup: rg,
-  location: plan.location,      // Reference plan's location
-  serverFarmId: plan.id,        // Reference plan's ID
+  location: plan.location, // Reference plan's location
+  serverFarmId: plan.id, // Reference plan's ID
   properties: {
     siteConfig: {
       appSettings: [
         {
           name: 'STORAGE_ACCOUNT_NAME',
-          value: storage.name   // Reference storage account name
-        }
-      ]
-    }
-  }
+          value: storage.name, // Reference storage account name
+        },
+      ],
+    },
+  },
 });
 ```
 
@@ -334,13 +336,13 @@ export class MyStack extends Stack {
 
     const storage = new StorageAccount(this, 'storage', {
       resourceGroup: rg,
-      location: 'eastus'
+      location: 'eastus',
     });
 
     const webApp = new WebApp(this, 'webapp', {
       resourceGroup: rg,
       location: 'eastus',
-      serverFarmId: plan.id
+      serverFarmId: plan.id,
     });
 
     // Export for external use
@@ -361,7 +363,7 @@ Atakora distinguishes between logical names (for TypeScript) and Azure resource 
 // The actual Azure name is generated with a hash for uniqueness
 const storage = new StorageAccount(this, 'my-storage', {
   resourceGroup: rg,
-  location: 'eastus'
+  location: 'eastus',
 });
 
 // Actual Azure name: "mystorage-abc123def456" (lowercase, no hyphens, unique hash)
@@ -376,11 +378,12 @@ Override the generated name when needed:
 const storage = new StorageAccount(this, 'my-storage', {
   resourceGroup: rg,
   location: 'eastus',
-  name: 'mycompanystorage2024'  // Custom Azure name
+  name: 'mycompanystorage2024', // Custom Azure name
 });
 ```
 
 **Important**: Custom names must:
+
 - Be globally unique (for resources like Storage Accounts)
 - Follow Azure naming rules (length, allowed characters)
 - Remain stable across deployments
@@ -438,7 +441,7 @@ describe('MyInfrastructureStack', () => {
     const template = stack.toTemplate();
 
     const storageResources = template.resources.filter(
-      r => r.type === 'Microsoft.Storage/storageAccounts'
+      (r) => r.type === 'Microsoft.Storage/storageAccounts'
     );
 
     expect(storageResources).toHaveLength(1);
@@ -450,9 +453,7 @@ describe('MyInfrastructureStack', () => {
     const stack = new MyInfrastructureStack();
     const template = stack.toTemplate();
 
-    const webApps = template.resources.filter(
-      r => r.type === 'Microsoft.Web/sites'
-    );
+    const webApps = template.resources.filter((r) => r.type === 'Microsoft.Web/sites');
 
     expect(webApps[0].properties.httpsOnly).toBe(true);
   });
@@ -472,13 +473,13 @@ export class ExistingStack extends Stack {
 
     // Existing resources
     const rg = new ResourceGroup(this, 'rg', {
-      location: 'eastus'
+      location: 'eastus',
     });
 
     const webApp = new WebApp(this, 'webapp', {
       resourceGroup: rg,
       location: 'eastus',
-      serverFarmId: plan.id
+      serverFarmId: plan.id,
     });
 
     // NEW: Add storage account
@@ -486,7 +487,7 @@ export class ExistingStack extends Stack {
       resourceGroup: rg,
       location: rg.location,
       sku: { name: 'Standard_LRS' },
-      kind: 'StorageV2'
+      kind: 'StorageV2',
     });
 
     // NEW: Configure web app to use storage
@@ -494,7 +495,7 @@ export class ExistingStack extends Stack {
 
     // Update web app configuration
     webApp.addProperty('siteConfig.appSettings', [
-      { name: 'STORAGE_CONNECTION', value: storageConnection }
+      { name: 'STORAGE_CONNECTION', value: storageConnection },
     ]);
   }
 }
@@ -508,7 +509,7 @@ export class WebAppWithDatabaseStack extends Stack {
     super('webapp-db-stack');
 
     const rg = new ResourceGroup(this, 'rg', {
-      location: 'eastus'
+      location: 'eastus',
     });
 
     // Add SQL Server
@@ -518,8 +519,8 @@ export class WebAppWithDatabaseStack extends Stack {
       properties: {
         administratorLogin: 'sqladmin',
         administratorLoginPassword: '${secretRef:sqlPassword}',
-        version: '12.0'
-      }
+        version: '12.0',
+      },
     });
 
     // Add SQL Database
@@ -529,15 +530,15 @@ export class WebAppWithDatabaseStack extends Stack {
       serverName: sqlServer.name,
       sku: {
         name: 'S0',
-        tier: 'Standard'
-      }
+        tier: 'Standard',
+      },
     });
 
     // Add App Service Plan
     const plan = new AppServicePlan(this, 'plan', {
       resourceGroup: rg,
       location: rg.location,
-      sku: { name: 'P1v2', tier: 'PremiumV2' }
+      sku: { name: 'P1v2', tier: 'PremiumV2' },
     });
 
     // Add Web App with database connection
@@ -547,13 +548,15 @@ export class WebAppWithDatabaseStack extends Stack {
       serverFarmId: plan.id,
       properties: {
         siteConfig: {
-          connectionStrings: [{
-            name: 'DefaultConnection',
-            connectionString: `Server=${sqlServer.fullyQualifiedDomainName};Database=${database.name};User Id=sqladmin;Password=...`,
-            type: 'SQLAzure'
-          }]
-        }
-      }
+          connectionStrings: [
+            {
+              name: 'DefaultConnection',
+              connectionString: `Server=${sqlServer.fullyQualifiedDomainName};Database=${database.name};User Id=sqladmin;Password=...`,
+              type: 'SQLAzure',
+            },
+          ],
+        },
+      },
     });
   }
 }
@@ -567,14 +570,14 @@ export class ConditionalStack extends Stack {
     super('conditional-stack');
 
     const rg = new ResourceGroup(this, 'rg', {
-      location: 'eastus'
+      location: 'eastus',
     });
 
     // Always create web app
     const webApp = new WebApp(this, 'webapp', {
       resourceGroup: rg,
       location: rg.location,
-      serverFarmId: plan.id
+      serverFarmId: plan.id,
     });
 
     // Conditionally add Redis cache
@@ -585,8 +588,8 @@ export class ConditionalStack extends Stack {
         sku: {
           name: config.environment === 'production' ? 'Premium' : 'Basic',
           family: config.environment === 'production' ? 'P' : 'C',
-          capacity: config.environment === 'production' ? 1 : 0
-        }
+          capacity: config.environment === 'production' ? 1 : 0,
+        },
       });
 
       webApp.addAppSetting('REDIS_HOST', cache.hostName);
@@ -598,7 +601,7 @@ export class ConditionalStack extends Stack {
       const insights = new ApplicationInsights(this, 'appinsights', {
         resourceGroup: rg,
         location: rg.location,
-        kind: 'web'
+        kind: 'web',
       });
 
       webApp.addAppSetting('APPINSIGHTS_INSTRUMENTATIONKEY', insights.instrumentationKey);
@@ -629,13 +632,13 @@ const existingStorage = StorageAccount.fromName(this, 'storage', 'mystorage');
 const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
-  name: 'mystorage-prod-2024'  // More specific name
+  name: 'mystorage-prod-2024', // More specific name
 });
 
 // Option 3: Let Atakora generate unique name
 const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
-  location: 'eastus'
+  location: 'eastus',
   // No name specified - auto-generated with hash
 });
 ```
@@ -683,14 +686,14 @@ Error: The value 'invalid' is not valid for property 'sku.name'
 ```typescript
 // ❌ Invalid SKU
 const storage = new StorageAccount(this, 'storage', {
-  sku: { name: 'invalid' }
+  sku: { name: 'invalid' },
 });
 
 // ✅ Valid SKU from type definition
 const storage = new StorageAccount(this, 'storage', {
   sku: {
-    name: 'Standard_LRS'  // TypeScript will validate this
-  }
+    name: 'Standard_LRS', // TypeScript will validate this
+  },
 });
 ```
 
@@ -709,20 +712,20 @@ Error: App Service Plan not found
 const webApp = new WebApp(this, 'webapp', {
   resourceGroup: rg,
   location: 'eastus',
-  serverFarmId: '/subscriptions/.../plans/non-existent'
+  serverFarmId: '/subscriptions/.../plans/non-existent',
 });
 
 // ✅ Create dependency first
 const plan = new AppServicePlan(this, 'plan', {
   resourceGroup: rg,
   location: 'eastus',
-  sku: { name: 'B1', tier: 'Basic' }
+  sku: { name: 'B1', tier: 'Basic' },
 });
 
 const webApp = new WebApp(this, 'webapp', {
   resourceGroup: rg,
   location: 'eastus',
-  serverFarmId: plan.id  // Reference created resource
+  serverFarmId: plan.id, // Reference created resource
 });
 ```
 
@@ -731,16 +734,19 @@ const webApp = new WebApp(this, 'webapp', {
 When you encounter issues:
 
 1. **Check Synthesis Output**: Review the generated ARM template for issues
+
    ```bash
    atakora synth --verbose
    ```
 
 2. **Compare Changes**: See what's different from current deployment
+
    ```bash
    atakora diff --verbose
    ```
 
 3. **Validate Locally**: Run validation without deploying
+
    ```bash
    atakora synth --validate
    ```
@@ -760,7 +766,7 @@ When you encounter issues:
 - [Core Concepts](../core-concepts/README.md) - Understanding constructs and stacks
 - [Common Resources](../../getting-started/common-resources/README.md) - Resource-specific guides
 - [Naming Conventions](../../reference/naming-conventions.md) - Resource naming rules
-- [Troubleshooting](../../troubleshooting/common-issues.md) - Solutions to common problems
+- [Troubleshooting](../../troubleshooting/Common-Issues.md) - Solutions to common problems
 
 ---
 

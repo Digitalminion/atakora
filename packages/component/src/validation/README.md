@@ -5,6 +5,7 @@ Runtime validation engine for @atakora/component using Zod.
 ## Overview
 
 The validation engine provides type-safe runtime validation for:
+
 - Model field definitions
 - Function inputs and outputs
 - Event payloads
@@ -65,11 +66,7 @@ const userSchema: SchemaDefinition = {
   age: {
     type: 'number',
     required: true,
-    validations: [
-      { type: 'min', value: 0 },
-      { type: 'max', value: 120 },
-      { type: 'integer' },
-    ],
+    validations: [{ type: 'min', value: 0 }, { type: 'max', value: 120 }, { type: 'integer' }],
   },
   name: {
     type: 'string',
@@ -94,16 +91,24 @@ const result = validateSchema(userSchema, {
 import { validateModelInput } from '@atakora/component/validation';
 
 // Create mode: all required fields must be present
-const createResult = validateModelInput(userSchema, {
-  email: 'user@example.com',
-  age: 25,
-  name: 'John Doe',
-}, 'create');
+const createResult = validateModelInput(
+  userSchema,
+  {
+    email: 'user@example.com',
+    age: 25,
+    name: 'John Doe',
+  },
+  'create'
+);
 
 // Update mode: all fields optional, only validate provided fields
-const updateResult = validateModelInput(userSchema, {
-  age: 26, // Only updating age
-}, 'update');
+const updateResult = validateModelInput(
+  userSchema,
+  {
+    age: 26, // Only updating age
+  },
+  'update'
+);
 ```
 
 ### Custom Validators
@@ -169,9 +174,7 @@ const inputSchema: SchemaDefinition = {
     type: 'enum',
     required: false,
     default: 'pdf',
-    validations: [
-      { type: 'format', value: ['pdf', 'excel'] },
-    ],
+    validations: [{ type: 'format', value: ['pdf', 'excel'] }],
   },
 };
 
@@ -183,9 +186,7 @@ const outputSchema: SchemaDefinition = {
   status: {
     type: 'enum',
     required: true,
-    validations: [
-      { type: 'format', value: ['generating', 'completed'] },
-    ],
+    validations: [{ type: 'format', value: ['generating', 'completed'] }],
   },
 };
 
@@ -326,6 +327,7 @@ z.string().email()
 ### Model Definitions → Validation Schemas
 
 Model schemas are validated on all CRUD operations:
+
 - Create: All required fields validated
 - Update: Only provided fields validated
 - Delete: ID validation only
@@ -333,6 +335,7 @@ Model schemas are validated on all CRUD operations:
 ### Runtime Validation in API Handlers
 
 Validation runs automatically in:
+
 - HTTP request handlers (Express, Azure Functions)
 - Event processors (before processing)
 - Function inputs/outputs (before and after execution)
@@ -354,6 +357,7 @@ if (result.success) {
 ## Testing
 
 See `__tests__/validation/` for comprehensive test suite covering:
+
 - All field types
 - All validation rules
 - Error handling

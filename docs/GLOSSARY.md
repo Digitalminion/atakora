@@ -304,4 +304,4 @@ See npm Workspace.
 - [Documentation Index](./INDEX.md) - Alphabetical index of all documentation pages
 - [Getting Started](./getting-started/README.md) - New to Atakora? Start here
 - [Reference Documentation](./reference/README.md) - Complete API and CLI reference
-- [Troubleshooting](./troubleshooting/common-issues.md) - Common problems and solutions
+- [Troubleshooting](./troubleshooting/Common-Issues.md) - Common problems and solutions

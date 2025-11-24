@@ -599,6 +599,7 @@ az ad sp create-for-rbac \
 ### 2. Implement Approval Gates
 
 GitHub Actions:
+
 ```yaml
 environment:
   name: production
@@ -606,6 +607,7 @@ environment:
 ```
 
 Azure DevOps:
+
 - Go to **Environments** > **production**
 - Add **Approvals** > Add required approvers
 
@@ -737,7 +739,7 @@ az login --service-principal \
 ```yaml
 # Increase timeout
 - name: Deploy infrastructure
-  timeout-minutes: 60  # Default is 360 (6 hours)
+  timeout-minutes: 60 # Default is 360 (6 hours)
   run: npx atakora deploy
 ```
 
@@ -756,7 +758,7 @@ az login --service-principal \
 
 - **[Deployment Guide](../fundamentals/deployment.md)** - Deployment fundamentals
 - **[Testing Infrastructure](../workflows/testing-infrastructure.md)** - Testing strategies
-- **[CI/CD Problems](../../troubleshooting/ci-cd-problems.md)** - Common CI/CD issues
+- **[CI/CD Problems](../../troubleshooting/CI-CD-Problems.md)** - Common CI/CD issues
 - **[CLI deploy Command](../../reference/cli/deploy.md)** - Deploy command reference
 
 ---

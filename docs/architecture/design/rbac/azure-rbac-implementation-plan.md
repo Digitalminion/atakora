@@ -35,36 +35,43 @@ An AWS CDK-inspired grant pattern for Azure RBAC that provides:
 ## Phase Breakdown
 
 ### Phase 1: Core Foundation (Week 1-2)
+
 **Owner**: Single agent (foundation work, sequential)
 **Dependencies**: None
 **Deliverables**: Core interfaces, enums, and type definitions
 
 ### Phase 2: Base Infrastructure (Week 2-3)
+
 **Owner**: Single agent (builds on Phase 1)
 **Dependencies**: Phase 1 complete
 **Deliverables**: GrantableResource base class, RoleAssignment constructs, WellKnownRoleIds
 
 ### Phase 3: Storage Resource Grants (Week 3-4)
+
 **Owner**: Agent 1 (can parallelize with Phase 4-6)
 **Dependencies**: Phase 2 complete
 **Deliverables**: StorageAccount grant methods and tests
 
 ### Phase 4: Key Vault & Cosmos Grants (Week 4-5)
+
 **Owner**: Agent 2 (can parallelize with Phase 3, 5-6)
 **Dependencies**: Phase 2 complete
 **Deliverables**: KeyVault and CosmosAccount grant methods and tests
 
 ### Phase 5: Additional Service Grants (Week 5-6)
+
 **Owner**: Agent 3 (can parallelize with Phase 3-4, 6)
 **Dependencies**: Phase 2 complete
 **Deliverables**: SQL, Event Hub, Service Bus grant methods and tests
 
 ### Phase 6: Managed Identity Support (Week 5-6)
+
 **Owner**: Agent 4 (can parallelize with Phase 3-5)
 **Dependencies**: Phase 2 complete
 **Deliverables**: UserAssignedIdentity construct, IGrantable implementations
 
 ### Phase 7: Integration & Polish (Week 7-8)
+
 **Owner**: All agents (collaborative)
 **Dependencies**: Phases 3-6 complete
 **Deliverables**: Cross-stack support, integration tests, documentation
@@ -80,6 +87,7 @@ An AWS CDK-inspired grant pattern for Azure RBAC that provides:
 **Location**: `packages/lib/src/core/grants/`
 
 **Files to Create**:
+
 - `igrantable.ts` - IGrantable interface
 - `principal-type.ts` - PrincipalType enum
 - `grant-result.ts` - IGrantResult interface
@@ -149,7 +157,7 @@ export enum PrincipalType {
   ForeignGroup = 'ForeignGroup',
 
   /** Azure AD device */
-  Device = 'Device'
+  Device = 'Device',
 }
 ```
 
@@ -201,11 +209,13 @@ export interface IGrantResult {
 ```
 
 **Testing Requirements**:
+
 - Unit tests for type safety
 - Interface compliance checks
 - Documentation examples
 
 **Success Criteria**:
+
 - All interfaces compile without errors
 - Full TSDoc documentation
 - Exported from `@atakora/lib`
@@ -226,10 +236,12 @@ export * from './grants';
 ```
 
 **Testing Requirements**:
+
 - Verify exports are accessible
 - Check for naming conflicts
 
 **Success Criteria**:
+
 - Interfaces importable from `@atakora/lib/core`
 
 **Estimated Effort**: 1 hour
@@ -274,17 +286,23 @@ export class MissingIdentityError extends GrantError {
  */
 export class InvalidRoleAssignmentError extends GrantError {
   constructor(message: string, details?: string) {
-    super(message, details, 'Check the Azure RBAC documentation for valid role assignment configurations');
+    super(
+      message,
+      details,
+      'Check the Azure RBAC documentation for valid role assignment configurations'
+    );
     this.name = 'InvalidRoleAssignmentError';
   }
 }
 ```
 
 **Testing Requirements**:
+
 - Error instantiation tests
 - Error message validation
 
 **Success Criteria**:
+
 - Errors extend ValidationError properly
 - Clear error messages
 
@@ -442,12 +460,12 @@ export class RoleAssignmentArm extends Resource {
         ...(this.props.description && { description: this.props.description }),
         ...(this.props.condition && {
           condition: this.props.condition,
-          conditionVersion: this.props.conditionVersion
+          conditionVersion: this.props.conditionVersion,
         }),
         ...(this.props.skipPrincipalValidation && {
-          delegatedManagedIdentityResourceId: null
-        })
-      }
+          delegatedManagedIdentityResourceId: null,
+        }),
+      },
     };
   }
 
@@ -481,12 +499,14 @@ export class RoleAssignmentArm extends Resource {
 ```
 
 **Testing Requirements**:
+
 - Unit tests for GUID generation determinism
 - Property validation tests
 - ARM template output validation
 - Cross-stack reference tests
 
 **Success Criteria**:
+
 - Generates valid ARM JSON
 - Deterministic GUID generation
 - Proper validation errors
@@ -622,11 +642,13 @@ export class RoleAssignment extends Construct {
 ```
 
 **Testing Requirements**:
+
 - L1/L2 integration tests
 - Property propagation tests
 - Immutability verification
 
 **Success Criteria**:
+
 - Clean developer API
 - Proper L1 wrapping
 - Immutability enforced
@@ -682,10 +704,12 @@ export class GrantResult implements IGrantResult {
 ```
 
 **Testing Requirements**:
+
 - Interface compliance tests
 - Method delegation tests
 
 **Success Criteria**:
+
 - Implements IGrantResult fully
 - Proper delegation to RoleAssignment
 
@@ -721,146 +745,220 @@ export class WellKnownRoleIds {
   public static readonly READER = WellKnownRoleIds.roleId('acdd72a7-3385-48ef-bd42-f606fba81ae7');
 
   /** Create and manage all resources */
-  public static readonly CONTRIBUTOR = WellKnownRoleIds.roleId('b24988ac-6180-42a0-ab88-20f7382dd24c');
+  public static readonly CONTRIBUTOR = WellKnownRoleIds.roleId(
+    'b24988ac-6180-42a0-ab88-20f7382dd24c'
+  );
 
   /** Full access including ability to assign roles */
   public static readonly OWNER = WellKnownRoleIds.roleId('8e3af657-a8ff-443c-a75c-2fe8c4bcb635');
 
   /** Manage user access to Azure resources */
-  public static readonly USER_ACCESS_ADMINISTRATOR = WellKnownRoleIds.roleId('18d7d88d-d35e-4fb5-a5c3-7773c20a72d9');
+  public static readonly USER_ACCESS_ADMINISTRATOR = WellKnownRoleIds.roleId(
+    '18d7d88d-d35e-4fb5-a5c3-7773c20a72d9'
+  );
 
   // ============================================================
   // Storage Account Roles
   // ============================================================
 
   /** Read data from blobs */
-  public static readonly STORAGE_BLOB_DATA_READER = WellKnownRoleIds.roleId('2a2b9908-6ea1-4ae2-8e65-a410df84e7d1');
+  public static readonly STORAGE_BLOB_DATA_READER = WellKnownRoleIds.roleId(
+    '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
+  );
 
   /** Read and write blob data */
-  public static readonly STORAGE_BLOB_DATA_CONTRIBUTOR = WellKnownRoleIds.roleId('ba92f5b4-2d11-453d-a403-e96b0029c9fe');
+  public static readonly STORAGE_BLOB_DATA_CONTRIBUTOR = WellKnownRoleIds.roleId(
+    'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+  );
 
   /** Full access to blob data including POSIX ACLs */
-  public static readonly STORAGE_BLOB_DATA_OWNER = WellKnownRoleIds.roleId('b7e6dc6d-f1e8-4753-8033-0f276bb0955b');
+  public static readonly STORAGE_BLOB_DATA_OWNER = WellKnownRoleIds.roleId(
+    'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
+  );
 
   /** Read messages and metadata from queues */
-  public static readonly STORAGE_QUEUE_DATA_READER = WellKnownRoleIds.roleId('19e7f393-937e-4f77-808e-94535e297925');
+  public static readonly STORAGE_QUEUE_DATA_READER = WellKnownRoleIds.roleId(
+    '19e7f393-937e-4f77-808e-94535e297925'
+  );
 
   /** Process queue messages */
-  public static readonly STORAGE_QUEUE_DATA_CONTRIBUTOR = WellKnownRoleIds.roleId('974c5e8b-45b9-4653-ba55-5f855dd0fb88');
+  public static readonly STORAGE_QUEUE_DATA_CONTRIBUTOR = WellKnownRoleIds.roleId(
+    '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
+  );
 
   /** Send queue messages */
-  public static readonly STORAGE_QUEUE_DATA_MESSAGE_SENDER = WellKnownRoleIds.roleId('c6a89b2d-59bc-44d0-9896-0f6e12d7b80a');
+  public static readonly STORAGE_QUEUE_DATA_MESSAGE_SENDER = WellKnownRoleIds.roleId(
+    'c6a89b2d-59bc-44d0-9896-0f6e12d7b80a'
+  );
 
   /** Process queue messages (read and delete) */
-  public static readonly STORAGE_QUEUE_DATA_MESSAGE_PROCESSOR = WellKnownRoleIds.roleId('8a0f0c08-91a1-4084-bc3d-661d67233fed');
+  public static readonly STORAGE_QUEUE_DATA_MESSAGE_PROCESSOR = WellKnownRoleIds.roleId(
+    '8a0f0c08-91a1-4084-bc3d-661d67233fed'
+  );
 
   /** Read table data */
-  public static readonly STORAGE_TABLE_DATA_READER = WellKnownRoleIds.roleId('76199698-9eea-4c19-bc75-cec21354c6b6');
+  public static readonly STORAGE_TABLE_DATA_READER = WellKnownRoleIds.roleId(
+    '76199698-9eea-4c19-bc75-cec21354c6b6'
+  );
 
   /** Read and write table data */
-  public static readonly STORAGE_TABLE_DATA_CONTRIBUTOR = WellKnownRoleIds.roleId('0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3');
+  public static readonly STORAGE_TABLE_DATA_CONTRIBUTOR = WellKnownRoleIds.roleId(
+    '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'
+  );
 
   /** Read file share data */
-  public static readonly STORAGE_FILE_DATA_SMB_SHARE_READER = WellKnownRoleIds.roleId('aba4ae5f-2193-4029-9191-0cb91df5e314');
+  public static readonly STORAGE_FILE_DATA_SMB_SHARE_READER = WellKnownRoleIds.roleId(
+    'aba4ae5f-2193-4029-9191-0cb91df5e314'
+  );
 
   /** Read and write file share data */
-  public static readonly STORAGE_FILE_DATA_SMB_SHARE_CONTRIBUTOR = WellKnownRoleIds.roleId('0c867c2a-1d8c-454a-a3db-ab2ea1bdc8bb');
+  public static readonly STORAGE_FILE_DATA_SMB_SHARE_CONTRIBUTOR = WellKnownRoleIds.roleId(
+    '0c867c2a-1d8c-454a-a3db-ab2ea1bdc8bb'
+  );
 
   /** Full control of file share data */
-  public static readonly STORAGE_FILE_DATA_SMB_SHARE_ELEVATED_CONTRIBUTOR = WellKnownRoleIds.roleId('a7264617-510b-434b-a828-9731dc254ea7');
+  public static readonly STORAGE_FILE_DATA_SMB_SHARE_ELEVATED_CONTRIBUTOR = WellKnownRoleIds.roleId(
+    'a7264617-510b-434b-a828-9731dc254ea7'
+  );
 
   // ============================================================
   // Cosmos DB Roles
   // ============================================================
 
   /** Read Cosmos DB account metadata */
-  public static readonly COSMOS_DB_ACCOUNT_READER = WellKnownRoleIds.roleId('fbdf93bf-df7d-467e-a4d2-9458aa1360c8');
+  public static readonly COSMOS_DB_ACCOUNT_READER = WellKnownRoleIds.roleId(
+    'fbdf93bf-df7d-467e-a4d2-9458aa1360c8'
+  );
 
   /** Manage Cosmos DB accounts but not access data */
-  public static readonly COSMOS_DB_OPERATOR = WellKnownRoleIds.roleId('230815da-be43-4aae-9cb4-875f7bd000aa');
+  public static readonly COSMOS_DB_OPERATOR = WellKnownRoleIds.roleId(
+    '230815da-be43-4aae-9cb4-875f7bd000aa'
+  );
 
   /** Read Cosmos DB data (SQL API) */
-  public static readonly COSMOS_DB_DATA_READER = WellKnownRoleIds.roleId('00000000-0000-0000-0000-000000000001');
+  public static readonly COSMOS_DB_DATA_READER = WellKnownRoleIds.roleId(
+    '00000000-0000-0000-0000-000000000001'
+  );
 
   /** Read and write Cosmos DB data (SQL API) */
-  public static readonly COSMOS_DB_DATA_CONTRIBUTOR = WellKnownRoleIds.roleId('00000000-0000-0000-0000-000000000002');
+  public static readonly COSMOS_DB_DATA_CONTRIBUTOR = WellKnownRoleIds.roleId(
+    '00000000-0000-0000-0000-000000000002'
+  );
 
   // ============================================================
   // Key Vault Roles
   // ============================================================
 
   /** Read secrets from Key Vault */
-  public static readonly KEY_VAULT_SECRETS_USER = WellKnownRoleIds.roleId('4633458b-17de-408a-b874-0445c86b69e6');
+  public static readonly KEY_VAULT_SECRETS_USER = WellKnownRoleIds.roleId(
+    '4633458b-17de-408a-b874-0445c86b69e6'
+  );
 
   /** Manage secrets in Key Vault */
-  public static readonly KEY_VAULT_SECRETS_OFFICER = WellKnownRoleIds.roleId('b86a8fe4-44ce-4948-aee5-eccb2c155cd7');
+  public static readonly KEY_VAULT_SECRETS_OFFICER = WellKnownRoleIds.roleId(
+    'b86a8fe4-44ce-4948-aee5-eccb2c155cd7'
+  );
 
   /** Use cryptographic keys for operations */
-  public static readonly KEY_VAULT_CRYPTO_USER = WellKnownRoleIds.roleId('12338af0-0e69-4776-bea7-57ae8d297424');
+  public static readonly KEY_VAULT_CRYPTO_USER = WellKnownRoleIds.roleId(
+    '12338af0-0e69-4776-bea7-57ae8d297424'
+  );
 
   /** Manage cryptographic keys */
-  public static readonly KEY_VAULT_CRYPTO_OFFICER = WellKnownRoleIds.roleId('14b46e9e-c2b7-41b4-b07b-48a6ebf60603');
+  public static readonly KEY_VAULT_CRYPTO_OFFICER = WellKnownRoleIds.roleId(
+    '14b46e9e-c2b7-41b4-b07b-48a6ebf60603'
+  );
 
   /** Read certificates */
-  public static readonly KEY_VAULT_CERTIFICATES_USER = WellKnownRoleIds.roleId('db79e9a7-68ee-4b58-9aeb-b90e7c24fcba');
+  public static readonly KEY_VAULT_CERTIFICATES_USER = WellKnownRoleIds.roleId(
+    'db79e9a7-68ee-4b58-9aeb-b90e7c24fcba'
+  );
 
   /** Manage certificates */
-  public static readonly KEY_VAULT_CERTIFICATES_OFFICER = WellKnownRoleIds.roleId('a4417e6f-fecd-4de8-b567-7b0420556985');
+  public static readonly KEY_VAULT_CERTIFICATES_OFFICER = WellKnownRoleIds.roleId(
+    'a4417e6f-fecd-4de8-b567-7b0420556985'
+  );
 
   /** Read all Key Vault data */
-  public static readonly KEY_VAULT_READER = WellKnownRoleIds.roleId('21090545-7ca7-4776-b22c-e363652d74d2');
+  public static readonly KEY_VAULT_READER = WellKnownRoleIds.roleId(
+    '21090545-7ca7-4776-b22c-e363652d74d2'
+  );
 
   /** Full access to Key Vault data */
-  public static readonly KEY_VAULT_ADMINISTRATOR = WellKnownRoleIds.roleId('00482a5a-887f-4fb3-b363-3b7fe8e74483');
+  public static readonly KEY_VAULT_ADMINISTRATOR = WellKnownRoleIds.roleId(
+    '00482a5a-887f-4fb3-b363-3b7fe8e74483'
+  );
 
   // ============================================================
   // App Service / Function Apps
   // ============================================================
 
   /** Deploy and manage web apps */
-  public static readonly WEBSITE_CONTRIBUTOR = WellKnownRoleIds.roleId('de139f84-1756-47ae-9be6-808fbbe84772');
+  public static readonly WEBSITE_CONTRIBUTOR = WellKnownRoleIds.roleId(
+    'de139f84-1756-47ae-9be6-808fbbe84772'
+  );
 
   /** Manage web app slots */
-  public static readonly WEB_PLAN_CONTRIBUTOR = WellKnownRoleIds.roleId('2cc479cb-7b4d-49a8-b449-8c00fd0f0a4b');
+  public static readonly WEB_PLAN_CONTRIBUTOR = WellKnownRoleIds.roleId(
+    '2cc479cb-7b4d-49a8-b449-8c00fd0f0a4b'
+  );
 
   // ============================================================
   // SQL Database Roles
   // ============================================================
 
   /** Read SQL database data */
-  public static readonly SQL_DB_CONTRIBUTOR = WellKnownRoleIds.roleId('9b7fa17d-e63e-47b0-bb0a-15c516ac86ec');
+  public static readonly SQL_DB_CONTRIBUTOR = WellKnownRoleIds.roleId(
+    '9b7fa17d-e63e-47b0-bb0a-15c516ac86ec'
+  );
 
   /** Manage SQL database security */
-  public static readonly SQL_SECURITY_MANAGER = WellKnownRoleIds.roleId('056cd41c-7e88-42e1-933e-88ba6a50c9c3');
+  public static readonly SQL_SECURITY_MANAGER = WellKnownRoleIds.roleId(
+    '056cd41c-7e88-42e1-933e-88ba6a50c9c3'
+  );
 
   /** Manage SQL servers */
-  public static readonly SQL_SERVER_CONTRIBUTOR = WellKnownRoleIds.roleId('6d8ee4ec-f05a-4a1d-8b00-a9b17e38b437');
+  public static readonly SQL_SERVER_CONTRIBUTOR = WellKnownRoleIds.roleId(
+    '6d8ee4ec-f05a-4a1d-8b00-a9b17e38b437'
+  );
 
   // ============================================================
   // Event Hub Roles
   // ============================================================
 
   /** Read Event Hub data */
-  public static readonly EVENT_HUB_DATA_RECEIVER = WellKnownRoleIds.roleId('a638d3c7-ab3a-418d-83e6-5f17a39d4fde');
+  public static readonly EVENT_HUB_DATA_RECEIVER = WellKnownRoleIds.roleId(
+    'a638d3c7-ab3a-418d-83e6-5f17a39d4fde'
+  );
 
   /** Send Event Hub data */
-  public static readonly EVENT_HUB_DATA_SENDER = WellKnownRoleIds.roleId('2b629674-e913-4c01-ae53-ef4638d8f975');
+  public static readonly EVENT_HUB_DATA_SENDER = WellKnownRoleIds.roleId(
+    '2b629674-e913-4c01-ae53-ef4638d8f975'
+  );
 
   /** Manage Event Hubs */
-  public static readonly EVENT_HUB_DATA_OWNER = WellKnownRoleIds.roleId('f526a384-b230-433a-b45c-95f59c4a2dec');
+  public static readonly EVENT_HUB_DATA_OWNER = WellKnownRoleIds.roleId(
+    'f526a384-b230-433a-b45c-95f59c4a2dec'
+  );
 
   // ============================================================
   // Service Bus Roles
   // ============================================================
 
   /** Read Service Bus messages */
-  public static readonly SERVICE_BUS_DATA_RECEIVER = WellKnownRoleIds.roleId('4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0');
+  public static readonly SERVICE_BUS_DATA_RECEIVER = WellKnownRoleIds.roleId(
+    '4f6d3b9b-027b-4f4c-9142-0e5a2a2247e0'
+  );
 
   /** Send Service Bus messages */
-  public static readonly SERVICE_BUS_DATA_SENDER = WellKnownRoleIds.roleId('69a216fc-b8fb-44d8-bc22-1f3c2cd27a39');
+  public static readonly SERVICE_BUS_DATA_SENDER = WellKnownRoleIds.roleId(
+    '69a216fc-b8fb-44d8-bc22-1f3c2cd27a39'
+  );
 
   /** Manage Service Bus entities */
-  public static readonly SERVICE_BUS_DATA_OWNER = WellKnownRoleIds.roleId('090c5cfd-751d-490a-894a-3ce6f1109419');
+  public static readonly SERVICE_BUS_DATA_OWNER = WellKnownRoleIds.roleId(
+    '090c5cfd-751d-490a-894a-3ce6f1109419'
+  );
 
   // ============================================================
   // Container Roles
@@ -873,7 +971,9 @@ export class WellKnownRoleIds {
   public static readonly ACR_PUSH = WellKnownRoleIds.roleId('8311e382-0749-4cb8-b61a-304f252e45ec');
 
   /** Delete container images */
-  public static readonly ACR_DELETE = WellKnownRoleIds.roleId('c2f4ef07-c644-48eb-af81-4b1b4947fb11');
+  public static readonly ACR_DELETE = WellKnownRoleIds.roleId(
+    'c2f4ef07-c644-48eb-af81-4b1b4947fb11'
+  );
 
   /**
    * Helper to construct full role definition resource ID.
@@ -892,11 +992,13 @@ export class WellKnownRoleIds {
 ```
 
 **Testing Requirements**:
+
 - Verify all role GUIDs are correct
 - Test roleId helper function
 - Documentation validation
 
 **Success Criteria**:
+
 - All 40+ roles defined
 - ARM expression format correct
 - Full documentation
@@ -929,7 +1031,7 @@ export enum ManagedIdentityType {
   NONE = 'None',
   SYSTEM_ASSIGNED = 'SystemAssigned',
   USER_ASSIGNED = 'UserAssigned',
-  SYSTEM_ASSIGNED_USER_ASSIGNED = 'SystemAssigned,UserAssigned'
+  SYSTEM_ASSIGNED_USER_ASSIGNED = 'SystemAssigned,UserAssigned',
 }
 
 /**
@@ -977,8 +1079,10 @@ export abstract class GrantableResource extends Resource implements IGrantable {
     }
 
     // For system-assigned identity, reference the principalId property
-    if (this.identity.type === ManagedIdentityType.SYSTEM_ASSIGNED ||
-        this.identity.type === ManagedIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED) {
+    if (
+      this.identity.type === ManagedIdentityType.SYSTEM_ASSIGNED ||
+      this.identity.type === ManagedIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED
+    ) {
       // Return ARM reference expression
       return `reference(${this.resourceId}).identity.principalId`;
     }
@@ -986,7 +1090,7 @@ export abstract class GrantableResource extends Resource implements IGrantable {
     // For user-assigned only, this resource cannot act as a grantable
     throw new Error(
       `Resource '${this.node.id}' has only user-assigned identity. ` +
-      `It cannot be used as a grantable. Use the user-assigned identity directly.`
+        `It cannot be used as a grantable. Use the user-assigned identity directly.`
     );
   }
 
@@ -1026,7 +1130,7 @@ export abstract class GrantableResource extends Resource implements IGrantable {
       principalId: grantable.principalId,
       principalType: grantable.principalType,
       tenantId: grantable.tenantId,
-      description
+      description,
     });
 
     return new GrantResult(roleAssignment, roleDefinitionId, grantable, this.resourceId);
@@ -1052,24 +1156,28 @@ export abstract class GrantableResource extends Resource implements IGrantable {
   protected ensureIdentity(): void {
     if (!this.identity || this.identity.type === ManagedIdentityType.NONE) {
       this.identity = {
-        type: ManagedIdentityType.SYSTEM_ASSIGNED
+        type: ManagedIdentityType.SYSTEM_ASSIGNED,
       };
 
       // Log for transparency
-      this.node.addMetadata('AutoEnabledIdentity',
-        'System-assigned identity was automatically enabled due to grant usage');
+      this.node.addMetadata(
+        'AutoEnabledIdentity',
+        'System-assigned identity was automatically enabled due to grant usage'
+      );
     }
   }
 }
 ```
 
 **Testing Requirements**:
+
 - Grant method functionality tests
 - Auto-identity enablement tests
 - PrincipalId resolution tests
 - Error handling tests
 
 **Success Criteria**:
+
 - Base class works with all resource types
 - Identity auto-enablement transparent
 - Full error coverage
@@ -1094,9 +1202,11 @@ export * from './well-known-role-ids';
 ```
 
 **Testing Requirements**:
+
 - Export verification
 
 **Success Criteria**:
+
 - All authorization types exported
 
 **Estimated Effort**: 1 hour
@@ -1145,10 +1255,12 @@ export class StorageAccounts extends GrantableResource implements IStorageAccoun
 ```
 
 **Testing Requirements**:
+
 - Base class integration tests
 - Identity initialization tests
 
 **Success Criteria**:
+
 - Extends GrantableResource properly
 - No breaking changes to existing API
 
@@ -1164,7 +1276,7 @@ export class StorageAccounts extends GrantableResource implements IStorageAccoun
 
 **Implementation Requirements**:
 
-```typescript
+````typescript
 export class StorageAccounts extends GrantableResource implements IStorageAccount {
   // ... previous code from Task 3.1 ...
 
@@ -1313,15 +1425,17 @@ export class StorageAccounts extends GrantableResource implements IStorageAccoun
     );
   }
 }
-```
+````
 
 **Testing Requirements**:
+
 - Unit tests for each grant method
 - Role assignment creation verification
 - Description generation tests
 - Integration tests with FunctionApp
 
 **Success Criteria**:
+
 - All 10 grant methods working
 - Proper role assignments created
 - Full test coverage
@@ -1358,11 +1472,11 @@ describe('StorageAccounts - Grant Methods', () => {
     stack = new SubscriptionStack(app, 'TestStack', {
       subscriptionId: 'test-sub-id',
       project: { name: 'test', resourceName: 'tst' },
-      instance: { name: 'dev', resourceName: 'dv' }
+      instance: { name: 'dev', resourceName: 'dv' },
     });
     resourceGroup = new ResourceGroup(stack, 'TestRG', {
       resourceGroupName: 'test-rg',
-      location: 'eastus'
+      location: 'eastus',
     });
     storage = new StorageAccounts(resourceGroup, 'TestStorage');
   });
@@ -1371,7 +1485,7 @@ describe('StorageAccounts - Grant Methods', () => {
     it('should create role assignment with correct role', () => {
       const mockGrantable = {
         principalId: 'test-principal-id',
-        principalType: PrincipalType.ManagedIdentity
+        principalType: PrincipalType.ManagedIdentity,
       };
 
       const result = storage.grantBlobRead(mockGrantable);
@@ -1383,7 +1497,7 @@ describe('StorageAccounts - Grant Methods', () => {
     it('should include resource name in description', () => {
       const mockGrantable = {
         principalId: 'test-principal-id',
-        principalType: PrincipalType.ManagedIdentity
+        principalType: PrincipalType.ManagedIdentity,
       };
 
       const result = storage.grantBlobRead(mockGrantable);
@@ -1391,7 +1505,7 @@ describe('StorageAccounts - Grant Methods', () => {
 
       // Verify description in ARM template
       const roleAssignments = template.resources.filter(
-        r => r.type === 'Microsoft.Authorization/roleAssignments'
+        (r) => r.type === 'Microsoft.Authorization/roleAssignments'
       );
       expect(roleAssignments[0].properties.description).toContain(storage.storageAccountName);
     });
@@ -1402,11 +1516,13 @@ describe('StorageAccounts - Grant Methods', () => {
 ```
 
 **Testing Requirements**:
+
 - All grant methods tested
 - ARM template output validation
 - Cross-resource grant tests
 
 **Success Criteria**:
+
 - 100% code coverage
 - All scenarios tested
 
@@ -1425,6 +1541,7 @@ describe('StorageAccounts - Grant Methods', () => {
 **Implementation Requirements**:
 
 Similar pattern to StorageAccount:
+
 1. Extend GrantableResource
 2. Implement grant methods for:
    - `grantSecretsRead()`
@@ -1436,10 +1553,12 @@ Similar pattern to StorageAccount:
    - `grantAdministrator()`
 
 **Testing Requirements**:
+
 - Full grant method test suite
 - Integration tests
 
 **Success Criteria**:
+
 - All 7 grant methods implemented
 - Full test coverage
 
@@ -1456,16 +1575,19 @@ Similar pattern to StorageAccount:
 **Implementation Requirements**:
 
 Implement grant methods for:
+
 - `grantDataRead()`
 - `grantDataWrite()`
 - `grantAccountReader()`
 - `grantOperator()`
 
 **Testing Requirements**:
+
 - Full grant method test suite
 - Integration tests
 
 **Success Criteria**:
+
 - All 4 grant methods implemented
 - Full test coverage
 
@@ -1484,6 +1606,7 @@ Implement grant methods for:
 **Implementation Requirements**:
 
 Implement grant methods for:
+
 - `grantDatabaseContributor()`
 - `grantSecurityManager()`
 - `grantServerContributor()`
@@ -1501,6 +1624,7 @@ Implement grant methods for:
 **Implementation Requirements**:
 
 Implement grant methods for:
+
 - `grantDataReceiver()`
 - `grantDataSender()`
 - `grantDataOwner()`
@@ -1518,6 +1642,7 @@ Implement grant methods for:
 **Implementation Requirements**:
 
 Implement grant methods for:
+
 - `grantDataReceiver()`
 - `grantDataSender()`
 - `grantDataOwner()`
@@ -1570,10 +1695,12 @@ export class UserAssignedIdentity extends Resource implements IGrantable {
 ```
 
 **Testing Requirements**:
+
 - IGrantable implementation tests
 - ARM template generation tests
 
 **Success Criteria**:
+
 - Implements IGrantable
 - Works with grant methods
 
@@ -1594,10 +1721,12 @@ export class UserAssignedIdentity extends Resource implements IGrantable {
 3. Implement principalId getter
 
 **Testing Requirements**:
+
 - Identity auto-enablement tests
 - Grant usage tests
 
 **Success Criteria**:
+
 - FunctionApp can be used as grantable
 - Auto-identity works
 
@@ -1633,17 +1762,19 @@ export class CrossStackGrant {
       roleDefinitionId,
       principalId: grantable.principalId,
       principalType: grantable.principalType,
-      tenantId: grantable.tenantId
+      tenantId: grantable.tenantId,
     });
   }
 }
 ```
 
 **Testing Requirements**:
+
 - Multi-stack deployment tests
 - Token resolution tests
 
 **Success Criteria**:
+
 - Cross-stack grants work
 - Proper dependencies
 
@@ -1660,6 +1791,7 @@ export class CrossStackGrant {
 **Implementation Requirements**:
 
 Create comprehensive integration tests covering:
+
 - StorageAccount → FunctionApp grants
 - KeyVault → FunctionApp grants
 - Cosmos → FunctionApp grants
@@ -1668,11 +1800,13 @@ Create comprehensive integration tests covering:
 - User-assigned identity grants
 
 **Testing Requirements**:
+
 - End-to-end scenarios
 - ARM template validation
 - Deployment simulation
 
 **Success Criteria**:
+
 - All integration scenarios pass
 - ARM templates valid
 
@@ -1704,10 +1838,12 @@ Create comprehensive integration tests covering:
    - Custom role example
 
 **Testing Requirements**:
+
 - All examples must compile
 - All examples must deploy successfully
 
 **Success Criteria**:
+
 - Complete documentation
 - Working examples
 
@@ -1722,31 +1858,37 @@ Create comprehensive integration tests covering:
 After Phase 2 completes, Phases 3-6 can be executed in parallel by different agents:
 
 **Agent 1: Storage Specialist**
+
 - Task 3.1: Update StorageAccount
 - Task 3.2: Storage grant methods
 - Task 3.3: Storage integration tests
 
 **Agent 2: Data Services Specialist**
+
 - Task 4.1: KeyVault grants
 - Task 4.2: Cosmos grants
 
 **Agent 3: Messaging Services Specialist**
+
 - Task 5.1: SQL grants
 - Task 5.2: Event Hub grants
 - Task 5.3: Service Bus grants
 
 **Agent 4: Identity Specialist**
+
 - Task 6.1: UserAssignedIdentity
 - Task 6.2: FunctionApp IGrantable
 
 ### Integration Points
 
 **Clear Boundaries**:
+
 - Each agent works on separate resource types
 - All depend on Phase 2 base infrastructure
 - No cross-dependencies between Phases 3-6
 
 **Integration in Phase 7**:
+
 - All agents collaborate on integration tests
 - Shared responsibility for cross-stack tests
 - Collaborative documentation
@@ -1754,11 +1896,13 @@ After Phase 2 completes, Phases 3-6 can be executed in parallel by different age
 ### Coordination Requirements
 
 **Daily Sync Points**:
+
 - Share Phase 2 completion status
 - Coordinate on shared type changes
 - Review ARM template patterns
 
 **Weekly Integration**:
+
 - Merge all changes
 - Run full integration test suite
 - Review API consistency
@@ -1772,6 +1916,7 @@ After Phase 2 completes, Phases 3-6 can be executed in parallel by different age
 **Coverage Target**: 100%
 
 **Test Categories**:
+
 1. **Interface Compliance**: IGrantable, IGrantResult
 2. **Grant Method Logic**: All grant methods
 3. **Role Assignment Creation**: ARM template generation
@@ -1779,6 +1924,7 @@ After Phase 2 completes, Phases 3-6 can be executed in parallel by different age
 5. **Validation**: Error cases, edge cases
 
 **Tools**:
+
 - Vitest for test runner
 - Custom ARM template matchers
 - Mock constructs
@@ -1788,6 +1934,7 @@ After Phase 2 completes, Phases 3-6 can be executed in parallel by different age
 **Coverage Target**: All major scenarios
 
 **Test Categories**:
+
 1. **Single Resource Grants**: Storage → Function
 2. **Multi-Resource Grants**: Multiple resources → Function
 3. **Cross-Stack Grants**: Stack A → Stack B
@@ -1795,6 +1942,7 @@ After Phase 2 completes, Phases 3-6 can be executed in parallel by different age
 5. **ARM Template Validation**: Syntactically correct, deployable
 
 **Tools**:
+
 - Full stack synthesis
 - ARM template validation
 - Deployment simulation (optional)
@@ -1804,11 +1952,13 @@ After Phase 2 completes, Phases 3-6 can be executed in parallel by different age
 **Coverage Target**: Critical paths
 
 **Test Categories**:
+
 1. **Real Deployments**: Deploy to test subscription
 2. **Role Assignment Verification**: Azure CLI checks
 3. **Permission Validation**: Actual permission tests
 
 **Tools**:
+
 - Azure CLI
 - Test subscription
 - Automated teardown
@@ -1892,22 +2042,27 @@ After Phase 2 completes, Phases 3-6 can be executed in parallel by different age
 ## Rollout Plan
 
 ### Phase 1 Release: Foundation (Week 3)
+
 **Deliverables**: Core interfaces, minimal functionality
 **Audience**: Internal testing only
 
 ### Phase 2 Release: Base Infrastructure (Week 4)
+
 **Deliverables**: RoleAssignment, WellKnownRoleIds
 **Audience**: Early adopters, feedback collection
 
 ### Phase 3 Release: Storage Grants (Week 5)
+
 **Deliverables**: StorageAccount with full grant API
 **Audience**: Broader internal use
 
 ### Phase 4 Release: Multiple Services (Week 7)
+
 **Deliverables**: KeyVault, Cosmos, SQL, EventHub, ServiceBus
 **Audience**: Beta testing
 
 ### Final Release: Complete Pattern (Week 8)
+
 **Deliverables**: All features, full documentation
 **Audience**: General availability
 
@@ -2013,18 +2168,19 @@ Task 3.3                              Task 5.3                         Task 7.3
 
 ## Appendix C: Effort Summary
 
-| Phase | Tasks | Estimated Days | Can Parallelize |
-|-------|-------|----------------|-----------------|
-| Phase 1: Foundation | 3 | 3-4 | No |
-| Phase 2: Infrastructure | 6 | 12-15 | Partial (Task 2.4) |
-| Phase 3: Storage | 3 | 6-9 | Yes |
-| Phase 4: KeyVault/Cosmos | 2 | 5-7 | Yes |
-| Phase 5: SQL/EventHub/ServiceBus | 3 | 6-9 | Yes |
-| Phase 6: Identity | 2 | 5-7 | Yes |
-| Phase 7: Integration | 3 | 12-15 | Partial |
-| **Total** | **22** | **49-66 days** | **With parallelization: 30-40 days** |
+| Phase                            | Tasks  | Estimated Days | Can Parallelize                      |
+| -------------------------------- | ------ | -------------- | ------------------------------------ |
+| Phase 1: Foundation              | 3      | 3-4            | No                                   |
+| Phase 2: Infrastructure          | 6      | 12-15          | Partial (Task 2.4)                   |
+| Phase 3: Storage                 | 3      | 6-9            | Yes                                  |
+| Phase 4: KeyVault/Cosmos         | 2      | 5-7            | Yes                                  |
+| Phase 5: SQL/EventHub/ServiceBus | 3      | 6-9            | Yes                                  |
+| Phase 6: Identity                | 2      | 5-7            | Yes                                  |
+| Phase 7: Integration             | 3      | 12-15          | Partial                              |
+| **Total**                        | **22** | **49-66 days** | **With parallelization: 30-40 days** |
 
 **Team Size Impact**:
+
 - 1 agent: 10-13 weeks
 - 4 agents (Phases 3-6 parallel): 6-8 weeks
 - 2 agents (some parallelization): 8-10 weeks

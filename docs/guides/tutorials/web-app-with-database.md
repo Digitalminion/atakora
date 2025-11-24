@@ -65,6 +65,7 @@ npm install
 ```
 
 **Project structure**:
+
 ```
 webapp-tutorial/
 ├── package.json
@@ -87,28 +88,15 @@ import {
   PrivateDnsZones,
   PrivateDnsZoneVirtualNetworkLinks,
 } from '@atakora/cdk/network';
-import {
-  StorageAccounts,
-  BlobServices,
-  BlobContainers,
-} from '@atakora/cdk/storage';
-import {
-  ServerFarms,
-  Sites,
-  SiteConfig,
-} from '@atakora/cdk/web';
+import { StorageAccounts, BlobServices, BlobContainers } from '@atakora/cdk/storage';
+import { ServerFarms, Sites, SiteConfig } from '@atakora/cdk/web';
 import {
   Servers as SqlServers,
   Databases as SqlDatabases,
   PrivateEndpoints,
 } from '@atakora/cdk/sql';
-import {
-  Vaults as KeyVaults,
-  Secrets,
-} from '@atakora/cdk/keyvault';
-import {
-  Components as AppInsights,
-} from '@atakora/cdk/insights';
+import { Vaults as KeyVaults, Secrets } from '@atakora/cdk/keyvault';
+import { Components as AppInsights } from '@atakora/cdk/insights';
 
 // Configuration
 const config = {
@@ -293,17 +281,13 @@ const sqlPrivateDnsZone = new PrivateDnsZones(stack, 'SqlPrivateDnsZone', {
   privateZoneName: 'privatelink.database.windows.net',
 });
 
-const sqlDnsLink = new PrivateDnsZoneVirtualNetworkLinks(
-  sqlPrivateDnsZone,
-  'SqlDnsLink',
-  {
-    virtualNetworkLinkName: 'vnet-link',
-    registrationEnabled: false,
-    virtualNetwork: {
-      id: vnet.id,
-    },
-  }
-);
+const sqlDnsLink = new PrivateDnsZoneVirtualNetworkLinks(sqlPrivateDnsZone, 'SqlDnsLink', {
+  virtualNetworkLinkName: 'vnet-link',
+  registrationEnabled: false,
+  virtualNetwork: {
+    id: vnet.id,
+  },
+});
 
 // 10. Private Endpoint for SQL
 const sqlPrivateEndpoint = new PrivateEndpoints(stack, 'SqlPrivateEndpoint', {
@@ -434,6 +418,7 @@ atakora diff Infrastructure
 ```
 
 **Expected output**:
+
 ```
 Stack: Infrastructure
 
@@ -468,6 +453,7 @@ atakora deploy Infrastructure --require-approval
 ```
 
 **Deployment process**:
+
 1. Creates resource group
 2. Deploys virtual network and subnets
 3. Creates storage account
@@ -533,7 +519,8 @@ const appInsights = require('applicationinsights');
 
 // Initialize Application Insights
 if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
-  appInsights.setup(process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
+  appInsights
+    .setup(process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
     .setAutoDependencyCorrelation(true)
     .setAutoCollectRequests(true)
     .setAutoCollectPerformance(true)
@@ -664,6 +651,7 @@ curl $WEBAPP_URL/
 ```
 
 **Expected response**:
+
 ```json
 {
   "message": "Web App with Database Tutorial",
@@ -824,6 +812,7 @@ az group delete --name rg-webapp-tutorial --yes --no-wait
 **Issue**: Private endpoint connectivity problems.
 
 **Solution**:
+
 ```bash
 # Verify private endpoint status
 az network private-endpoint show \
@@ -841,6 +830,7 @@ nslookup sql-webapp-dev.database.windows.net
 **Issue**: Web app cannot read secrets from Key Vault.
 
 **Solution**:
+
 ```bash
 # Verify managed identity is enabled
 az webapp identity show \
@@ -858,6 +848,7 @@ az keyvault show \
 **Issue**: No telemetry in Application Insights.
 
 **Solution**:
+
 ```bash
 # Verify connection string
 az webapp config appsettings list \
@@ -896,7 +887,7 @@ az monitor app-insights component show \
 - **[Deployment Guide](../fundamentals/deployment.md)** - Deployment fundamentals
 - **[Web Resources API](../../reference/api/cdk/web.md)** - App Service API reference
 - **[Network Resources API](../../reference/api/cdk/network.md)** - Networking API reference
-- **[Common Issues](../../troubleshooting/common-issues.md)** - Troubleshooting guide
+- **[Common Issues](../../troubleshooting/Common-Issues.md)** - Troubleshooting guide
 
 ---
 

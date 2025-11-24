@@ -8,7 +8,7 @@ This section provides guidance for migrating to new versions of Atakora and upgr
 
 ## Available Guides
 
-### [Migrating to @atakora/cdk Package](./migrating-to-cdk-package.md)
+### [Migrating to @atakora/cdk Package](./MIGRATING-TO-CDK-PACKAGE.md)
 
 Comprehensive guide for migrating from the monolithic `@atakora/lib` package to the new modular `@atakora/cdk` package structure. This guide covers:
 
@@ -124,16 +124,16 @@ If you encounter issues during migration:
 
 ## Version Support Policy
 
-| Version | Status | Support Ends | Notes |
-|---------|--------|--------------|-------|
-| 2.x | Current | - | Latest features |
-| 1.x | Maintenance | 2025-06-01 | Critical bugs only |
-| 0.x | Unsupported | 2024-01-01 | Migrate to 1.x+ |
+| Version | Status      | Support Ends | Notes              |
+| ------- | ----------- | ------------ | ------------------ |
+| 2.x     | Current     | -            | Latest features    |
+| 1.x     | Maintenance | 2025-06-01   | Critical bugs only |
+| 0.x     | Unsupported | 2024-01-01   | Migrate to 1.x+    |
 
 ## Next Steps
 
-- **[Migrating to @atakora/cdk](./migrating-to-cdk-package.md)**: Start with the CDK migration guide
-- **[Testing Infrastructure](../workflows/testing-infrastructure.md)**: Test your migrated code
+- **[Migrating to @atakora/cdk](./MIGRATING-TO-CDK-PACKAGE.md)**: Start with the CDK migration guide
+- **[Testing Infrastructure](../Workflows/TESTING-INFRASTRUCTURE.md)**: Test your migrated code
 - **[Examples](../../examples/README.md)**: Reference migrated example projects
 
 ---

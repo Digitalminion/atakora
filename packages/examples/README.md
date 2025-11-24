@@ -14,7 +14,9 @@ This directory contains production-ready examples that demonstrate how to use At
 ## Available Examples
 
 ### simple-web-app
+
 A complete web application infrastructure with:
+
 - App Service with staging slot
 - SQL Database for data storage
 - Storage Account for static files
@@ -22,14 +24,18 @@ A complete web application infrastructure with:
 - Virtual Network integration
 
 ### multi-region-app
+
 Multi-region application with global load balancing:
+
 - Primary and secondary region deployments
 - Traffic Manager for global routing
 - Geo-replicated storage and databases
 - High availability and disaster recovery
 
 ### government-cloud
+
 Azure Government Cloud deployment with enhanced security:
+
 - Government Cloud endpoints and configuration
 - Private endpoints for secure connectivity
 - Key Vault with HSM-backed keys

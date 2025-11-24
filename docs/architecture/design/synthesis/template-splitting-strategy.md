@@ -7,18 +7,22 @@ This document defines the strategy for intelligently splitting large ARM templat
 ## Splitting Principles
 
 ### 1. Size-Based Splitting
+
 - **Hard limit**: 3.5MB per template (leaving 0.5MB buffer)
 - **Soft limit**: 2.5MB triggers evaluation for splitting
 - **Measurement**: UTF-8 encoded JSON string length
 
 ### 2. Logical Grouping
+
 Templates should be split along logical boundaries that make sense for:
+
 - Deployment ordering
 - Failure isolation
 - Reusability
 - Developer understanding
 
 ### 3. Dependency Preservation
+
 - Resources with direct dependencies should stay in the same template when possible
 - Cross-template dependencies use ARM deployment outputs
 - Circular dependencies must be broken before splitting
@@ -26,11 +30,13 @@ Templates should be split along logical boundaries that make sense for:
 ## Resource Categories and Grouping
 
 ### Tier 1: Foundation Resources (Deploy First)
+
 These resources have no dependencies and others depend on them.
 
 **Template Name**: `foundation-{index}.json`
 
 Resources:
+
 - Storage Accounts
 - Cosmos DB Accounts
 - SQL Servers
@@ -40,6 +46,7 @@ Resources:
 - Log Analytics Workspaces
 
 Example grouping:
+
 ```json
 {
   "foundation-storage": ["StorageAccounts", "BlobContainers"],
@@ -49,11 +56,13 @@ Example grouping:
 ```
 
 ### Tier 2: Compute Resources
+
 These depend on foundation but are independent of each other.
 
 **Template Name**: `compute-{index}.json`
 
 Resources:
+
 - App Service Plans
 - Function Apps (without code)
 - Container Groups
@@ -61,16 +70,19 @@ Resources:
 - AKS Clusters
 
 Splitting strategy:
+
 - Group by service plan (all apps on same plan together)
 - Separate VM-based from PaaS compute
 - Keep scale sets together
 
 ### Tier 3: Application Resources
+
 These depend on compute and foundation resources.
 
 **Template Name**: `application-{index}.json`
 
 Resources:
+
 - Function definitions (metadata only)
 - API Management APIs
 - Application Insights
@@ -78,16 +90,19 @@ Resources:
 - Front Door configurations
 
 Splitting strategy:
+
 - Group by application boundary
 - Keep API and its functions together
 - Separate monitoring from application logic
 
 ### Tier 4: Configuration Resources
+
 These configure other resources and can be deployed last.
 
 **Template Name**: `configuration-{index}.json`
 
 Resources:
+
 - Role Assignments
 - Diagnostic Settings
 - Alert Rules
@@ -95,6 +110,7 @@ Resources:
 - Backup Policies
 
 Splitting strategy:
+
 - Group by target resource type
 - Separate security from monitoring
 - Can parallelize most configuration
@@ -131,7 +147,7 @@ class TemplateSplitter {
     return {
       templates,
       dependencies: this.crossTemplateDependencies(templates, dependencies),
-      deploymentOrder: order
+      deploymentOrder: order,
     };
   }
 
@@ -193,6 +209,7 @@ class TemplateSplitter {
 Resources that MUST stay in the same template:
 
 ### Strong Affinity (Never Split)
+
 ```typescript
 const STRONG_AFFINITY = [
   // Parent-child relationships
@@ -208,6 +225,7 @@ const STRONG_AFFINITY = [
 ```
 
 ### Weak Affinity (Prefer Together)
+
 ```typescript
 const WEAK_AFFINITY = [
   // Related but independent
@@ -222,6 +240,7 @@ const WEAK_AFFINITY = [
 When resources in different templates depend on each other:
 
 ### Output-based References
+
 ```json
 // Template A: foundation-storage.json
 {
@@ -251,6 +270,7 @@ When resources in different templates depend on each other:
 ```
 
 ### Root Template Orchestration
+
 ```json
 {
   "resources": [
@@ -267,9 +287,7 @@ When resources in different templates depend on each other:
     {
       "type": "Microsoft.Resources/deployments",
       "name": "compute-functions",
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'foundation-storage')]"
-      ],
+      "dependsOn": ["[resourceId('Microsoft.Resources/deployments', 'foundation-storage')]"],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -289,6 +307,7 @@ When resources in different templates depend on each other:
 ## Size Calculation and Optimization
 
 ### Size Calculation Method
+
 ```typescript
 function calculateTemplateSize(template: ArmTemplate): number {
   // Serialize to JSON with minimal formatting
@@ -311,6 +330,7 @@ function calculateTemplateSize(template: ArmTemplate): number {
 5. **Use Copy Loops**: Replace repetitive resources with copy loops
 
 Example optimization:
+
 ```json
 // Before: 3 similar resources (600KB)
 {
@@ -340,6 +360,7 @@ Example optimization:
 ## Special Cases
 
 ### Function Apps with Inline Code
+
 Function apps with inline code are handled specially:
 
 1. **Extract code** during transform phase
@@ -348,6 +369,7 @@ Function apps with inline code are handled specially:
 4. **Reference via app settings** (WEBSITE_RUN_FROM_PACKAGE)
 
 Template structure:
+
 ```json
 {
   "type": "Microsoft.Web/sites",
@@ -366,6 +388,7 @@ Template structure:
 ```
 
 ### Large Parameter Sets
+
 When parameter objects are large:
 
 1. **Use Parameter Files**: Separate parameter files per environment
@@ -373,6 +396,7 @@ When parameter objects are large:
 3. **Use Key Vault**: Store sensitive/large values in Key Vault
 
 ### Resource Arrays
+
 When dealing with many similar resources:
 
 1. **Use Copy Loops**: Reduce template size dramatically
@@ -382,17 +406,20 @@ When dealing with many similar resources:
 ## Validation Rules
 
 ### Pre-Split Validation
+
 - Verify no circular dependencies exist
 - Check all resource types are recognized
 - Ensure all dependencies are explicit
 
 ### Post-Split Validation
+
 - Each template is under 3.5MB
 - No template has >200 resources
 - All dependencies are satisfied
 - Deployment order is deterministic
 
 ### Size Monitoring
+
 ```typescript
 interface TemplateSizeReport {
   totalSize: number;
@@ -414,6 +441,7 @@ interface TemplateSizeReport {
 ## Performance Considerations
 
 ### Parallel Deployment
+
 Templates at the same tier can deploy in parallel:
 
 ```json
@@ -430,6 +458,7 @@ Templates at the same tier can deploy in parallel:
 ```
 
 ### Deployment Optimization
+
 - Deploy independent templates in parallel
 - Use `dependsOn` only when necessary
 - Cache unchanged templates
@@ -449,6 +478,7 @@ Templates at the same tier can deploy in parallel:
    - Solution: Add to tier mapping or use default tier
 
 ### Recovery Strategy
+
 - Log detailed splitting decisions
 - Provide clear error messages
 - Allow manual override of splitting rules
@@ -457,18 +487,21 @@ Templates at the same tier can deploy in parallel:
 ## Testing Strategy
 
 ### Unit Tests
+
 - Test each grouping rule
 - Verify size calculations
 - Check dependency preservation
 - Validate output structure
 
 ### Integration Tests
+
 - Deploy split templates to Azure
 - Verify resource creation order
 - Check cross-template references work
 - Measure deployment performance
 
 ### Edge Cases
+
 - Single resource at limit
 - Hundreds of small resources
 - Deep dependency chains

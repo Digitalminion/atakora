@@ -20,23 +20,23 @@ Common issues and solutions when working with Atakora REST APIs.
 ### Error: "Operation must define at least one response"
 
 **Problem:**
+
 ```typescript
-const operation = get('/users')
-  .operationId('listUsers')
-  .build();  // Error: Operation must define at least one response
+const operation = get('/users').operationId('listUsers').build(); // Error: Operation must define at least one response
 ```
 
 **Cause:** Every REST operation must have at least one response defined.
 
 **Solution:**
+
 ```typescript
 const operation = get('/users')
   .operationId('listUsers')
   .responses({
     200: {
       description: 'Success',
-      content: { 'application/json': { schema: UserArraySchema } }
-    }
+      content: { 'application/json': { schema: UserArraySchema } },
+    },
   })
   .build();
 ```
@@ -46,31 +46,33 @@ const operation = get('/users')
 ### Error: Type inference not working
 
 **Problem:**
+
 ```typescript
-const operation = get('/users/{userId}')
-  .pathParams({ /* ... */ });  // Types not inferred
+const operation = get('/users/{userId}').pathParams({
+  /* ... */
+}); // Types not inferred
 
 // Later, no type safety
-operation.pathParameters.schema.properties.userId;  // No autocomplete
+operation.pathParameters.schema.properties.userId; // No autocomplete
 ```
 
 **Cause:** Missing type parameter on `pathParams`.
 
 **Solution:**
+
 ```typescript
-const operation = get('/users/{userId}')
-  .pathParams<{ userId: string }>({
-    schema: {
-      type: 'object',
-      required: ['userId'],
-      properties: {
-        userId: { type: 'string', format: 'uuid' }
-      }
-    }
-  });
+const operation = get('/users/{userId}').pathParams<{ userId: string }>({
+  schema: {
+    type: 'object',
+    required: ['userId'],
+    properties: {
+      userId: { type: 'string', format: 'uuid' },
+    },
+  },
+});
 
 // Now fully typed
-operation.pathParameters.schema.properties.userId;  // ✓ Type-safe
+operation.pathParameters.schema.properties.userId; // ✓ Type-safe
 ```
 
 ---
@@ -78,41 +80,42 @@ operation.pathParameters.schema.properties.userId;  // ✓ Type-safe
 ### Error: "Type 'string' is not assignable to type 'never'"
 
 **Problem:**
+
 ```typescript
-const operation = post('/users')
-  .body<CreateUserRequest>({
-    required: true,
-    content: {
-      'application/json': {
-        schema: {
-          type: 'object',
-          properties: {
-            name: { type: 'string' }  // Error here
-          }
-        }
-      }
-    }
-  });
+const operation = post('/users').body<CreateUserRequest>({
+  required: true,
+  content: {
+    'application/json': {
+      schema: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' }, // Error here
+        },
+      },
+    },
+  },
+});
 ```
 
 **Cause:** Mismatch between TypeScript type and JSON Schema type.
 
 **Solution:**
+
 ```typescript
 // Option 1: Use 'as const' assertion
 const schema = {
   type: 'object',
   properties: {
-    name: { type: 'string' }
-  }
+    name: { type: 'string' },
+  },
 } as const;
 
 // Option 2: Explicitly type the schema
 const schema: JsonSchema<CreateUserRequest> = {
   type: 'object',
   properties: {
-    name: { type: 'string' }
-  }
+    name: { type: 'string' },
+  },
 };
 ```
 
@@ -121,13 +124,15 @@ const schema: JsonSchema<CreateUserRequest> = {
 ### Error: "Cannot find module '@atakora/cdk/api/rest'"
 
 **Problem:**
+
 ```typescript
-import { get, post } from '@atakora/cdk/api/rest';  // Module not found
+import { get, post } from '@atakora/cdk/api/rest'; // Module not found
 ```
 
 **Cause:** Incorrect import path or missing package.
 
 **Solution:**
+
 ```bash
 # Ensure package is installed
 npm install @atakora/cdk
@@ -150,12 +155,13 @@ import { get, post } from '@atakora/cdk/api/rest';
 ### Error: "Backend function app not found"
 
 **Problem:**
+
 ```typescript
 const operation = get('/users')
   .backend({
     type: 'azureFunction',
-    functionApp: undefined,  // Error during synthesis
-    functionName: 'GetUsers'
+    functionApp: undefined, // Error during synthesis
+    functionName: 'GetUsers',
   })
   .build();
 ```
@@ -163,6 +169,7 @@ const operation = get('/users')
 **Cause:** Function app reference is undefined or hasn't been synthesized yet.
 
 **Solution:**
+
 ```typescript
 class MyStack extends Stack {
   constructor(scope: App, id: string) {
@@ -178,7 +185,7 @@ class MyStack extends Stack {
       .backend({
         type: 'azureFunction',
         functionApp: this.userFunctionApp,
-        functionName: 'GetUsers'
+        functionName: 'GetUsers',
       })
       .build();
   }
@@ -190,6 +197,7 @@ class MyStack extends Stack {
 ### Error: "Circular dependency detected"
 
 **Problem:**
+
 ```typescript
 // Stack A depends on Stack B
 // Stack B depends on Stack A
@@ -198,6 +206,7 @@ class MyStack extends Stack {
 **Cause:** Circular dependencies between stacks or resources.
 
 **Solution:**
+
 ```typescript
 // Option 1: Combine into single stack
 class CombinedStack extends Stack {
@@ -234,6 +243,7 @@ const stackB = new StackB(app, 'StackB', stackA.apiUrl);
 ### Error: "Resource group does not exist"
 
 **Problem:**
+
 ```bash
 $ atakora deploy
 Error: Resource group 'my-rg' does not exist
@@ -242,6 +252,7 @@ Error: Resource group 'my-rg' does not exist
 **Cause:** Resource group not created or incorrect name.
 
 **Solution:**
+
 ```bash
 # Create resource group first
 az group create --name my-rg --location eastus
@@ -260,14 +271,16 @@ az group list --output table
 ### Error: "Invalid OpenAPI specification"
 
 **Problem:**
+
 ```typescript
 const importer = new OpenApiImporter('./openapi.yaml');
-await importer.import();  // OpenApiValidationError
+await importer.import(); // OpenApiValidationError
 ```
 
 **Cause:** OpenAPI spec doesn't conform to OpenAPI 3.0/3.1 schema.
 
 **Solution:**
+
 ```typescript
 try {
   const importer = new OpenApiImporter('./openapi.yaml');
@@ -305,6 +318,7 @@ try {
 ### Error: "$ref resolution failed"
 
 **Problem:**
+
 ```yaml
 paths:
   /users:
@@ -314,7 +328,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserList'  # Not found
+                $ref: '#/components/schemas/UserList' # Not found
 
 # Missing:
 components:
@@ -326,6 +340,7 @@ components:
 **Cause:** Referenced schema doesn't exist in components.
 
 **Solution:**
+
 ```yaml
 # Define all referenced schemas
 components:
@@ -354,33 +369,33 @@ components:
 ### Issue: Generic types not inferred
 
 **Problem:**
+
 ```typescript
 // Want type inference but getting 'any'
-const operation = get('/users')
-  .responses({
-    200: {
-      description: 'Success',
-      content: { 'application/json': { schema: UserSchema } }
-    }
-  });
+const operation = get('/users').responses({
+  200: {
+    description: 'Success',
+    content: { 'application/json': { schema: UserSchema } },
+  },
+});
 
-type ResponseType = typeof operation;  // any
+type ResponseType = typeof operation; // any
 ```
 
 **Cause:** Missing type parameter on `responses`.
 
 **Solution:**
+
 ```typescript
 // Explicitly specify response type
-const operation = get('/users')
-  .responses<User[]>({
-    200: {
-      description: 'Success',
-      content: { 'application/json': { schema: UserArraySchema } }
-    }
-  });
+const operation = get('/users').responses<User[]>({
+  200: {
+    description: 'Success',
+    content: { 'application/json': { schema: UserArraySchema } },
+  },
+});
 
-type ResponseType = typeof operation;  // IRestOperation<{}, {}, unknown, User[]>
+type ResponseType = typeof operation; // IRestOperation<{}, {}, unknown, User[]>
 ```
 
 ---
@@ -388,6 +403,7 @@ type ResponseType = typeof operation;  // IRestOperation<{}, {}, unknown, User[]
 ### Issue: Schema type mismatch
 
 **Problem:**
+
 ```typescript
 interface User {
   id: string;
@@ -400,14 +416,15 @@ const schema = {
   properties: {
     id: { type: 'string' },
     name: { type: 'string' },
-    age: { type: 'string' }  // Mismatch: should be 'number'
-  }
+    age: { type: 'string' }, // Mismatch: should be 'number'
+  },
 };
 ```
 
 **Cause:** TypeScript interface and JSON Schema don't match.
 
 **Solution:**
+
 ```typescript
 // Option 1: Keep them in sync manually
 const schema: JsonSchema<User> = {
@@ -416,8 +433,8 @@ const schema: JsonSchema<User> = {
   properties: {
     id: { type: 'string' },
     name: { type: 'string' },
-    age: { type: 'number' }  // Fixed
-  }
+    age: { type: 'number' }, // Fixed
+  },
 };
 
 // Option 2: Generate schema from TypeScript types
@@ -433,6 +450,7 @@ const schema = generateSchema<User>();
 ### Error: "404 Not Found" when calling API
 
 **Problem:**
+
 ```bash
 $ curl https://api.example.com/users/123
 404 Not Found
@@ -441,6 +459,7 @@ $ curl https://api.example.com/users/123
 **Cause:** Operation not registered or path mismatch.
 
 **Solution:**
+
 ```typescript
 // 1. Check operation is registered
 class ApiStack extends Stack {
@@ -474,6 +493,7 @@ $ az apim api operation list --resource-group my-rg --service-name my-apim --api
 ### Error: "401 Unauthorized"
 
 **Problem:**
+
 ```bash
 $ curl https://api.example.com/users
 401 Unauthorized
@@ -482,6 +502,7 @@ $ curl https://api.example.com/users
 **Cause:** Missing or invalid authentication.
 
 **Solution:**
+
 ```bash
 # 1. Check if authentication is required
 # Look for .security() in operation definition
@@ -506,6 +527,7 @@ az ad app list --display-name "My API" --query "[0].appId"
 ### Error: "429 Too Many Requests"
 
 **Problem:**
+
 ```bash
 $ curl https://api.example.com/users
 429 Too Many Requests
@@ -515,6 +537,7 @@ Retry-After: 60
 **Cause:** Rate limit exceeded.
 
 **Solution:**
+
 ```typescript
 // 1. Check rate limit configuration
 const rateLimiter = new RateLimiter({
@@ -522,10 +545,10 @@ const rateLimiter = new RateLimiter({
   limits: [
     {
       scope: 'perApiKey',
-      limit: 1000,  // Check this value
-      window: 3600
-    }
-  ]
+      limit: 1000, // Check this value
+      window: 3600,
+    },
+  ],
 });
 
 // 2. Implement retry logic
@@ -550,10 +573,10 @@ const rateLimiter = new RateLimiter({
   limits: [
     {
       scope: 'perApiKey',
-      limit: 5000,  // Increased
-      window: 3600
-    }
-  ]
+      limit: 5000, // Increased
+      window: 3600,
+    },
+  ],
 });
 ```
 
@@ -562,6 +585,7 @@ const rateLimiter = new RateLimiter({
 ### Error: "500 Internal Server Error"
 
 **Problem:**
+
 ```bash
 $ curl https://api.example.com/users
 500 Internal Server Error
@@ -570,6 +594,7 @@ $ curl https://api.example.com/users
 **Cause:** Backend error or misconfiguration.
 
 **Solution:**
+
 ```typescript
 // 1. Check Application Insights logs
 // Azure Portal → API Management → Application Insights → Logs
@@ -611,6 +636,7 @@ $ az functionapp function show \
 **Problem:** API responses taking > 1 second.
 
 **Diagnosis:**
+
 ```typescript
 // 1. Enable Application Insights
 import { ObservabilityHelper } from '@atakora/cdk/api/rest/advanced';
@@ -619,14 +645,14 @@ const observability = new ObservabilityHelper({
   tracing: {
     enabled: true,
     provider: 'applicationInsights',
-    samplingRate: 1.0  // 100% sampling for diagnosis
+    samplingRate: 1.0, // 100% sampling for diagnosis
   },
   logging: {
     enabled: true,
     logLevel: 'information',
     logRequests: true,
-    logResponses: true
-  }
+    logResponses: true,
+  },
 });
 
 // 2. Check Application Insights metrics
@@ -647,13 +673,12 @@ import { HttpCachingHelper } from '@atakora/cdk/api/rest/advanced';
 const cachingHelper = new HttpCachingHelper({
   enabled: true,
   strategy: 'etag',
-  defaultTtl: 300  // 5 minutes
+  defaultTtl: 300, // 5 minutes
 });
 
-const operation = get('/users')
-  .policies({
-    outbound: [cachingHelper.createETagPolicy()]
-  });
+const operation = get('/users').policies({
+  outbound: [cachingHelper.createETagPolicy()],
+});
 ```
 
 2. **Optimize backend:**
@@ -698,6 +723,7 @@ const operation = get('/users')
 **Problem:** Function app using excessive memory.
 
 **Diagnosis:**
+
 ```bash
 # Check function app metrics
 az monitor metrics list \
@@ -717,13 +743,12 @@ import { FieldSelectionHelper } from '@atakora/cdk/api/rest/advanced';
 
 const fieldSelection = new FieldSelectionHelper({
   enabled: true,
-  allowedFields: ['id', 'name', 'email']  // Limit fields
+  allowedFields: ['id', 'name', 'email'], // Limit fields
 });
 
-const operation = get('/users')
-  .policies({
-    outbound: [fieldSelection.createProjectionPolicy()]
-  });
+const operation = get('/users').policies({
+  outbound: [fieldSelection.createProjectionPolicy()],
+});
 ```
 
 2. **Implement pagination:**
@@ -734,7 +759,7 @@ import { offsetPagination } from '@atakora/cdk/api/rest/advanced';
 const pagination = offsetPagination({
   strategy: 'offset',
   defaultPageSize: 20,
-  maxPageSize: 100  // Limit maximum page size
+  maxPageSize: 100, // Limit maximum page size
 });
 ```
 
@@ -745,6 +770,7 @@ const pagination = offsetPagination({
 ### Issue: Authentication failing in Gov Cloud
 
 **Problem:**
+
 ```bash
 $ curl -H "Authorization: Bearer $TOKEN" https://api.usgovcloudapi.net/users
 401 Unauthorized
@@ -753,6 +779,7 @@ $ curl -H "Authorization: Bearer $TOKEN" https://api.usgovcloudapi.net/users
 **Cause:** Using commercial cloud endpoints instead of government cloud.
 
 **Solution:**
+
 ```typescript
 import { AuthenticationManager } from '@atakora/cdk/api/rest/advanced';
 
@@ -765,11 +792,11 @@ const authManager = new AuthenticationManager({
       config: {
         tenantId: 'gov-tenant-id',
         clientId: 'client-id',
-        instance: 'https://login.microsoftonline.us',  // Gov cloud
-        audience: 'api://your-api'
-      }
-    }
-  ]
+        instance: 'https://login.microsoftonline.us', // Gov cloud
+        audience: 'api://your-api',
+      },
+    },
+  ],
 });
 ```
 
@@ -778,6 +805,7 @@ const authManager = new AuthenticationManager({
 ### Issue: Deployment failing in Gov Cloud
 
 **Problem:**
+
 ```bash
 $ atakora deploy --environment gov
 Error: Region 'eastus' not available in Government Cloud
@@ -786,13 +814,14 @@ Error: Region 'eastus' not available in Government Cloud
 **Cause:** Using commercial cloud regions.
 
 **Solution:**
+
 ```typescript
 // Use government cloud regions
 class GovCloudStack extends Stack {
   constructor(scope: App, id: string) {
     super(scope, id, {
-      region: 'usgovvirginia',  // Gov cloud region
-      environment: 'AzureUSGovernment'
+      region: 'usgovvirginia', // Gov cloud region
+      environment: 'AzureUSGovernment',
     });
   }
 }
@@ -840,7 +869,7 @@ const mockRequest: HttpRequest = {
   params: { userId: '123' },
   query: {},
   headers: {},
-  body: null
+  body: null,
 };
 
 // Test your handler
@@ -895,7 +924,7 @@ If you can't find a solution here:
 1. **Check the Documentation**
    - [REST API User Guide](./rest-api-user-guide.md)
    - [REST API Reference](../reference/api/rest-api-reference.md)
-   - [Examples](../examples/rest-api-examples.md)
+   - [Examples](../examples/REST-API.md)
 
 2. **Search GitHub Issues**
    - https://github.com/atakora/atakora/issues
@@ -918,24 +947,24 @@ If you can't find a solution here:
 
 ## Common Error Codes
 
-| Code | Description | Solution |
-|------|-------------|----------|
-| `ATK-REST-001` | Missing required response | Add at least one response definition |
-| `ATK-REST-002` | Invalid path parameter | Ensure path param name matches schema |
-| `ATK-REST-003` | Schema validation failed | Check JSON Schema syntax |
-| `ATK-REST-004` | OpenAPI import failed | Validate OpenAPI spec |
-| `ATK-REST-005` | Backend not configured | Add backend configuration |
-| `ATK-REST-006` | Type mismatch | Ensure TypeScript and schema types match |
-| `ATK-REST-007` | Circular dependency | Refactor stack dependencies |
-| `ATK-REST-008` | Rate limit exceeded | Implement retry logic or increase limits |
-| `ATK-REST-009` | Authentication failed | Check credentials and configuration |
-| `ATK-REST-010` | Synthesis error | Review stack configuration |
+| Code           | Description               | Solution                                 |
+| -------------- | ------------------------- | ---------------------------------------- |
+| `ATK-REST-001` | Missing required response | Add at least one response definition     |
+| `ATK-REST-002` | Invalid path parameter    | Ensure path param name matches schema    |
+| `ATK-REST-003` | Schema validation failed  | Check JSON Schema syntax                 |
+| `ATK-REST-004` | OpenAPI import failed     | Validate OpenAPI spec                    |
+| `ATK-REST-005` | Backend not configured    | Add backend configuration                |
+| `ATK-REST-006` | Type mismatch             | Ensure TypeScript and schema types match |
+| `ATK-REST-007` | Circular dependency       | Refactor stack dependencies              |
+| `ATK-REST-008` | Rate limit exceeded       | Implement retry logic or increase limits |
+| `ATK-REST-009` | Authentication failed     | Check credentials and configuration      |
+| `ATK-REST-010` | Synthesis error           | Review stack configuration               |
 
 ---
 
 ## Related Documentation
 
 - [REST API User Guide](./rest-api-user-guide.md)
-- [REST API Examples](../examples/rest-api-examples.md)
+- [REST API Examples](../examples/REST-API.md)
 - [REST API Reference](../reference/api/rest-api-reference.md)
 - [Migration Guide](./rest-api-migration.md)

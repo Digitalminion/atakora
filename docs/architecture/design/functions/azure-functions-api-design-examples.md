@@ -3,6 +3,7 @@
 ### Basic HTTP Function with handler.ts + resource.ts
 
 **File: functions/api/resource.ts**
+
 ```typescript
 import { defineFunction } from '@atakora/functions';
 
@@ -16,20 +17,21 @@ export default defineFunction<ApiEnv>({
     type: 'http',
     route: 'api/users/{userId}',
     methods: ['GET', 'POST'],
-    authLevel: AuthLevel.FUNCTION
+    authLevel: AuthLevel.FUNCTION,
   },
   environment: {
     DATABASE_URL: '${COSMOS_ENDPOINT}',
-    API_KEY: '${API_SECRET_KEY}'
+    API_KEY: '${API_SECRET_KEY}',
   },
   timeout: Duration.seconds(30),
   role: {
-    managedIdentity: true
-  }
+    managedIdentity: true,
+  },
 });
 ```
 
 **File: functions/api/handler.ts**
+
 ```typescript
 import { HttpHandler, AzureFunctionContext, HttpRequest, HttpResponse } from '@atakora/functions';
 
@@ -46,18 +48,19 @@ export const handler: HttpHandler = async (
 
   return {
     status: 200,
-    body: { userId, message: 'Success' }
+    body: { userId, message: 'Success' },
   };
 };
 ```
 
 **File: app.ts**
+
 ```typescript
 const functionApp = new FunctionApp(resourceGroup, 'MyFunctions', {
   plan: consumptionPlan,
   storageAccount: storage,
   runtime: FunctionRuntime.NODE,
-  runtimeVersion: '18'
+  runtimeVersion: '18',
 });
 
 // Function automatically discovers resource.ts configuration
@@ -66,36 +69,40 @@ const apiFunction = new AzureFunction(functionApp, 'ApiEndpoint', {
   resource: './functions/api/resource.ts',
   environment: {
     COSMOS_ENDPOINT: cosmosDb.endpoint,
-    API_SECRET_KEY: keyVault.secret('api-key')
-  }
+    API_SECRET_KEY: keyVault.secret('api-key'),
+  },
 });
 ```
 
 ### Timer Function with Cosmos Output
 
 **File: functions/cleanup/resource.ts**
+
 ```typescript
 import { defineFunction } from '@atakora/functions';
 
 export default defineFunction({
   trigger: {
     type: 'timer',
-    schedule: '0 0 2 * * *',  // 2 AM daily
-    runOnStartup: false
+    schedule: '0 0 2 * * *', // 2 AM daily
+    runOnStartup: false,
   },
-  outputBindings: [{
-    type: 'cosmosDb',
-    direction: 'out',
-    name: 'deletedItems',
-    databaseName: 'audit',
-    collectionName: 'deletions',
-    connection: '${COSMOS_CONNECTION}'
-  }],
-  timeout: Duration.minutes(10)
+  outputBindings: [
+    {
+      type: 'cosmosDb',
+      direction: 'out',
+      name: 'deletedItems',
+      databaseName: 'audit',
+      collectionName: 'deletions',
+      connection: '${COSMOS_CONNECTION}',
+    },
+  ],
+  timeout: Duration.minutes(10),
 });
 ```
 
 **File: functions/cleanup/handler.ts**
+
 ```typescript
 import { TimerHandler, AzureFunctionContext, TimerInfo } from '@atakora/functions';
 
@@ -105,7 +112,7 @@ export const handler: TimerHandler = async (
 ): Promise<void> => {
   context.log.info('Cleanup function triggered', {
     isPastDue: timer.isPastDue,
-    nextRun: timer.scheduleStatus.next
+    nextRun: timer.scheduleStatus.next,
   });
 
   const deletedItems = [];
@@ -117,19 +124,21 @@ export const handler: TimerHandler = async (
 ```
 
 **File: app.ts**
+
 ```typescript
 const cleanupFunction = new AzureFunction(functionApp, 'Cleanup', {
   handler: './functions/cleanup/handler.ts',
   resource: './functions/cleanup/resource.ts',
   environment: {
-    COSMOS_CONNECTION: cosmosDb.connectionString
-  }
+    COSMOS_CONNECTION: cosmosDb.connectionString,
+  },
 });
 ```
 
 ### Queue Processing Function
 
 **File: functions/orders/resource.ts**
+
 ```typescript
 import { defineFunction } from '@atakora/functions';
 
@@ -144,30 +153,35 @@ export default defineFunction<OrderEnv>({
     queueName: 'orders',
     connection: '${STORAGE_CONNECTION}',
     batchSize: 10,
-    maxDequeueCount: 3
+    maxDequeueCount: 3,
   },
-  inputBindings: [{
-    type: 'table',
-    direction: 'in',
-    name: 'inventory',
-    tableName: 'inventory',
-    connection: '${STORAGE_CONNECTION}'
-  }],
-  outputBindings: [{
-    type: 'serviceBus',
-    direction: 'out',
-    name: 'notifications',
-    queueName: 'order-notifications',
-    connection: '${SERVICE_BUS_CONNECTION}'
-  }],
+  inputBindings: [
+    {
+      type: 'table',
+      direction: 'in',
+      name: 'inventory',
+      tableName: 'inventory',
+      connection: '${STORAGE_CONNECTION}',
+    },
+  ],
+  outputBindings: [
+    {
+      type: 'serviceBus',
+      direction: 'out',
+      name: 'notifications',
+      queueName: 'order-notifications',
+      connection: '${SERVICE_BUS_CONNECTION}',
+    },
+  ],
   environment: {
     MAX_RETRIES: '3',
-    NOTIFICATION_ENABLED: '${NOTIFICATION_FLAG}'
-  }
+    NOTIFICATION_ENABLED: '${NOTIFICATION_FLAG}',
+  },
 });
 ```
 
 **File: functions/orders/handler.ts**
+
 ```typescript
 import { QueueHandler, AzureFunctionContext } from '@atakora/functions';
 
@@ -188,7 +202,7 @@ export const handler: QueueHandler<OrderMessage> = async (
   // Process order logic
   const notification = {
     orderId: message.orderId,
-    status: 'processed'
+    status: 'processed',
   };
 
   // Output to Service Bus
@@ -199,6 +213,7 @@ export const handler: QueueHandler<OrderMessage> = async (
 ```
 
 **File: app.ts**
+
 ```typescript
 const orderProcessor = new AzureFunction(functionApp, 'OrderProcessor', {
   handler: './functions/orders/handler.ts',
@@ -206,7 +221,7 @@ const orderProcessor = new AzureFunction(functionApp, 'OrderProcessor', {
   environment: {
     STORAGE_CONNECTION: storage.connectionString,
     SERVICE_BUS_CONNECTION: serviceBus.connectionString,
-    NOTIFICATION_FLAG: 'true'
-  }
+    NOTIFICATION_FLAG: 'true',
+  },
 });
 ```

@@ -10,6 +10,7 @@ The backend gen2 implementation currently contains a `helpers.ts` file at `packa
 4. **Network helpers**: `ipAddress()`, `cidr()`, `subnet()` - Validate and format network configurations
 
 These utilities are used extensively throughout the fluent API implementations:
+
 - Event topics (audit-logger, service-bus)
 - Infrastructure resources (virtual-network, log-analytics, api-management)
 - Queue processors (shown in fluent-api-examples.md)
@@ -19,6 +20,7 @@ The question is whether these utilities belong in application code (`@atakora/ba
 ### Current State Analysis
 
 Currently these helpers exist only in the backend application code, but:
+
 - They're foundational to the fluent API design pattern
 - Every application using fluent APIs would need to duplicate this code
 - The utilities are Azure-specific but not application-specific
@@ -51,6 +53,7 @@ Currently these helpers exist only in the backend application code, but:
 Move the fluent API utilities to **@atakora/component** package in a new `common` module at `packages/component/src/common/`.
 
 This will be organized as:
+
 ```
 packages/component/src/
 ├── common/
@@ -65,6 +68,7 @@ packages/component/src/
 ```
 
 Export pattern:
+
 ```typescript
 // From @atakora/component
 export * from './common';
@@ -78,21 +82,25 @@ import { seconds, minutes, greaterThan } from '@atakora/component';
 ## Alternatives Considered
 
 ### Alternative 1: Keep in Backend (Status Quo)
+
 - **Pros**: No changes needed, application has full control
 - **Cons**: Code duplication across projects, violates DRY principle
 - **Rejected because**: These are framework utilities, not application code
 
 ### Alternative 2: Move to @atakora/lib
+
 - **Pros**: Available to all packages, core location
 - **Cons**: Lib is focused on low-level synthesis, would add unrelated concerns
 - **Rejected because**: These are high-level fluent API utilities, not core synthesis logic
 
 ### Alternative 3: Move to @atakora/cdk
+
 - **Pros**: CDK-specific utilities location
 - **Cons**: Component package can't import CDK, would create circular dependency
 - **Rejected because**: Component package needs these utilities and can't depend on CDK
 
 ### Alternative 4: Create @atakora/common or @atakora/fluent
+
 - **Pros**: Clean separation, dedicated package for utilities
 - **Cons**: Another package to maintain, versioning complexity
 - **Rejected because**: Over-engineering for current needs, can reconsider if utilities grow significantly
@@ -174,6 +182,7 @@ export function days(value: number): Duration;
 ```
 
 This organization allows for:
+
 - Tree-shaking of unused utilities
 - Clear module boundaries
 - Easy testing of individual utility groups

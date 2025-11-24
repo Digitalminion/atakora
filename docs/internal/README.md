@@ -9,6 +9,7 @@
 This directory contains **internal planning artifacts, task breakdowns, analysis reports, and project management documents**. These files are for project team use and are not intended as user-facing documentation.
 
 **Distinction from Architecture Documentation:**
+
 - `/docs/architecture/` - User-facing architecture decisions and designs
 - `/docs/internal/` - Internal planning, tasks, and project management
 
@@ -69,6 +70,7 @@ CDK migration tracking and status:
 ### For Project Team
 
 Use these documents to:
+
 - Track implementation progress
 - Coordinate across agents (Devon, Charlie, Felix, etc.)
 - Plan sprints and milestones
@@ -86,14 +88,14 @@ Use these documents to:
 
 **When to create an internal document vs ADR:**
 
-| Document Type | Location | Purpose |
-|---------------|----------|---------|
-| Architecture Decision | `/docs/architecture/decisions/` | Long-term architectural decisions |
-| Design Document | `/docs/architecture/design/` | Technical design specifications |
-| Task Breakdown | `/docs/internal/planning/` | Sprint/epic task breakdowns |
-| Analysis Report | `/docs/internal/analysis/` | Technical analysis and assessments |
-| Implementation Status | `/docs/internal/tasks/` | Task tracking and progress |
-| Migration Status | `/docs/internal/migration/` | Package migration tracking |
+| Document Type         | Location                        | Purpose                            |
+| --------------------- | ------------------------------- | ---------------------------------- |
+| Architecture Decision | `/docs/architecture/decisions/` | Long-term architectural decisions  |
+| Design Document       | `/docs/architecture/design/`    | Technical design specifications    |
+| Task Breakdown        | `/docs/internal/planning/`      | Sprint/epic task breakdowns        |
+| Analysis Report       | `/docs/internal/analysis/`      | Technical analysis and assessments |
+| Implementation Status | `/docs/internal/tasks/`         | Task tracking and progress         |
+| Migration Status      | `/docs/internal/migration/`     | Package migration tracking         |
 
 ## See Also
 

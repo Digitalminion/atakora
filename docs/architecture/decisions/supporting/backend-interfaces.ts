@@ -90,10 +90,17 @@ export interface ICosmosRequirement extends IResourceRequirement {
 }
 
 export interface CosmosConfig {
-  readonly consistency?: 'Eventual' | 'ConsistentPrefix' | 'Session' | 'BoundedStaleness' | 'Strong';
+  readonly consistency?:
+    | 'Eventual'
+    | 'ConsistentPrefix'
+    | 'Session'
+    | 'BoundedStaleness'
+    | 'Strong';
   readonly enableServerless?: boolean;
   readonly enableMultiRegion?: boolean;
-  readonly capabilities?: ReadonlyArray<'EnableCassandra' | 'EnableGremlin' | 'EnableTable' | 'EnableMongo'>;
+  readonly capabilities?: ReadonlyArray<
+    'EnableCassandra' | 'EnableGremlin' | 'EnableTable' | 'EnableMongo'
+  >;
   readonly databases?: ReadonlyArray<DatabaseRequirement>;
   readonly publicNetworkAccess?: 'Enabled' | 'Disabled';
   readonly ipRules?: ReadonlyArray<string>;
@@ -147,7 +154,18 @@ export interface CorsSettings {
 }
 
 export interface ConnectionString {
-  readonly type: 'MySql' | 'SQLServer' | 'SQLAzure' | 'Custom' | 'NotificationHub' | 'ServiceBus' | 'EventHub' | 'ApiHub' | 'DocDb' | 'RedisCache' | 'PostgreSQL';
+  readonly type:
+    | 'MySql'
+    | 'SQLServer'
+    | 'SQLAzure'
+    | 'Custom'
+    | 'NotificationHub'
+    | 'ServiceBus'
+    | 'EventHub'
+    | 'ApiHub'
+    | 'DocDb'
+    | 'RedisCache'
+    | 'PostgreSQL';
   readonly value: string;
 }
 
@@ -336,11 +354,7 @@ export interface NetworkingConfig {
  * Resource naming convention
  */
 export interface NamingConvention {
-  formatResourceName(
-    resourceType: string,
-    backendId: string,
-    suffix?: string
-  ): string;
+  formatResourceName(resourceType: string, backendId: string, suffix?: string): string;
 
   formatResourceGroupName(backendId: string, environment?: string): string;
 }
@@ -381,9 +395,7 @@ export interface IResourceProvider {
   ): any;
 
   /** Merge multiple requirements into one */
-  mergeRequirements(
-    requirements: ReadonlyArray<IResourceRequirement>
-  ): IResourceRequirement;
+  mergeRequirements(requirements: ReadonlyArray<IResourceRequirement>): IResourceRequirement;
 
   /** Validate merged requirements */
   validateMerged(requirement: IResourceRequirement): ValidationResult;
@@ -441,10 +453,7 @@ export interface ConflictResolution<T> {
  * Main entry point for creating backends
  */
 export interface DefineBackendFunction {
-  <T extends ComponentMap>(
-    components: T,
-    config?: BackendConfig
-  ): TypedBackend<T>;
+  <T extends ComponentMap>(components: T, config?: BackendConfig): TypedBackend<T>;
 
   (config: BackendConfig): BackendBuilder;
 }
@@ -461,9 +470,7 @@ export type ComponentMap = {
  */
 export interface TypedBackend<T extends ComponentMap> extends IBackend {
   readonly components: {
-    [K in keyof T]: T[K] extends IComponentDefinition<infer C>
-      ? IBackendComponent<C>
-      : never;
+    [K in keyof T]: T[K] extends IComponentDefinition<infer C> ? IBackendComponent<C> : never;
   };
 }
 
@@ -492,9 +499,8 @@ export type ExtractConfig<T> = T extends IComponentDefinition<infer C> ? C : nev
 /**
  * Extract component type from definition
  */
-export type ExtractComponent<T> = T extends IComponentDefinition<infer C>
-  ? IBackendComponent<C>
-  : never;
+export type ExtractComponent<T> =
+  T extends IComponentDefinition<infer C> ? IBackendComponent<C> : never;
 
 /**
  * Type guard for backend components

@@ -1,17 +1,20 @@
 # Linked Templates Implementation - Task Breakdown
 
 ## Overview
+
 Complete task hierarchy for implementing linked templates as the default ARM synthesis approach.
 **Total: 4 Milestones, 26 Subtasks across 6 weeks**
 
 ---
 
 ## 📍 Phase 1: Core Infrastructure (Weeks 1-2)
+
 **Milestone ID:** `1211633762838600`
 **Status:** Not Started
 **Agent Distribution:** Devon (4 tasks), Felix (1 task)
 
 ### Subtasks (5):
+
 1. **Implement Template Splitter Component** [`1211633767269465`]
    - **Agent:** devon-developer
    - **File:** `packages/lib/src/synthesis/assembly/template-splitter.ts`
@@ -40,11 +43,13 @@ Complete task hierarchy for implementing linked templates as the default ARM syn
 ---
 
 ## 📍 Phase 2: Deployment Orchestration (Weeks 3-4)
+
 **Milestone ID:** `1211634072215086`
 **Status:** Not Started
 **Agent Distribution:** Grace (4 tasks), Felix (1 task), Devon (1 task)
 
 ### Subtasks (6):
+
 1. **Implement Artifact Storage Manager** [`1211633768601452`]
    - **Agent:** grace-synthesis-cli
    - **File:** `packages/lib/src/synthesis/storage/artifact-storage.ts`
@@ -78,11 +83,13 @@ Complete task hierarchy for implementing linked templates as the default ARM syn
 ---
 
 ## 📍 Phase 3: Testing & Validation (Week 5)
+
 **Milestone ID:** `1211634073008096`
 **Status:** Not Started
 **Agent Distribution:** Charlie (6 tasks)
 
 ### Subtasks (6):
+
 1. **Unit Tests for Template Splitter** [`1211633896343970`]
    - **Agent:** charlie-quality-lead
    - **File:** `packages/lib/src/synthesis/assembly/__tests__/template-splitter.test.ts`
@@ -116,11 +123,13 @@ Complete task hierarchy for implementing linked templates as the default ARM syn
 ---
 
 ## 📍 Phase 4: Documentation & Release (Week 6)
+
 **Milestone ID:** `1211634073463361`
 **Status:** Not Started
 **Agent Distribution:** Ella (7 tasks)
 
 ### Subtasks (7):
+
 1. **Create User Documentation for Linked Templates** [`1211633898158264`]
    - **Agent:** ella-docs
    - **File:** `docs/guides/linked-templates.md`
@@ -160,20 +169,21 @@ Complete task hierarchy for implementing linked templates as the default ARM syn
 
 ## Agent Workload Summary
 
-| Agent | Phase 1 | Phase 2 | Phase 3 | Phase 4 | Total |
-|-------|---------|---------|---------|---------|-------|
-| **devon-developer** | 4 | 1 | 0 | 0 | **5** |
-| **grace-synthesis-cli** | 0 | 4 | 0 | 0 | **4** |
-| **felix-schema-validator** | 1 | 1 | 0 | 0 | **2** |
-| **charlie-quality-lead** | 0 | 0 | 6 | 0 | **6** |
-| **ella-docs** | 0 | 0 | 0 | 7 | **7** |
-| **becky-staff-architect** | Architecture complete | - | - | - | **-** |
+| Agent                      | Phase 1               | Phase 2 | Phase 3 | Phase 4 | Total |
+| -------------------------- | --------------------- | ------- | ------- | ------- | ----- |
+| **devon-developer**        | 4                     | 1       | 0       | 0       | **5** |
+| **grace-synthesis-cli**    | 0                     | 4       | 0       | 0       | **4** |
+| **felix-schema-validator** | 1                     | 1       | 0       | 0       | **2** |
+| **charlie-quality-lead**   | 0                     | 0       | 6       | 0       | **6** |
+| **ella-docs**              | 0                     | 0       | 0       | 7       | **7** |
+| **becky-staff-architect**  | Architecture complete | -       | -       | -       | **-** |
 
 ---
 
 ## Quick Reference Commands
 
 ### View All Tasks by Agent
+
 ```bash
 npx dm list --agent devon-developer -i
 npx dm list --agent grace-synthesis-cli -i
@@ -183,6 +193,7 @@ npx dm list --agent ella-docs -i
 ```
 
 ### View Subtasks for a Phase
+
 ```bash
 npx dm subtask list 1211633762838600  # Phase 1
 npx dm subtask list 1211634072215086  # Phase 2
@@ -191,11 +202,13 @@ npx dm subtask list 1211634073463361  # Phase 4
 ```
 
 ### Complete a Task
+
 ```bash
 npx dm task complete <taskId>
 ```
 
 ### View Task Details
+
 ```bash
 npx dm task get <taskId>
 ```
@@ -205,12 +218,15 @@ npx dm task get <taskId>
 ## Key Dependencies
 
 **Phase 1 → Phase 2:**
+
 - TemplateSplitter and FunctionPackager must be complete before deployment orchestration
 
 **Phase 2 → Phase 3:**
+
 - All deployment components must exist before testing
 
 **Phase 3 → Phase 4:**
+
 - Tests should pass before documentation finalization
 
 ---

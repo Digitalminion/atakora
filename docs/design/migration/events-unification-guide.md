@@ -7,12 +7,14 @@ The Atakora framework now provides a unified events namespace that consolidates 
 ## Why Migrate?
 
 ### Current Problems
+
 - **Scattered Implementation**: Events spread across `queue-processors/`, `event-topics/`, and `infrastructure/service-bus/` folders
 - **Inconsistent APIs**: Each pattern has different configuration methods
 - **Import Complexity**: Must remember multiple import paths
 - **Poor Discoverability**: No single place to see all event infrastructure
 
 ### Benefits of Unified Events
+
 - **Single Import**: All event infrastructure from `@atakora/component/events`
 - **Consistent API**: Same builder patterns work across all event types
 - **Progressive Enhancement**: Start simple, add complexity as needed
@@ -43,7 +45,7 @@ import {
   serviceBusTopic,
   days,
   hours,
-  minutes
+  minutes,
 } from '@atakora/component/events';
 
 // Import your processor functions
@@ -59,10 +61,7 @@ export const events = defineEvents({
     .retries(3)
     .deadLetter(),
 
-  email: queue('email')
-    .processor(emailProcessor)
-    .ttl(days(2))
-    .reliable(),
+  email: queue('email').processor(emailProcessor).ttl(days(2)).reliable(),
 
   // Event Grid Topics
   auditLogs: topic('audit-logs')
@@ -89,6 +88,7 @@ export const events = defineEvents({
 Replace old imports with the unified events:
 
 #### Before:
+
 ```typescript
 // index.ts
 import { dataQualityQueue } from './queue-processors/data-quality/resource';
@@ -103,6 +103,7 @@ backend.serviceBus = serviceBus;
 ```
 
 #### After:
+
 ```typescript
 // index.ts
 import { events } from './events/resource';
@@ -119,6 +120,7 @@ backend.events = events;
 #### Storage Queue Migration
 
 **Old Pattern:**
+
 ```typescript
 // queue-processors/data-quality/resource.ts
 import { Queue } from '@atakora/component/queues';
@@ -131,18 +133,20 @@ export const dataQualityQueue = Queue('data-quality')
 ```
 
 **New Pattern:**
+
 ```typescript
 dataQuality: queue('data-quality')
   .processor(dataQualityProcessor)
   .ttl(days(7))
   .visibilityTimeout(minutes(5))
   .retries(3)
-  .deadLetter()
+  .deadLetter();
 ```
 
 #### Event Grid Topic Migration
 
 **Old Pattern:**
+
 ```typescript
 // event-topics/audit-logger/resource.ts
 import { EventTopic } from '../builders';
@@ -154,55 +158,51 @@ export const auditLogsTopic = EventTopic('audit-logs')
 ```
 
 **New Pattern:**
+
 ```typescript
 auditLogs: topic('audit-logs')
   .processor(auditLogger)
   .events(['Auth.*', 'Data.*'])
   .retention(days(90))
-  .schema('CloudEventSchemaV1_0')
+  .schema('CloudEventSchemaV1_0');
 ```
 
 #### Service Bus Queue Migration
 
 **Old Pattern:**
+
 ```typescript
 // infrastructure/service-bus/resource.ts
-const serviceBus = ServiceBus('app-bus')
-  .queue('orders', q => q
-    .requiresSession(true)
-    .duplicateDetection(minutes(10))
-    .maxDeliveryCount(3)
-  );
+const serviceBus = ServiceBus('app-bus').queue('orders', (q) =>
+  q.requiresSession(true).duplicateDetection(minutes(10)).maxDeliveryCount(3)
+);
 ```
 
 **New Pattern:**
+
 ```typescript
-orders: serviceBusQueue('orders')
-  .sessions()
-  .duplicateDetection(minutes(10))
-  .maxDeliveryCount(3)
+orders: serviceBusQueue('orders').sessions().duplicateDetection(minutes(10)).maxDeliveryCount(3);
 ```
 
 #### Service Bus Topic Migration
 
 **Old Pattern:**
+
 ```typescript
-const serviceBus = ServiceBus('app-bus')
-  .topic('notifications', t => t
-    .subscription('email', emailHandler)
-    .subscription('sms', smsHandler)
-  );
+const serviceBus = ServiceBus('app-bus').topic('notifications', (t) =>
+  t.subscription('email', emailHandler).subscription('sms', smsHandler)
+);
 ```
 
 **New Pattern:**
+
 ```typescript
 notifications: serviceBusTopic('notifications')
   .subscription('email', emailProcessor)
   .subscription('sms', smsProcessor)
-  .subscription('high-priority', sub => sub
-    .filter("Priority = 'High'")
-    .processor(urgentProcessor)
-  )
+  .subscription('high-priority', (sub) =>
+    sub.filter("Priority = 'High'").processor(urgentProcessor)
+  );
 ```
 
 ### Step 5: Use Preset Configurations
@@ -234,6 +234,7 @@ auditLogs: topic('audit-logs')
 Once migration is complete and tested:
 
 1. Delete old folders:
+
    ```bash
    rm -rf queue-processors/
    rm -rf event-topics/
@@ -251,17 +252,20 @@ Once migration is complete and tested:
 Set default configuration for all events:
 
 ```typescript
-export const events = defineEvents({
-  // ... your events
-}, {
-  storageAccountName: 'myeventstorage',
-  serviceBusNamespaceName: 'sb-events-prod',
-  serviceBusSku: 'Standard',
-  tags: {
-    environment: 'production',
-    team: 'platform'
+export const events = defineEvents(
+  {
+    // ... your events
+  },
+  {
+    storageAccountName: 'myeventstorage',
+    serviceBusNamespaceName: 'sb-events-prod',
+    serviceBusSku: 'Standard',
+    tags: {
+      environment: 'production',
+      team: 'platform',
+    },
   }
-});
+);
 ```
 
 ### Progressive Enhancement
@@ -298,11 +302,9 @@ Add monitoring to any event type:
 ```typescript
 criticalQueue: queue('critical')
   .processor(criticalProcessor)
-  .monitoring(m => m
-    .queueDepth(1000, 'Warning')
-    .messageAge(hours(1), 'Error')
-    .onDeliveryFailure(5, 'Critical')
-  )
+  .monitoring((m) =>
+    m.queueDepth(1000, 'Warning').messageAge(hours(1), 'Error').onDeliveryFailure(5, 'Critical')
+  );
 ```
 
 ## Troubleshooting
@@ -323,21 +325,23 @@ criticalQueue: queue('critical')
 
 ### Method Mapping
 
-| Old Method | New Method | Notes |
-|------------|------------|-------|
-| `messageTimeToLive()` | `ttl()` | Accepts Duration objects |
-| `maxDeliveryCount()` | `retries()` or `maxDeliveryCount()` | Both available |
-| `requiresSession()` | `sessions()` | Simpler boolean method |
-| `eventTypes()` | `events()` | Renamed for clarity |
-| `retentionDays()` | `retention()` | Accepts Duration or number |
+| Old Method            | New Method                          | Notes                      |
+| --------------------- | ----------------------------------- | -------------------------- |
+| `messageTimeToLive()` | `ttl()`                             | Accepts Duration objects   |
+| `maxDeliveryCount()`  | `retries()` or `maxDeliveryCount()` | Both available             |
+| `requiresSession()`   | `sessions()`                        | Simpler boolean method     |
+| `eventTypes()`        | `events()`                          | Renamed for clarity        |
+| `retentionDays()`     | `retention()`                       | Accepts Duration or number |
 
 ### Builder Methods by Type
 
 **All Types:**
+
 - `.processor()` - Attach handler
 - `.tag()` / `.withTags()` - Resource tagging
 
 **Storage Queue:**
+
 - `.ttl()` - Message time to live
 - `.visibilityTimeout()` - Lock duration
 - `.retries()` - Max delivery attempts
@@ -345,18 +349,21 @@ criticalQueue: queue('critical')
 - `.batchSize()` - Concurrent processing
 
 **Event Grid Topic:**
+
 - `.events()` - Event type list
 - `.schema()` - Event schema format
 - `.retention()` - Event retention
 - `.subscription()` - Add subscribers
 
 **Service Bus Queue:**
+
 - `.sessions()` - Enable sessions
 - `.duplicateDetection()` - Dedup window
 - `.lockDuration()` - Message lock
 - `.partitioning()` - Enable partitions
 
 **Service Bus Topic:**
+
 - `.subscription()` - Add subscriptions
 - `.supportOrdering()` - Message ordering
 - `.maxSize()` - Topic size limit

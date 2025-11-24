@@ -41,6 +41,7 @@ This document defines the comprehensive storage strategy for ARM templates and f
 ### Naming Conventions
 
 #### Storage Account Naming
+
 ```typescript
 interface StorageAccountNaming {
   // Pattern: st{project}{environment}{uniqueid}
@@ -64,6 +65,7 @@ interface StorageAccountNaming {
 ```
 
 #### Deployment ID Generation
+
 ```typescript
 interface DeploymentIdStrategy {
   // Pattern: deploy-{timestamp}-{hash}
@@ -100,27 +102,27 @@ class StorageProvisioner {
       name: this.generateName(config),
       location: config.location,
       sku: {
-        name: 'Standard_LRS',  // Locally redundant by default
-        tier: 'Standard'
+        name: 'Standard_LRS', // Locally redundant by default
+        tier: 'Standard',
       },
       kind: 'StorageV2',
       properties: {
         supportsHttpsTrafficOnly: true,
         minimumTlsVersion: 'TLS1_2',
-        allowBlobPublicAccess: false,  // No public access
+        allowBlobPublicAccess: false, // No public access
         networkAcls: {
           defaultAction: 'Deny',
           bypass: 'AzureServices',
           virtualNetworkRules: [],
-          ipRules: config.allowedIPs || []
-        }
+          ipRules: config.allowedIPs || [],
+        },
       },
       tags: {
         'atakora-version': '2.0.0',
         'atakora-purpose': 'deployment-artifacts',
         'atakora-project': config.project,
-        'atakora-environment': config.environment
-      }
+        'atakora-environment': config.environment,
+      },
     });
 
     // Create required containers
@@ -137,7 +139,7 @@ class StorageProvisioner {
       { name: 'deployments', publicAccess: 'None' },
       { name: 'templates', publicAccess: 'None' },
       { name: 'packages', publicAccess: 'None' },
-      { name: 'artifacts', publicAccess: 'None' }
+      { name: 'artifacts', publicAccess: 'None' },
     ];
 
     for (const container of containers) {
@@ -166,7 +168,7 @@ interface StorageConfiguration {
     networkRestrictions: 'Private' | 'Restricted' | 'Open';
     encryption: {
       services: ['blob', 'file'];
-      keySource: 'Microsoft.Storage';  // or Microsoft.Keyvault
+      keySource: 'Microsoft.Storage'; // or Microsoft.Keyvault
     };
   };
 
@@ -294,7 +296,7 @@ interface AccessControl {
   // Storage account access
   account: {
     authentication: 'AzureAD' | 'SharedKey' | 'SAS';
-    authorization: 'RBAC';  // Azure RBAC
+    authorization: 'RBAC'; // Azure RBAC
     roles: {
       owner: 'Storage Account Owner';
       contributor: 'Storage Blob Data Contributor';
@@ -317,19 +319,19 @@ interface AccessControl {
     packages: {
       admins: ['write', 'read', 'delete'];
       cicd: ['write', 'read'];
-      runtime: ['read'];  // Function apps at runtime
+      runtime: ['read']; // Function apps at runtime
     };
   };
 
   // SAS token policies
   sasTokens: {
     deployment: {
-      permissions: 'rw';    // Read/write during deployment
+      permissions: 'rw'; // Read/write during deployment
       duration: '1h';
       ipRestrictions: true;
     };
     runtime: {
-      permissions: 'r';     // Read-only at runtime
+      permissions: 'r'; // Read-only at runtime
       duration: '24h';
       ipRestrictions: false;
     };
@@ -356,7 +358,7 @@ interface EncryptionStrategy {
   inTransit: {
     enforceHttps: true;
     minimumTls: 'TLS1.2';
-    certificatePinning: false;  // Optional for high security
+    certificatePinning: false; // Optional for high security
   };
 
   // Client-side encryption (optional)
@@ -378,7 +380,7 @@ interface RetentionPolicy {
   active: {
     location: '/deployments/active/';
     retention: 'indefinite';
-    count: 1;  // Only current deployment
+    count: 1; // Only current deployment
   };
 
   // Recent deployments
@@ -400,12 +402,12 @@ interface RetentionPolicy {
 
   // Cleanup rules
   cleanup: {
-    schedule: '0 2 * * *';  // Daily at 2 AM
+    schedule: '0 2 * * *'; // Daily at 2 AM
     rules: [
-      { age: '>365d', action: 'delete' },
-      { age: '>90d', action: 'archive' },
-      { age: '>30d', action: 'cool' },
-      { tagged: false, age: '>7d', action: 'delete' }
+      { age: '>365d'; action: 'delete' },
+      { age: '>90d'; action: 'archive' },
+      { age: '>30d'; action: 'cool' },
+      { tagged: false; age: '>7d'; action: 'delete' },
     ];
   };
 }
@@ -425,14 +427,14 @@ class StorageLifecycleManager {
           definition: {
             filters: {
               blobTypes: ['blockBlob'],
-              prefixMatch: ['deployments/archive/']
+              prefixMatch: ['deployments/archive/'],
             },
             actions: {
               baseBlob: {
-                delete: { daysAfterModificationGreaterThan: 365 }
-              }
-            }
-          }
+                delete: { daysAfterModificationGreaterThan: 365 },
+              },
+            },
+          },
         },
         {
           name: 'tier-to-cool',
@@ -441,14 +443,14 @@ class StorageLifecycleManager {
           definition: {
             filters: {
               blobTypes: ['blockBlob'],
-              prefixMatch: ['templates/', 'packages/']
+              prefixMatch: ['templates/', 'packages/'],
             },
             actions: {
               baseBlob: {
-                tierToCool: { daysAfterModificationGreaterThan: 30 }
-              }
-            }
-          }
+                tierToCool: { daysAfterModificationGreaterThan: 30 },
+              },
+            },
+          },
         },
         {
           name: 'tier-to-archive',
@@ -457,16 +459,16 @@ class StorageLifecycleManager {
           definition: {
             filters: {
               blobTypes: ['blockBlob'],
-              prefixMatch: ['deployments/archive/']
+              prefixMatch: ['deployments/archive/'],
             },
             actions: {
               baseBlob: {
-                tierToArchive: { daysAfterModificationGreaterThan: 90 }
-              }
-            }
-          }
-        }
-      ]
+                tierToArchive: { daysAfterModificationGreaterThan: 90 },
+              },
+            },
+          },
+        },
+      ],
     };
 
     await this.applyPolicy(account, policy);
@@ -477,7 +479,7 @@ class StorageLifecycleManager {
       deleted: [],
       tiered: [],
       retained: [],
-      errors: []
+      errors: [],
     };
 
     // Scan all containers
@@ -517,9 +519,9 @@ class UploadOptimizer {
 
     // Upload strategy based on size
     await Promise.all([
-      this.uploadSmallFiles(small, config),     // Parallel, many at once
-      this.uploadMediumFiles(medium, config),   // Parallel, limited concurrency
-      this.uploadLargeFiles(large, config)      // Sequential or chunked
+      this.uploadSmallFiles(small, config), // Parallel, many at once
+      this.uploadMediumFiles(medium, config), // Parallel, limited concurrency
+      this.uploadLargeFiles(large, config), // Sequential or chunked
     ]);
   }
 
@@ -529,7 +531,7 @@ class UploadOptimizer {
 
     for (let i = 0; i < files.length; i += BATCH_SIZE) {
       const batch = files.slice(i, i + BATCH_SIZE);
-      await Promise.all(batch.map(f => this.uploadFile(f, config)));
+      await Promise.all(batch.map((f) => this.uploadFile(f, config)));
     }
   }
 
@@ -538,17 +540,15 @@ class UploadOptimizer {
     const CONCURRENCY = 5;
     const queue = new PQueue({ concurrency: CONCURRENCY });
 
-    await queue.addAll(
-      files.map(file => () => this.uploadFile(file, config))
-    );
+    await queue.addAll(files.map((file) => () => this.uploadFile(file, config)));
   }
 
   private async uploadLargeFiles(files: File[], config: UploadConfig): Promise<void> {
     // Files > 10MB: Chunked upload
     for (const file of files) {
       await this.uploadFileChunked(file, config, {
-        chunkSize: 4 * 1024 * 1024,  // 4MB chunks
-        parallelChunks: 3
+        chunkSize: 4 * 1024 * 1024, // 4MB chunks
+        parallelChunks: 3,
       });
     }
   }
@@ -565,7 +565,7 @@ interface CacheStrategy {
     directory: '.atakora/cache/';
     maxSize: '1GB';
     ttl: '7d';
-    strategy: 'LRU';  // Least recently used
+    strategy: 'LRU'; // Least recently used
   };
 
   // Blob storage caching
@@ -592,7 +592,7 @@ interface CacheStrategy {
   // Cache validation
   validation: {
     checksum: true;
-    signature: false;  // Future enhancement
+    signature: false; // Future enhancement
     expiry: true;
   };
 }
@@ -622,14 +622,14 @@ interface GovCloudConfig {
   network: {
     privateEndpointsRequired: true;
     publicAccessDenied: true;
-    allowedIPs: ['10.0.0.0/8'];  // Government networks only
+    allowedIPs: ['10.0.0.0/8']; // Government networks only
   };
 
   // Retention policies
   retention: {
     minimum: '3 years';
     auditLogs: '7 years';
-    deleteProhibited: true;  // Soft delete only
+    deleteProhibited: true; // Soft delete only
   };
 }
 ```
@@ -643,15 +643,16 @@ class GovCloudStorageProvider extends StorageProvisioner {
       ...config,
       endpoints: this.getGovEndpoints(),
       compliance: this.enforceCompliance(),
-      network: this.configureGovNetwork()
+      network: this.configureGovNetwork(),
     });
   }
 
   private getGovEndpoints(): Endpoints {
     return {
-      blob: process.env.AZURE_STORAGE_BLOB_ENDPOINT || 'https://storage.blob.core.usgovcloudapi.net',
+      blob:
+        process.env.AZURE_STORAGE_BLOB_ENDPOINT || 'https://storage.blob.core.usgovcloudapi.net',
       auth: process.env.AZURE_AUTH_ENDPOINT || 'https://login.microsoftonline.us',
-      management: process.env.AZURE_MANAGEMENT_ENDPOINT || 'https://management.usgovcloudapi.net'
+      management: process.env.AZURE_MANAGEMENT_ENDPOINT || 'https://management.usgovcloudapi.net',
     };
   }
 
@@ -660,13 +661,13 @@ class GovCloudStorageProvider extends StorageProvisioner {
       encryption: {
         algorithm: 'AES-256-FIPS',
         keyManagement: 'customer-managed',
-        keyVault: 'required'
+        keyVault: 'required',
       },
       audit: {
         enabled: true,
         retention: '7y',
-        immutable: true
-      }
+        immutable: true,
+      },
     };
   }
 }
@@ -680,33 +681,33 @@ class GovCloudStorageProvider extends StorageProvisioner {
 interface StorageMetrics {
   // Performance metrics
   performance: {
-    uploadSpeed: number;      // MB/s
-    downloadSpeed: number;    // MB/s
-    latency: number;         // ms
-    throughput: number;      // requests/sec
+    uploadSpeed: number; // MB/s
+    downloadSpeed: number; // MB/s
+    latency: number; // ms
+    throughput: number; // requests/sec
   };
 
   // Usage metrics
   usage: {
-    totalSize: number;       // GB
+    totalSize: number; // GB
     fileCount: number;
     containerCount: number;
-    bandwidthUsed: number;   // GB/month
+    bandwidthUsed: number; // GB/month
   };
 
   // Cost metrics
   cost: {
-    storage: number;         // $/month
-    transactions: number;    // $/month
-    bandwidth: number;       // $/month
-    total: number;          // $/month
+    storage: number; // $/month
+    transactions: number; // $/month
+    bandwidth: number; // $/month
+    total: number; // $/month
   };
 
   // Health metrics
   health: {
-    availability: number;    // percentage
-    errorRate: number;      // errors/hour
-    throttling: number;     // throttles/hour
+    availability: number; // percentage
+    errorRate: number; // errors/hour
+    throttling: number; // throttles/hour
   };
 }
 ```
@@ -771,14 +772,14 @@ interface BackupStrategy {
   // Geo-redundancy
   geoRedundancy: {
     enabled: true;
-    replication: 'GRS';  // Geo-redundant storage
+    replication: 'GRS'; // Geo-redundant storage
     failoverRegion: 'West US';
   };
 
   // Recovery procedures
   recovery: {
-    rto: '4h';  // Recovery time objective
-    rpo: '1h';  // Recovery point objective
+    rto: '4h'; // Recovery time objective
+    rpo: '1h'; // Recovery point objective
     automatedFailover: false;
     manualProcedures: true;
   };
@@ -788,6 +789,7 @@ interface BackupStrategy {
 ## Best Practices
 
 ### Do's
+
 1. **Always use SAS tokens** for deployment-time access
 2. **Enable soft delete** for production storage accounts
 3. **Monitor storage costs** and optimize tiers
@@ -797,6 +799,7 @@ interface BackupStrategy {
 7. **Use private endpoints** in production
 
 ### Don'ts
+
 1. **Never expose storage keys** in logs or source control
 2. **Don't use public access** for containers
 3. **Don't skip cleanup** - storage costs accumulate

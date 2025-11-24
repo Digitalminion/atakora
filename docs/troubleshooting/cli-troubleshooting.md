@@ -41,6 +41,7 @@ az account show
 **Problem**: `atakora: command not found` or `'atakora' is not recognized`
 
 **Causes**:
+
 - CLI not installed globally
 - npm global bin directory not in PATH
 - Using local installation without npx
@@ -48,6 +49,7 @@ az account show
 **Solutions**:
 
 1. **Install globally**:
+
    ```bash
    npm install -g @atakora/cli
 
@@ -56,6 +58,7 @@ az account show
    ```
 
 2. **Fix npm PATH (Unix/Mac)**:
+
    ```bash
    # Check npm global bin directory
    npm config get prefix
@@ -68,6 +71,7 @@ az account show
    ```
 
 3. **Fix npm PATH (Windows)**:
+
    ```powershell
    # Get npm global directory
    npm config get prefix
@@ -90,11 +94,13 @@ az account show
 **Solutions**:
 
 1. **Use npx (recommended)**:
+
    ```bash
    npx @atakora/cli init
    ```
 
 2. **Fix npm permissions (Unix/Mac)**:
+
    ```bash
    # Change npm directory ownership
    sudo chown -R $(whoami) ~/.npm
@@ -105,6 +111,7 @@ az account show
    ```
 
 3. **Use nvm (Node Version Manager)**:
+
    ```bash
    # Install nvm
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
@@ -122,6 +129,7 @@ az account show
 **Problem**: `Cannot find module '@atakora/lib'` or similar
 
 **Causes**:
+
 - Dependencies not installed
 - Corrupted node_modules
 - Version mismatch
@@ -129,17 +137,20 @@ az account show
 **Solutions**:
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Clean install**:
+
    ```bash
    rm -rf node_modules package-lock.json
    npm install
    ```
 
 3. **Check package versions**:
+
    ```bash
    npm list @atakora/cli @atakora/lib @atakora/cdk
 
@@ -159,6 +170,7 @@ az account show
 **Problem**: `Error: DefaultAzureCredential failed to retrieve a token`
 
 **Diagnosis**:
+
 ```bash
 # Check environment variables
 echo $AZURE_TENANT_ID
@@ -176,6 +188,7 @@ atakora config show
 **Solutions**:
 
 1. **Use Azure CLI**:
+
    ```bash
    az login
    az account set --subscription "Your Subscription"
@@ -183,6 +196,7 @@ atakora config show
    ```
 
 2. **Set environment variables**:
+
    ```bash
    export AZURE_TENANT_ID="00000000-0000-0000-0000-000000000000"
    export AZURE_CLIENT_ID="11111111-1111-1111-1111-111111111111"
@@ -191,6 +205,7 @@ atakora config show
    ```
 
 3. **Test service principal**:
+
    ```bash
    az login --service-principal \
      --username $AZURE_CLIENT_ID \
@@ -202,6 +217,7 @@ atakora config show
    ```
 
 4. **Clear credential cache**:
+
    ```bash
    # Remove Azure CLI cache
    rm -rf ~/.azure
@@ -216,6 +232,7 @@ atakora config show
 **Problem**: `Error: 404 Subscription not found` or `Token not issued for this tenant`
 
 **Diagnosis**:
+
 ```bash
 # Check current subscription
 az account show
@@ -230,6 +247,7 @@ atakora config show
 **Solutions**:
 
 1. **Switch subscription**:
+
    ```bash
    # Via Azure CLI
    az account set --subscription "Correct Subscription Name"
@@ -239,6 +257,7 @@ atakora config show
    ```
 
 2. **Use correct tenant**:
+
    ```bash
    # Login to specific tenant
    az login --tenant "00000000-0000-0000-0000-000000000000"
@@ -248,6 +267,7 @@ atakora config show
    ```
 
 3. **Create tenant-specific profile**:
+
    ```bash
    atakora config set-profile my-tenant \
      --tenant "tenant-id" \
@@ -264,6 +284,7 @@ atakora config show
 **Solutions**:
 
 1. **Set cloud environment**:
+
    ```bash
    # Azure CLI
    az cloud set --name AzureUSGovernment
@@ -274,6 +295,7 @@ atakora config show
    ```
 
 2. **Use correct authority**:
+
    ```bash
    export AZURE_CLOUD=AzureUSGovernment
    export AZURE_AUTHORITY_HOST=https://login.microsoftonline.us/
@@ -282,6 +304,7 @@ atakora config show
    ```
 
 3. **Verify endpoints**:
+
    ```bash
    # Check cloud config
    az cloud show --name AzureUSGovernment
@@ -298,12 +321,14 @@ atakora config show
 **Solutions**:
 
 1. **Re-login with Azure CLI**:
+
    ```bash
    az logout
    az login
    ```
 
 2. **Refresh service principal secret**:
+
    ```bash
    # Reset secret
    az ad sp credential reset --id $AZURE_CLIENT_ID
@@ -325,6 +350,7 @@ atakora config show
 **Problem**: `Error: Project not initialized` or `Manifest not found`
 
 **Diagnosis**:
+
 ```bash
 # Check if manifest exists
 ls -la .atakora/manifest.json
@@ -339,11 +365,13 @@ git rev-parse --show-toplevel
 **Solutions**:
 
 1. **Initialize project**:
+
    ```bash
    atakora init
    ```
 
 2. **Run from correct directory**:
+
    ```bash
    # Navigate to project root
    cd /path/to/project
@@ -353,6 +381,7 @@ git rev-parse --show-toplevel
    ```
 
 3. **Recreate manifest**:
+
    ```bash
    # Backup existing packages
    cp -r packages packages.backup
@@ -370,6 +399,7 @@ git rev-parse --show-toplevel
 **Problem**: `Error: Profile 'production' does not exist`
 
 **Diagnosis**:
+
 ```bash
 # List profiles
 atakora config list
@@ -384,6 +414,7 @@ atakora config show
 **Solutions**:
 
 1. **Create missing profile**:
+
    ```bash
    atakora config set-profile production \
      --tenant "tenant-id" \
@@ -392,6 +423,7 @@ atakora config show
    ```
 
 2. **Switch to existing profile**:
+
    ```bash
    # List available
    atakora config list
@@ -401,6 +433,7 @@ atakora config show
    ```
 
 3. **Fix corrupted config**:
+
    ```bash
    # Backup existing
    mv ~/.azure-arm/config.json ~/.azure-arm/config.json.backup
@@ -414,6 +447,7 @@ atakora config show
 **Problem**: `Error: Package 'backend' not found in manifest`
 
 **Diagnosis**:
+
 ```bash
 # Check manifest
 cat .atakora/manifest.json
@@ -428,11 +462,13 @@ ls -la packages/backend/
 **Solutions**:
 
 1. **Add package to manifest**:
+
    ```bash
    atakora add backend
    ```
 
 2. **Fix manifest manually**:
+
    ```json
    {
      "organization": "MyOrg",
@@ -448,6 +484,7 @@ ls -la packages/backend/
    ```
 
 3. **Regenerate package**:
+
    ```bash
    # Remove package
    rm -rf packages/backend
@@ -463,6 +500,7 @@ ls -la packages/backend/
 **Problem**: Generated name exceeds Azure resource limits
 
 **Diagnosis**:
+
 ```typescript
 import { ResourceNameGenerator } from '@atakora/lib/naming';
 
@@ -482,13 +520,15 @@ console.log(`Max length: ${generator.getMaxLength('storage')}`);
 **Solutions**:
 
 1. **Use abbreviations**:
+
    ```typescript
-   organization: 'vlon'  // instead of 'very-long-organization-name'
-   geography: 'eus'      // instead of 'eastus'
-   environment: 'np'     // instead of 'nonprod'
+   organization: 'vlon'; // instead of 'very-long-organization-name'
+   geography: 'eus'; // instead of 'eastus'
+   environment: 'np'; // instead of 'nonprod'
    ```
 
 2. **Check before generation**:
+
    ```typescript
    const tentativeName = buildName(params);
 
@@ -502,9 +542,9 @@ console.log(`Max length: ${generator.getMaxLength('storage')}`);
    ```typescript
    const generator = new ResourceNameGenerator({
      patterns: {
-       storage: 'st',  // Shorter prefix
+       storage: 'st', // Shorter prefix
      },
-     maxLength: 24
+     maxLength: 24,
    });
    ```
 
@@ -513,6 +553,7 @@ console.log(`Max length: ${generator.getMaxLength('storage')}`);
 **Problem**: `Validation failed: Resource name contains invalid characters`
 
 **Diagnosis**:
+
 ```typescript
 const result = generator.validateName('my-storage_123', 'storage');
 console.log(result.errors);
@@ -522,6 +563,7 @@ console.log(result.errors);
 **Solutions**:
 
 1. **Check resource-specific rules**:
+
    ```typescript
    import { getValidationRules } from '@atakora/lib/naming';
 
@@ -532,6 +574,7 @@ console.log(result.errors);
    ```
 
 2. **Let generator handle transformations**:
+
    ```typescript
    // Generator automatically removes hyphens for storage
    const name = generator.generateName({
@@ -542,6 +585,7 @@ console.log(result.errors);
    ```
 
 3. **Manual validation before deployment**:
+
    ```typescript
    const name = generateName();
    const validation = generator.validateName(name, resourceType);
@@ -556,6 +600,7 @@ console.log(result.errors);
 **Problem**: `Deployment failed: Storage account name already exists`
 
 **Diagnosis**:
+
 ```bash
 # Check if name exists
 az storage account check-name --name "myname123"
@@ -571,6 +616,7 @@ az storage account check-name --name "myname123"
 **Solutions**:
 
 1. **Add unique suffix**:
+
    ```typescript
    import crypto from 'crypto';
 
@@ -579,22 +625,24 @@ az storage account check-name --name "myname123"
    const name = generator.generateName({
      resourceType: 'storage',
      // ... other params
-     additionalSuffix: uniqueSuffix
+     additionalSuffix: uniqueSuffix,
    });
    ```
 
 2. **Increment instance number**:
+
    ```typescript
-   instance: '02'  // Try next instance
+   instance: '02'; // Try next instance
    ```
 
 3. **Check availability before creation**:
+
    ```typescript
    import { StorageManagementClient } from '@azure/arm-storage';
 
    const client = new StorageManagementClient(credential, subscriptionId);
    const result = await client.storageAccounts.checkNameAvailability({
-     name: proposedName
+     name: proposedName,
    });
 
    if (!result.nameAvailable) {
@@ -610,6 +658,7 @@ az storage account check-name --name "myname123"
 **Problem**: `Error: TypeScript compilation failed`
 
 **Diagnosis**:
+
 ```bash
 # Compile manually to see errors
 npm run build
@@ -624,6 +673,7 @@ cat tsconfig.json
 **Solutions**:
 
 1. **Fix TypeScript errors**:
+
    ```bash
    # See detailed errors
    npx tsc --noEmit --pretty
@@ -634,12 +684,14 @@ cat tsconfig.json
    ```
 
 2. **Update dependencies**:
+
    ```bash
    npm update @atakora/lib @atakora/cdk
    npm update typescript @types/node
    ```
 
 3. **Check for breaking changes**:
+
    ```bash
    # Compare versions
    npm list @atakora/lib @atakora/cdk
@@ -653,6 +705,7 @@ cat tsconfig.json
 **Problem**: `Validation failed: Invalid delegation structure`
 
 **Diagnosis**:
+
 ```bash
 # Enable verbose logging
 export ATAKORA_LOG_LEVEL=debug
@@ -665,30 +718,38 @@ cat .atakora/arm.out/<package>/validation-errors.json
 **Solutions**:
 
 1. **Fix delegation structure**:
+
    ```typescript
    // ✗ Wrong
-   delegations: [{
-     name: 'sqlDelegation',
-     serviceName: 'Microsoft.Sql/managedInstances'  // Missing properties wrapper
-   }]
+   delegations: [
+     {
+       name: 'sqlDelegation',
+       serviceName: 'Microsoft.Sql/managedInstances', // Missing properties wrapper
+     },
+   ];
 
    // ✓ Correct
-   delegations: [{
-     name: 'sqlDelegation',
-     properties: {
-       serviceName: 'Microsoft.Sql/managedInstances'
-     }
-   }]
+   delegations: [
+     {
+       name: 'sqlDelegation',
+       properties: {
+         serviceName: 'Microsoft.Sql/managedInstances',
+       },
+     },
+   ];
    ```
 
 2. **Fix NSG references**:
+
    ```typescript
    // ✗ Wrong - literal string
-   networkSecurityGroup: { id: 'my-nsg-id' }
+   networkSecurityGroup: {
+     id: 'my-nsg-id';
+   }
 
    // ✓ Correct - ARM reference
    networkSecurityGroup: {
-     id: Fn.resourceId('Microsoft.Network/networkSecurityGroups', nsg.name)
+     id: Fn.resourceId('Microsoft.Network/networkSecurityGroups', nsg.name);
    }
    ```
 
@@ -704,6 +765,7 @@ cat .atakora/arm.out/<package>/validation-errors.json
 **Problem**: Resources not appearing in ARM template
 
 **Diagnosis**:
+
 ```bash
 # Check synthesized template
 cat .atakora/arm.out/<package>/template.json | jq '.resources[].type'
@@ -716,28 +778,39 @@ atakora synth
 **Solutions**:
 
 1. **Ensure resource is in construct tree**:
+
    ```typescript
    // Resource must be created with stack as scope
-   new VirtualNetwork(stack, 'VNet', { /* ... */ });
+   new VirtualNetwork(stack, 'VNet', {
+     /* ... */
+   });
 
    // Not orphaned
-   const vnet = new VirtualNetwork(undefined, 'VNet', { /* ... */ });  // ✗ Wrong
+   const vnet = new VirtualNetwork(undefined, 'VNet', {
+     /* ... */
+   }); // ✗ Wrong
    ```
 
 2. **Check for conditional logic**:
+
    ```typescript
    // Resource only created if condition is true
    if (process.env.INCLUDE_VPN === 'true') {
-     new VpnGateway(stack, 'Vpn', { /* ... */ });
+     new VpnGateway(stack, 'Vpn', {
+       /* ... */
+     });
    }
    ```
 
 3. **Verify synthesis**:
+
    ```typescript
    const app = new App();
    const stack = new Stack(app, 'MyStack');
 
-   new VirtualNetwork(stack, 'VNet', { /* ... */ });
+   new VirtualNetwork(stack, 'VNet', {
+     /* ... */
+   });
 
    // Explicitly synthesize
    const assembly = app.synth();
@@ -753,6 +826,7 @@ atakora synth
 **Solutions**:
 
 1. **Setup matchers**:
+
    ```typescript
    import { setupArmMatchers } from '@atakora/lib/testing';
 
@@ -763,15 +837,13 @@ atakora synth
    ```
 
 2. **Import test utilities correctly**:
+
    ```typescript
    // ✓ Correct
-   import {
-     expectValidationError,
-     setupArmMatchers
-   } from '@atakora/lib/testing';
+   import { expectValidationError, setupArmMatchers } from '@atakora/lib/testing';
 
    // ✗ Wrong
-   import { expectValidationError } from '@atakora/lib';  // Wrong path
+   import { expectValidationError } from '@atakora/lib'; // Wrong path
    ```
 
 ### Validation Not Triggered
@@ -781,12 +853,13 @@ atakora synth
 **Solutions**:
 
 1. **Trigger synthesis**:
+
    ```typescript
    const stack = new Stack(app, 'Test');
 
    // Create invalid resource
    new VirtualNetwork(stack, 'VNet', {
-     addressSpace: 'invalid'
+     addressSpace: 'invalid',
    });
 
    // Must synthesize to trigger validation
@@ -797,15 +870,16 @@ atakora synth
    ```
 
 2. **Use correct test pattern**:
+
    ```typescript
    test('validates CIDR', () => {
      const stack = new Stack(app, 'Test');
 
      expect(() => {
        new VirtualNetwork(stack, 'VNet', {
-         addressSpace: 'invalid'
+         addressSpace: 'invalid',
        });
-       stack.synthesize();  // Trigger validation
+       stack.synthesize(); // Trigger validation
      }).toThrow('Invalid CIDR');
    });
    ```
@@ -817,6 +891,7 @@ atakora synth
 **Solutions**:
 
 1. **Create context with bindings**:
+
    ```typescript
    import { FunctionTestUtils, MockBlobStorage } from '@atakora/lib/testing';
 
@@ -825,8 +900,8 @@ atakora synth
 
    const context = testUtils.createContext({
      bindings: {
-       inputBlob: blobStorage.getBlob('container', 'file.json')
-     }
+       inputBlob: blobStorage.getBlob('container', 'file.json'),
+     },
    });
 
    // Access via context.bindings
@@ -834,16 +909,17 @@ atakora synth
    ```
 
 2. **Use createMockBindings helper**:
+
    ```typescript
    import { createMockBindings } from '@atakora/lib/testing';
 
    const bindings = createMockBindings({
      blob: { container: 'test', blob: 'file.json' },
-     queue: { name: 'output' }
+     queue: { name: 'output' },
    });
 
    const context = testUtils.createContext({
-     bindings: bindings.input
+     bindings: bindings.input,
    });
    ```
 
@@ -856,6 +932,7 @@ atakora synth
 **Solutions**:
 
 1. **Use incremental builds**:
+
    ```bash
    # Enable TypeScript incremental compilation
    # In tsconfig.json:
@@ -870,6 +947,7 @@ atakora synth
    ```
 
 2. **Skip validation**:
+
    ```bash
    # For development only
    export ATAKORA_SKIP_VALIDATION=1
@@ -877,12 +955,14 @@ atakora synth
    ```
 
 3. **Parallel package synthesis**:
+
    ```bash
    # Synthesize packages in parallel (future feature)
    atakora synth --parallel
    ```
 
 4. **Profile synthesis**:
+
    ```bash
    # Enable profiling
    export ATAKORA_PROFILE=1
@@ -899,6 +979,7 @@ atakora synth
 **Solutions**:
 
 1. **Increase Node.js memory**:
+
    ```bash
    # Increase to 4GB
    export NODE_OPTIONS="--max-old-space-size=4096"
@@ -906,6 +987,7 @@ atakora synth
    ```
 
 2. **Synthesize packages individually**:
+
    ```bash
    # Instead of all at once
    atakora synth --package backend
@@ -913,17 +995,18 @@ atakora synth
    ```
 
 3. **Optimize construct usage**:
+
    ```typescript
    // Reuse constructs where possible
    const naming = new NamingService(stack, params);
 
    // ✗ Creates new service each time
-   constructs.forEach(c => {
+   constructs.forEach((c) => {
      const name = new NamingService(stack, params).generateName('vnet', c.id);
    });
 
    // ✓ Reuse service
-   constructs.forEach(c => {
+   constructs.forEach((c) => {
      const name = naming.generateName('vnet', c.id);
    });
    ```
@@ -996,8 +1079,8 @@ Submit issues at: [GitHub Issues](https://github.com/digital-minion/atakora/issu
 
 ## See Also
 
-- [Common Issues](./common-issues.md)
-- [Deployment Failures](./deployment-failures.md)
+- [Common Issues](./Common-Issues.md)
+- [Deployment Failures](./Deployment-Failures.md)
 - [Authentication Reference](../reference/authentication.md)
 - [Naming Conventions Guide](../guides/naming-conventions.md)
 - [Testing Guide](../guides/testing-utilities.md)

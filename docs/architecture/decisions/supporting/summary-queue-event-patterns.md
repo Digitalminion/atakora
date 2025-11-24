@@ -50,6 +50,7 @@ defineQueueProcessor({
   handler: './handler.ts'  // Creates Azure Function
 })
 ```
+
 **Creates**: Storage Queue + Azure Function with queue trigger
 
 ### Event Processors
@@ -61,6 +62,7 @@ defineEventProcessor({
   handler: './handler.ts'  // Creates Azure Function
 })
 ```
+
 **Creates**: Event Grid Topic/Subscription + Azure Function
 
 ### Scheduled Jobs
@@ -68,10 +70,11 @@ defineEventProcessor({
 ```typescript
 defineScheduledJob({
   name: 'daily-cleanup',
-  schedule: '0 2 * * *',  // No infrastructure
-  handler: './handler.ts'  // Creates Azure Function
-})
+  schedule: '0 2 * * *', // No infrastructure
+  handler: './handler.ts', // Creates Azure Function
+});
 ```
+
 **Creates**: Only Azure Function with timer trigger
 
 ## Key Principles
@@ -104,6 +107,7 @@ defineScheduledJob({
 ## Conclusion
 
 By naming our abstractions accurately (`queue-processors` not `queues`), we:
+
 - Maintain technical accuracy
 - Provide better developer experience
 - Create self-documenting code

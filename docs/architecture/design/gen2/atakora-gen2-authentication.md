@@ -31,7 +31,7 @@ const user = {
   email: 'developer@company.com',
   name: 'Jane Developer',
   groups: ['developers', 'admins'],
-  provider: 'entra-id',  // or 'custom', 'api-key', 'managed-identity'
+  provider: 'entra-id', // or 'custom', 'api-key', 'managed-identity'
 };
 ```
 
@@ -41,13 +41,15 @@ const user = {
 // Authorization answers: "Can this user perform this action?"
 // Defined declaratively in schema
 
-const model = c.model({
-  title: a.string().required(),
-  content: a.string(),
-}).authorization(allow => [
-  allow.owner(),              // Only the owner can access
-  allow.groups(['admins']),   // Admins can access everything
-]);
+const model = c
+  .model({
+    title: a.string().required(),
+    content: a.string(),
+  })
+  .authorization((allow) => [
+    allow.owner(), // Only the owner can access
+    allow.groups(['admins']), // Admins can access everything
+  ]);
 ```
 
 ## Default Authentication: Entra ID
@@ -118,11 +120,11 @@ export const handler: Handler = async (context) => {
   // User context is automatically available
   const { user } = context;
 
-  console.log(user.id);         // '12345678-1234-1234-1234-123456789abc'
-  console.log(user.email);      // 'developer@company.com'
-  console.log(user.name);       // 'Jane Developer'
-  console.log(user.groups);     // ['developers', 'admins']
-  console.log(user.claims);     // Full JWT claims
+  console.log(user.id); // '12345678-1234-1234-1234-123456789abc'
+  console.log(user.email); // 'developer@company.com'
+  console.log(user.name); // 'Jane Developer'
+  console.log(user.groups); // ['developers', 'admins']
+  console.log(user.claims); // Full JWT claims
 
   // Check authorization
   if (user.isInGroup('admins')) {
@@ -150,12 +152,12 @@ Resources are scoped to the user who created them:
 export const data = defineData({
   schema: a.schema({
     // Only the owner can read/update/delete their feedback
-    Feedback: c.model({
-      rating: a.number().required(),
-      comment: a.string(),
-    }).authorization(allow => [
-      allow.owner(),
-    ]),
+    Feedback: c
+      .model({
+        rating: a.number().required(),
+        comment: a.string(),
+      })
+      .authorization((allow) => [allow.owner()]),
   }),
 });
 ```
@@ -186,12 +188,12 @@ Resources scoped by Azure AD group membership:
 export const data = defineData({
   schema: a.schema({
     // Only admins can manage organizations
-    Organization: c.model({
-      name: a.string().required(),
-      domain: a.string(),
-    }).authorization(allow => [
-      allow.groups(['admins']),
-    ]),
+    Organization: c
+      .model({
+        name: a.string().required(),
+        domain: a.string(),
+      })
+      .authorization((allow) => [allow.groups(['admins'])]),
   }),
 });
 ```
@@ -209,14 +211,16 @@ Combine multiple rules (OR logic):
 ```typescript
 export const data = defineData({
   schema: a.schema({
-    Document: c.model({
-      title: a.string().required(),
-      content: a.string(),
-    }).authorization(allow => [
-      allow.owner(),                    // Owner can do anything
-      allow.groups(['admins']),         // Admins can do anything
-      allow.groups(['viewers']).read(), // Viewers can only read
-    ]),
+    Document: c
+      .model({
+        title: a.string().required(),
+        content: a.string(),
+      })
+      .authorization((allow) => [
+        allow.owner(), // Owner can do anything
+        allow.groups(['admins']), // Admins can do anything
+        allow.groups(['viewers']).read(), // Viewers can only read
+      ]),
   }),
 });
 ```
@@ -228,14 +232,16 @@ Allow public access to certain resources:
 ```typescript
 export const data = defineData({
   schema: a.schema({
-    BlogPost: c.model({
-      title: a.string().required(),
-      content: a.string(),
-      published: a.boolean(),
-    }).authorization(allow => [
-      allow.guest().read(),             // Anyone can read
-      allow.groups(['authors']).write(), // Only authors can write
-    ]),
+    BlogPost: c
+      .model({
+        title: a.string().required(),
+        content: a.string(),
+        published: a.boolean(),
+      })
+      .authorization((allow) => [
+        allow.guest().read(), // Anyone can read
+        allow.groups(['authors']).write(), // Only authors can write
+      ]),
   }),
 });
 ```
@@ -247,11 +253,13 @@ Any authenticated user can access:
 ```typescript
 export const data = defineData({
   schema: a.schema({
-    PublicResource: c.model({
-      name: a.string().required(),
-    }).authorization(allow => [
-      allow.authenticated(),  // Any logged-in user
-    ]),
+    PublicResource: c
+      .model({
+        name: a.string().required(),
+      })
+      .authorization((allow) => [
+        allow.authenticated(), // Any logged-in user
+      ]),
   }),
 });
 ```
@@ -263,28 +271,30 @@ Complex logic with custom functions:
 ```typescript
 export const data = defineData({
   schema: a.schema({
-    Project: c.model({
-      name: a.string().required(),
-      teamId: a.string(),
-      visibility: a.enum(['private', 'team', 'public']),
-    }).authorization(allow => [
-      allow.custom(({ user, record, operation }) => {
-        // Owner always has access
-        if (record.owner === user.id) return true;
+    Project: c
+      .model({
+        name: a.string().required(),
+        teamId: a.string(),
+        visibility: a.enum(['private', 'team', 'public']),
+      })
+      .authorization((allow) => [
+        allow.custom(({ user, record, operation }) => {
+          // Owner always has access
+          if (record.owner === user.id) return true;
 
-        // Public projects can be read by anyone
-        if (record.visibility === 'public' && operation === 'read') {
-          return true;
-        }
+          // Public projects can be read by anyone
+          if (record.visibility === 'public' && operation === 'read') {
+            return true;
+          }
 
-        // Team members can access team projects
-        if (record.visibility === 'team') {
-          return user.teams.includes(record.teamId);
-        }
+          // Team members can access team projects
+          if (record.visibility === 'team') {
+            return user.teams.includes(record.teamId);
+          }
 
-        return false;
-      }),
-    ]),
+          return false;
+        }),
+      ]),
   }),
 });
 ```
@@ -296,26 +306,23 @@ Control access to individual fields:
 ```typescript
 export const data = defineData({
   schema: a.schema({
-    User: c.model({
-      name: a.string().required(),
-      email: a.string().required(),
+    User: c
+      .model({
+        name: a.string().required(),
+        email: a.string().required(),
 
-      // Only admins and owner can see email
-      emailVerified: a.boolean()
-        .authorization(allow => [
-          allow.owner(),
-          allow.groups(['admins']),
-        ]),
+        // Only admins and owner can see email
+        emailVerified: a
+          .boolean()
+          .authorization((allow) => [allow.owner(), allow.groups(['admins'])]),
 
-      // Only admins can see internal notes
-      internalNotes: a.string()
-        .authorization(allow => [
-          allow.groups(['admins']),
-        ]),
-    }).authorization(allow => [
-      allow.authenticated().read(),  // Anyone can read user profiles
-      allow.owner().update(),        // But only owner can update
-    ]),
+        // Only admins can see internal notes
+        internalNotes: a.string().authorization((allow) => [allow.groups(['admins'])]),
+      })
+      .authorization((allow) => [
+        allow.authenticated().read(), // Anyone can read user profiles
+        allow.owner().update(), // But only owner can update
+      ]),
   }),
 });
 ```
@@ -327,17 +334,19 @@ Different rules for different operations:
 ```typescript
 export const data = defineData({
   schema: a.schema({
-    Article: c.model({
-      title: a.string().required(),
-      content: a.string(),
-      published: a.boolean(),
-    }).authorization(allow => [
-      allow.guest().read(),                    // Anyone can read
-      allow.groups(['authors']).create(),      // Authors can create
-      allow.owner().update().delete(),         // Owner can update/delete
-      allow.groups(['editors']).update(),      // Editors can update all
-      allow.groups(['admins']).delete(),       // Admins can delete all
-    ]),
+    Article: c
+      .model({
+        title: a.string().required(),
+        content: a.string(),
+        published: a.boolean(),
+      })
+      .authorization((allow) => [
+        allow.guest().read(), // Anyone can read
+        allow.groups(['authors']).create(), // Authors can create
+        allow.owner().update().delete(), // Owner can update/delete
+        allow.groups(['editors']).update(), // Editors can update all
+        allow.groups(['admins']).delete(), // Admins can delete all
+      ]),
   }),
 });
 ```
@@ -349,37 +358,38 @@ Custom business logic with auth:
 ```typescript
 export const data = defineData({
   schema: a.schema({
-    Organization: c.model({
-      name: a.string().required(),
-      memberCount: a.number(),
-    }).authorization(allow => [
-      allow.owner(),
-      allow.groups(['admins']),
-    ]),
+    Organization: c
+      .model({
+        name: a.string().required(),
+        memberCount: a.number(),
+      })
+      .authorization((allow) => [allow.owner(), allow.groups(['admins'])]),
   }),
 
   mutations: {
     // Custom mutation with auth
-    addUserToOrganization: a.mutation()
+    addUserToOrganization: a
+      .mutation()
       .arguments({
         organizationId: a.id().required(),
         userId: a.id().required(),
       })
       .returns(a.ref('Organization'))
       .handler(a.handler.function(addUserFunction))
-      .authorization(allow => [
-        allow.groups(['admins']),  // Only admins can add users
+      .authorization((allow) => [
+        allow.groups(['admins']), // Only admins can add users
       ]),
 
     // Public mutation (password reset)
-    initiatePasswordReset: a.mutation()
+    initiatePasswordReset: a
+      .mutation()
       .arguments({
         email: a.string().required(),
       })
       .returns(a.boolean())
       .handler(a.handler.function(resetPasswordFunction))
-      .authorization(allow => [
-        allow.guest(),  // Unauthenticated users can reset password
+      .authorization((allow) => [
+        allow.guest(), // Unauthenticated users can reset password
       ]),
   },
 });
@@ -390,26 +400,29 @@ export const data = defineData({
 ### JWT Provider (Auth0, Firebase, Okta, etc.)
 
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-}, {
-  authentication: {
-    provider: 'jwt',
-    jwt: {
-      issuer: 'https://auth.example.com',
-      audience: 'api://colorai',
-      jwksUri: 'https://auth.example.com/.well-known/jwks.json',
+const backend = defineBackend(
+  {
+    feedbackApi,
+  },
+  {
+    authentication: {
+      provider: 'jwt',
+      jwt: {
+        issuer: 'https://auth.example.com',
+        audience: 'api://colorai',
+        jwksUri: 'https://auth.example.com/.well-known/jwks.json',
 
-      // Map JWT claims to user context
-      claimsMapping: {
-        userId: 'sub',
-        email: 'email',
-        name: 'name',
-        groups: 'https://example.com/claims/groups',
+        // Map JWT claims to user context
+        claimsMapping: {
+          userId: 'sub',
+          email: 'email',
+          name: 'name',
+          groups: 'https://example.com/claims/groups',
+        },
       },
     },
-  },
-});
+  }
+);
 ```
 
 ### Multiple Providers
@@ -417,33 +430,36 @@ const backend = defineBackend({
 Support both Entra ID and custom JWT:
 
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-}, {
-  authentication: {
-    providers: [
-      {
-        name: 'entra-id',
-        type: 'azure-ad',
-        tenantId: '${manifest.tenantId}',
-        clientId: '${auto-generated}',
-      },
-      {
-        name: 'auth0',
-        type: 'jwt',
-        issuer: 'https://example.auth0.com/',
-        audience: 'api://colorai',
-        jwksUri: 'https://example.auth0.com/.well-known/jwks.json',
-      },
-    ],
-
-    // Define which provider to use for which endpoints
-    routing: {
-      '/api/internal/*': 'entra-id',    // Internal APIs use Entra ID
-      '/api/public/*': 'auth0',          // Public APIs use Auth0
-    },
+const backend = defineBackend(
+  {
+    feedbackApi,
   },
-});
+  {
+    authentication: {
+      providers: [
+        {
+          name: 'entra-id',
+          type: 'azure-ad',
+          tenantId: '${manifest.tenantId}',
+          clientId: '${auto-generated}',
+        },
+        {
+          name: 'auth0',
+          type: 'jwt',
+          issuer: 'https://example.auth0.com/',
+          audience: 'api://colorai',
+          jwksUri: 'https://example.auth0.com/.well-known/jwks.json',
+        },
+      ],
+
+      // Define which provider to use for which endpoints
+      routing: {
+        '/api/internal/*': 'entra-id', // Internal APIs use Entra ID
+        '/api/public/*': 'auth0', // Public APIs use Auth0
+      },
+    },
+  }
+);
 ```
 
 ### API Key Authentication
@@ -451,30 +467,35 @@ const backend = defineBackend({
 For service-to-service calls:
 
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-}, {
-  authentication: {
-    providers: [
-      { type: 'entra-id' },  // Default for users
-      {
-        type: 'api-key',
-        header: 'X-API-Key',
-        vault: 'api-keys',  // Key Vault secret name
-      },
-    ],
+const backend = defineBackend(
+  {
+    feedbackApi,
   },
-});
+  {
+    authentication: {
+      providers: [
+        { type: 'entra-id' }, // Default for users
+        {
+          type: 'api-key',
+          header: 'X-API-Key',
+          vault: 'api-keys', // Key Vault secret name
+        },
+      ],
+    },
+  }
+);
 
 // In schema
 export const data = defineData({
   schema: a.schema({
-    WebhookEvent: c.model({
-      type: a.string(),
-      payload: a.json(),
-    }).authorization(allow => [
-      allow.apiKey(),  // Allow API key auth
-    ]),
+    WebhookEvent: c
+      .model({
+        type: a.string(),
+        payload: a.json(),
+      })
+      .authorization((allow) => [
+        allow.apiKey(), // Allow API key auth
+      ]),
   }),
 });
 ```
@@ -515,7 +536,7 @@ import { PublicClientApplication } from '@azure/msal-browser';
 
 const msalConfig = {
   auth: {
-    clientId: 'YOUR_CLIENT_ID',  // From backend output
+    clientId: 'YOUR_CLIENT_ID', // From backend output
     authority: 'https://login.microsoftonline.com/YOUR_TENANT_ID',
     redirectUri: 'http://localhost:3000',
   },
@@ -534,7 +555,7 @@ const accessToken = result.accessToken;
 // Call API
 const response = await fetch('https://api.colorai.com/api/feedback', {
   headers: {
-    'Authorization': `Bearer ${accessToken}`,
+    Authorization: `Bearer ${accessToken}`,
   },
 });
 ```
@@ -611,6 +632,7 @@ await client.mutations.addUserToOrganization({
 ### 1. Token Validation
 
 All tokens are validated:
+
 - ✅ Signature verified
 - ✅ Issuer checked
 - ✅ Audience validated
@@ -636,19 +658,22 @@ All endpoints enforce HTTPS:
 Strict CORS by default:
 
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-}, {
-  cors: {
-    allowedOrigins: [
-      'https://colorai.com',
-      'https://app.colorai.com',
-      process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : null,
-    ].filter(Boolean),
-    allowedMethods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowCredentials: true,
+const backend = defineBackend(
+  {
+    feedbackApi,
   },
-});
+  {
+    cors: {
+      allowedOrigins: [
+        'https://colorai.com',
+        'https://app.colorai.com',
+        process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : null,
+      ].filter(Boolean),
+      allowedMethods: ['GET', 'POST', 'PUT', 'DELETE'],
+      allowCredentials: true,
+    },
+  }
+);
 ```
 
 ### 4. Rate Limiting
@@ -656,20 +681,23 @@ const backend = defineBackend({
 Automatic rate limiting per user:
 
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-}, {
-  rateLimit: {
-    authenticated: {
-      windowMs: 15 * 60 * 1000,  // 15 minutes
-      max: 100,  // 100 requests per window
-    },
-    unauthenticated: {
-      windowMs: 15 * 60 * 1000,
-      max: 20,  // Stricter for guest access
-    },
+const backend = defineBackend(
+  {
+    feedbackApi,
   },
-});
+  {
+    rateLimit: {
+      authenticated: {
+        windowMs: 15 * 60 * 1000, // 15 minutes
+        max: 100, // 100 requests per window
+      },
+      unauthenticated: {
+        windowMs: 15 * 60 * 1000,
+        max: 20, // Stricter for guest access
+      },
+    },
+  }
+);
 ```
 
 ### 5. Secrets in Key Vault
@@ -677,20 +705,23 @@ const backend = defineBackend({
 Never hardcode secrets:
 
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-}, {
-  authentication: {
-    provider: 'jwt',
-    jwt: {
-      issuer: 'https://auth.example.com',
-      audience: 'api://colorai',
-
-      // Client secret stored in Key Vault
-      clientSecret: '${keyVault.secrets.auth-client-secret}',
-    },
+const backend = defineBackend(
+  {
+    feedbackApi,
   },
-});
+  {
+    authentication: {
+      provider: 'jwt',
+      jwt: {
+        issuer: 'https://auth.example.com',
+        audience: 'api://colorai',
+
+        // Client secret stored in Key Vault
+        clientSecret: '${keyVault.secrets.auth-client-secret}',
+      },
+    },
+  }
+);
 ```
 
 ## Authorization Flow
@@ -786,7 +817,8 @@ export class AuthMiddleware {
   }
 
   private parseGroups(claims: Record<string, any>): string[] {
-    const groupsClaim = claims['groups'] || claims['http://schemas.microsoft.com/ws/2008/06/identity/claims/groups'];
+    const groupsClaim =
+      claims['groups'] || claims['http://schemas.microsoft.com/ws/2008/06/identity/claims/groups'];
     if (!groupsClaim) return [];
 
     return Array.isArray(groupsClaim) ? groupsClaim : [groupsClaim];
@@ -800,7 +832,9 @@ export class AuthMiddleware {
       groups: [],
       claims: {},
       isAuthenticated: false,
-      isInGroup() { return false; },
+      isInGroup() {
+        return false;
+      },
     };
   }
 }
@@ -819,13 +853,13 @@ export class AuthorizationEnforcer {
     user: User,
     model: ModelSchema,
     operation: 'create' | 'read' | 'update' | 'delete',
-    record?: any,
+    record?: any
   ): Promise<boolean> {
     const rules = model.authorizationRules;
 
     for (const rule of rules) {
       if (await this.evaluateRule(user, rule, operation, record)) {
-        return true;  // OR logic - any rule passing is enough
+        return true; // OR logic - any rule passing is enough
       }
     }
 
@@ -836,7 +870,7 @@ export class AuthorizationEnforcer {
     user: User,
     rule: AuthorizationRule,
     operation: string,
-    record?: any,
+    record?: any
   ): Promise<boolean> {
     // Check if rule applies to this operation
     if (rule.operations && !rule.operations.includes(operation)) {
@@ -848,10 +882,10 @@ export class AuthorizationEnforcer {
         return record?.owner === user.id;
 
       case 'groups':
-        return rule.groups.some(group => user.isInGroup(group));
+        return rule.groups.some((group) => user.isInGroup(group));
 
       case 'guest':
-        return true;  // Anyone (including unauthenticated)
+        return true; // Anyone (including unauthenticated)
 
       case 'authenticated':
         return user.isAuthenticated;
@@ -874,12 +908,12 @@ export class AuthorizationEnforcer {
     const rules = model.authorizationRules;
 
     // If any rule allows full access, no filter needed
-    if (rules.some(r => r.type === 'groups' && r.groups.some(g => user.isInGroup(g)))) {
-      return query;  // Admin access
+    if (rules.some((r) => r.type === 'groups' && r.groups.some((g) => user.isInGroup(g)))) {
+      return query; // Admin access
     }
 
     // If owner rule exists, filter by owner
-    if (rules.some(r => r.type === 'owner')) {
+    if (rules.some((r) => r.type === 'owner')) {
       query.where('owner', '=', user.id);
     }
 
@@ -905,7 +939,7 @@ interface AuthenticationConfig {
   // Entra ID config
   entraId?: {
     tenantId: string;
-    clientId?: string;  // Auto-generated if not provided
+    clientId?: string; // Auto-generated if not provided
     allowedGroups?: string[];
   };
 
@@ -924,8 +958,8 @@ interface AuthenticationConfig {
 
   // API key config
   apiKey?: {
-    header: string;  // e.g., 'X-API-Key'
-    vault: string;   // Key Vault secret name
+    header: string; // e.g., 'X-API-Key'
+    vault: string; // Key Vault secret name
   };
 
   // CORS
@@ -952,6 +986,7 @@ interface AuthenticationConfig {
 ## Summary
 
 **Authentication is:**
+
 - ✅ **Zero-config** - Entra ID works out of the box
 - ✅ **Declarative** - Rules in schema, not scattered in code
 - ✅ **Type-safe** - User context is strongly typed
@@ -959,6 +994,7 @@ interface AuthenticationConfig {
 - ✅ **Secure** - Best practices enforced by default
 
 **Authorization supports:**
+
 - ✅ **Owner-based** - Resources scoped to creator
 - ✅ **Group-based** - Role-based access control
 - ✅ **Guest access** - Public resources
@@ -967,6 +1003,7 @@ interface AuthenticationConfig {
 - ✅ **Custom logic** - Complex business rules
 
 **Next Steps:**
+
 1. Implement AuthMiddleware and AuthorizationEnforcer
 2. Add Entra ID app registration to synthesis
 3. Generate typed client SDK with auth

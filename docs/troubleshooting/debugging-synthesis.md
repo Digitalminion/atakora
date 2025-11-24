@@ -17,6 +17,7 @@ atakora synth --verbose
 ```
 
 Output shows:
+
 - Construct creation
 - Property resolution
 - Validation steps
@@ -27,35 +28,40 @@ Output shows:
 ### Missing Properties
 
 **Error**:
+
 ```
 Validation Error: Missing required property 'addressSpace'
 ```
 
 **Debug**:
+
 ```typescript
 console.log('Creating VNet:', {
   id: 'VNet',
-  addressSpace: props.addressSpace  // Check if defined
+  addressSpace: props.addressSpace, // Check if defined
 });
 
 new VirtualNetwork(this, 'VNet', props);
 ```
 
 **Fix**:
+
 ```typescript
 new VirtualNetwork(this, 'VNet', {
-  addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
+  addressSpace: { addressPrefixes: ['10.0.0.0/16'] },
 });
 ```
 
 ### Reference Resolution
 
 **Error**:
+
 ```
 Cannot resolve reference to ResourceGroup
 ```
 
 **Debug**: Check construct tree:
+
 ```typescript
 const app = new App();
 const stack = new Stack(app, 'test');
@@ -65,21 +71,24 @@ console.log('Stack children:', stack.node.children.length);
 ```
 
 **Fix**: Ensure parent-child relationship:
+
 ```typescript
-const rg = new ResourceGroup(stack, 'RG', {});  // Parent: stack
+const rg = new ResourceGroup(stack, 'RG', {}); // Parent: stack
 const vnet = new VirtualNetwork(stack, 'VNet', {
-  resourceGroup: rg  // Reference sibling
+  resourceGroup: rg, // Reference sibling
 });
 ```
 
 ### Validation Failures
 
 **Error**:
+
 ```
 Validation failed with 3 errors
 ```
 
 **Debug**: Run synthesis with validation details:
+
 ```typescript
 try {
   app.synth();
@@ -147,14 +156,14 @@ Build infrastructure incrementally:
 ```typescript
 // Step 1: Just resource group
 const rg = new ResourceGroup(this, 'RG', {});
-app.synth();  // Test
+app.synth(); // Test
 
 // Step 2: Add network
 const vnet = new VirtualNetwork(this, 'VNet', {
   resourceGroup: rg,
-  addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
+  addressSpace: { addressPrefixes: ['10.0.0.0/16'] },
 });
-app.synth();  // Test
+app.synth(); // Test
 
 // Step 3: Add more resources...
 ```
@@ -171,11 +180,11 @@ import { VirtualNetwork } from '@atakora/cdk/network';
 const app = new App();
 const stack = new Stack(app, 'test', {
   environment: 'test',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 new VirtualNetwork(stack, 'VNet', {
-  addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
+  addressSpace: { addressPrefixes: ['10.0.0.0/16'] },
 });
 
 app.synth();
@@ -193,7 +202,7 @@ atakora synth --no-validate
 
 ## See Also
 
-- [Common Issues](./common-issues.md)
+- [Common Issues](./Common-Issues.md)
 - [Synthesis Guide](../guides/fundamentals/synthesis.md)
 - [Validation Overview](../guides/validation/overview.md)
 

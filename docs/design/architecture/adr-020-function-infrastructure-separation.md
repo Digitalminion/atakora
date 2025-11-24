@@ -3,10 +3,12 @@
 ## Context
 
 The gen2 architecture initially mixed Azure Functions with their infrastructure triggers in the same folders. For example:
+
 - Queue processors contained both the queue definition and the function handler
 - Event processors contained both the Event Grid topic and the function handler
 
 This created several problems:
+
 1. **Unclear separation of concerns** - Functions (compute) were mixed with infrastructure (queues, topics)
 2. **Inconsistent organization** - HTTP functions were in `functions/` but queue/event functions were elsewhere
 3. **Difficult to understand relationships** - The connection between infrastructure and functions was implicit
@@ -19,6 +21,7 @@ We have established a clear architectural pattern:
 **ALL Azure Functions live in the `functions/` folder, regardless of trigger type.**
 
 This means:
+
 - HTTP-triggered functions → `functions/*/`
 - Queue-triggered functions → `functions/*/`
 - Timer-triggered functions → `functions/*/`
@@ -26,6 +29,7 @@ This means:
 - Service Bus-triggered functions → `functions/*/`
 
 Infrastructure resources live in their domain-specific folders and reference the functions:
+
 - Queues → `queue-processors/*/resource.ts` (defines queue, imports function)
 - Event Grid Topics → `event-topics/*/resource.ts` (defines topic, imports function)
 - Service Bus Topics → `service-bus-topics/*/resource.ts` (defines topic, imports function)
@@ -60,7 +64,7 @@ import { dataQualityProcessor } from '../../functions/data-quality-processor/res
 
 export const dataQualityQueue = defineQueue({
   name: 'data-quality',
-  processor: dataQualityProcessor,  // Attaches the function
+  processor: dataQualityProcessor, // Attaches the function
   queue: {
     messageTimeToLive: '7.00:00:00',
     maxDeliveryCount: 3,
@@ -99,6 +103,7 @@ gen2/
 Keep queue/event processors as combined units with both infrastructure and function.
 
 **Rejected because:**
+
 - Violates separation of concerns
 - Makes it harder to understand what's infrastructure vs compute
 - Inconsistent with HTTP functions being separate
@@ -106,11 +111,13 @@ Keep queue/event processors as combined units with both infrastructure and funct
 ### Alternative 2: Separate by Trigger Type
 
 Organize functions into subfolders by trigger type:
+
 - `functions/http/`
 - `functions/queue/`
 - `functions/event-grid/`
 
 **Rejected because:**
+
 - Adds unnecessary hierarchy
 - Functions often change trigger types during development
 - All functions are fundamentally the same (code that runs)
@@ -120,6 +127,7 @@ Organize functions into subfolders by trigger type:
 Put infrastructure and functions together in feature folders.
 
 **Rejected because:**
+
 - Infrastructure often serves multiple functions
 - Functions can be reused across different infrastructure
 - Harder to manage infrastructure lifecycle separately

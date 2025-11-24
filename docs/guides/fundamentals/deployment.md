@@ -83,6 +83,7 @@ atakora synth --output ./infrastructure
 ```
 
 **What happens during synthesis**:
+
 - Constructs are traversed to build resource definitions
 - Dependencies are resolved and ordered
 - ARM templates are generated in JSON format
@@ -90,6 +91,7 @@ atakora synth --output ./infrastructure
 - Manifest file tracks deployment metadata
 
 **Output structure**:
+
 ```
 arm.out/
 ├── production.template.json     # ARM template
@@ -116,6 +118,7 @@ az deployment group what-if \
 ```
 
 **Validation checks**:
+
 - Template syntax correctness
 - Resource property types
 - Required properties present
@@ -139,6 +142,7 @@ atakora diff Production --verbose
 ```
 
 **Diff output example**:
+
 ```
 Stack: Production
 
@@ -172,13 +176,13 @@ atakora deploy Production --auto-approve
 
 **Deployment options**:
 
-| Flag | Description |
-|------|-------------|
-| `--require-approval` | Prompt before deploying (default for production) |
-| `--auto-approve` | Skip confirmation prompts |
-| `--verbose` | Show detailed deployment logs |
-| `--parallel` | Deploy independent stacks in parallel |
-| `--rollback-on-error` | Automatically rollback on failure |
+| Flag                  | Description                                      |
+| --------------------- | ------------------------------------------------ |
+| `--require-approval`  | Prompt before deploying (default for production) |
+| `--auto-approve`      | Skip confirmation prompts                        |
+| `--verbose`           | Show detailed deployment logs                    |
+| `--parallel`          | Deploy independent stacks in parallel            |
+| `--rollback-on-error` | Automatically rollback on failure                |
 
 ### Step 5: Monitor Deployment
 
@@ -195,6 +199,7 @@ az deployment group show \
 ```
 
 **Deployment states**:
+
 - **Running**: Deployment in progress
 - **Succeeded**: All resources created successfully
 - **Failed**: Deployment encountered errors
@@ -286,6 +291,7 @@ atakora deploy Production
 ```
 
 **Best for**:
+
 - Small to medium infrastructure
 - Non-production environments
 - Quick iterations during development
@@ -300,6 +306,7 @@ atakora deploy Production --mode Incremental
 ```
 
 **Behavior**:
+
 - Creates new resources
 - Updates modified resources
 - **Leaves unchanged resources alone**
@@ -317,6 +324,7 @@ atakora deploy Production --mode Complete
 **Warning**: Complete mode deletes resources not defined in the template!
 
 **Best for**:
+
 - Ensuring exact infrastructure state
 - Removing orphaned resources
 - Production deployments with careful review
@@ -337,6 +345,7 @@ atakora deploy ApplicationStack
 ```
 
 **Best for**:
+
 - Large infrastructure changes
 - Minimizing blast radius
 - Testing dependencies between layers
@@ -369,6 +378,7 @@ const greenStack = new ResourceGroupStack(app, 'Green', {
 ```
 
 **Best for**:
+
 - Zero-downtime deployments
 - Easy rollback capability
 - High-availability requirements
@@ -464,7 +474,7 @@ const app = new AzureApp({
 
 const environments = ['dev', 'staging', 'prod'];
 
-environments.forEach(env => {
+environments.forEach((env) => {
   const stack = new ResourceGroupStack(app, env, {
     resourceGroupName: `rg-webapp-${env}`,
     location: 'eastus2',
@@ -547,7 +557,8 @@ Reference existing Azure resources:
 
 ```typescript
 // Reference existing VNet
-const existingVNetId = '/subscriptions/xxx/resourceGroups/rg-shared/providers/Microsoft.Network/virtualNetworks/vnet-shared';
+const existingVNetId =
+  '/subscriptions/xxx/resourceGroups/rg-shared/providers/Microsoft.Network/virtualNetworks/vnet-shared';
 
 const webApp = new Sites(stack, 'WebApp', {
   siteName: 'webapp-main',
@@ -593,6 +604,7 @@ az deployment group show \
 ```
 
 **Output example**:
+
 ```json
 {
   "StorageAccountName": {
@@ -675,6 +687,7 @@ atakora deploy Production --rollback-on-error
 ```
 
 **Azure deployment behavior**:
+
 - If any resource fails, entire deployment fails
 - Resources already created remain (unless using Complete mode)
 - Fix issues and redeploy
@@ -788,7 +801,7 @@ jobs:
 
   deploy-production:
     needs: deploy-staging
-    environment: production  # Requires manual approval
+    environment: production # Requires manual approval
     runs-on: ubuntu-latest
     steps:
       - run: atakora deploy Production --auto-approve
@@ -998,11 +1011,13 @@ az deployment group create \
 ## Related Reading
 
 ### Fundamentals
+
 - **[App and Stacks](./app-and-stacks.md)** - Understanding the construct tree and stack organization
 - **[Synthesis](./synthesis.md)** - How code becomes ARM templates
 - **[Resources](./resources.md)** - Working with Azure resources
 
 ### Workflows and Tutorials
+
 - **[Deploying Environments Workflow](../workflows/deploying-environments.md)** - Multi-environment deployment strategies
 - **[Managing Secrets](../workflows/managing-secrets.md)** - Secure secret handling for deployments
 - **[CI/CD Pipeline Tutorial](../tutorials/ci-cd-pipeline.md)** - Automate deployments with GitHub Actions / Azure DevOps
@@ -1010,20 +1025,22 @@ az deployment group create \
 - **[Multi-Region Setup](../tutorials/multi-region-setup.md)** - Cross-region deployments
 
 ### Reference
+
 - **[CLI deploy Command](../../reference/cli/deploy.md)** - Detailed deploy command documentation
 - **[CLI diff Command](../../reference/cli/diff.md)** - Preview deployment changes
 - **[CLI synth Command](../../reference/cli/synth.md)** - Template synthesis options
 - **[Authentication Reference](../../reference/authentication.md)** - Authentication methods and configuration
 
 ### Troubleshooting
-- **[Deployment Failures](../../troubleshooting/deployment-failures.md)** - Common deployment issues and solutions
+
+- **[Deployment Failures](../../troubleshooting/Deployment-Failures.md)** - Common deployment issues and solutions
 - **[Common Validation Errors](../validation/common-errors.md)** - Fix validation errors before deployment
 - **[Error Code Reference](../../reference/error-codes.md)** - Complete error code index
 
 ## See Also
 
-- [Your First Stack Tutorial](../../getting-started/your-first-stack.md) - Hands-on deployment walkthrough
-- [Testing Infrastructure](../workflows/testing-infrastructure.md)  - Test before deploying
+- [Your First Stack Tutorial](../../getting-started/03-Your-First-Stack.md) - Hands-on deployment walkthrough
+- [Testing Infrastructure](../workflows/testing-infrastructure.md) - Test before deploying
 - [ARM Template Output Reference](../../reference/arm-template-output.md) - Understanding generated templates
 
 ---

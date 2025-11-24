@@ -14,12 +14,14 @@ Following the architectural decision in ADR-004, all user-facing documentation h
 ### Import Pattern Change
 
 **OLD Pattern (Deprecated)**:
+
 ```typescript
 import { App, Stack, Construct } from '@atakora/lib';
 import { VirtualNetworks } from '@atakora/cdk/network';
 ```
 
 **NEW Pattern (Required)**:
+
 ```typescript
 import { App, Stack, Construct } from '@atakora/cdk';
 import { VirtualNetworks } from '@atakora/cdk/network';
@@ -60,10 +62,10 @@ import { VirtualNetworks } from '@atakora/cdk/network';
 
 ### Getting Started Documentation ✅
 
-6. **docs/getting-started/installation.md** - Installation guide updated
-7. **docs/getting-started/quickstart.md** - Quick start tutorial updated
-8. **docs/getting-started/your-first-stack.md** - First stack tutorial updated
-9. **docs/getting-started/next-steps.md** - Next steps guide updated
+6. **docs/getting-started/01-Installation.md** - Installation guide updated
+7. **docs/getting-started/02-Quickstart.md** - Quick start tutorial updated
+8. **docs/getting-started/03-Your-First-Stack.md** - First stack tutorial updated
+9. **docs/getting-started/05-Next-Steps.md** - Next steps guide updated
 
 ### Fundamental Guides ✅
 
@@ -81,33 +83,39 @@ import { VirtualNetworks } from '@atakora/cdk/network';
 The following user-facing documentation files still contain `@atakora/lib` imports and should be updated:
 
 #### Tutorials
+
 - `docs/guides/tutorials/web-app-with-database.md`
 - `docs/guides/tutorials/multi-region-setup.md`
 - `docs/guides/tutorials/ci-cd-pipeline.md`
 - `docs/guides/tutorials/government-cloud-deployment.md`
 
 #### Workflows
+
 - `docs/guides/workflows/adding-resources.md`
 - `docs/guides/workflows/managing-secrets.md`
 - `docs/guides/workflows/organizing-projects.md`
 - `docs/guides/workflows/deploying-environments.md`
 
 #### Validation Guides
+
 - `docs/guides/validation/overview.md`
 - `docs/guides/validation/README.md`
 - `docs/guides/validation/writing-custom-validators.md`
 - `docs/guides/common-validation-errors.md`
 
 #### Examples
+
 - `docs/examples/simple-web-app/README.md`
 - `docs/examples/multi-region-app/README.md`
 - `docs/examples/government-cloud/README.md`
 
 #### API Reference
+
 - `docs/reference/api/README.md`
 - `docs/reference/api/core/README.md`
 
 #### CLI Reference
+
 - `docs/reference/cli/README.md`
 - `docs/reference/cli/init.md`
 - `docs/reference/cli/add.md`
@@ -170,6 +178,7 @@ npx @atakora/cdk-migrate update-imports
 ```
 
 This tool would:
+
 1. Scan TypeScript/JavaScript files
 2. Replace `from '@atakora/lib'` with `from '@atakora/cdk'`
 3. Preserve type-only imports
@@ -261,7 +270,7 @@ Before considering the documentation update complete, verify:
 In addition to import path changes, some class names were updated:
 
 - `AzureApp` → `App`
-- Resource classes now use Microsoft.* naming (e.g., `ResourceGroups`, `VirtualNetworks`)
+- Resource classes now use Microsoft.\* naming (e.g., `ResourceGroups`, `VirtualNetworks`)
 
 ### Gov Cloud Considerations
 
@@ -270,6 +279,7 @@ No changes required for Gov Cloud vs Commercial Cloud - the import pattern appli
 ### Breaking Changes
 
 This is a **breaking change** for users:
+
 - Existing code will break in v2.0.0 if not updated
 - v1.x maintains backward compatibility with deprecation warnings
 - Migration guide provides clear upgrade path

@@ -25,12 +25,14 @@ We will implement an **environment-aware progressive security model** with these
 ### 2. Service Endpoints vs Private Endpoints
 
 Use a smart selection strategy:
+
 - **Service Endpoints** for cost-sensitive environments (free, Azure backbone)
 - **Private Endpoints** for production and compliance scenarios (~$7/endpoint/month)
 
 ### 3. Three-Tier Security Architecture
 
 All production deployments follow a three-tier model:
+
 1. **Edge Security** - API Management/Application Gateway with WAF
 2. **Network Isolation** - VNet with NSGs and subnet segmentation
 3. **Resource Security** - Managed Identity, RBAC, Key Vault
@@ -38,6 +40,7 @@ All production deployments follow a three-tier model:
 ### 4. Cost-Conscious Security Levels
 
 Provide clear cost tiers:
+
 - **Basic** (~$0): Public endpoints with IP restrictions
 - **Standard** (~$50): Service endpoints + NSGs
 - **Enhanced** (~$300): Private endpoints + basic WAF
@@ -50,9 +53,12 @@ Provide clear cost tiers:
 const backend = defineBackend({ api });
 
 // Progressive enhancement
-const backend = defineBackend({ api }, {
-  networking: { forcePrivate: true }  // Override defaults
-});
+const backend = defineBackend(
+  { api },
+  {
+    networking: { forcePrivate: true }, // Override defaults
+  }
+);
 ```
 
 ## Alternatives Considered
@@ -62,11 +68,13 @@ const backend = defineBackend({ api }, {
 Force private endpoints in all environments.
 
 **Pros:**
+
 - Consistent security posture
 - No accidental data exposure
 - Simplified mental model
 
 **Cons:**
+
 - Development becomes painful (VPN required)
 - Higher costs even for dev/test
 - Slower onboarding for new developers
@@ -76,11 +84,13 @@ Force private endpoints in all environments.
 Use public endpoints with authentication/firewall rules.
 
 **Pros:**
+
 - Simple development experience
 - Lower infrastructure costs
 - Easy debugging and testing
 
 **Cons:**
+
 - Doesn't meet enterprise requirements
 - Compliance violations
 - Security relies solely on authentication
@@ -90,11 +100,13 @@ Use public endpoints with authentication/firewall rules.
 Require explicit network configuration for each environment.
 
 **Pros:**
+
 - Full control and flexibility
 - No surprises
 - Clear cost implications
 
 **Cons:**
+
 - Violates Gen 2's zero-config philosophy
 - Boilerplate configuration
 - Easy to misconfigure
@@ -136,21 +148,25 @@ This decision will be successful if:
 ## Implementation Notes
 
 ### Phase 1: Core Networking
+
 - VNet creation with smart subnet allocation
 - NSG rules with least-privilege defaults
 - Service endpoint configuration
 
 ### Phase 2: Private Endpoints
+
 - Automatic private endpoint creation
 - Private DNS zone management
 - DNS resolution configuration
 
 ### Phase 3: Advanced Security
+
 - WAF integration
 - DDoS protection options
 - Azure Firewall support
 
 ### Phase 4: Monitoring
+
 - Network Watcher integration
 - Connection troubleshooting
 - Performance metrics

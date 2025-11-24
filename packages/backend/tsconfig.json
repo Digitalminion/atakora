@@ -7,17 +7,7 @@
     "declaration": true,
     "declarationMap": true
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/**/handler.ts"
-  ],
-  "references": [
-    { "path": "../lib" },
-    { "path": "../cdk" },
-    { "path": "../component" }
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "**/**/handler.ts"],
+  "references": [{ "path": "../lib" }, { "path": "../cdk" }, { "path": "../component" }]
 }

@@ -29,6 +29,7 @@ Development → Staging → Production
 ```
 
 **Development (Dev)**
+
 - Purpose: Active development and experimentation
 - Changes: Frequent, sometimes breaking
 - Cost: Optimized for minimal spend
@@ -36,6 +37,7 @@ Development → Staging → Production
 - Availability: Best effort
 
 **Staging (Pre-Production)**
+
 - Purpose: Production validation and testing
 - Changes: Controlled, tested changes only
 - Cost: Similar to production sizing
@@ -43,6 +45,7 @@ Development → Staging → Production
 - Availability: High, mirrors production
 
 **Production (Prod)**
+
 - Purpose: Serve real users
 - Changes: Carefully reviewed and tested
 - Cost: Optimized for performance and reliability
@@ -102,20 +105,20 @@ export const devConfig: EnvironmentConfig = {
   tags: {
     environment: 'development',
     managedBy: 'atakora',
-    costCenter: 'engineering'
+    costCenter: 'engineering',
   },
   appService: {
     sku: { name: 'B1', tier: 'Basic' },
-    alwaysOn: false
+    alwaysOn: false,
   },
   database: {
     sku: { name: 'Basic', tier: 'Basic' },
-    backupRetentionDays: 7
+    backupRetentionDays: 7,
   },
   monitoring: {
     enabled: false,
-    retentionDays: 30
-  }
+    retentionDays: 30,
+  },
 };
 ```
 
@@ -131,20 +134,20 @@ export const productionConfig: EnvironmentConfig = {
     environment: 'production',
     managedBy: 'atakora',
     costCenter: 'engineering',
-    businessUnit: 'platform'
+    businessUnit: 'platform',
   },
   appService: {
     sku: { name: 'P1v2', tier: 'PremiumV2' },
-    alwaysOn: true
+    alwaysOn: true,
   },
   database: {
     sku: { name: 'S2', tier: 'Standard' },
-    backupRetentionDays: 35
+    backupRetentionDays: 35,
   },
   monitoring: {
     enabled: true,
-    retentionDays: 90
-  }
+    retentionDays: 90,
+  },
 };
 ```
 
@@ -162,7 +165,7 @@ import { EnvironmentConfig } from './base';
 const configs: Record<string, EnvironmentConfig> = {
   dev: devConfig,
   staging: stagingConfig,
-  production: productionConfig
+  production: productionConfig,
 };
 
 export function getConfig(environment?: string): EnvironmentConfig {
@@ -172,7 +175,7 @@ export function getConfig(environment?: string): EnvironmentConfig {
   if (!config) {
     throw new Error(
       `No configuration found for environment: ${env}. ` +
-      `Available environments: ${Object.keys(configs).join(', ')}`
+        `Available environments: ${Object.keys(configs).join(', ')}`
     );
   }
 
@@ -197,13 +200,13 @@ export class WebApplicationStack extends Stack {
 
     const rg = new ResourceGroup(this, 'rg', {
       location: config.location,
-      tags: config.tags
+      tags: config.tags,
     });
 
     const plan = new AppServicePlan(this, 'plan', {
       resourceGroup: rg,
       location: config.location,
-      sku: config.appService.sku
+      sku: config.appService.sku,
     });
 
     const webApp = new WebApp(this, 'webapp', {
@@ -212,10 +215,10 @@ export class WebApplicationStack extends Stack {
       serverFarmId: plan.id,
       properties: {
         siteConfig: {
-          alwaysOn: config.appService.alwaysOn
-        }
+          alwaysOn: config.appService.alwaysOn,
+        },
       },
-      tags: config.tags
+      tags: config.tags,
     });
 
     // Conditional resources based on environment
@@ -225,14 +228,11 @@ export class WebApplicationStack extends Stack {
         location: config.location,
         kind: 'web',
         properties: {
-          retentionInDays: config.monitoring.retentionDays
-        }
+          retentionInDays: config.monitoring.retentionDays,
+        },
       });
 
-      webApp.addAppSetting(
-        'APPINSIGHTS_INSTRUMENTATIONKEY',
-        appInsights.instrumentationKey
-      );
+      webApp.addAppSetting('APPINSIGHTS_INSTRUMENTATIONKEY', appInsights.instrumentationKey);
     }
   }
 }
@@ -516,14 +516,14 @@ const promotions: PromotionConfig[] = [
     from: 'dev',
     to: 'staging',
     tests: ['unit', 'integration'],
-    approvalRequired: false
+    approvalRequired: false,
   },
   {
     from: 'staging',
     to: 'production',
     tests: ['smoke', 'security'],
-    approvalRequired: true
-  }
+    approvalRequired: true,
+  },
 ];
 
 async function runTests(tests: string[]): Promise<boolean> {
@@ -558,9 +558,7 @@ async function promote(config: PromotionConfig): Promise<void> {
 
   // Deploy to target environment
   console.log(`Deploying to ${config.to}...`);
-  await execAsync(
-    `atakora deploy --package webapp --var environment=${config.to}`
-  );
+  await execAsync(`atakora deploy --package webapp --var environment=${config.to}`);
 
   console.log(`✓ Successfully promoted to ${config.to}`);
 }
@@ -606,7 +604,7 @@ name: Drift Detection
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
+    - cron: '0 */6 * * *' # Every 6 hours
   workflow_dispatch:
 
 jobs:
@@ -696,7 +694,7 @@ const checks: PreDeploymentCheck[] = [
       const { stdout } = await execAsync('npm test');
       return !stdout.includes('failed');
     },
-    critical: true
+    critical: true,
   },
   {
     name: 'No secrets in code',
@@ -704,7 +702,7 @@ const checks: PreDeploymentCheck[] = [
       const { stdout } = await execAsync('git secrets --scan');
       return stdout === '';
     },
-    critical: true
+    critical: true,
   },
   {
     name: 'Dependencies up to date',
@@ -712,7 +710,7 @@ const checks: PreDeploymentCheck[] = [
       const { stdout } = await execAsync('npm outdated');
       return !stdout.includes('MAJOR');
     },
-    critical: false
+    critical: false,
   },
   {
     name: 'Staging tests passed',
@@ -720,7 +718,7 @@ const checks: PreDeploymentCheck[] = [
       // Check staging test results
       return true;
     },
-    critical: true
+    critical: true,
   },
   {
     name: 'Change approval received',
@@ -728,8 +726,8 @@ const checks: PreDeploymentCheck[] = [
       // Check for approval in ticketing system
       return true;
     },
-    critical: true
-  }
+    critical: true,
+  },
 ];
 
 async function runPreDeploymentChecks(): Promise<void> {
@@ -885,14 +883,14 @@ export class BlueGreenStack extends Stack {
       location: config.location,
       tags: {
         ...config.tags,
-        version
-      }
+        version,
+      },
     });
 
     const plan = new AppServicePlan(this, `plan-${version}`, {
       resourceGroup: rg,
       location: config.location,
-      sku: config.appService.sku
+      sku: config.appService.sku,
     });
 
     const webApp = new WebApp(this, `webapp-${version}`, {
@@ -901,8 +899,8 @@ export class BlueGreenStack extends Stack {
       serverFarmId: plan.id,
       tags: {
         ...config.tags,
-        version
-      }
+        version,
+      },
     });
 
     // Traffic manager for switching
@@ -917,19 +915,19 @@ export class BlueGreenStack extends Stack {
             type: 'Microsoft.Network/trafficManagerProfiles/azureEndpoints',
             properties: {
               targetResourceId: webApp.id,
-              weight: version === 'blue' ? 100 : 0
-            }
+              weight: version === 'blue' ? 100 : 0,
+            },
           },
           {
             name: 'green',
             type: 'Microsoft.Network/trafficManagerProfiles/azureEndpoints',
             properties: {
               targetResourceId: webApp.id,
-              weight: version === 'green' ? 100 : 0
-            }
-          }
-        ]
-      }
+              weight: version === 'green' ? 100 : 0,
+            },
+          },
+        ],
+      },
     });
   }
 }
@@ -987,7 +985,9 @@ export function validateEnvironmentParity(
 
   // Check resource types match
   if (env1.appService.sku.tier !== env2.appService.sku.tier.replace('Premium', 'Basic')) {
-    differences.push(`SKU tier mismatch: ${env1.appService.sku.tier} vs ${env2.appService.sku.tier}`);
+    differences.push(
+      `SKU tier mismatch: ${env1.appService.sku.tier} vs ${env2.appService.sku.tier}`
+    );
   }
 
   // Check features match
@@ -1020,13 +1020,13 @@ const resourceName = config.environment === 'prod' ? 'webapp' : 'webapp-dev';
 // ✅ Good: Separate resource groups per environment
 const rg = new ResourceGroup(this, 'rg', {
   location: config.location,
-  name: `rg-${config.environment}`
+  name: `rg-${config.environment}`,
 });
 
 // ❌ Avoid: Shared resource group
 const rg = new ResourceGroup(this, 'rg', {
   location: 'eastus',
-  name: 'rg-shared'
+  name: 'rg-shared',
 });
 ```
 
@@ -1052,7 +1052,7 @@ Document what changes in each deployment.
 
 - [Core Concepts](../core-concepts/README.md) - Understanding stacks and synthesis
 - [CLI Reference](../../reference/cli/README.md) - Deployment commands
-- [Troubleshooting](../../troubleshooting/deployment-failures.md) - Deployment issues
+- [Troubleshooting](../../troubleshooting/Deployment-Failures.md) - Deployment issues
 
 ---
 

@@ -62,10 +62,10 @@ We will implement a **multi-phase deployment orchestrator** that manages the com
 
 ```typescript
 enum DeploymentMode {
-  INCREMENTAL = 'Incremental',  // Default: Add/update resources
-  COMPLETE = 'Complete',         // Replace all resources
-  VALIDATE = 'Validate',         // Dry run only
-  WHATIF = 'WhatIf'             // Preview changes
+  INCREMENTAL = 'Incremental', // Default: Add/update resources
+  COMPLETE = 'Complete', // Replace all resources
+  VALIDATE = 'Validate', // Dry run only
+  WHATIF = 'WhatIf', // Preview changes
 }
 ```
 
@@ -74,10 +74,10 @@ enum DeploymentMode {
 ```typescript
 interface DeploymentOptions {
   mode: DeploymentMode;
-  parallel: boolean;           // Deploy independent templates in parallel
-  force: boolean;              // Skip confirmations
-  rollbackOnFailure: boolean;  // Automatic rollback
-  timeout: number;             // Max deployment time (minutes)
+  parallel: boolean; // Deploy independent templates in parallel
+  force: boolean; // Skip confirmations
+  rollbackOnFailure: boolean; // Automatic rollback
+  timeout: number; // Max deployment time (minutes)
   retryPolicy: {
     maxAttempts: number;
     backoffMultiplier: number;
@@ -88,33 +88,41 @@ interface DeploymentOptions {
 ## Alternatives Considered
 
 ### Alternative 1: Simple Sequential Deployment
+
 Deploy each template one by one in a fixed order.
 
 **Rejected because**:
+
 - Slow deployment times
 - Doesn't leverage Azure's parallel deployment capabilities
 - Poor user experience for large stacks
 
 ### Alternative 2: Azure DevOps / GitHub Actions Only
+
 Rely entirely on CI/CD pipelines for orchestration.
 
 **Rejected because**:
+
 - Not all users have CI/CD
 - Local development needs deployment capability
 - Reduces framework portability
 
 ### Alternative 3: Terraform-style State Management
+
 Implement full state tracking like Terraform with state files.
 
 **Rejected because**:
+
 - Azure already tracks deployment state
 - Adds complexity without clear benefit
 - Risk of state drift
 
 ### Alternative 4: Azure Deployment Stacks
+
 Use Azure's preview Deployment Stacks feature.
 
 **Rejected because**:
+
 - Still in preview
 - Not available in all regions
 - Limited Government cloud support
@@ -155,7 +163,7 @@ class DeploymentPreparation {
     const storage = await this.ensureStorage({
       location: manifest.location,
       project: manifest.project,
-      environment: manifest.environment
+      environment: manifest.environment,
     });
 
     // 4. Validate all artifacts exist
@@ -207,13 +215,17 @@ class ArtifactUploader {
     return { uris: results, tokens };
   }
 
-  private async uploadBlob(storage: StorageAccount, container: string, file: File): Promise<string> {
+  private async uploadBlob(
+    storage: StorageAccount,
+    container: string,
+    file: File
+  ): Promise<string> {
     const blobClient = storage.getBlockBlobClient(container, file.name);
 
     // Upload with retry logic
     await this.retry(async () => {
       await blobClient.uploadFile(file.path, {
-        onProgress: (progress) => this.reportProgress(file.name, progress)
+        onProgress: (progress) => this.reportProgress(file.name, progress),
       });
     });
 
@@ -235,7 +247,7 @@ class DeploymentEngine {
       template: rootTemplate,
       parameters: plan.parameters,
       mode: plan.mode,
-      location: plan.location
+      location: plan.location,
     });
 
     // 3. Monitor deployment progress
@@ -268,21 +280,21 @@ class DeploymentEngine {
       deployment,
       linkedDeployments,
       duration: monitor.getDuration(),
-      resourcesCreated: await this.getCreatedResources(deployment)
+      resourcesCreated: await this.getCreatedResources(deployment),
     };
   }
 
   private prepareRootTemplate(plan: DeploymentPlan, artifacts: UploadResult): ArmTemplate {
     return {
-      '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+      $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
       contentVersion: '1.0.0.0',
       parameters: this.generateParameters(plan),
       variables: {
         deploymentId: plan.deploymentId,
-        storageUri: artifacts.storageUri
+        storageUri: artifacts.storageUri,
       },
       resources: this.generateLinkedDeployments(plan, artifacts),
-      outputs: this.generateOutputs(plan)
+      outputs: this.generateOutputs(plan),
     };
   }
 
@@ -300,10 +312,10 @@ class DeploymentEngine {
             mode: plan.mode,
             templateLink: {
               uri: artifacts.getUri(template.name),
-              contentVersion: '1.0.0.0'
+              contentVersion: '1.0.0.0',
             },
-            parameters: this.extractParameters(template, plan.parameters)
-          }
+            parameters: this.extractParameters(template, plan.parameters),
+          },
         });
       }
     }
@@ -337,10 +349,10 @@ class DeploymentValidator {
     checks.push(await this.checkResourceHealth(deployment));
 
     return {
-      success: checks.every(c => c.success),
+      success: checks.every((c) => c.success),
       checks,
       warnings: this.extractWarnings(checks),
-      recommendations: this.generateRecommendations(checks)
+      recommendations: this.generateRecommendations(checks),
     };
   }
 }
@@ -409,7 +421,7 @@ class ParallelDeploymentStrategy {
     const queue = new PQueue({ concurrency: maxConcurrency });
 
     // Add all templates in tier to queue
-    const promises = tier.templates.map(template =>
+    const promises = tier.templates.map((template) =>
       queue.add(() => this.deployTemplate(template))
     );
 
@@ -417,7 +429,7 @@ class ParallelDeploymentStrategy {
     const results = await Promise.allSettled(promises);
 
     // Handle failures
-    const failures = results.filter(r => r.status === 'rejected');
+    const failures = results.filter((r) => r.status === 'rejected');
     if (failures.length > 0) {
       throw new AggregateError(failures, 'Parallel deployment failed');
     }
@@ -429,12 +441,11 @@ class ParallelDeploymentStrategy {
     const visited = new Set<string>();
 
     while (visited.size < templates.length) {
-      const tier = templates.filter(t =>
-        !visited.has(t.name) &&
-        this.allDependenciesVisited(t, visited, graph)
+      const tier = templates.filter(
+        (t) => !visited.has(t.name) && this.allDependenciesVisited(t, visited, graph)
       );
 
-      tier.forEach(t => visited.add(t.name));
+      tier.forEach((t) => visited.add(t.name));
       tiers.push({ templates: tier, parallel: true });
     }
 
@@ -471,7 +482,7 @@ class DeploymentErrorHandler {
         return {
           action: 'fail',
           message: 'Azure quota exceeded. Please increase quota or reduce resources.',
-          suggestion: this.getQuotaSuggestion(error)
+          suggestion: this.getQuotaSuggestion(error),
         };
 
       case ErrorType.TEMPLATE_ERROR:
@@ -479,7 +490,7 @@ class DeploymentErrorHandler {
         return {
           action: 'fail',
           message: 'Template validation failed',
-          details: this.extractTemplateErrors(error)
+          details: this.extractTemplateErrors(error),
         };
 
       default:
@@ -487,7 +498,7 @@ class DeploymentErrorHandler {
         return {
           action: 'fail',
           message: 'Deployment failed',
-          diagnostics: await this.collectDiagnostics(context)
+          diagnostics: await this.collectDiagnostics(context),
         };
     }
   }
@@ -523,7 +534,7 @@ class ProgressReporter {
   }
 
   private format(update: ProgressUpdate): string {
-    const percentage = Math.round(update.completed / update.total * 100);
+    const percentage = Math.round((update.completed / update.total) * 100);
     const bar = this.generateProgressBar(percentage);
 
     return `${update.phase} | ${bar} ${percentage}% | ${update.message}`;
@@ -531,7 +542,7 @@ class ProgressReporter {
 
   private generateProgressBar(percentage: number): string {
     const width = 30;
-    const completed = Math.round(width * percentage / 100);
+    const completed = Math.round((width * percentage) / 100);
     const remaining = width - completed;
 
     return `[${'='.repeat(completed)}${' '.repeat(remaining)}]`;
@@ -542,18 +553,21 @@ class ProgressReporter {
 ## Success Criteria
 
 ### Immediate Success Metrics
+
 - Deployment success rate >99%
 - Clear progress reporting during all phases
 - Automatic rollback works correctly
 - Error messages are actionable
 
 ### Performance Metrics
+
 - Parallel deployment reduces time by >40%
 - Upload phase completes in <2 minutes for typical stack
 - Status updates every 5 seconds during deployment
 - Total deployment time <10 minutes for 50 resources
 
 ### Reliability Metrics
+
 - Automatic retry recovers from 90% of transient failures
 - Rollback completes in <2 minutes
 - State recovery works after CLI crash

@@ -238,9 +238,7 @@ export interface IResourceProvider {
   ): any;
 
   /** Merge multiple requirements into one */
-  mergeRequirements(
-    requirements: ReadonlyArray<IResourceRequirement>
-  ): IResourceRequirement;
+  mergeRequirements(requirements: ReadonlyArray<IResourceRequirement>): IResourceRequirement;
 }
 
 /**
@@ -288,9 +286,7 @@ export interface ConflictResolution<T> {
 ```typescript
 // Components use static factory method for definition
 export class CrudApi implements IBackendComponent<CrudApiConfig> {
-  private constructor(
-    private readonly definition: IComponentDefinition<CrudApiConfig>
-  ) {}
+  private constructor(private readonly definition: IComponentDefinition<CrudApiConfig>) {}
 
   /**
    * Define a CrudApi component (Phase 1)
@@ -300,7 +296,7 @@ export class CrudApi implements IBackendComponent<CrudApiConfig> {
       componentId: id,
       componentType: 'CrudApi',
       config,
-      factory: CrudApi.createInstance
+      factory: CrudApi.createInstance,
     };
   }
 
@@ -313,7 +309,12 @@ export class CrudApi implements IBackendComponent<CrudApiConfig> {
     config: CrudApiConfig,
     resources: ResourceMap
   ): CrudApi {
-    const instance = new CrudApi({ componentId: id, componentType: 'CrudApi', config, factory: CrudApi.createInstance });
+    const instance = new CrudApi({
+      componentId: id,
+      componentType: 'CrudApi',
+      config,
+      factory: CrudApi.createInstance,
+    });
     instance.initializeWithResources(scope, resources);
     return instance;
   }
@@ -327,14 +328,18 @@ export class CrudApi implements IBackendComponent<CrudApiConfig> {
         requirementKey: 'primary-database',
         config: {
           enableServerless: true,
-          databases: [{
-            name: `${entityName.toLowerCase()}-db`,
-            containers: [{
-              name: entityName.toLowerCase(),
-              partitionKey: partitionKey ?? '/id'
-            }]
-          }]
-        }
+          databases: [
+            {
+              name: `${entityName.toLowerCase()}-db`,
+              containers: [
+                {
+                  name: entityName.toLowerCase(),
+                  partitionKey: partitionKey ?? '/id',
+                },
+              ],
+            },
+          ],
+        },
       },
       {
         resourceType: 'functions',
@@ -345,10 +350,10 @@ export class CrudApi implements IBackendComponent<CrudApiConfig> {
           environmentVariables: {
             [`${entityName.toUpperCase()}_COSMOS_ENDPOINT`]: '${cosmos.endpoint}',
             [`${entityName.toUpperCase()}_DATABASE_NAME`]: `${entityName.toLowerCase()}-db`,
-            [`${entityName.toUpperCase()}_CONTAINER_NAME`]: entityName.toLowerCase()
-          }
-        }
-      }
+            [`${entityName.toUpperCase()}_CONTAINER_NAME`]: entityName.toLowerCase(),
+          },
+        },
+      },
     ];
   }
 
@@ -372,7 +377,11 @@ export class Backend extends Construct implements IBackend {
   private readonly resources = new Map<string, any>();
   private readonly providers: IResourceProvider[];
 
-  constructor(scope: Construct, id: string, private readonly config: BackendConfig) {
+  constructor(
+    scope: Construct,
+    id: string,
+    private readonly config: BackendConfig
+  ) {
     super(scope, id);
 
     // Register default providers
@@ -380,7 +389,7 @@ export class Backend extends Construct implements IBackend {
       new CosmosResourceProvider(),
       new FunctionAppResourceProvider(),
       new StorageResourceProvider(),
-      ...(config.providers ?? [])
+      ...(config.providers ?? []),
     ];
   }
 
@@ -411,7 +420,7 @@ export class Backend extends Construct implements IBackend {
           backend: this,
           naming: this.config.naming ?? new DefaultNamingConvention(),
           tags: this.config.tags ?? {},
-          existingResources: this.resources
+          existingResources: this.resources,
         });
 
         const key = `${requirement.resourceType}:${requirement.requirementKey}`;
@@ -470,8 +479,8 @@ const userApi = CrudApi.define('UserApi', {
   schema: {
     id: 'string',
     name: { type: 'string', required: true },
-    email: { type: 'string', required: true }
-  }
+    email: { type: 'string', required: true },
+  },
 });
 
 const productApi = CrudApi.define('ProductApi', {
@@ -479,13 +488,13 @@ const productApi = CrudApi.define('ProductApi', {
   schema: {
     id: 'string',
     name: 'string',
-    price: 'number'
-  }
+    price: 'number',
+  },
 });
 
 const adminPortal = StaticSite.define('AdminPortal', {
   sourceDirectory: './admin',
-  buildCommand: 'npm run build'
+  buildCommand: 'npm run build',
 });
 
 // Phase 2: Create backend
@@ -498,19 +507,19 @@ const backend = defineBackend({
   // Configuration
   monitoring: {
     enabled: true,
-    retentionDays: 90
+    retentionDays: 90,
   },
   networking: 'isolated',
   tags: {
     Environment: 'Production',
-    Team: 'Platform'
-  }
+    Team: 'Platform',
+  },
 });
 
 // Phase 3: Add to stack
 const stack = new ResourceGroupStack(app, 'MyAppStack', {
   resourceGroupName: 'rg-myapp-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 backend.addToStack(stack);
@@ -552,11 +561,7 @@ Shared resources use deterministic naming:
 ```typescript
 interface NamingConvention {
   // Format: {prefix}-{resourceType}-{backend}-{environment}-{suffix}
-  formatResourceName(
-    resourceType: string,
-    backendId: string,
-    suffix?: string
-  ): string;
+  formatResourceName(resourceType: string, backendId: string, suffix?: string): string;
 }
 
 // Example: "cosmos-db-backend-prod-001"
@@ -594,7 +599,9 @@ export class CrudApi extends Construct implements IBackendComponent {
   }
 
   // New static factory for backend pattern
-  static define(id: string, config: CrudApiConfig) { /* ... */ }
+  static define(id: string, config: CrudApiConfig) {
+    /* ... */
+  }
 }
 ```
 
@@ -605,36 +612,42 @@ After sufficient adoption, deprecate old constructor pattern with clear migratio
 ## Work Packages
 
 ### Package 1: Core Infrastructure (Devon)
+
 - [ ] Implement IResourceRequirement interfaces
 - [ ] Create Backend base construct
 - [ ] Implement resource provider registry
 - [ ] Create configuration merger
 
 ### Package 2: Resource Providers (Grace)
+
 - [ ] Implement CosmosResourceProvider
 - [ ] Implement FunctionAppResourceProvider
 - [ ] Implement StorageResourceProvider
 - [ ] Create provider test suite
 
 ### Package 3: Component Updates (Devon)
+
 - [ ] Update CrudApi to support backend pattern
 - [ ] Update FunctionsApp to support backend pattern
 - [ ] Update StaticSite to support backend pattern
 - [ ] Maintain backward compatibility
 
 ### Package 4: Type System (Felix)
+
 - [ ] Create type inference helpers
 - [ ] Implement validation schemas
 - [ ] Create type guards for resources
 - [ ] Build compile-time checks
 
 ### Package 5: Testing (Charlie)
+
 - [ ] Create backend integration tests
 - [ ] Test resource sharing scenarios
 - [ ] Test configuration merging
 - [ ] Performance benchmarks
 
 ### Package 6: Documentation (Ella)
+
 - [ ] Write migration guide
 - [ ] Create usage examples
 - [ ] Document best practices

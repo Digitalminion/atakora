@@ -27,21 +27,22 @@ Consistent, well-structured resource names provide:
 ```
 
 **Example**:
+
 ```
 vnet-data-digital-minion-authr-nonprod-eastus-01
 ```
 
 ### Components
 
-| Component | Description | Example | Required |
-|-----------|-------------|---------|----------|
-| **prefix** | Resource type abbreviation | `vnet`, `st`, `kv` | Yes |
-| **purpose** | Resource-specific purpose | `data`, `api`, `frontend` | Optional |
-| **org** | Organization name | `digital-minion`, `dm` | Yes |
-| **project** | Project identifier | `authr`, `webapp` | Yes |
-| **env** | Environment | `nonprod`, `prod` | Yes |
-| **geo** | Geography/region | `eastus`, `usgovvirginia` | Yes |
-| **instance** | Instance number | `01`, `02` | Yes |
+| Component    | Description                | Example                   | Required |
+| ------------ | -------------------------- | ------------------------- | -------- |
+| **prefix**   | Resource type abbreviation | `vnet`, `st`, `kv`        | Yes      |
+| **purpose**  | Resource-specific purpose  | `data`, `api`, `frontend` | Optional |
+| **org**      | Organization name          | `digital-minion`, `dm`    | Yes      |
+| **project**  | Project identifier         | `authr`, `webapp`         | Yes      |
+| **env**      | Environment                | `nonprod`, `prod`         | Yes      |
+| **geo**      | Geography/region           | `eastus`, `usgovvirginia` | Yes      |
+| **instance** | Instance number            | `01`, `02`                | Yes      |
 
 ## Resource Name Generator
 
@@ -58,7 +59,7 @@ const vnetName = generator.generateName({
   project: 'authr',
   environment: 'nonprod',
   geography: 'eastus',
-  instance: '01'
+  instance: '01',
 });
 
 // Result: "vnet-digital-minion-authr-nonprod-eastus-01"
@@ -71,10 +72,10 @@ const subnetName = generator.generateName({
   resourceType: 'subnet',
   organization: 'digital-minion',
   project: 'authr',
-  purpose: 'data',           // Add purpose
+  purpose: 'data', // Add purpose
   environment: 'nonprod',
   geography: 'eastus',
-  instance: '01'
+  instance: '01',
 });
 
 // Result: "subnet-data-digital-minion-authr-nonprod-eastus-01"
@@ -84,12 +85,12 @@ const subnetName = generator.generateName({
 
 ```typescript
 const generator = new ResourceNameGenerator({
-  separator: '_',              // Use underscore instead of hyphen
-  maxLength: 50,              // Custom max length
+  separator: '_', // Use underscore instead of hyphen
+  maxLength: 50, // Custom max length
   patterns: {
-    storage: 'stor',          // Custom prefix for storage
-    keyvault: 'vault'         // Custom prefix for key vault
-  }
+    storage: 'stor', // Custom prefix for storage
+    keyvault: 'vault', // Custom prefix for key vault
+  },
 });
 
 const storageName = generator.generateName({
@@ -98,7 +99,7 @@ const storageName = generator.generateName({
   project: 'authr',
   environment: 'nonprod',
   geography: 'eus',
-  instance: '01'
+  instance: '01',
 });
 
 // Result: "stor_dm_authr_nonprod_eus_01"
@@ -108,29 +109,29 @@ const storageName = generator.generateName({
 
 ### Default Prefixes
 
-| Resource Type | Prefix | Example Name |
-|---------------|--------|--------------|
-| Resource Group | `rg` | `rg-digital-minion-authr-nonprod-eastus-01` |
-| Virtual Network | `vnet` | `vnet-digital-minion-authr-nonprod-eastus-01` |
-| Subnet | `subnet` | `subnet-data-digital-minion-authr-nonprod-eastus-01` |
-| Storage Account | `st` | `stdmauthrnonprodeus01` (special case) |
-| Key Vault | `kv` | `kv-digital-minion-authr-nonprod-eastus-01` |
-| Function App | `func` | `func-api-digital-minion-authr-nonprod-eastus-01` |
-| App Service | `app` | `app-web-digital-minion-authr-nonprod-eastus-01` |
-| Cosmos DB | `cosmos` | `cosmos-digital-minion-authr-nonprod-eastus-01` |
-| SQL Database | `sql` | `sql-digital-minion-authr-nonprod-eastus-01` |
-| Network Security Group | `nsg` | `nsg-data-digital-minion-authr-nonprod-eastus-01` |
+| Resource Type          | Prefix   | Example Name                                         |
+| ---------------------- | -------- | ---------------------------------------------------- |
+| Resource Group         | `rg`     | `rg-digital-minion-authr-nonprod-eastus-01`          |
+| Virtual Network        | `vnet`   | `vnet-digital-minion-authr-nonprod-eastus-01`        |
+| Subnet                 | `subnet` | `subnet-data-digital-minion-authr-nonprod-eastus-01` |
+| Storage Account        | `st`     | `stdmauthrnonprodeus01` (special case)               |
+| Key Vault              | `kv`     | `kv-digital-minion-authr-nonprod-eastus-01`          |
+| Function App           | `func`   | `func-api-digital-minion-authr-nonprod-eastus-01`    |
+| App Service            | `app`    | `app-web-digital-minion-authr-nonprod-eastus-01`     |
+| Cosmos DB              | `cosmos` | `cosmos-digital-minion-authr-nonprod-eastus-01`      |
+| SQL Database           | `sql`    | `sql-digital-minion-authr-nonprod-eastus-01`         |
+| Network Security Group | `nsg`    | `nsg-data-digital-minion-authr-nonprod-eastus-01`    |
 
 ### Customizing Prefixes
 
 ```typescript
 const generator = new ResourceNameGenerator({
   patterns: {
-    'virtualMachine': 'vm',
-    'loadBalancer': 'lb',
-    'publicIp': 'pip',
-    'networkInterface': 'nic'
-  }
+    virtualMachine: 'vm',
+    loadBalancer: 'lb',
+    publicIp: 'pip',
+    networkInterface: 'nic',
+  },
 });
 ```
 
@@ -139,20 +140,22 @@ const generator = new ResourceNameGenerator({
 ### Storage Accounts
 
 **Azure Constraints**:
+
 - 3-24 characters
 - Lowercase letters and numbers only
 - No hyphens or special characters
 - Globally unique across all of Azure
 
 **Atakora Handling**:
+
 ```typescript
 const storageName = generator.generateName({
   resourceType: 'storage',
-  organization: 'dp',           // Use abbreviations
+  organization: 'dp', // Use abbreviations
   project: 'authr',
   environment: 'nonprod',
-  geography: 'eus',            // Abbreviated region
-  instance: '01'
+  geography: 'eus', // Abbreviated region
+  instance: '01',
 });
 
 // Result: "stdpauthrnonprodeus01"
@@ -162,20 +165,22 @@ const storageName = generator.generateName({
 ```
 
 **Tips for Storage Names**:
+
 ```typescript
 // Use short abbreviations
-organization: 'dm'      // instead of 'digital-minion'
-geography: 'eus'        // instead of 'eastus'
-environment: 'np'       // instead of 'nonprod'
+organization: 'dm'; // instead of 'digital-minion'
+geography: 'eus'; // instead of 'eastus'
+environment: 'np'; // instead of 'nonprod'
 
 // Add purpose for multiple storage accounts
-purpose: 'data'         // stdatadmauthrpeus01
-purpose: 'logs'         // stlogsdmauthrpeus01
+purpose: 'data'; // stdatadmauthrpeus01
+purpose: 'logs'; // stlogsdmauthrpeus01
 ```
 
 ### Key Vault
 
 **Azure Constraints**:
+
 - 3-24 characters
 - Alphanumeric and hyphens
 - Must start with letter
@@ -184,6 +189,7 @@ purpose: 'logs'         // stlogsdmauthrpeus01
 - Globally unique
 
 **Atakora Handling**:
+
 ```typescript
 const kvName = generator.generateName({
   resourceType: 'keyvault',
@@ -192,7 +198,7 @@ const kvName = generator.generateName({
   purpose: 'secrets',
   environment: 'nonprod',
   geography: 'eus',
-  instance: '01'
+  instance: '01',
 });
 
 // Result: "kv-secrets-dm-authr-nonprod-eus-01"
@@ -204,12 +210,14 @@ const kvName = generator.generateName({
 ### Cosmos DB
 
 **Azure Constraints**:
+
 - 3-44 characters
 - Lowercase letters, numbers, hyphens
 - Must start and end with letter or number
 - Globally unique
 
 **Atakora Handling**:
+
 ```typescript
 const cosmosName = generator.generateName({
   resourceType: 'cosmos',
@@ -218,7 +226,7 @@ const cosmosName = generator.generateName({
   purpose: 'users',
   environment: 'nonprod',
   geography: 'eastus',
-  instance: '01'
+  instance: '01',
 });
 
 // Result: "cosmos-users-digital-minion-authr-nonprod-eastus-01"
@@ -304,7 +312,7 @@ const rgName = generator.generateForScope({
   purpose: 'data',
   environment: 'nonprod',
   geography: 'eastus',
-  instance: '01'
+  instance: '01',
 });
 
 // Result: "rg-digital-minion-authr-data-nonprod-eastus-01"
@@ -319,7 +327,7 @@ const mgName = generator.generateForScope({
   scope: DeploymentScope.ManagementGroup,
   resourceType: 'mg',
   organization: 'digital-minion',
-  purpose: 'platform'
+  purpose: 'platform',
 });
 
 // Result: "mg-digital-minion-platform"
@@ -333,7 +341,7 @@ const mgName = generator.generateForScope({
 const policyName = generator.generateForScope({
   scope: DeploymentScope.Tenant,
   resourceType: 'policy',
-  purpose: 'tagging'
+  purpose: 'tagging',
 });
 
 // Result: "policy-tagging"
@@ -359,7 +367,7 @@ class MyStack extends Stack {
       project: 'authr',
       environment: 'nonprod',
       geography: 'eastus',
-      instance: '01'
+      instance: '01',
     });
 
     // Automatically extracts purpose from construct ID
@@ -388,15 +396,15 @@ const apiName = naming.generateName('func', 'ApiGateway');
 
 Common service words are abbreviated:
 
-| Full Word | Abbreviation |
-|-----------|--------------|
-| Database | db |
-| Storage | stor |
-| Network | net |
-| Gateway | gw |
-| Service | svc |
-| Application | app |
-| Function | func |
+| Full Word   | Abbreviation |
+| ----------- | ------------ |
+| Database    | db           |
+| Storage     | stor         |
+| Network     | net          |
+| Gateway     | gw           |
+| Service     | svc          |
+| Application | app          |
+| Function    | func         |
 
 ```typescript
 // Construct ID: "UserDatabaseService"
@@ -410,39 +418,42 @@ const dbName = naming.generateName('sql', 'UserDatabaseService');
 
 ### Character Constraints
 
-| Resource Type | Valid Characters | Case Sensitive |
-|---------------|------------------|----------------|
-| Resource Group | Alphanumeric, underscore, parentheses, hyphen, period | No |
-| Storage Account | Lowercase letters, numbers | No |
-| Key Vault | Alphanumeric, hyphens | No |
-| Virtual Network | Alphanumeric, hyphen, period, underscore | No |
-| Function App | Alphanumeric, hyphens | No |
+| Resource Type   | Valid Characters                                      | Case Sensitive |
+| --------------- | ----------------------------------------------------- | -------------- |
+| Resource Group  | Alphanumeric, underscore, parentheses, hyphen, period | No             |
+| Storage Account | Lowercase letters, numbers                            | No             |
+| Key Vault       | Alphanumeric, hyphens                                 | No             |
+| Virtual Network | Alphanumeric, hyphen, period, underscore              | No             |
+| Function App    | Alphanumeric, hyphens                                 | No             |
 
 ### Length Constraints
 
-| Resource Type | Min Length | Max Length | Global Uniqueness |
-|---------------|------------|------------|-------------------|
-| Resource Group | 1 | 90 | No |
-| Storage Account | 3 | 24 | Yes |
-| Key Vault | 3 | 24 | Yes |
-| Virtual Network | 2 | 64 | No |
-| Cosmos DB | 3 | 44 | Yes |
-| Function App | 2 | 60 | Yes |
-| SQL Server | 1 | 63 | Yes |
+| Resource Type   | Min Length | Max Length | Global Uniqueness |
+| --------------- | ---------- | ---------- | ----------------- |
+| Resource Group  | 1          | 90         | No                |
+| Storage Account | 3          | 24         | Yes               |
+| Key Vault       | 3          | 24         | Yes               |
+| Virtual Network | 2          | 64         | No                |
+| Cosmos DB       | 3          | 44         | Yes               |
+| Function App    | 2          | 60         | Yes               |
+| SQL Server      | 1          | 63         | Yes               |
 
 ### Pattern Requirements
 
 **Storage Account**:
+
 - Must be lowercase
 - Only alphanumeric
 - No hyphens
 
 **Key Vault**:
+
 - Must start with letter
 - Must end with letter or digit
 - No consecutive hyphens
 
 **Resource Group**:
+
 - Cannot end with period
 - Alphanumeric, underscore, parentheses, hyphen, period allowed
 
@@ -452,19 +463,19 @@ const dbName = naming.generateName('sql', 'UserDatabaseService');
 
 ```typescript
 // Commercial Cloud
-geography: 'eastus'    // East US
-geography: 'westus'    // West US
-geography: 'centralus' // Central US
+geography: 'eastus'; // East US
+geography: 'westus'; // West US
+geography: 'centralus'; // Central US
 
 // Government Cloud
-geography: 'usgovvirginia'  // US Gov Virginia
-geography: 'usgovarizona'   // US Gov Arizona
-geography: 'usdodeast'      // US DoD East
-geography: 'usdodcentral'   // US DoD Central
+geography: 'usgovvirginia'; // US Gov Virginia
+geography: 'usgovarizona'; // US Gov Arizona
+geography: 'usdodeast'; // US DoD East
+geography: 'usdodcentral'; // US DoD Central
 
 // Use abbreviations for storage accounts
-geography: 'usgv'   // US Gov Virginia
-geography: 'usga'   // US Gov Arizona
+geography: 'usgv'; // US Gov Virginia
+geography: 'usga'; // US Gov Arizona
 ```
 
 ### Compliance Tags
@@ -475,13 +486,13 @@ Government cloud often requires specific naming patterns:
 const generator = new ResourceNameGenerator({
   patterns: {
     // IL4 workloads
-    'storageIL4': 'stil4',
-    'cosmosIL4': 'cosmosil4',
+    storageIL4: 'stil4',
+    cosmosIL4: 'cosmosil4',
 
     // IL5 workloads
-    'storageIL5': 'stil5',
-    'cosmosIL5': 'cosmosil5'
-  }
+    storageIL5: 'stil5',
+    cosmosIL5: 'cosmosil5',
+  },
 });
 
 const il4Storage = generator.generateName({
@@ -490,7 +501,7 @@ const il4Storage = generator.generateName({
   project: 'classified',
   environment: 'prod',
   geography: 'usdodeast',
-  instance: '01'
+  instance: '01',
 });
 // Result: "stil4dodclassifiedprodusdodeast01"
 ```
@@ -501,46 +512,46 @@ const il4Storage = generator.generateName({
 
 ```typescript
 // ✗ Avoid - exceeds storage limit
-organization: 'digital-minion-engineering'
+organization: 'digital-minion-engineering';
 
 // ✓ Better
-organization: 'dm-eng'
+organization: 'dm-eng';
 ```
 
 ### 2. Consistent Environment Names
 
 ```typescript
 // ✓ Use standard environment names
-environment: 'dev'
-environment: 'test'
-environment: 'stage'
-environment: 'prod'
+environment: 'dev';
+environment: 'test';
+environment: 'stage';
+environment: 'prod';
 
 // Or combined
-environment: 'nonprod'  // dev, test, stage
-environment: 'prod'     // production only
+environment: 'nonprod'; // dev, test, stage
+environment: 'prod'; // production only
 ```
 
 ### 3. Purpose Over Generic Names
 
 ```typescript
 // ✗ Avoid
-purpose: 'storage1'
-purpose: 'storage2'
+purpose: 'storage1';
+purpose: 'storage2';
 
 // ✓ Better
-purpose: 'data'
-purpose: 'logs'
-purpose: 'backups'
+purpose: 'data';
+purpose: 'logs';
+purpose: 'backups';
 ```
 
 ### 4. Numbered Instances
 
 ```typescript
 // ✓ Use consistent numbering
-instance: '01'  // Not '1'
-instance: '02'  // Not '2'
-instance: '10'  // Easy to sort
+instance: '01'; // Not '1'
+instance: '02'; // Not '2'
+instance: '10'; // Easy to sort
 ```
 
 ### 5. Validate Before Deployment
@@ -560,21 +571,21 @@ if (!validation.isValid) {
 ```typescript
 // Create naming convention document
 const conventions = {
-  organization: 'dm',      // Digital Minion
+  organization: 'dm', // Digital Minion
   environments: {
-    nonprod: 'nonprod',    // Dev, Test, Stage
-    prod: 'prod'           // Production
+    nonprod: 'nonprod', // Dev, Test, Stage
+    prod: 'prod', // Production
   },
   regions: {
     primary: 'eastus',
     secondary: 'westus',
-    gov: 'usgovvirginia'
+    gov: 'usgovvirginia',
   },
   purposes: {
-    data: 'data',          // Data tier resources
-    app: 'app',            // Application tier
-    web: 'web'             // Web tier
-  }
+    data: 'data', // Data tier resources
+    app: 'app', // Application tier
+    web: 'web', // Web tier
+  },
 };
 ```
 
@@ -588,7 +599,7 @@ const naming = new NamingService(stack, {
   project: 'webapp',
   environment: 'prod',
   geography: 'eastus',
-  instance: '01'
+  instance: '01',
 });
 
 // Web tier
@@ -619,7 +630,7 @@ const primaryNaming = new NamingService(stack, {
   project: 'authr',
   environment: 'prod',
   geography: 'eastus',
-  instance: '01'
+  instance: '01',
 });
 
 // Secondary region
@@ -628,7 +639,7 @@ const secondaryNaming = new NamingService(stack, {
   project: 'authr',
   environment: 'prod',
   geography: 'westus',
-  instance: '01'
+  instance: '01',
 });
 
 const primaryDb = primaryNaming.generateName('cosmos', 'UserData');
@@ -643,19 +654,19 @@ const secondaryDb = secondaryNaming.generateName('cosmos', 'UserData');
 ```typescript
 const environments = ['dev', 'test', 'stage', 'prod'];
 
-const resourceNames = environments.map(env => {
+const resourceNames = environments.map((env) => {
   const naming = new NamingService(stack, {
     organization: 'dm',
     project: 'authr',
     environment: env,
     geography: 'eastus',
-    instance: '01'
+    instance: '01',
   });
 
   return {
     env,
     storage: naming.generateName('storage', 'AppData'),
-    database: naming.generateName('cosmos', 'UserData')
+    database: naming.generateName('cosmos', 'UserData'),
   };
 });
 
@@ -674,6 +685,7 @@ const resourceNames = environments.map(env => {
 **Problem**: Generated name exceeds Azure limit
 
 **Solution**:
+
 ```typescript
 // Check if name will be truncated
 if (generator.willTruncate(name, resourceType)) {
@@ -681,9 +693,9 @@ if (generator.willTruncate(name, resourceType)) {
 }
 
 // Use shorter components
-organization: 'dm'          // instead of 'digital-minion'
-geography: 'eus'            // instead of 'eastus'
-purpose: 'api'              // instead of 'api-gateway'
+organization: 'dm'; // instead of 'digital-minion'
+geography: 'eus'; // instead of 'eastus'
+purpose: 'api'; // instead of 'api-gateway'
 ```
 
 ### Invalid Characters
@@ -691,6 +703,7 @@ purpose: 'api'              // instead of 'api-gateway'
 **Problem**: Name contains invalid characters for resource type
 
 **Solution**:
+
 ```typescript
 // Check validation result
 const result = generator.validateName(name, resourceType);
@@ -705,15 +718,16 @@ console.log(result.errors);
 **Problem**: Storage/Key Vault/Cosmos name already exists globally
 
 **Solution**:
+
 ```typescript
 // Add unique suffix
-additionalSuffix: crypto.randomBytes(4).toString('hex')
+additionalSuffix: crypto.randomBytes(4).toString('hex');
 
 // Or increment instance
-instance: '02'  // Try next instance number
+instance: '02'; // Try next instance number
 
 // Or add more specific purpose
-purpose: 'user-data-prod'
+purpose: 'user-data-prod';
 ```
 
 ### Inconsistent Naming
@@ -721,12 +735,17 @@ purpose: 'user-data-prod'
 **Problem**: Names don't follow organizational standards
 
 **Solution**:
+
 ```typescript
 // Create shared naming configuration
 const namingConfig = {
   separator: '-',
-  patterns: { /* your patterns */ },
-  maxLengths: { /* your limits */ }
+  patterns: {
+    /* your patterns */
+  },
+  maxLengths: {
+    /* your limits */
+  },
 };
 
 // Use across all stacks
@@ -740,6 +759,7 @@ const generator = new ResourceNameGenerator(namingConfig);
 Full API documentation: [Naming API Reference](../reference/api/lib/naming.md)
 
 **Methods**:
+
 - `generateName(params)` - Generate resource name
 - `validateName(name, type)` - Validate name
 - `getPattern(type)` - Get resource prefix
@@ -750,6 +770,7 @@ Full API documentation: [Naming API Reference](../reference/api/lib/naming.md)
 ### NamingService
 
 **Methods**:
+
 - `generateName(type, constructId)` - Generate from construct
 - `extractPurpose(constructId)` - Extract purpose from ID
 - `getAbbreviations()` - Get service abbreviations

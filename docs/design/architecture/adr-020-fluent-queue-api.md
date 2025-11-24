@@ -5,6 +5,7 @@
 The current queue resource definition pattern in Atakora uses a configuration object approach that closely mirrors ARM template structure. User feedback indicates this feels like "a loose abstraction for an ARM template" with "big JSON payloads" rather than a TypeScript-native developer experience.
 
 Current approach:
+
 ```typescript
 export const dataQualityQueue = defineQueue({
   name: 'data-quality',
@@ -28,6 +29,7 @@ export const dataQualityQueue = defineQueue({
 ```
 
 This pattern has several problems:
+
 1. **Configuration-heavy**: Feels like writing JSON, not TypeScript
 2. **Poor discoverability**: Options are buried in nested objects
 3. **String-based time values**: Error-prone and not type-safe
@@ -37,6 +39,7 @@ This pattern has several problems:
 ## Decision
 
 We will implement a fluent, chainable API for queue configuration that provides:
+
 1. **Builder pattern** with method chaining for progressive enhancement
 2. **Type-safe helper functions** for time units, thresholds, and common patterns
 3. **Smart defaults** with optional overrides
@@ -50,28 +53,29 @@ import { Queue, minutes, hours, days } from '@atakora/component/queues';
 import { greaterThan, olderThan } from '@atakora/component/monitoring';
 
 // Simple with defaults
-export const simpleQueue = Queue.create('simple')
-  .processor(myProcessor);
+export const simpleQueue = Queue.create('simple').processor(myProcessor);
 
 // Progressive enhancement
-export const dataQualityQueue = Queue
-  .create('data-quality')
+export const dataQualityQueue = Queue.create('data-quality')
   .processor(dataQualityProcessor)
   .ttl(days(7))
   .visibility(minutes(10))
   .retries(3)
   .withDeadLetterQueue()
-  .monitoring(alerts => alerts
-    .onDepth(greaterThan(1000)).warn()
-    .onMessageAge(olderThan(hours(1))).warn()
-    .onDeadLetter().error()
+  .monitoring((alerts) =>
+    alerts
+      .onDepth(greaterThan(1000))
+      .warn()
+      .onMessageAge(olderThan(hours(1)))
+      .warn()
+      .onDeadLetter()
+      .error()
   );
 
 // Using presets
-export const highThroughputQueue = Queue
-  .create('events')
+export const highThroughputQueue = Queue.create('events')
   .processor(eventProcessor)
-  .highThroughput()  // Preset: batch size, parallel processing
+  .highThroughput() // Preset: batch size, parallel processing
   .withMetrics();
 
 // Composable patterns
@@ -80,8 +84,7 @@ const retryPolicy = exponentialBackoff()
   .initialDelay(seconds(5))
   .maxDelay(minutes(5));
 
-export const criticalQueue = Queue
-  .create('critical')
+export const criticalQueue = Queue.create('critical')
   .processor(criticalProcessor)
   .retry(retryPolicy)
   .alerting(urgent());
@@ -122,32 +125,22 @@ class QueueBuilder {
   withDeadLetterQueue(name?: string): this {
     this.config.deadLetter = {
       enabled: true,
-      name: name || `${this.config.name}-dlq`
+      name: name || `${this.config.name}-dlq`,
     };
     return this;
   }
 
   // Presets
   highThroughput(): this {
-    return this
-      .batchSize(32)
-      .parallelism(10)
-      .visibility(seconds(30));
+    return this.batchSize(32).parallelism(10).visibility(seconds(30));
   }
 
   longRunning(): this {
-    return this
-      .visibility(minutes(30))
-      .ttl(days(14))
-      .retries(1);
+    return this.visibility(minutes(30)).ttl(days(14)).retries(1);
   }
 
   standardRetries(): this {
-    return this.retry(
-      exponentialBackoff()
-        .maxAttempts(3)
-        .initialDelay(seconds(5))
-    );
+    return this.retry(exponentialBackoff().maxAttempts(3).initialDelay(seconds(5)));
   }
 
   // Monitoring sub-builder
@@ -294,10 +287,12 @@ export const linearBackoff = (): RetryPolicyBuilder => ...;
 ## Alternatives Considered
 
 ### 1. Pure Configuration Objects (Current)
+
 - **Pros**: Familiar to ARM users, simple to implement
 - **Cons**: Poor DX, not idiomatic TypeScript, lacks type safety for strings
 
 ### 2. Class-based Inheritance
+
 ```typescript
 class DataQualityQueue extends Queue {
   configure() {
@@ -306,10 +301,12 @@ class DataQualityQueue extends Queue {
   }
 }
 ```
+
 - **Pros**: OOP patterns, could enable inheritance
 - **Cons**: Verbose, requires subclassing, less flexible
 
 ### 3. Functional Composition
+
 ```typescript
 const dataQualityQueue = compose(
   withName('data-quality'),
@@ -318,12 +315,14 @@ const dataQualityQueue = compose(
   withTtl(days(7))
 );
 ```
+
 - **Pros**: Functional, composable
 - **Cons**: Less discoverable, harder to chain conditionally
 
 ## Consequences
 
 ### Positive
+
 - **Exceptional DX**: Feels like writing TypeScript, not configuration
 - **Type safety**: Full IntelliSense and compile-time checking
 - **Discoverability**: IDE autocomplete guides developers
@@ -332,12 +331,14 @@ const dataQualityQueue = compose(
 - **Maintainable**: Changes are easier with method chaining
 
 ### Negative
+
 - **Migration effort**: Existing code needs updating
 - **Learning curve**: New patterns to learn (though more intuitive)
 - **Implementation complexity**: Builder pattern requires more code
 - **Bundle size**: Additional builder code (mitigated by tree-shaking)
 
 ### Neutral
+
 - **ARM generation unchanged**: Still produces same ARM templates
 - **Runtime behavior identical**: No performance impact
 - **Testing approach same**: Unit tests work similarly
@@ -362,6 +363,7 @@ const dataQualityQueue = compose(
 ## Examples
 
 ### Before (Configuration-based)
+
 ```typescript
 defineQueue({
   name: 'orders',
@@ -380,30 +382,36 @@ defineQueue({
 ```
 
 ### After (Fluent API)
+
 ```typescript
 Queue.create('orders')
   .ttl(days(7))
   .visibility(minutes(5))
   .retries(5)
-  .monitoring(alerts => alerts
-    .onDepth(greaterThan(100)).warn()
-  );
+  .monitoring((alerts) => alerts.onDepth(greaterThan(100)).warn());
 ```
 
 ### Complex Example with Presets
+
 ```typescript
 Queue.create('critical-events')
   .processor(eventProcessor)
-  .highThroughput()           // Preset for high volume
-  .retry(exponentialBackoff()  // Custom retry
-    .maxAttempts(10)
-    .initialDelay(seconds(1))
-    .maxDelay(minutes(10))
+  .highThroughput() // Preset for high volume
+  .retry(
+    exponentialBackoff() // Custom retry
+      .maxAttempts(10)
+      .initialDelay(seconds(1))
+      .maxDelay(minutes(10))
   )
-  .monitoring(alerts => alerts
-    .onDepth(greaterThan(10000)).critical()
-    .onMessageAge(olderThan(minutes(5))).error()
-    .onDeadLetter().critical().withNotification(email('ops@company.com'))
+  .monitoring((alerts) =>
+    alerts
+      .onDepth(greaterThan(10000))
+      .critical()
+      .onMessageAge(olderThan(minutes(5)))
+      .error()
+      .onDeadLetter()
+      .critical()
+      .withNotification(email('ops@company.com'))
   )
   .withDeadLetterQueue()
   .withMetrics()

@@ -5,6 +5,7 @@
 We are transitioning from monolithic ARM templates to **linked templates as the default and only synthesis approach**. This change is driven by Azure's 4MB template size limit, which we're exceeding with inline function code. Our Foundation stack is currently 11.2MB with 10 CRUD functions embedding JavaScript directly in the template.
 
 This document outlines a comprehensive architecture where:
+
 - Templates are automatically split across multiple linked templates
 - Function code is deployed via "run from package" pattern
 - The synthesis pipeline orchestrates artifact preparation and upload
@@ -63,21 +64,25 @@ This document outlines a comprehensive architecture where:
 ### Core Components
 
 #### 1. Template Splitter
+
 - **Location**: `packages/lib/src/synthesis/transform/template-splitter.ts`
 - **Responsibility**: Intelligently split resources across multiple templates
 - **Strategy**: Group by resource type and dependency relationships
 
 #### 2. Function Packager
+
 - **Location**: `packages/lib/src/synthesis/functions/packager.ts`
 - **Responsibility**: Package function code into deployment artifacts
 - **Output**: ZIP files for Azure Functions "run from package"
 
 #### 3. Artifact Manager
+
 - **Location**: `packages/lib/src/synthesis/assembly/artifact-manager.ts`
 - **Responsibility**: Manage upload and lifecycle of templates/packages
 - **Features**: SAS token generation, versioning, cleanup
 
 #### 4. Deployment Orchestrator
+
 - **Location**: `packages/cli/src/commands/deploy/orchestrator.ts`
 - **Responsibility**: Coordinate multi-phase deployment
 - **Phases**: Upload artifacts → Deploy root → Monitor progress
@@ -211,13 +216,13 @@ interface SasTokenStrategy {
 
   // Token lifetime
   readonly duration: {
-    deployment: '1h';  // Short-lived for deployment
-    runtime: '24h';    // Longer for function runtime
+    deployment: '1h'; // Short-lived for deployment
+    runtime: '24h'; // Longer for function runtime
   };
 
   // Security
   readonly restrictions: {
-    ip: string[];      // Optional IP restrictions
+    ip: string[]; // Optional IP restrictions
     protocol: 'https'; // HTTPS only
   };
 }
@@ -226,23 +231,27 @@ interface SasTokenStrategy {
 ### Synthesis Pipeline Changes
 
 #### Phase 1: Prepare (No Changes)
+
 - Traverse construct tree
 - Collect resources by stack
 - Validate resource organization
 
 #### Phase 2: Transform (Enhanced)
+
 - Convert resources to ARM JSON
 - **NEW**: Extract function code from InlineFunction
 - **NEW**: Generate function manifests (without code)
 - Resolve dependencies
 
 #### Phase 3: Split & Package (New Phase)
+
 - **Split templates** based on size and grouping rules
 - **Package functions** into deployment ZIPs
 - **Generate deployment manifest** with artifact references
 - **Calculate checksums** for integrity validation
 
 #### Phase 4: Assembly & Upload (Enhanced)
+
 - **Upload templates** to storage account
 - **Upload packages** to storage account
 - **Generate SAS tokens** for all artifacts
@@ -279,6 +288,7 @@ sequenceDiagram
 ### Manifest Structure
 
 #### Current Manifest
+
 ```json
 {
   "version": "1.0.0",
@@ -291,6 +301,7 @@ sequenceDiagram
 ```
 
 #### New Manifest
+
 ```json
 {
   "version": "2.0.0",
@@ -337,30 +348,35 @@ sequenceDiagram
 ## Implementation Roadmap
 
 ### Phase 1: Core Infrastructure (Week 1-2)
+
 1. Implement `TemplateSplitter` class
 2. Create `FunctionPackager` class
 3. Build `ArtifactManager` for storage operations
 4. Update synthesis pipeline to use new components
 
 ### Phase 2: Storage & Upload (Week 2-3)
+
 1. Create storage account provisioning logic
 2. Implement SAS token generation
 3. Build artifact upload system
 4. Add checksum validation
 
 ### Phase 3: Template Generation (Week 3-4)
+
 1. Modify `InlineFunction` to generate metadata only
 2. Update `ResourceTransformer` for linked templates
 3. Implement root template generation
 4. Add template size validation
 
 ### Phase 4: Deployment Integration (Week 4-5)
+
 1. Update CLI deploy command
 2. Implement deployment orchestration
 3. Add progress monitoring
 4. Build rollback capabilities
 
 ### Phase 5: Testing & Migration (Week 5-6)
+
 1. Unit tests for all new components
 2. Integration tests for full pipeline
 3. Migration guide for existing code
@@ -369,30 +385,33 @@ sequenceDiagram
 ## Migration Strategy
 
 ### Breaking Changes
+
 - `InlineFunction` no longer embeds code directly
 - Synthesis output structure changes
 - Deployment requires storage account
 
 ### Migration Path
+
 1. **Immediate**: All new synthesis uses linked templates
 2. **No Legacy Mode**: Old monolithic approach is removed
 3. **Automatic Conversion**: Existing constructs work without changes
 4. **Transparent to Developers**: Complexity hidden in synthesis layer
 
 ### Developer Experience
+
 ```typescript
 // BEFORE: No changes needed in application code
 const func = new InlineFunction(functionApp, 'CreateUser', {
   functionName: 'create-user',
   code: generatedCode,
-  httpTrigger: { methods: ['POST'] }
+  httpTrigger: { methods: ['POST'] },
 });
 
 // AFTER: Exact same code continues to work
 const func = new InlineFunction(functionApp, 'CreateUser', {
   functionName: 'create-user',
   code: generatedCode,
-  httpTrigger: { methods: ['POST'] }
+  httpTrigger: { methods: ['POST'] },
 });
 // But synthesis now generates linked templates + packages automatically
 ```
@@ -400,12 +419,14 @@ const func = new InlineFunction(functionApp, 'CreateUser', {
 ## Success Metrics
 
 ### Technical Metrics
+
 - Template size: All templates <3.5MB
 - Deployment time: <20% increase despite multi-phase
 - Storage overhead: <100MB per deployment
 - SAS token security: 100% HTTPS, time-limited
 
 ### Developer Metrics
+
 - Zero code changes required
 - Deployment success rate >99%
 - Clear error messages for failures
@@ -414,12 +435,14 @@ const func = new InlineFunction(functionApp, 'CreateUser', {
 ## Security Considerations
 
 ### Storage Account Security
+
 - Private endpoints only (no public access)
 - Managed identity for CLI access
 - SAS tokens for deployment-time access
 - Automatic token expiration
 
 ### Package Integrity
+
 - SHA256 checksums for all artifacts
 - Signature validation before deployment
 - Immutable packages (no overwrites)
@@ -428,12 +451,14 @@ const func = new InlineFunction(functionApp, 'CreateUser', {
 ## Performance Optimizations
 
 ### Parallel Operations
+
 - Upload templates in parallel
 - Upload packages in parallel
 - Deploy independent templates concurrently
 - Stream large files (don't load in memory)
 
 ### Caching Strategy
+
 - Cache generated packages between deployments
 - Reuse unchanged templates
 - Skip upload if checksum matches
@@ -442,30 +467,34 @@ const func = new InlineFunction(functionApp, 'CreateUser', {
 ## Error Handling
 
 ### Failure Scenarios
+
 1. **Storage Upload Failure**: Retry with exponential backoff
 2. **Template Too Large**: Split into smaller chunks
 3. **SAS Token Expired**: Regenerate and retry
 4. **Deployment Failed**: Rollback to previous version
 
 ### Error Messages
+
 ```typescript
 // Clear, actionable error messages
 throw new Error(
   `Template size (${size}MB) exceeds limit (3.5MB). ` +
-  `Template will be automatically split. ` +
-  `Largest resource: ${largestResource.name} (${largestResource.size}MB)`
+    `Template will be automatically split. ` +
+    `Largest resource: ${largestResource.name} (${largestResource.size}MB)`
 );
 ```
 
 ## Governance & Compliance
 
 ### Government Cloud Support
+
 - Use appropriate storage endpoints (.blob.core.usgovcloudapi.net)
 - Comply with FedRAMP controls
 - Support air-gapped environments
 - Regional data residency
 
 ### Audit & Compliance
+
 - Log all artifact operations
 - Track deployment history
 - Maintain artifact retention policy
@@ -474,21 +503,25 @@ throw new Error(
 ## Alternative Approaches Considered
 
 ### 1. Nested Templates (Rejected)
+
 - Still subject to 4MB total limit
 - Doesn't solve our core problem
 - More complex than linked templates
 
 ### 2. Azure Bicep (Rejected)
+
 - Requires learning new DSL
 - Less flexibility than TypeScript
 - Still produces ARM templates ultimately
 
 ### 3. Terraform (Rejected)
+
 - Complete rewrite required
 - Different ecosystem
 - Loses TypeScript benefits
 
 ### 4. Custom Resource Providers (Rejected)
+
 - Complex to implement
 - Requires hosting infrastructure
 - Operational overhead

@@ -13,7 +13,7 @@ Atakora is a type-safe Infrastructure as Code (IaC) framework for Azure that com
 This is a TypeScript monorepo with npm workspaces containing 5 main packages:
 
 - **@atakora/lib** - Core framework with synthesis engine, validation, and authorization abstractions
-- **@atakora/cdk** - L1/L2 Azure resource constructs organized by Microsoft.* namespaces (Network, Storage, Compute, etc.)
+- **@atakora/cdk** - L1/L2 Azure resource constructs organized by Microsoft.\* namespaces (Network, Storage, Compute, etc.)
 - **@atakora/cli** - Command-line interface for project initialization and deployment
 - **@atakora/component** - Production-ready infrastructure patterns (CRUD APIs, web apps, microservices)
 - **@atakora/backend** (private) - Example/internal backend infrastructure package
@@ -88,6 +88,7 @@ Atakora follows AWS CDK's construct tree pattern with three levels:
 3. **Resources** - Azure resources (L1 low-level, L2 high-level intent-based)
 
 Example hierarchy:
+
 ```
 App
 └── ResourceGroupStack (Foundation)
@@ -135,6 +136,7 @@ The framework has two distinct type systems:
    - Should import from `@atakora/lib` for core types
 
 **Import Pattern**: CDK constructs must use:
+
 ```typescript
 import { Construct, Resource, DeploymentScope } from '@atakora/cdk';
 import type { ArmResource } from '@atakora/cdk';
@@ -170,6 +172,7 @@ npm run codegen:sync [schemas-dir] [pattern...]
 ```
 
 Generated code locations:
+
 - Types: `packages/lib/src/generated/types/`
 - Validation: `packages/lib/src/generated/validation/`
 - Resources: `packages/lib/src/resources/<namespace>/`
@@ -184,11 +187,13 @@ Framework uses Vitest with coverage thresholds:
 - Statements: 80%
 
 Test file patterns:
+
 - `*.test.ts` - Unit tests
 - `*.spec.ts` - Integration tests
 - `__tests__/` - Test directories
 
 Run tests:
+
 ```bash
 npm test                    # All packages
 npm test -- --watch         # Watch mode
@@ -207,6 +212,7 @@ Internal dependency order (build order):
 5. `@atakora/backend` (depends on lib + cdk + component)
 
 **Important**:
+
 - CLI is bundled into a single file (`dist/cli.bundle.js`) using esbuild
 - Lib and CDK must build before CLI
 - Use `npm run build` from root to build in correct order
@@ -295,6 +301,7 @@ const storageName = AzureNaming.storageAccount('myapp', 'prod');
 ### Commit Messages
 
 No specific convention enforced, but be descriptive. Commits include:
+
 - What changed and why
 - Reference ADRs for architectural decisions
 
@@ -329,6 +336,7 @@ npm run build
 ### Type Errors in CDK
 
 Ensure you're importing from the correct package:
+
 ```typescript
 // Correct
 import { Construct, Resource } from '@atakora/cdk';
@@ -340,6 +348,7 @@ import { Construct, Resource } from '@atakora/lib';
 ### Synthesis Failures
 
 Check the `arm.out/` directory for:
+
 - `manifest.json` - Synthesis output manifest
 - `<stack-name>.template.json` - Main ARM template
 - `<stack-name>-*.template.json` - Linked templates

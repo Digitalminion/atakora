@@ -32,7 +32,7 @@ import {
 
   // Mock bindings
   createMockBindings,
-  MockBlobStorage
+  MockBlobStorage,
 } from '@atakora/lib/testing';
 ```
 
@@ -58,19 +58,18 @@ test('subnet delegation requires properties wrapper', () => {
       {
         name: 'delegated',
         addressPrefix: '10.0.1.0/24',
-        delegations: [{
-          name: 'sqlDelegation',
-          serviceName: 'Microsoft.Sql/managedInstances'  // Missing properties wrapper
-        }]
-      }
-    ]
+        delegations: [
+          {
+            name: 'sqlDelegation',
+            serviceName: 'Microsoft.Sql/managedInstances', // Missing properties wrapper
+          },
+        ],
+      },
+    ],
   });
 
   // Expect specific validation error
-  expectValidationError(
-    stack,
-    KnownValidationErrorCode.INVALID_DELEGATION_STRUCTURE
-  );
+  expectValidationError(stack, KnownValidationErrorCode.INVALID_DELEGATION_STRUCTURE);
 });
 ```
 
@@ -90,14 +89,16 @@ test('valid subnet delegation structure', () => {
       {
         name: 'delegated',
         addressPrefix: '10.0.1.0/24',
-        delegations: [{
-          name: 'sqlDelegation',
-          properties: {
-            serviceName: 'Microsoft.Sql/managedInstances'  // Correct structure
-          }
-        }]
-      }
-    ]
+        delegations: [
+          {
+            name: 'sqlDelegation',
+            properties: {
+              serviceName: 'Microsoft.Sql/managedInstances', // Correct structure
+            },
+          },
+        ],
+      },
+    ],
   });
 
   // Expect no validation errors
@@ -119,7 +120,7 @@ test('detects invalid delegation structure', () => {
     name: 'test-subnet',
     addressPrefix: '10.0.1.0/24',
     delegationName: 'sqlDelegation',
-    serviceName: 'Microsoft.Sql/managedInstances'
+    serviceName: 'Microsoft.Sql/managedInstances',
   });
 
   // This subnet will fail Azure deployment
@@ -139,12 +140,13 @@ test('creates valid delegation structure', () => {
     name: 'test-subnet',
     addressPrefix: '10.0.1.0/24',
     delegationName: 'sqlDelegation',
-    serviceName: 'Microsoft.Sql/managedInstances'
+    serviceName: 'Microsoft.Sql/managedInstances',
   });
 
   // This subnet will pass Azure deployment
-  expect(validSubnet.properties.delegations[0].properties.serviceName)
-    .toBe('Microsoft.Sql/managedInstances');
+  expect(validSubnet.properties.delegations[0].properties.serviceName).toBe(
+    'Microsoft.Sql/managedInstances'
+  );
 });
 ```
 
@@ -156,7 +158,7 @@ import { createSubnetWithMisplacedAddressPrefix } from '@atakora/lib/testing';
 test('detects misplaced addressPrefix', () => {
   const invalidSubnet = createSubnetWithMisplacedAddressPrefix({
     name: 'test-subnet',
-    addressPrefix: '10.0.1.0/24'
+    addressPrefix: '10.0.1.0/24',
   });
 
   // addressPrefix at root level instead of properties
@@ -173,7 +175,7 @@ import { createLiteralNsgReference, createValidNsgReference } from '@atakora/lib
 test('detects literal NSG reference', () => {
   const invalidNsg = createLiteralNsgReference({
     subnetName: 'test-subnet',
-    nsgId: 'my-nsg-id'  // Literal string instead of ARM reference
+    nsgId: 'my-nsg-id', // Literal string instead of ARM reference
   });
 
   // Will fail - NSG ID should be ARM resourceId() expression
@@ -184,12 +186,13 @@ test('detects literal NSG reference', () => {
 test('creates valid NSG reference', () => {
   const validNsg = createValidNsgReference({
     subnetName: 'test-subnet',
-    nsgName: 'my-nsg'
+    nsgName: 'my-nsg',
   });
 
   // Correct ARM expression
-  expect(validNsg.properties.networkSecurityGroup.id)
-    .toMatch(/\[resourceId\('Microsoft.Network\/networkSecurityGroups'/);
+  expect(validNsg.properties.networkSecurityGroup.id).toMatch(
+    /\[resourceId\('Microsoft.Network\/networkSecurityGroups'/
+  );
 });
 ```
 
@@ -198,13 +201,13 @@ test('creates valid NSG reference', () => {
 ```typescript
 import {
   createNetworkLockedStorageAccount,
-  createNetworkLockedOpenAIService
+  createNetworkLockedOpenAIService,
 } from '@atakora/lib/testing';
 
 test('storage with network rules requires service endpoint', () => {
   const lockedStorage = createNetworkLockedStorageAccount({
     name: 'teststorage',
-    vnetRules: [{ subnetId: '/subscriptions/.../subnets/data' }]
+    vnetRules: [{ subnetId: '/subscriptions/.../subnets/data' }],
   });
 
   // This will fail unless subnet has Microsoft.Storage service endpoint
@@ -214,7 +217,7 @@ test('storage with network rules requires service endpoint', () => {
 test('openai with network rules requires private endpoint', () => {
   const lockedOpenAI = createNetworkLockedOpenAIService({
     name: 'testopenai',
-    publicAccess: false
+    publicAccess: false,
   });
 
   // This will fail unless private endpoint is configured
@@ -234,16 +237,18 @@ test('custom invalid resource structure', () => {
 
   const invalidVnet = builder
     .withName('test-vnet')
-    .withProperty('addressSpace', '10.0.0.0/16')  // Should be addressSpace.addressPrefixes
+    .withProperty('addressSpace', '10.0.0.0/16') // Should be addressSpace.addressPrefixes
     .withMissingRequiredProperty('location')
     .build();
 
   // Test that validation catches the issues
   const errors = validateResource(invalidVnet);
-  expect(errors).toContainEqual(expect.objectContaining({
-    code: 'MISSING_REQUIRED_PROPERTY',
-    path: 'location'
-  }));
+  expect(errors).toContainEqual(
+    expect.objectContaining({
+      code: 'MISSING_REQUIRED_PROPERTY',
+      path: 'location',
+    })
+  );
 });
 ```
 
@@ -271,7 +276,7 @@ test('stack contains virtual network', () => {
   const stack = new Stack(app, 'TestStack');
 
   new VirtualNetwork(stack, 'VNet', {
-    addressSpace: '10.0.0.0/16'
+    addressSpace: '10.0.0.0/16',
   });
 
   const template = Template.fromStack(stack);
@@ -279,9 +284,9 @@ test('stack contains virtual network', () => {
   expect(template).toHaveResource('Microsoft.Network/virtualNetworks', {
     properties: {
       addressSpace: {
-        addressPrefixes: ['10.0.0.0/16']
-      }
-    }
+        addressPrefixes: ['10.0.0.0/16'],
+      },
+    },
   });
 });
 ```
@@ -295,17 +300,14 @@ test('storage account has correct SKU', () => {
   const stack = new Stack(app, 'TestStack');
 
   new StorageAccount(stack, 'Storage', {
-    sku: 'Standard_LRS'
+    sku: 'Standard_LRS',
   });
 
   const template = Template.fromStack(stack);
 
-  expect(template).toHaveResourceWithProperties(
-    'Microsoft.Storage/storageAccounts',
-    {
-      sku: { name: 'Standard_LRS' }
-    }
-  );
+  expect(template).toHaveResourceWithProperties('Microsoft.Storage/storageAccounts', {
+    sku: { name: 'Standard_LRS' },
+  });
 });
 ```
 
@@ -320,7 +322,7 @@ test('stack exports storage connection string', () => {
   const storage = new StorageAccount(stack, 'Storage');
 
   new ArmOutput(stack, 'StorageConnectionString', {
-    value: storage.connectionString
+    value: storage.connectionString,
   });
 
   const template = Template.fromStack(stack);
@@ -339,14 +341,14 @@ test('stack has environment parameter', () => {
 
   const env = new ArmParameter(stack, 'Environment', {
     type: 'string',
-    allowedValues: ['dev', 'prod']
+    allowedValues: ['dev', 'prod'],
   });
 
   const template = Template.fromStack(stack);
 
   expect(template).toHaveParameter('Environment', {
     type: 'string',
-    allowedValues: ['dev', 'prod']
+    allowedValues: ['dev', 'prod'],
   });
 });
 ```
@@ -364,8 +366,8 @@ test('stack has 3 subnets', () => {
     subnets: [
       { name: 'subnet1', addressPrefix: '10.0.1.0/24' },
       { name: 'subnet2', addressPrefix: '10.0.2.0/24' },
-      { name: 'subnet3', addressPrefix: '10.0.3.0/24' }
-    ]
+      { name: 'subnet3', addressPrefix: '10.0.3.0/24' },
+    ],
   });
 
   const template = Template.fromStack(stack);
@@ -387,7 +389,7 @@ test('simulates successful deployment', async () => {
   const stack = new Stack(app, 'TestStack');
 
   new ResourceGroup(stack, 'RG', {
-    location: 'eastus'
+    location: 'eastus',
   });
 
   const simulator = new DeploymentSimulator();
@@ -416,7 +418,7 @@ test('checks deployment result', async () => {
 
   if (!result.success) {
     console.error('Deployment failed:');
-    result.errors.forEach(err => {
+    result.errors.forEach((err) => {
       console.error(`  - ${err.code}: ${err.message}`);
       console.error(`    Resource: ${err.resourceType} ${err.resourceName}`);
     });
@@ -433,20 +435,24 @@ test('validates resource dependencies', async () => {
   const stack = new Stack(app, 'TestStack');
 
   const vnet = new VirtualNetwork(stack, 'VNet', {
-    addressSpace: '10.0.0.0/16'
+    addressSpace: '10.0.0.0/16',
   });
 
   const subnet = new Subnet(stack, 'Subnet', {
     addressPrefix: '10.0.1.0/24',
-    virtualNetwork: vnet  // Dependency
+    virtualNetwork: vnet, // Dependency
   });
 
   const simulator = new DeploymentSimulator();
   const result = await simulator.simulate(stack);
 
   // Verify VNet deployed before Subnet
-  const vnetIndex = result.deployedResources.findIndex(r => r.type === 'Microsoft.Network/virtualNetworks');
-  const subnetIndex = result.deployedResources.findIndex(r => r.type === 'Microsoft.Network/virtualNetworks/subnets');
+  const vnetIndex = result.deployedResources.findIndex(
+    (r) => r.type === 'Microsoft.Network/virtualNetworks'
+  );
+  const subnetIndex = result.deployedResources.findIndex(
+    (r) => r.type === 'Microsoft.Network/virtualNetworks/subnets'
+  );
 
   expect(vnetIndex).toBeLessThan(subnetIndex);
 });
@@ -467,9 +473,9 @@ test('performs what-if analysis', async () => {
       {
         type: 'Microsoft.Network/virtualNetworks',
         name: 'existing-vnet',
-        properties: { addressSpace: { addressPrefixes: ['10.0.0.0/16'] } }
-      }
-    ]
+        properties: { addressSpace: { addressPrefixes: ['10.0.0.0/16'] } },
+      },
+    ],
   });
 
   const result = await simulator.simulate(stack);
@@ -478,14 +484,16 @@ test('performs what-if analysis', async () => {
   expect(result.changes).toContainEqual({
     action: 'Create',
     resourceType: 'Microsoft.Storage/storageAccounts',
-    resourceName: 'newstorage'
+    resourceName: 'newstorage',
   });
 
   expect(result.changes).toContainEqual({
     action: 'Modify',
     resourceType: 'Microsoft.Network/virtualNetworks',
     resourceName: 'existing-vnet',
-    diff: { /* property changes */ }
+    diff: {
+      /* property changes */
+    },
   });
 });
 ```
@@ -510,7 +518,7 @@ describe('HTTP Function', () => {
     const context = testUtils.createContext();
     const request = testUtils.createHttpRequest({
       method: 'GET',
-      query: { name: 'Alice' }
+      query: { name: 'Alice' },
     });
 
     await myHttpFunction(context, request);
@@ -518,8 +526,8 @@ describe('HTTP Function', () => {
     expect(context.res).toMatchObject({
       status: 200,
       body: expect.objectContaining({
-        message: 'Hello, Alice!'
-      })
+        message: 'Hello, Alice!',
+      }),
     });
   });
 });
@@ -532,11 +540,13 @@ const context = testUtils.createContext({
   invocationId: 'test-123',
   executionContext: {
     functionName: 'MyFunction',
-    functionDirectory: '/home/site/wwwroot/MyFunction'
+    functionDirectory: '/home/site/wwwroot/MyFunction',
   },
   bindings: {
-    myInput: { /* input binding data */ }
-  }
+    myInput: {
+      /* input binding data */
+    },
+  },
 });
 
 // Mock logging
@@ -552,7 +562,7 @@ const getRequest = testUtils.createHttpRequest({
   method: 'GET',
   url: 'https://example.com/api/users',
   query: { id: '123' },
-  headers: { 'Authorization': 'Bearer token' }
+  headers: { Authorization: 'Bearer token' },
 });
 
 // POST request with body
@@ -560,7 +570,7 @@ const postRequest = testUtils.createHttpRequest({
   method: 'POST',
   url: 'https://example.com/api/users',
   body: { name: 'Alice', email: 'alice@example.com' },
-  headers: { 'Content-Type': 'application/json' }
+  headers: { 'Content-Type': 'application/json' },
 });
 ```
 
@@ -571,27 +581,23 @@ test('timer function runs on schedule', async () => {
   const context = testUtils.createContext();
   const timer = testUtils.createTimerInfo({
     isPastDue: false,
-    schedule: { adjustForDST: true }
+    schedule: { adjustForDST: true },
   });
 
   await myTimerFunction(context, timer);
 
-  expect(context.log).toHaveBeenCalledWith(
-    expect.stringContaining('Timer executed')
-  );
+  expect(context.log).toHaveBeenCalledWith(expect.stringContaining('Timer executed'));
 });
 
 test('handles past due timer', async () => {
   const context = testUtils.createContext();
   const timer = testUtils.createTimerInfo({
-    isPastDue: true
+    isPastDue: true,
   });
 
   await myTimerFunction(context, timer);
 
-  expect(context.log).toHaveBeenCalledWith(
-    expect.stringContaining('Timer is running late')
-  );
+  expect(context.log).toHaveBeenCalledWith(expect.stringContaining('Timer is running late'));
 });
 ```
 
@@ -602,14 +608,14 @@ test('processes queue message', async () => {
   const context = testUtils.createContext();
   const message = {
     orderId: '12345',
-    items: [{ id: 'item1', quantity: 2 }]
+    items: [{ id: 'item1', quantity: 2 }],
   };
 
   await myQueueFunction(context, message);
 
   expect(context.bindings.outputQueue).toEqual({
     orderId: '12345',
-    status: 'processed'
+    status: 'processed',
   });
 });
 ```
@@ -620,19 +626,18 @@ test('processes queue message', async () => {
 import {
   expectFunctionToThrow,
   expectResponseStatus,
-  expectResponseHeaders
+  expectResponseHeaders,
 } from '@atakora/lib/testing';
 
 test('function throws on invalid input', async () => {
   const context = testUtils.createContext();
   const request = testUtils.createHttpRequest({
-    body: { /* invalid data */ }
+    body: {
+      /* invalid data */
+    },
   });
 
-  await expectFunctionToThrow(
-    () => myHttpFunction(context, request),
-    'Invalid input'
-  );
+  await expectFunctionToThrow(() => myHttpFunction(context, request), 'Invalid input');
 });
 
 test('returns correct status code', async () => {
@@ -652,7 +657,7 @@ test('sets correct headers', async () => {
 
   expectResponseHeaders(context, {
     'Content-Type': 'application/json',
-    'Cache-Control': 'no-cache'
+    'Cache-Control': 'no-cache',
   });
 });
 ```
@@ -671,7 +676,7 @@ test('function reads from blob storage', async () => {
 
   // Setup test data
   blobStorage.uploadBlob('mycontainer', 'test.json', {
-    data: 'test content'
+    data: 'test content',
   });
 
   const context = testUtils.createContext();
@@ -679,9 +684,7 @@ test('function reads from blob storage', async () => {
 
   await myBlobFunction(context, context.bindings.inputBlob);
 
-  expect(context.log).toHaveBeenCalledWith(
-    expect.stringContaining('test content')
-  );
+  expect(context.log).toHaveBeenCalledWith(expect.stringContaining('test content'));
 });
 ```
 
@@ -701,7 +704,7 @@ test('function writes to queue', async () => {
   expect(messages).toHaveLength(1);
   expect(messages[0]).toEqual({
     status: 'processed',
-    timestamp: expect.any(String)
+    timestamp: expect.any(String),
   });
 });
 ```
@@ -719,7 +722,7 @@ test('function queries table storage', async () => {
     PartitionKey: 'users',
     RowKey: '123',
     Name: 'Alice',
-    Email: 'alice@example.com'
+    Email: 'alice@example.com',
   });
 
   const context = testUtils.createContext();
@@ -743,7 +746,7 @@ test('function writes to cosmos db', async () => {
 
   await myCosmosFunction(context, {
     id: '123',
-    name: 'Test Item'
+    name: 'Test Item',
   });
 
   // Verify document created
@@ -751,7 +754,7 @@ test('function writes to cosmos db', async () => {
   expect(doc).toMatchObject({
     id: '123',
     name: 'Test Item',
-    processed: true
+    processed: true,
   });
 });
 ```
@@ -766,22 +769,22 @@ test('function with multiple bindings', async () => {
     blob: {
       container: 'uploads',
       blob: 'file.json',
-      content: { data: 'test' }
+      content: { data: 'test' },
     },
     queue: {
-      name: 'processing-queue'
+      name: 'processing-queue',
     },
     table: {
-      name: 'ProcessingStatus'
+      name: 'ProcessingStatus',
     },
     cosmos: {
       database: 'MyDb',
-      container: 'Items'
-    }
+      container: 'Items',
+    },
   });
 
   const context = testUtils.createContext({
-    bindings: bindings.input
+    bindings: bindings.input,
   });
 
   await myComplexFunction(context, context.bindings.inputBlob);
@@ -804,7 +807,7 @@ describe('VirtualNetwork validation', () => {
 
     expect(() => {
       new VirtualNetwork(stack, 'VNet', {
-        addressSpace: 'invalid-cidr'  // Should fail
+        addressSpace: 'invalid-cidr', // Should fail
       });
     }).toThrow('Invalid CIDR notation');
   });
@@ -816,8 +819,8 @@ describe('VirtualNetwork validation', () => {
       new VirtualNetwork(stack, 'VNet', {
         addressSpace: '10.0.0.0/16',
         subnets: [
-          { name: 'too-small', addressPrefix: '10.0.0.0/30' }  // Too small
-        ]
+          { name: 'too-small', addressPrefix: '10.0.0.0/30' }, // Too small
+        ],
       });
     });
   });
@@ -838,8 +841,8 @@ describe('ARM template generation', () => {
       type: 'Microsoft.Storage/storageAccounts',
       apiVersion: expect.stringMatching(/2023-\d{2}-\d{2}/),
       properties: expect.objectContaining({
-        sku: expect.any(Object)
-      })
+        sku: expect.any(Object),
+      }),
     });
   });
 });
@@ -876,21 +879,23 @@ describe('HTTP Function', () => {
   test('validates input', async () => {
     const context = testUtils.createContext();
     const request = testUtils.createHttpRequest({
-      body: { /* missing required fields */ }
+      body: {
+        /* missing required fields */
+      },
     });
 
     await myFunction(context, request);
 
     expectResponseStatus(context, 400);
     expect(context.res.body).toMatchObject({
-      error: 'Invalid input'
+      error: 'Invalid input',
     });
   });
 
   test('handles errors gracefully', async () => {
     const context = testUtils.createContext();
     const request = testUtils.createHttpRequest({
-      body: { id: 'non-existent' }
+      body: { id: 'non-existent' },
     });
 
     await myFunction(context, request);
@@ -907,6 +912,7 @@ describe('HTTP Function', () => {
 **Problem**: Validation errors not caught in tests
 
 **Solution**:
+
 ```typescript
 // Ensure synthesis happens
 const template = Template.fromStack(stack);
@@ -923,6 +929,7 @@ expectValidationError(stack, errorCode);
 **Problem**: `expect(...).toHaveResource is not a function`
 
 **Solution**:
+
 ```typescript
 // Add to test setup file
 import { setupArmMatchers } from '@atakora/lib/testing';
@@ -937,13 +944,14 @@ beforeAll(() => {
 **Problem**: Function can't access mock bindings
 
 **Solution**:
+
 ```typescript
 // Ensure bindings are passed to context
 const context = testUtils.createContext({
   bindings: {
     inputBlob: mockBlob,
-    outputQueue: mockQueue
-  }
+    outputQueue: mockQueue,
+  },
 });
 
 // Access via context.bindings

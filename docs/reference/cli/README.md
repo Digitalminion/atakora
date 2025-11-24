@@ -10,16 +10,16 @@ The Atakora CLI provides commands for managing infrastructure-as-code projects. 
 
 ## Quick Reference
 
-| Command | Purpose | Common Use Case |
-|---------|---------|-----------------|
-| [`init`](./init.md) | Initialize new project | Start a new infrastructure project |
-| [`add`](./add.md) | Add package to workspace | Create environment-specific stacks |
-| [`synth`](./synth.md) | Synthesize ARM templates | Generate deployment templates |
-| [`deploy`](./deploy.md) | Deploy to Azure | Push infrastructure changes |
-| [`diff`](./diff.md) | Show template changes | Preview deployment impact |
-| [`config`](./config.md) | Manage authentication | Configure Azure credentials |
-| [`set-default`](./set-default.md) | Set default package | Switch active workspace |
-| [`function`](./function.md) | Manage Azure Functions | Create, test, and deploy functions |
+| Command                           | Purpose                  | Common Use Case                    |
+| --------------------------------- | ------------------------ | ---------------------------------- |
+| [`init`](./Init.md)               | Initialize new project   | Start a new infrastructure project |
+| [`add`](./Add.md)                 | Add package to workspace | Create environment-specific stacks |
+| [`synth`](./Synth.md)             | Synthesize ARM templates | Generate deployment templates      |
+| [`deploy`](./Deploy.md)           | Deploy to Azure          | Push infrastructure changes        |
+| [`diff`](./Diff.md)               | Show template changes    | Preview deployment impact          |
+| [`config`](./Config.md)           | Manage authentication    | Configure Azure credentials        |
+| [`set-default`](./Set-Default.md) | Set default package      | Switch active workspace            |
+| [`function`](./Function.md)       | Manage Azure Functions   | Create, test, and deploy functions |
 
 ## Installation
 
@@ -147,7 +147,7 @@ The manifest tracks all packages in your workspace:
 }
 ```
 
-See [Manifest Schema Reference](../manifest-schema.md) for complete documentation.
+See [Manifest Schema Reference](../Schemas/Manifest-Schema.md) for complete documentation.
 
 ### Config (.atakora/config.json)
 
@@ -211,14 +211,14 @@ export ATAKORA_SKIP_VALIDATION=1
 
 The CLI uses standard exit codes:
 
-| Code | Meaning | Common Causes |
-|------|---------|---------------|
-| 0 | Success | Command completed successfully |
-| 1 | General Error | Invalid options, file not found, etc. |
-| 2 | Validation Error | Schema validation failure, invalid config |
-| 3 | Synthesis Error | TypeScript errors, missing dependencies |
-| 4 | Deployment Error | Azure API errors, authentication failure |
-| 5 | Conflict | Resource already exists, concurrent changes |
+| Code | Meaning          | Common Causes                               |
+| ---- | ---------------- | ------------------------------------------- |
+| 0    | Success          | Command completed successfully              |
+| 1    | General Error    | Invalid options, file not found, etc.       |
+| 2    | Validation Error | Schema validation failure, invalid config   |
+| 3    | Synthesis Error  | TypeScript errors, missing dependencies     |
+| 4    | Deployment Error | Azure API errors, authentication failure    |
+| 5    | Conflict         | Resource already exists, concurrent changes |
 
 Example handling in scripts:
 
@@ -279,6 +279,7 @@ atakora synth --verbose
 ```
 
 Output includes:
+
 - File system operations
 - Template synthesis steps
 - Validation results
@@ -294,6 +295,7 @@ atakora synth
 ```
 
 Additional output:
+
 - Internal function calls
 - Constructor invocations
 - Property resolutions
@@ -315,11 +317,11 @@ atakora deploy --dry-run
 
 ### CLI vs Library Versions
 
-| CLI Version | Compatible Library Versions | Notes |
-|-------------|----------------------------|-------|
-| 1.0.x | 1.0.x | Full feature support |
-| 1.1.x | 1.0.x - 1.1.x | Backward compatible |
-| 2.0.x | 2.0.x | Breaking changes |
+| CLI Version | Compatible Library Versions | Notes                |
+| ----------- | --------------------------- | -------------------- |
+| 1.0.x       | 1.0.x                       | Full feature support |
+| 1.1.x       | 1.0.x - 1.1.x               | Backward compatible  |
+| 2.0.x       | 2.0.x                       | Breaking changes     |
 
 ### Check Versions
 
@@ -393,6 +395,7 @@ atakora clean
 **Problem**: `atakora: command not found`
 
 **Solution**: Install CLI globally or use npx:
+
 ```bash
 npm install -g @atakora/cli
 # or
@@ -404,6 +407,7 @@ npx @atakora/cli init
 **Problem**: `EACCES: permission denied`
 
 **Solution**: Use npm with proper permissions:
+
 ```bash
 # Fix npm permissions (Unix)
 sudo chown -R $(whoami) ~/.npm
@@ -417,6 +421,7 @@ npx atakora init
 **Problem**: `Cannot find module '@atakora/lib'`
 
 **Solution**: Install dependencies:
+
 ```bash
 npm install
 ```
@@ -426,33 +431,34 @@ npm install
 **Problem**: `Authentication failed` or `401 Unauthorized`
 
 **Solution**: Configure Azure credentials:
+
 ```bash
 atakora config set-credentials
 # or
 az login
 ```
 
-See [Troubleshooting Guide](../../troubleshooting/common-issues.md) for more solutions.
+See [Troubleshooting Guide](../../troubleshooting/Common-Issues.md) for more solutions.
 
 ## Command Reference
 
 Detailed documentation for each command:
 
-- **[`init`](./init.md)** - Initialize a new Atakora project
-- **[`add`](./add.md)** - Add a package to the workspace
-- **[`synth`](./synth.md)** - Synthesize ARM templates from code
-- **[`deploy`](./deploy.md)** - Deploy infrastructure to Azure
-- **[`diff`](./diff.md)** - Show differences between local and deployed
-- **[`config`](./config.md)** - Manage authentication configuration
-- **[`set-default`](./set-default.md)** - Set the default active package
-- **[`function`](./function.md)** - Manage Azure Functions (create, deploy, test)
+- **[`init`](./Init.md)** - Initialize a new Atakora project
+- **[`add`](./Add.md)** - Add a package to the workspace
+- **[`synth`](./Synth.md)** - Synthesize ARM templates from code
+- **[`deploy`](./Deploy.md)** - Deploy infrastructure to Azure
+- **[`diff`](./Diff.md)** - Show differences between local and deployed
+- **[`config`](./Config.md)** - Manage authentication configuration
+- **[`set-default`](./Set-Default.md)** - Set the default active package
+- **[`function`](./Function.md)** - Manage Azure Functions (create, deploy, test)
 
 ## See Also
 
 - [Getting Started Guide](../../getting-started/README.md)
-- [Error Code Reference](../error-codes.md)
-- [Manifest Schema](../manifest-schema.md)
-- [Troubleshooting](../../troubleshooting/common-issues.md)
+- [Error Code Reference](../Configuration/Error-Codes.md)
+- [Manifest Schema](../Schemas/Manifest-Schema.md)
+- [Troubleshooting](../../troubleshooting/Common-Issues.md)
 
 ---
 

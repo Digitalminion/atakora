@@ -5,6 +5,7 @@
 ## Overview
 
 The manifest now tracks the storage account used for linked template artifacts. This provides:
+
 - ✅ **Reusability** - Same storage account across deployments
 - ✅ **History** - Track which deployments used the storage
 - ✅ **Cleanup** - Know which storage to clean up old artifacts from
@@ -13,6 +14,7 @@ The manifest now tracks the storage account used for linked template artifacts. 
 ## Manifest Structure
 
 ### Before (v2.0.0 without storage tracking)
+
 ```json
 {
   "version": "2.0.0",
@@ -22,6 +24,7 @@ The manifest now tracks the storage account used for linked template artifacts. 
 ```
 
 ### After (v2.0.0 with storage tracking)
+
 ```json
 {
   "version": "2.0.0",
@@ -46,6 +49,7 @@ The manifest now tracks the storage account used for linked template artifacts. 
 ## How It Works
 
 ### First Deployment
+
 1. Deploy command reads manifest - no `artifactStorage` present
 2. **Automatically provisions new storage account**: `{organization}cdk{hash}` (e.g., `digitalproductscdk7f3e92`)
    - Creates storage account if it doesn't exist
@@ -60,6 +64,7 @@ The manifest now tracks the storage account used for linked template artifacts. 
    - Saves updated manifest
 
 ### Subsequent Deployments
+
 1. Deploy command reads manifest - `artifactStorage` exists
 2. Reuses existing storage account from `accountName`
 3. Uploads new templates (with new deployment ID)
@@ -71,6 +76,7 @@ The manifest now tracks the storage account used for linked template artifacts. 
 ## Benefits
 
 ### 1. Automatic Provisioning & Reuse
+
 ```bash
 # First deployment - Storage auto-created
 $ atakora deploy Foundation
@@ -89,27 +95,31 @@ $ atakora deploy Foundation
 ```
 
 **No manual setup required!** The CLI automatically:
+
 - ✅ Creates the storage account if it doesn't exist
 - ✅ Configures security settings (private, TLS 1.2+, encrypted)
 - ✅ Creates the blob container
 - ✅ Reuses existing storage on subsequent deployments
 
 ### 2. Deployment History
+
 ```json
 {
   "deployments": [
-    "Foundation-1699564800000",  // Nov 9, 2023
-    "Foundation-1699650000000"   // Nov 10, 2023
+    "Foundation-1699564800000", // Nov 9, 2023
+    "Foundation-1699650000000" // Nov 10, 2023
   ]
 }
 ```
 
 You can see:
+
 - How many times you've deployed
 - When deployments happened (via timestamp in ID)
 - Which artifacts are in storage
 
 ### 3. Cleanup Operations
+
 ```bash
 # Future command: Clean up old deployments
 $ atakora storage clean --keep 5
@@ -129,6 +139,7 @@ Deployments: 2
 ```
 
 ### 4. Multi-Environment Support
+
 Each manifest (dev, staging, prod) tracks its own storage:
 
 ```
@@ -144,6 +155,7 @@ Each manifest (dev, staging, prod) tracks its own storage:
 ## Implementation Details
 
 ### Storage Account Name Generation
+
 ```typescript
 // Pattern: {organization}cdk{hash}
 // Example: digitalproductscdk7f3e92
@@ -172,6 +184,7 @@ const accountName = `${prefix}${hash}`;
 **Organization-based**: Uses your organization name for easy identification
 
 ### Deployment ID Format
+
 ```
 {stackName}-{timestamp}
 
@@ -183,13 +196,14 @@ Examples:
 **Unique**: Timestamp ensures no collisions
 
 ### Deployment Limit
+
 Only last **10 deployments** are tracked in manifest to keep file size reasonable:
 
 ```typescript
 deployments: [
-  ...existingDeployments.slice(-9),  // Keep last 9
-  newDeploymentId                     // Add new one
-]
+  ...existingDeployments.slice(-9), // Keep last 9
+  newDeploymentId, // Add new one
+];
 ```
 
 Older deployments still exist in storage but aren't tracked in manifest.
@@ -198,13 +212,13 @@ Older deployments still exist in storage but aren't tracked in manifest.
 
 ```typescript
 export interface ArtifactStorageConfig {
-  readonly accountName: string;           // "digitalproductscdk7f3e92"
-  readonly resourceGroupName: string;     // "rg-..."
-  readonly location: string;              // "eastus2"
-  readonly containerName: string;         // "arm-templates"
-  readonly endpoint: string;              // "https://..."
-  readonly provisionedAt: string;         // ISO 8601
-  readonly lastUsedAt?: string;           // ISO 8601
+  readonly accountName: string; // "digitalproductscdk7f3e92"
+  readonly resourceGroupName: string; // "rg-..."
+  readonly location: string; // "eastus2"
+  readonly containerName: string; // "arm-templates"
+  readonly endpoint: string; // "https://..."
+  readonly provisionedAt: string; // ISO 8601
+  readonly lastUsedAt?: string; // ISO 8601
   readonly deployments?: readonly string[]; // Max 10 IDs
 }
 
@@ -212,13 +226,14 @@ export interface CloudAssemblyV2 {
   readonly version: '2.0.0';
   readonly stacks: Record<string, StackManifestV2>;
   readonly directory: string;
-  artifactStorage?: ArtifactStorageConfig;  // NEW!
+  artifactStorage?: ArtifactStorageConfig; // NEW!
 }
 ```
 
 ## Migration Path
 
 ### Existing v2.0.0 Manifests (without storage tracking)
+
 No changes needed! The field is optional:
 
 ```typescript
@@ -229,6 +244,7 @@ artifactStorage?: ArtifactStorageConfig;
 - If present: Reuse existing storage
 
 ### Updating from v1.0.0 to v2.0.0
+
 The `artifactStorage` field is v2.0.0 only. v1.0.0 manifests don't have linked templates, so no storage is needed.
 
 ## Storage Account Configuration
@@ -263,6 +279,7 @@ When the CLI creates a storage account, it uses these settings:
 ## Security Considerations
 
 ### 1. Storage Account Access
+
 - **Private**: No public blob access (enforced at creation)
 - **RBAC**: Uses Azure AD authentication (DefaultAzureCredential)
 - **SAS Tokens**: Short-lived (24h), read-only
@@ -270,7 +287,9 @@ When the CLI creates a storage account, it uses these settings:
 - **HTTPS Only**: HTTP requests are rejected
 
 ### 2. Manifest Security
+
 The manifest contains:
+
 - ✅ Storage account name (public info)
 - ✅ Resource group name (public info)
 - ✅ Endpoint URL (public info)
@@ -279,7 +298,9 @@ The manifest contains:
 **Safe to commit**: The manifest can be committed to git - no sensitive data.
 
 ### 3. Deployment History
+
 Deployment IDs contain:
+
 - Stack name (e.g., "Foundation")
 - Timestamp (e.g., 1699564800000)
 
@@ -288,6 +309,7 @@ Deployment IDs contain:
 ## Future Enhancements
 
 ### 1. Storage Cleanup Command
+
 ```bash
 $ atakora storage clean [options]
 
@@ -298,6 +320,7 @@ Options:
 ```
 
 ### 2. Storage Info Command
+
 ```bash
 $ atakora storage info
 
@@ -310,6 +333,7 @@ Displays:
 ```
 
 ### 3. Cross-Manifest Sharing
+
 ```bash
 $ atakora storage share --from dev --to staging
 
@@ -320,6 +344,7 @@ Copies:
 ```
 
 ### 4. Storage Migration
+
 ```bash
 $ atakora storage migrate --to <new-account>
 
@@ -384,9 +409,11 @@ $ atakora storage clean --keep 5
 ## Troubleshooting
 
 ### Issue: Storage account not found
+
 **Cause**: Account was manually deleted from Azure
 
 **Solution**:
+
 ```bash
 # Remove artifactStorage from manifest
 $ code .atakora/arm.out/backend/manifest.json
@@ -397,9 +424,11 @@ $ atakora deploy Foundation
 ```
 
 ### Issue: Manifest not updating
+
 **Cause**: File permissions or disk space
 
 **Solution**:
+
 ```bash
 # Check manifest is writable
 $ ls -l .atakora/arm.out/backend/manifest.json
@@ -412,7 +441,9 @@ $ code .atakora/arm.out/backend/manifest.json
 ```
 
 ### Issue: Want to use different storage account
+
 **Solution**:
+
 ```bash
 # Option 1: Edit manifest to point to different account
 $ code .atakora/arm.out/backend/manifest.json

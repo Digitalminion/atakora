@@ -19,6 +19,7 @@ Current challenges and considerations:
 - No clear guidance on what should be shipped vs excluded
 
 Industry context:
+
 - AWS CDK v2 ships unminified JavaScript with source maps for debugging
 - Most CDK/IaC tools prioritize debuggability over size optimization
 - Tree-shaking is critical for large libraries with many exports
@@ -31,21 +32,25 @@ We will adopt a **progressive distribution strategy** that prioritizes debuggabi
 ### 1. Build Output Strategy
 
 **No Minification by Default**
+
 - Ship unminified, readable JavaScript for all packages
 - Rationale: Infrastructure code needs to be debuggable in production
 - Exception: CLI can optionally minify non-critical modules
 
 **Include Source Maps**
+
 - Generate and ship `.js.map` files for all packages
 - Enable `declarationMap` for TypeScript declaration maps
 - Rationale: Critical for debugging and error reporting
 
 **No Bundling for Libraries**
+
 - Keep file-per-module structure for @atakora/lib and @atakora/cdk
 - Preserve directory structure matching source layout
 - Rationale: Enables tree-shaking and selective imports
 
 **Selective Bundling for CLI**
+
 - Bundle CLI entry point and commands
 - Keep templates as separate files
 - Use esbuild for fast, efficient bundling
@@ -53,11 +58,13 @@ We will adopt a **progressive distribution strategy** that prioritizes debuggabi
 ### 2. Module Format Strategy
 
 **CommonJS as Primary Format**
+
 - Target CommonJS for broadest compatibility
 - TypeScript config: `"module": "commonjs", "target": "ES2020"`
 - Rationale: Node.js ecosystem standard, avoids dual-package hazard
 
 **ESM Support (Future)**
+
 - Plan for ESM exports in v2.0
 - Will require dual-build pipeline
 - Deferred to avoid complexity in v1.0
@@ -65,6 +72,7 @@ We will adopt a **progressive distribution strategy** that prioritizes debuggabi
 ### 3. Package Contents
 
 **What to Include:**
+
 ```json
 {
   "files": [
@@ -80,6 +88,7 @@ We will adopt a **progressive distribution strategy** that prioritizes debuggabi
 ```
 
 **What to Exclude:**
+
 - Source TypeScript files (`src/`)
 - Test files (`**/*.test.js`, `**/*.spec.js`)
 - Development configuration (`.eslintrc`, `vitest.config.ts`)
@@ -89,6 +98,7 @@ We will adopt a **progressive distribution strategy** that prioritizes debuggabi
 ### 4. Package-Specific Configurations
 
 **@atakora/lib (Internal Framework)**
+
 ```json
 {
   "main": "./dist/index.js",
@@ -99,13 +109,14 @@ We will adopt a **progressive distribution strategy** that prioritizes debuggabi
 ```
 
 **@atakora/cdk (Public CDK)**
+
 ```json
 {
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
-    "./network": "./dist/network/index.js",
+    "./network": "./dist/network/index.js"
     // ... other subpath exports
   },
   "sideEffects": false,
@@ -114,34 +125,32 @@ We will adopt a **progressive distribution strategy** that prioritizes debuggabi
 ```
 
 **@atakora/cli (CLI Tool)**
+
 ```json
 {
   "bin": {
     "atakora": "./bin/atakora.js"
   },
-  "files": [
-    "bin",
-    "dist",
-    "templates",
-    "README.md",
-    "LICENSE"
-  ]
+  "files": ["bin", "dist", "templates", "README.md", "LICENSE"]
 }
 ```
 
 ### 5. Build Pipeline
 
 **TypeScript Compilation**
+
 - Use TypeScript compiler (tsc) for type checking and initial compilation
 - Generate declarations and source maps
 - Output to centralized `dist/` then copy to package folders
 
 **Post-Processing**
+
 - Optional: Run esbuild on CLI for bundling
 - No minification step
 - Preserve source maps through all transformations
 
 **Validation**
+
 - Check package size before publish
 - Verify all exports resolve correctly
 - Test installation in isolated environment
@@ -153,11 +162,13 @@ We will adopt a **progressive distribution strategy** that prioritizes debuggabi
 Bundle everything into single files per package with aggressive minification.
 
 **Pros:**
+
 - Smallest possible package size
 - Faster installation
 - Single file distribution
 
 **Cons:**
+
 - No debugging capability in production
 - No tree-shaking possible
 - Source maps become huge or useless
@@ -170,11 +181,13 @@ Bundle everything into single files per package with aggressive minification.
 Ship only ESM modules targeting modern Node.js.
 
 **Pros:**
+
 - Future-proof
 - Better tree-shaking
 - Native module system
 
 **Cons:**
+
 - Limited compatibility with existing tools
 - Requires all consumers to use ESM
 - Complex migration path
@@ -187,11 +200,13 @@ Ship only ESM modules targeting modern Node.js.
 Use webpack for sophisticated bundling with code splitting.
 
 **Pros:**
+
 - Mature bundling solution
 - Advanced optimization options
 - Code splitting capabilities
 
 **Cons:**
+
 - Slow build times
 - Complex configuration
 - Overkill for library packages
@@ -219,6 +234,7 @@ Use webpack for sophisticated bundling with code splitting.
 ### Trade-offs Accepted
 
 We explicitly accept larger package sizes in exchange for:
+
 - Better debugging experience
 - Simpler build pipeline
 - Maximum compatibility

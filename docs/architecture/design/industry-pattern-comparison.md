@@ -11,6 +11,7 @@ Atakora's decision to make `@atakora/lib` internal-only while exposing all publi
 ### AWS CDK v2
 
 **Structure:**
+
 ```
 aws-cdk-lib/              # Single public package
 ├── core/                 # Framework classes (App, Stack, Construct)
@@ -25,6 +26,7 @@ aws-cdk-lib/              # Single public package
 ```
 
 **User Import Pattern:**
+
 ```typescript
 // Everything from one package
 import { App, Stack } from 'aws-cdk-lib';
@@ -33,6 +35,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 ```
 
 **Key Lessons:**
+
 - Single package eliminates version conflicts
 - Internal packages hidden from users
 - Namespace organization within single package
@@ -41,6 +44,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 ### Angular
 
 **Structure:**
+
 ```
 @angular/core            # Core framework
 @angular/common          # Common utilities
@@ -51,6 +55,7 @@ import * as ec2 from 'aws-cdk-lib/aws-ec2';
 ```
 
 **User Import Pattern:**
+
 ```typescript
 // Public packages only
 import { Component } from '@angular/core';
@@ -61,6 +66,7 @@ import { CommonModule } from '@angular/common';
 ```
 
 **Key Lessons:**
+
 - Clear distinction between public and internal packages
 - Internal packages support tooling but aren't user-facing
 - Public packages re-export what users need
@@ -68,6 +74,7 @@ import { CommonModule } from '@angular/common';
 ### React
 
 **Structure:**
+
 ```
 react/                   # Main package
 ├── index.js            # Public API
@@ -79,6 +86,7 @@ react-reconciler/       # Internal package
 ```
 
 **User Import Pattern:**
+
 ```typescript
 // Public API only
 import React from 'react';
@@ -89,6 +97,7 @@ import ReactDOM from 'react-dom';
 ```
 
 **Key Lessons:**
+
 - Main package exposes curated public API
 - Internal implementation hidden
 - Separate packages for different concerns
@@ -96,6 +105,7 @@ import ReactDOM from 'react-dom';
 ### .NET Framework
 
 **Structure:**
+
 ```
 System/                  # Public assemblies
 ├── System.dll
@@ -108,6 +118,7 @@ System.Private/          # Internal assemblies
 ```
 
 **User Import Pattern:**
+
 ```csharp
 // Public namespaces only
 using System;
@@ -119,6 +130,7 @@ using System.Web;
 ```
 
 **Key Lessons:**
+
 - "Private" in name signals internal use
 - Public assemblies expose safe API surface
 - Internal changes don't break user code
@@ -126,6 +138,7 @@ using System.Web;
 ### Vue.js
 
 **Structure:**
+
 ```
 vue/                     # Main package with all public APIs
 ├── dist/
@@ -138,6 +151,7 @@ vue/                     # Main package with all public APIs
 ```
 
 **User Import Pattern:**
+
 ```typescript
 // Single package import
 import { createApp, ref, computed } from 'vue';
@@ -147,6 +161,7 @@ import { createApp, ref, computed } from 'vue';
 ```
 
 **Key Lessons:**
+
 - Monorepo with single published package
 - Internal packages exist for development only
 - Users see single, cohesive API
@@ -154,6 +169,7 @@ import { createApp, ref, computed } from 'vue';
 ## Atakora's Approach
 
 ### Current Structure (Problematic)
+
 ```
 @atakora/lib/           # Framework (users import from here)
 @atakora/cdk/           # Resources (users also import from here)
@@ -165,6 +181,7 @@ import { VirtualNetworks } from '@atakora/cdk/network';
 ```
 
 ### New Structure (Aligned with Industry)
+
 ```
 @atakora/cdk/           # Single public API surface
 ├── index.ts           # Framework re-exports
@@ -177,6 +194,7 @@ import { VirtualNetworks } from '@atakora/cdk/network';
 ```
 
 **User Import Pattern:**
+
 ```typescript
 // Framework from CDK root
 import { App, Stack } from '@atakora/cdk';
@@ -187,47 +205,53 @@ import { VirtualNetworks } from '@atakora/cdk/network';
 
 ## Comparison Matrix
 
-| Aspect | AWS CDK v2 | Angular | React | .NET | Atakora (New) |
-|--------|------------|---------|--------|------|---------------|
-| **Public Packages** | 1 (aws-cdk-lib) | Multiple (@angular/*) | 2 (react, react-dom) | Multiple (System.*) | 1 (@atakora/cdk) |
-| **Internal Packages** | Hidden | Marked internal | Not published | Private.* naming | @atakora/lib |
-| **Import Pattern** | Single package | Category packages | Minimal surface | Namespaces | Single package |
-| **Version Management** | Single version | Synchronized | Synchronized | Framework version | Single version |
-| **Tree-shaking** | ✅ Via modules | ✅ Via modules | ✅ Via bundler | N/A (.NET) | ✅ Via modules |
-| **API Stability** | Public API stable | Public API stable | Public API stable | Public API stable | Public API stable |
-| **Encapsulation** | ✅ Strong | ✅ Strong | ✅ Strong | ✅ Strong | ✅ Strong |
+| Aspect                 | AWS CDK v2        | Angular                | React                | .NET                 | Atakora (New)     |
+| ---------------------- | ----------------- | ---------------------- | -------------------- | -------------------- | ----------------- |
+| **Public Packages**    | 1 (aws-cdk-lib)   | Multiple (@angular/\*) | 2 (react, react-dom) | Multiple (System.\*) | 1 (@atakora/cdk)  |
+| **Internal Packages**  | Hidden            | Marked internal        | Not published        | Private.\* naming    | @atakora/lib      |
+| **Import Pattern**     | Single package    | Category packages      | Minimal surface      | Namespaces           | Single package    |
+| **Version Management** | Single version    | Synchronized           | Synchronized         | Framework version    | Single version    |
+| **Tree-shaking**       | ✅ Via modules    | ✅ Via modules         | ✅ Via bundler       | N/A (.NET)           | ✅ Via modules    |
+| **API Stability**      | Public API stable | Public API stable      | Public API stable    | Public API stable    | Public API stable |
+| **Encapsulation**      | ✅ Strong         | ✅ Strong              | ✅ Strong            | ✅ Strong            | ✅ Strong         |
 
 ## Benefits of Industry-Aligned Approach
 
 ### 1. Clear API Boundaries
+
 - Users know exactly what's public API
 - Internal changes don't break user code
 - Framework can evolve without breaking changes
 
 ### 2. Simplified Dependency Management
+
 - Single version to track
 - No version conflicts between packages
 - Easier updates and maintenance
 
 ### 3. Better Developer Experience
+
 - Single installation command
 - Consistent import patterns
 - Better IDE support and autocomplete
 
 ### 4. Improved Maintainability
+
 - Freedom to refactor internals
 - Clear separation of concerns
 - Easier to deprecate and evolve APIs
 
 ## Anti-Patterns to Avoid
 
-### 1. Exposing Internal APIs (Java's sun.* packages)
+### 1. Exposing Internal APIs (Java's sun.\* packages)
+
 ```java
 // Bad: Using internal APIs
 import sun.misc.Unsafe; // Internal, not guaranteed stable
 ```
 
 ### 2. Multiple Public Packages with Version Skew (AWS CDK v1)
+
 ```json
 // Bad: Version conflicts
 {
@@ -238,12 +262,14 @@ import sun.misc.Unsafe; // Internal, not guaranteed stable
 ```
 
 ### 3. Unclear Boundaries (Early Node.js ecosystem)
+
 ```javascript
 // Bad: Reaching into internals
 const internal = require('some-package/lib/internal/helper');
 ```
 
 ### 4. Re-exporting Everything (Barrel exports)
+
 ```typescript
 // Bad: Destroys tree-shaking
 export * from './internal';
@@ -290,6 +316,7 @@ Atakora's decision to make `@atakora/lib` internal-only while exposing public AP
 - **Vue.js**: Single package from monorepo
 
 By adopting this pattern, Atakora provides:
+
 - ✅ Clear API boundaries
 - ✅ Better encapsulation
 - ✅ Simplified versioning

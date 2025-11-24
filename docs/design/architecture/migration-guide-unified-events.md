@@ -9,6 +9,7 @@ The unified events namespace consolidates all event-driven infrastructure (Stora
 ## Quick Comparison
 
 ### Before: Scattered Pattern
+
 ```typescript
 // Multiple imports from different locations
 import { Queue } from '@atakora/component/queues';
@@ -26,8 +27,7 @@ export const auditLogsTopic = EventTopic('audit-logs')
   .schema('EventGridSchema')
   .processor(auditLogger);
 
-export const serviceBus = ServiceBus('app-bus')
-  .queue('orders', q => q.sessions());
+export const serviceBus = ServiceBus('app-bus').queue('orders', (q) => q.sessions());
 
 // In index.ts - multiple assignments
 backend.dataQualityQueue = dataQualityQueue;
@@ -36,20 +36,18 @@ backend.serviceBus = serviceBus;
 ```
 
 ### After: Unified Pattern
+
 ```typescript
 // Single import for all events
 import { defineEvents, queue, topic, serviceBusQueue } from '@atakora/component/events';
 
 // All events in one place
 export const events = defineEvents({
-  dataQuality: queue('data-quality', dataQualityProcessor)
-    .ttl(days(7)),
+  dataQuality: queue('data-quality', dataQualityProcessor).ttl(days(7)),
 
-  auditLogs: topic('audit-logs', auditLogger)
-    .schema('EventGridSchema'),
+  auditLogs: topic('audit-logs', auditLogger).schema('EventGridSchema'),
 
-  orders: serviceBusQueue('orders', orderProcessor)
-    .sessions(),
+  orders: serviceBusQueue('orders', orderProcessor).sessions(),
 });
 
 // In index.ts - single assignment
@@ -72,7 +70,13 @@ Create a new file `events/resource.ts` in your backend:
 
 ```typescript
 // packages/backend/src/events/resource.ts
-import { defineEvents, queue, topic, serviceBusQueue, serviceBusTopic } from '@atakora/component/events';
+import {
+  defineEvents,
+  queue,
+  topic,
+  serviceBusQueue,
+  serviceBusTopic,
+} from '@atakora/component/events';
 import { minutes, hours, days } from '@atakora/component/common';
 
 // Import all your processor functions
@@ -89,6 +93,7 @@ export const events = defineEvents({
 ### Step 3: Migrate Storage Queues
 
 #### Old Pattern:
+
 ```typescript
 // queue-processors/data-quality/resource.ts
 import { Queue, minutes, hours, days } from '@atakora/component/queues';
@@ -97,26 +102,21 @@ export const dataQualityQueue = Queue('data-quality')
   .messageTimeToLive(days(7))
   .visibilityTimeout(minutes(10))
   .maxDeliveryCount(3)
-  .processor(dataQualityProcessor, proc => proc
-    .batchSize(16)
-    .maxConcurrentBatches(5)
-    .scale(0, 10)
+  .processor(dataQualityProcessor, (proc) =>
+    proc.batchSize(16).maxConcurrentBatches(5).scale(0, 10)
   )
-  .deadLetter(dlq => dlq
-    .name('data-quality-dlq')
-    .enabled(true)
-  )
-  .monitoring(alerts => alerts
-    .queueDepth(greaterThan(1000), 'Warning')
-    .messageAge(olderThan(hours(1)), 'Warning')
+  .deadLetter((dlq) => dlq.name('data-quality-dlq').enabled(true))
+  .monitoring((alerts) =>
+    alerts.queueDepth(greaterThan(1000), 'Warning').messageAge(olderThan(hours(1)), 'Warning')
   )
   .tags({
     Team: 'DataPlatform',
-    SLA: 'Tier1'
+    SLA: 'Tier1',
   });
 ```
 
 #### New Pattern:
+
 ```typescript
 // In events/resource.ts
 dataQuality: queue('data-quality')
@@ -140,6 +140,7 @@ dataQuality: queue('data-quality')
 ### Step 4: Migrate Event Grid Topics
 
 #### Old Pattern:
+
 ```typescript
 // event-topics/audit-logger/resource.ts
 export const auditLogsTopic = EventTopic('audit-logs')
@@ -147,21 +148,22 @@ export const auditLogsTopic = EventTopic('audit-logs')
   .dataResidency('WithinGeopair')
   .retention(30)
   .allAuditEvents()
-  .subscription('audit-logger-subscription', sub =>
+  .subscription('audit-logger-subscription', (sub) =>
     sub
       .endpoint(auditLogger)
-      .filter(filter => filter.allEventTypes())
+      .filter((filter) => filter.allEventTypes())
       .maxDeliveryAttempts(1)
       .eventTimeToLive(minutes(30))
   )
-  .withMonitoring(monitor => monitor.comprehensive())
+  .withMonitoring((monitor) => monitor.comprehensive())
   .withTags({
     purpose: 'audit-logging',
-    compliance: 'required'
+    compliance: 'required',
   });
 ```
 
 #### New Pattern:
+
 ```typescript
 // In events/resource.ts
 auditLogs: topic('audit-logs')
@@ -191,27 +193,25 @@ auditLogs: topic('audit-logs')
 ### Step 5: Migrate Service Bus
 
 #### Old Pattern:
+
 ```typescript
 // infrastructure/service-bus/resource.ts
 export const serviceBus = ServiceBus('app-bus')
   .standard()
-  .queue('orders', q =>
-    q
-      .ttl(days(14))
-      .sessions(true)
-      .duplicateDetection(minutes(10))
-      .withDeadLetter()
+  .queue('orders', (q) =>
+    q.ttl(days(14)).sessions(true).duplicateDetection(minutes(10)).withDeadLetter()
   )
-  .topic('notifications', t =>
+  .topic('notifications', (t) =>
     t
       .ttl(hours(1))
-      .subscription('email', sub => sub.forwardTo('email-queue'))
-      .subscription('sms', sub => sub.forwardTo('sms-queue'))
+      .subscription('email', (sub) => sub.forwardTo('email-queue'))
+      .subscription('sms', (sub) => sub.forwardTo('sms-queue'))
   )
   .withMonitoring();
 ```
 
 #### New Pattern:
+
 ```typescript
 // In events/resource.ts
 // Service Bus Queues
@@ -233,6 +233,7 @@ notifications: serviceBusTopic('notifications')
 ### Step 6: Update Backend Index
 
 #### Old Pattern:
+
 ```typescript
 // index.ts
 import { dataQualityQueue } from './queue-processors/data-quality/resource';
@@ -250,6 +251,7 @@ backend.serviceBus = serviceBus;
 ```
 
 #### New Pattern:
+
 ```typescript
 // index.ts
 import { events } from './events/resource';
@@ -272,6 +274,7 @@ Once migration is complete and tested:
 ## Common Migration Patterns
 
 ### Pattern 1: Simple Queue with Processor
+
 ```typescript
 // Before
 export const emailQueue = Queue('email')
@@ -283,6 +286,7 @@ email: queue('email', emailProcessor).ttl(days(2)),
 ```
 
 ### Pattern 2: Topic with Multiple Subscriptions
+
 ```typescript
 // Before
 export const eventTopic = EventTopic('events')
@@ -296,6 +300,7 @@ events: topic('events')
 ```
 
 ### Pattern 3: Service Bus Queue with Sessions
+
 ```typescript
 // Before
 serviceBus.queue('orders', q => q.sessions(true).ttl(days(7)));
@@ -305,6 +310,7 @@ orders: serviceBusQueue('orders').sessions().ttl(days(7)),
 ```
 
 ### Pattern 4: Complex Monitoring
+
 ```typescript
 // Before
 .monitoring(alerts => alerts
@@ -323,35 +329,36 @@ orders: serviceBusQueue('orders').sessions().ttl(days(7)),
 
 ### Storage Queue Methods
 
-| Old API | New API | Notes |
-|---------|---------|-------|
-| `.messageTimeToLive()` | `.ttl()` | Simplified name |
-| `.maxDeliveryCount()` | `.retries()` | More intuitive |
-| `.processor(fn, config)` | `.processor(fn, config)` | Same API |
-| `.deadLetter(config)` | `.deadLetter()` | Simplified |
-| `.tags({})` | `.withTags({})` | Consistent naming |
+| Old API                  | New API                  | Notes             |
+| ------------------------ | ------------------------ | ----------------- |
+| `.messageTimeToLive()`   | `.ttl()`                 | Simplified name   |
+| `.maxDeliveryCount()`    | `.retries()`             | More intuitive    |
+| `.processor(fn, config)` | `.processor(fn, config)` | Same API          |
+| `.deadLetter(config)`    | `.deadLetter()`          | Simplified        |
+| `.tags({})`              | `.withTags({})`          | Consistent naming |
 
 ### Event Grid Topic Methods
 
-| Old API | New API | Notes |
-|---------|---------|-------|
-| `.eventGridSchema()` | `.schema('EventGridSchema')` | Explicit |
-| `.allAuditEvents()` | `.events(['Auth.*', ...])` | More flexible |
-| `.withMonitoring()` | `.monitoring()` | Consistent |
-| `.retention(days)` | `.retention(days(n))` | Duration objects |
+| Old API              | New API                      | Notes            |
+| -------------------- | ---------------------------- | ---------------- |
+| `.eventGridSchema()` | `.schema('EventGridSchema')` | Explicit         |
+| `.allAuditEvents()`  | `.events(['Auth.*', ...])`   | More flexible    |
+| `.withMonitoring()`  | `.monitoring()`              | Consistent       |
+| `.retention(days)`   | `.retention(days(n))`        | Duration objects |
 
 ### Service Bus Methods
 
-| Old API | New API | Notes |
-|---------|---------|-------|
-| `ServiceBus().queue()` | `serviceBusQueue()` | Direct creation |
-| `ServiceBus().topic()` | `serviceBusTopic()` | Direct creation |
-| `.sessions(true)` | `.sessions()` | Boolean optional |
-| `.withDeadLetter()` | Built-in | Automatic |
+| Old API                | New API             | Notes            |
+| ---------------------- | ------------------- | ---------------- |
+| `ServiceBus().queue()` | `serviceBusQueue()` | Direct creation  |
+| `ServiceBus().topic()` | `serviceBusTopic()` | Direct creation  |
+| `.sessions(true)`      | `.sessions()`       | Boolean optional |
+| `.withDeadLetter()`    | Built-in            | Automatic        |
 
 ## Testing Your Migration
 
 ### 1. Verify Event Definitions
+
 ```typescript
 // Test that all events are defined
 import { events } from './events/resource';
@@ -361,12 +368,14 @@ console.log(Object.keys(events));
 ```
 
 ### 2. Check Processor Attachments
+
 ```typescript
 // Ensure processors are attached
 events.dataQuality.processor === dataQualityProcessor; // true
 ```
 
 ### 3. Validate Configuration
+
 ```typescript
 // Check that configuration is preserved
 events.orders.sessionsEnabled; // true
@@ -398,15 +407,19 @@ events.auditLogs.retentionDays; // 30
 ## Troubleshooting
 
 ### Issue: Import Errors
+
 **Solution**: Ensure you're importing from `@atakora/component/events`, not the old locations.
 
 ### Issue: Missing Methods
+
 **Solution**: Check the API mapping table above. Some methods have been renamed for consistency.
 
 ### Issue: Type Errors
+
 **Solution**: The new API is fully typed. Let TypeScript guide you to the correct method names.
 
 ### Issue: Configuration Not Applied
+
 **Solution**: Make sure to chain methods correctly. Each method returns `this` for chaining.
 
 ## Need Help?

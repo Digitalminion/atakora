@@ -13,6 +13,7 @@ This document defines the governance, compliance, and policy management strategy
 **Compliant by Default, Auditable by Design**
 
 Every resource should:
+
 1. **Be properly tagged** - Automatic cost allocation and resource tracking
 2. **Follow naming conventions** - Predictable, discoverable resources
 3. **Have audit logging enabled** - Complete compliance trail
@@ -26,31 +27,31 @@ Every resource should:
 ```typescript
 interface AutomaticTags {
   // Identity
-  'atakora:project': string;           // e.g., "colorai"
-  'atakora:environment': string;        // e.g., "prod", "nonprod", "dev"
-  'atakora:component': string;          // e.g., "backend", "frontend"
-  'atakora:managed-by': 'atakora';      // Always "atakora"
-  'atakora:version': string;            // e.g., "2.0.0"
+  'atakora:project': string; // e.g., "colorai"
+  'atakora:environment': string; // e.g., "prod", "nonprod", "dev"
+  'atakora:component': string; // e.g., "backend", "frontend"
+  'atakora:managed-by': 'atakora'; // Always "atakora"
+  'atakora:version': string; // e.g., "2.0.0"
 
   // Organization
-  'organization': string;               // e.g., "digitalproducts"
-  'cost-center': string;                // e.g., "engineering"
-  'business-unit': string;              // e.g., "research"
+  organization: string; // e.g., "digitalproducts"
+  'cost-center': string; // e.g., "engineering"
+  'business-unit': string; // e.g., "research"
 
   // Lifecycle
-  'created-by': string;                 // User email or service principal
-  'created-date': string;               // ISO 8601 datetime
-  'last-modified': string;              // ISO 8601 datetime
-  'deployment-id': string;              // Unique deployment identifier
+  'created-by': string; // User email or service principal
+  'created-date': string; // ISO 8601 datetime
+  'last-modified': string; // ISO 8601 datetime
+  'deployment-id': string; // Unique deployment identifier
 
   // Technical
-  'geography': string;                  // e.g., "eus2" (East US 2)
-  'instance': string;                   // e.g., "06"
-  'stack-name': string;                 // e.g., "Foundation"
+  geography: string; // e.g., "eus2" (East US 2)
+  instance: string; // e.g., "06"
+  'stack-name': string; // e.g., "Foundation"
 
   // Compliance
-  'data-classification': string;        // e.g., "confidential", "public"
-  'compliance-framework': string[];     // e.g., ["SOC2", "HIPAA"]
+  'data-classification': string; // e.g., "confidential", "public"
+  'compliance-framework': string[]; // e.g., ["SOC2", "HIPAA"]
   'backup-required': 'true' | 'false';
   'encryption-required': 'true' | 'false';
 }
@@ -73,7 +74,7 @@ export function defineBackend(
     'atakora:managed-by': 'atakora',
     'atakora:version': ATAKORA_VERSION,
 
-    'organization': config.organization,
+    organization: config.organization,
     'cost-center': options?.governance?.costCenter ?? 'engineering',
     'business-unit': options?.governance?.businessUnit ?? 'general',
 
@@ -81,8 +82,8 @@ export function defineBackend(
     'created-date': new Date().toISOString(),
     'deployment-id': generateDeploymentId(),
 
-    'geography': config.geography,
-    'instance': String(config.instance).padStart(2, '0'),
+    geography: config.geography,
+    instance: String(config.instance).padStart(2, '0'),
 
     'data-classification': options?.governance?.dataClassification ?? 'confidential',
     'compliance-framework': options?.governance?.complianceFrameworks?.join(',') ?? '',
@@ -113,8 +114,8 @@ export function defineBackend(
 functionApp.tags = {
   ...baseTags,
   'resource-type': 'compute',
-  'runtime': 'node:20',
-  'plan': 'EP1',
+  runtime: 'node:20',
+  plan: 'EP1',
 };
 
 // Cosmos DB specific tags
@@ -130,8 +131,8 @@ cosmos.tags = {
 storage.tags = {
   ...baseTags,
   'resource-type': 'storage',
-  'replication': 'LRS',
-  'contains-pii': 'true',  // If storing user data
+  replication: 'LRS',
+  'contains-pii': 'true', // If storing user data
 };
 
 // Key Vault specific tags
@@ -150,37 +151,40 @@ Special tags for financial reporting:
 
 ```typescript
 interface CostAllocationTags {
-  'cost-center': string;           // Finance department code
-  'project-code': string;          // Project billing code
-  'budget-owner': string;          // Email of budget owner
-  'monthly-budget': string;        // Expected monthly cost
-  'cost-category': string;         // "infrastructure" | "compute" | "storage" | "data"
-  'billing-period': string;        // "monthly" | "annual"
-  'chargeback': 'true' | 'false';  // Should costs be charged back to team?
+  'cost-center': string; // Finance department code
+  'project-code': string; // Project billing code
+  'budget-owner': string; // Email of budget owner
+  'monthly-budget': string; // Expected monthly cost
+  'cost-category': string; // "infrastructure" | "compute" | "storage" | "data"
+  'billing-period': string; // "monthly" | "annual"
+  chargeback: 'true' | 'false'; // Should costs be charged back to team?
 }
 ```
 
 ### Usage Example
 
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-  processUploadFunction,
-}, {
-  governance: {
-    costCenter: 'ENG-001',
-    businessUnit: 'AI Research',
-    dataClassification: 'confidential',
-    complianceFrameworks: ['SOC2', 'HIPAA'],
-    budgetOwner: 'engineering-lead@company.com',
-    monthlyBudget: '5000',
+const backend = defineBackend(
+  {
+    feedbackApi,
+    processUploadFunction,
   },
-  tags: {
-    'project-code': 'AI-2024-Q4',
-    'cost-category': 'infrastructure',
-    'team': 'data-platform',
-  },
-});
+  {
+    governance: {
+      costCenter: 'ENG-001',
+      businessUnit: 'AI Research',
+      dataClassification: 'confidential',
+      complianceFrameworks: ['SOC2', 'HIPAA'],
+      budgetOwner: 'engineering-lead@company.com',
+      monthlyBudget: '5000',
+    },
+    tags: {
+      'project-code': 'AI-2024-Q4',
+      'cost-category': 'infrastructure',
+      team: 'data-platform',
+    },
+  }
+);
 ```
 
 ## 2. Azure Policy Integration
@@ -327,7 +331,8 @@ const requireAtakoraTag = {
 const requireNamingConvention = {
   policyDefinitionName: 'require-naming-convention',
   displayName: 'Require naming convention for resources',
-  description: 'Resources must follow naming pattern: {type}-{component}-{org}-{project}-{env}-{geo}-{instance}',
+  description:
+    'Resources must follow naming pattern: {type}-{component}-{org}-{project}-{env}-{geo}-{instance}',
   mode: 'Indexed',
 
   policyRule: {
@@ -337,7 +342,7 @@ const requireNamingConvention = {
         {
           not: {
             field: 'name',
-            match: 'st*[a-z0-9]{8,24}',  // Storage account naming rules
+            match: 'st*[a-z0-9]{8,24}', // Storage account naming rules
           },
         },
       ],
@@ -359,13 +364,17 @@ const requirePrivateEndpointsInProd = {
     if: {
       allOf: [
         { field: 'tags[atakora:environment]', equals: 'prod' },
-        { field: 'type', in: [
-          'Microsoft.Storage/storageAccounts',
-          'Microsoft.DocumentDB/databaseAccounts',
-          'Microsoft.KeyVault/vaults',
-        ]},
         {
-          field: 'Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].privateLinkServiceId',
+          field: 'type',
+          in: [
+            'Microsoft.Storage/storageAccounts',
+            'Microsoft.DocumentDB/databaseAccounts',
+            'Microsoft.KeyVault/vaults',
+          ],
+        },
+        {
+          field:
+            'Microsoft.Network/privateEndpoints/privateLinkServiceConnections[*].privateLinkServiceId',
           exists: 'false',
         },
       ],
@@ -389,7 +398,8 @@ const requireAppInsightsForFunctions = {
         { field: 'type', equals: 'Microsoft.Web/sites' },
         { field: 'kind', contains: 'functionapp' },
         {
-          field: 'properties.siteConfig.appSettings[?(@.name==\'APPLICATIONINSIGHTS_CONNECTION_STRING\')].value',
+          field:
+            "properties.siteConfig.appSettings[?(@.name=='APPLICATIONINSIGHTS_CONNECTION_STRING')].value",
           exists: 'false',
         },
       ],
@@ -424,13 +434,15 @@ export class Backend extends Construct {
     // Security policies (always enforced)
     this.assignPolicy('require-https-storage', {
       scope,
-      policyDefinitionId: '/providers/Microsoft.Authorization/policyDefinitions/404c3081-a854-4457-ae30-26a93ef643f9',
+      policyDefinitionId:
+        '/providers/Microsoft.Authorization/policyDefinitions/404c3081-a854-4457-ae30-26a93ef643f9',
       effect: 'Deny',
     });
 
     this.assignPolicy('require-tls-12-minimum', {
       scope,
-      policyDefinitionId: '/providers/Microsoft.Authorization/policyDefinitions/fe83a0eb-a853-422d-aac2-1bffd182c5d0',
+      policyDefinitionId:
+        '/providers/Microsoft.Authorization/policyDefinitions/fe83a0eb-a853-422d-aac2-1bffd182c5d0',
       effect: 'Deny',
     });
 
@@ -438,7 +450,8 @@ export class Backend extends Construct {
     if (config.environment === 'prod') {
       this.assignPolicy('disable-public-network-access', {
         scope,
-        policyDefinitionId: '/providers/Microsoft.Authorization/policyDefinitions/34c877ad-507e-4c82-993e-3452a6e0ad3c',
+        policyDefinitionId:
+          '/providers/Microsoft.Authorization/policyDefinitions/34c877ad-507e-4c82-993e-3452a6e0ad3c',
         effect: 'Deny',
       });
 
@@ -467,21 +480,24 @@ export class Backend extends Construct {
     // HIPAA requires encryption at rest and in transit
     this.assignPolicy('hipaa-require-encryption', {
       scope,
-      policyDefinitionId: '/providers/Microsoft.Authorization/policyDefinitions/013e242c-8828-4970-87b3-ab247555486d',
+      policyDefinitionId:
+        '/providers/Microsoft.Authorization/policyDefinitions/013e242c-8828-4970-87b3-ab247555486d',
       effect: 'Deny',
     });
 
     // HIPAA requires audit logging
     this.assignPolicy('hipaa-require-audit-logging', {
       scope,
-      policyDefinitionId: '/providers/Microsoft.Authorization/policyDefinitions/7f89b1eb-583c-429a-8828-af049802c1d9',
+      policyDefinitionId:
+        '/providers/Microsoft.Authorization/policyDefinitions/7f89b1eb-583c-429a-8828-af049802c1d9',
       effect: 'AuditIfNotExists',
     });
 
     // HIPAA requires backup
     this.assignPolicy('hipaa-require-backup', {
       scope,
-      policyDefinitionId: '/providers/Microsoft.Authorization/policyDefinitions/013e242c-8828-4970-87b3-ab247555486d',
+      policyDefinitionId:
+        '/providers/Microsoft.Authorization/policyDefinitions/013e242c-8828-4970-87b3-ab247555486d',
       effect: 'AuditIfNotExists',
     });
   }
@@ -527,37 +543,40 @@ export class Backend extends Construct {
 ### Policy Configuration Example
 
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-  processUploadFunction,
-}, {
-  governance: {
-    enablePolicies: true,
-    complianceFrameworks: ['SOC2', 'HIPAA'],
-
-    policies: {
-      // Override default policies
-      'require-https-storage': { effect: 'Deny' },
-      'disable-public-network-access': { effect: 'Audit' },  // Audit instead of deny
-
-      // Add custom policies
-      custom: [
-        {
-          name: 'require-cost-center-tag',
-          displayName: 'Require cost-center tag',
-          effect: 'Deny',
-          rule: {
-            if: {
-              field: 'tags[cost-center]',
-              exists: 'false',
-            },
-            then: { effect: 'Deny' },
-          },
-        },
-      ],
-    },
+const backend = defineBackend(
+  {
+    feedbackApi,
+    processUploadFunction,
   },
-});
+  {
+    governance: {
+      enablePolicies: true,
+      complianceFrameworks: ['SOC2', 'HIPAA'],
+
+      policies: {
+        // Override default policies
+        'require-https-storage': { effect: 'Deny' },
+        'disable-public-network-access': { effect: 'Audit' }, // Audit instead of deny
+
+        // Add custom policies
+        custom: [
+          {
+            name: 'require-cost-center-tag',
+            displayName: 'Require cost-center tag',
+            effect: 'Deny',
+            rule: {
+              if: {
+                field: 'tags[cost-center]',
+                exists: 'false',
+              },
+              then: { effect: 'Deny' },
+            },
+          },
+        ],
+      },
+    },
+  }
+);
 ```
 
 ## 3. Audit Logging & Activity Tracking
@@ -597,16 +616,14 @@ new DiagnosticSetting(stack, 'cosmos-audit', {
   workspaceId: logAnalytics.id,
 
   logs: [
-    { category: 'DataPlaneRequests', enabled: true },     // All CRUD operations
-    { category: 'ControlPlaneRequests', enabled: true },  // Management operations
+    { category: 'DataPlaneRequests', enabled: true }, // All CRUD operations
+    { category: 'ControlPlaneRequests', enabled: true }, // Management operations
     { category: 'MongoRequests', enabled: true },
     { category: 'QueryRuntimeStatistics', enabled: true },
     { category: 'PartitionKeyStatistics', enabled: true },
   ],
 
-  metrics: [
-    { category: 'Requests', enabled: true },
-  ],
+  metrics: [{ category: 'Requests', enabled: true }],
 });
 
 // Storage Account audit logs
@@ -620,9 +637,7 @@ new DiagnosticSetting(stack, 'storage-audit', {
     { category: 'StorageDelete', enabled: true },
   ],
 
-  metrics: [
-    { category: 'Transaction', enabled: true },
-  ],
+  metrics: [{ category: 'Transaction', enabled: true }],
 });
 
 // Key Vault audit logs
@@ -631,13 +646,11 @@ new DiagnosticSetting(stack, 'vault-audit', {
   workspaceId: logAnalytics.id,
 
   logs: [
-    { category: 'AuditEvent', enabled: true },           // All access attempts
+    { category: 'AuditEvent', enabled: true }, // All access attempts
     { category: 'AzurePolicyEvaluationDetails', enabled: true },
   ],
 
-  metrics: [
-    { category: 'AllMetrics', enabled: true },
-  ],
+  metrics: [{ category: 'AllMetrics', enabled: true }],
 });
 
 // Function App audit logs
@@ -653,9 +666,7 @@ new DiagnosticSetting(stack, 'function-audit', {
     { category: 'AppServicePlatformLogs', enabled: true },
   ],
 
-  metrics: [
-    { category: 'AllMetrics', enabled: true },
-  ],
+  metrics: [{ category: 'AllMetrics', enabled: true }],
 });
 ```
 
@@ -844,11 +855,7 @@ const hipaaRequirements = {
     'audit-logging-enabled',
   ],
 
-  '164.308(a)(3) - Workforce Security': [
-    'require-rbac',
-    'require-mfa',
-    'access-reviews-enabled',
-  ],
+  '164.308(a)(3) - Workforce Security': ['require-rbac', 'require-mfa', 'access-reviews-enabled'],
 
   '164.308(a)(4) - Information Access Management': [
     'require-managed-identity',
@@ -868,10 +875,7 @@ const hipaaRequirements = {
     'automatic-logoff',
   ],
 
-  '164.312(c) - Integrity': [
-    'require-audit-logging',
-    'data-integrity-checks',
-  ],
+  '164.312(c) - Integrity': ['require-audit-logging', 'data-integrity-checks'],
 
   '164.312(e) - Transmission Security': [
     'require-tls-12-minimum',
@@ -922,7 +926,7 @@ const pciDssRequirements = {
 ```typescript
 interface ComplianceDashboard {
   framework: 'SOC2' | 'HIPAA' | 'PCI-DSS';
-  overallCompliance: number;  // Percentage
+  overallCompliance: number; // Percentage
 
   controls: Array<{
     id: string;
@@ -942,9 +946,7 @@ interface ComplianceDashboard {
 }
 
 // Generate compliance dashboard
-function generateComplianceDashboard(
-  framework: 'SOC2' | 'HIPAA' | 'PCI-DSS'
-): ComplianceDashboard {
+function generateComplianceDashboard(framework: 'SOC2' | 'HIPAA' | 'PCI-DSS'): ComplianceDashboard {
   // Query policy compliance state
   // Query resource configurations
   // Generate compliance score
@@ -958,84 +960,87 @@ function generateComplianceDashboard(
 ### Full Example with Governance
 
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-  labDatasetApi,
-  processUploadFunction,
-}, {
-  // Governance configuration
-  governance: {
-    // Tagging
-    costCenter: 'ENG-001',
-    businessUnit: 'AI Research',
-    budgetOwner: 'engineering-lead@company.com',
-    monthlyBudget: '5000',
+const backend = defineBackend(
+  {
+    feedbackApi,
+    labDatasetApi,
+    processUploadFunction,
+  },
+  {
+    // Governance configuration
+    governance: {
+      // Tagging
+      costCenter: 'ENG-001',
+      businessUnit: 'AI Research',
+      budgetOwner: 'engineering-lead@company.com',
+      monthlyBudget: '5000',
 
-    // Classification
-    dataClassification: 'confidential',
-    containsPII: true,
-    containsPHI: false,  // Protected Health Information
-    containsPCI: false,  // Payment Card Information
+      // Classification
+      dataClassification: 'confidential',
+      containsPII: true,
+      containsPHI: false, // Protected Health Information
+      containsPCI: false, // Payment Card Information
 
-    // Compliance
-    complianceFrameworks: ['SOC2', 'HIPAA'],
+      // Compliance
+      complianceFrameworks: ['SOC2', 'HIPAA'],
 
-    // Policy enforcement
-    enablePolicies: true,
-    policyMode: environment === 'prod' ? 'enforce' : 'audit',
+      // Policy enforcement
+      enablePolicies: true,
+      policyMode: environment === 'prod' ? 'enforce' : 'audit',
 
-    policies: {
-      // Security policies (always enforced)
-      'require-https-storage': { effect: 'Deny' },
-      'require-tls-12-minimum': { effect: 'Deny' },
-      'require-managed-identity': { effect: 'Audit' },
+      policies: {
+        // Security policies (always enforced)
+        'require-https-storage': { effect: 'Deny' },
+        'require-tls-12-minimum': { effect: 'Deny' },
+        'require-managed-identity': { effect: 'Audit' },
 
-      // Environment-specific
-      'disable-public-network-access': {
-        effect: environment === 'prod' ? 'Deny' : 'Audit',
+        // Environment-specific
+        'disable-public-network-access': {
+          effect: environment === 'prod' ? 'Deny' : 'Audit',
+        },
+
+        // Custom policies
+        custom: [
+          {
+            name: 'require-project-tag',
+            effect: 'Deny',
+            rule: {
+              if: { field: 'tags[atakora:project]', exists: 'false' },
+              then: { effect: 'Deny' },
+            },
+          },
+        ],
       },
 
-      // Custom policies
-      custom: [
-        {
-          name: 'require-project-tag',
-          effect: 'Deny',
-          rule: {
-            if: { field: 'tags[atakora:project]', exists: 'false' },
-            then: { effect: 'Deny' },
+      // Audit & reporting
+      audit: {
+        retentionDays: environment === 'prod' ? 365 : 90,
+        enableActivityLog: true,
+        enableResourceLog: true,
+
+        reports: [
+          {
+            name: 'daily-access-report',
+            schedule: 'daily',
+            recipients: ['security@company.com'],
           },
-        },
-      ],
+          {
+            name: 'weekly-compliance-report',
+            schedule: 'weekly',
+            recipients: ['compliance@company.com'],
+          },
+        ],
+      },
     },
 
-    // Audit & reporting
-    audit: {
-      retentionDays: environment === 'prod' ? 365 : 90,
-      enableActivityLog: true,
-      enableResourceLog: true,
-
-      reports: [
-        {
-          name: 'daily-access-report',
-          schedule: 'daily',
-          recipients: ['security@company.com'],
-        },
-        {
-          name: 'weekly-compliance-report',
-          schedule: 'weekly',
-          recipients: ['compliance@company.com'],
-        },
-      ],
+    // Additional tags
+    tags: {
+      'project-code': 'AI-2024-Q4',
+      team: 'data-platform',
+      'approval-id': 'JIRA-1234',
     },
-  },
-
-  // Additional tags
-  tags: {
-    'project-code': 'AI-2024-Q4',
-    'team': 'data-platform',
-    'approval-id': 'JIRA-1234',
-  },
-});
+  }
+);
 ```
 
 ## 6. Compliance Monitoring
@@ -1112,6 +1117,7 @@ const complianceDashboard = {
 ---
 
 **Next Steps:**
+
 1. Review governance requirements for your organization
 2. Identify compliance frameworks needed
 3. Customize policy assignments

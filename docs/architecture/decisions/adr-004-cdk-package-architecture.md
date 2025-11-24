@@ -4,7 +4,7 @@
 **Date**: 2025-10-08
 **Author**: Becky (Staff Architect)
 **Deciders**: Architecture Team
-**Context**: Modular CDK package organization following Microsoft.* namespaces
+**Context**: Modular CDK package organization following Microsoft.\* namespaces
 **Review Date**: 2025-10-08
 **Reviewer**: Becky (Staff Architect)
 
@@ -35,6 +35,7 @@ Microsoft.Sql/servers
 ```
 
 This pattern provides:
+
 - **Logical grouping** by service category (Storage, Network, Compute, etc.)
 - **Discoverability** - developers familiar with ARM know where to look
 - **Clear ownership** - each namespace represents a distinct Azure service team
@@ -51,6 +52,7 @@ import { Function } from '@aws-cdk/aws-lambda';
 ```
 
 However, AWS CDK v1 had issues:
+
 - **Package Explosion**: 200+ separate npm packages to manage
 - **Version Skew**: Mismatched versions between packages caused runtime errors
 - **Installation Complexity**: Users needed to `npm install` dozens of packages
@@ -65,6 +67,7 @@ import { aws_s3 as s3 } from 'aws-cdk-lib';
 ### Current State
 
 **Atakora's current structure**:
+
 ```
 packages/lib/
 ├── src/
@@ -237,6 +240,7 @@ cdk/network/
 ```
 
 **`cdk/network/index.ts`** (rollup pattern):
+
 ```typescript
 /**
  * Microsoft.Network resource constructs
@@ -277,6 +281,7 @@ export * from './private';
    - `insights/alerting/` contains all alerting resources
 
 2. **Simple User Imports**: Users import from the top-level namespace
+
    ```typescript
    // Single import path for all network resources
    import { VirtualNetworks, NetworkSecurityGroups } from '@atakora/cdk/network';
@@ -297,6 +302,7 @@ export * from './private';
 ### Package Exports Configuration
 
 **`packages/cdk/package.json`**:
+
 ```json
 {
   "name": "@atakora/cdk",
@@ -397,11 +403,13 @@ export * from './private';
 ### User Experience
 
 **Installation** (single package):
+
 ```bash
 npm install @atakora/cdk
 ```
 
 **Imports** (tree-shakable, namespace-organized):
+
 ```typescript
 // Core framework from @atakora/lib
 import { App, SubscriptionStack, ResourceGroupStack } from '@atakora/lib';
@@ -414,6 +422,7 @@ import { Vaults } from '@atakora/cdk/keyvault';
 ```
 
 **Example Infrastructure Code**:
+
 ```typescript
 import { App, ResourceGroupStack } from '@atakora/lib';
 import { VirtualNetworks, NetworkSecurityGroups } from '@atakora/cdk/network';
@@ -430,26 +439,26 @@ const stack = new ResourceGroupStack(app, 'WebApp', {
 // Microsoft.Network resources
 const vnet = new VirtualNetworks(stack, 'VNet', {
   virtualNetworkName: 'vnet-webapp',
-  addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
+  addressSpace: { addressPrefixes: ['10.0.0.0/16'] },
 });
 
 const nsg = new NetworkSecurityGroups(stack, 'NSG', {
-  networkSecurityGroupName: 'nsg-webapp'
+  networkSecurityGroupName: 'nsg-webapp',
 });
 
 // Microsoft.Storage resources
 const storage = new StorageAccounts(stack, 'Storage', {
-  accountName: 'stwebappprod'
+  accountName: 'stwebappprod',
 });
 
 // Microsoft.Web resources
 const plan = new ServerFarms(stack, 'Plan', {
-  serverFarmName: 'asp-webapp'
+  serverFarmName: 'asp-webapp',
 });
 
 const site = new Sites(stack, 'Site', {
   siteName: 'app-webapp-prod',
-  serverFarmId: plan.resourceId
+  serverFarmId: plan.resourceId,
 });
 
 app.synth();
@@ -513,36 +522,36 @@ packages/lib/src/
 
 ### What MOVES to @atakora/cdk (Azure Resource Constructs)
 
-**Purpose**: Azure-specific resource implementations organized by Microsoft.* namespace
+**Purpose**: Azure-specific resource implementations organized by Microsoft.\* namespace
 
 #### From `packages/lib/src/resources/` → `packages/cdk/`
 
-| Current Location (lib) | New Location (cdk) | Microsoft Namespace | Export Name |
-|------------------------|-------------------|---------------------|-------------|
-| `resources/virtual-network/` | `cdk/network/virtual-network.ts` | `Microsoft.Network` | `VirtualNetworks` |
-| `resources/subnet/` | `cdk/network/subnet.ts` | `Microsoft.Network` | `Subnets` |
-| `resources/network-security-group/` | `cdk/network/network-security-group.ts` | `Microsoft.Network` | `NetworkSecurityGroups` |
-| `resources/public-ip-address/` | `cdk/network/public-ip-address.ts` | `Microsoft.Network` | `PublicIPAddresses` |
-| `resources/private-dns-zone/` | `cdk/network/private-dns-zone.ts` | `Microsoft.Network` | `PrivateDnsZones` |
-| `resources/private-endpoint/` | `cdk/network/private-endpoint.ts` | `Microsoft.Network` | `PrivateEndpoints` |
-| `resources/application-gateway/` | `cdk/network/application-gateway.ts` | `Microsoft.Network` | `ApplicationGateways` |
-| `resources/waf-policy/` | `cdk/network/waf-policy.ts` | `Microsoft.Network` | `ApplicationGatewayWebApplicationFirewallPolicies` |
-| `resources/storage-account/` | `cdk/storage/storage-account.ts` | `Microsoft.Storage` | `StorageAccounts` |
-| `resources/app-service/` | `cdk/web/app-service.ts` | `Microsoft.Web` | `Sites` |
-| `resources/app-service-plan/` | `cdk/web/app-service-plan.ts` | `Microsoft.Web` | `ServerFarms` |
-| `resources/key-vault/` | `cdk/keyvault/key-vault.ts` | `Microsoft.KeyVault` | `Vaults` |
-| `resources/sql-database/` | `cdk/sql/sql-database.ts` | `Microsoft.Sql` | `Databases` |
-| `resources/cosmos-db/` | `cdk/documentdb/cosmos-db.ts` | `Microsoft.DocumentDB` | `DatabaseAccounts` |
-| `resources/application-insights/` | `cdk/insights/application-insights.ts` | `Microsoft.Insights` | `Components` |
-| `resources/action-group/` | `cdk/insights/action-group.ts` | `Microsoft.Insights` | `ActionGroups` |
-| `resources/metric-alert/` | `cdk/insights/metric-alert.ts` | `Microsoft.Insights` | `MetricAlerts` |
-| `resources/autoscale-setting/` | `cdk/insights/autoscale-setting.ts` | `Microsoft.Insights` | `AutoscaleSettings` |
-| `resources/diagnostic-setting/` | `cdk/insights/diagnostic-setting.ts` | `Microsoft.Insights` | `DiagnosticSettings` |
-| `resources/log-analytics-workspace/` | `cdk/operationalinsights/log-analytics-workspace.ts` | `Microsoft.OperationalInsights` | `Workspaces` |
-| `resources/openai-service/` | `cdk/cognitiveservices/openai-service.ts` | `Microsoft.CognitiveServices` | `Accounts` |
-| `resources/search-service/` | `cdk/search/search-service.ts` | `Microsoft.Search` | `SearchServices` |
-| `resources/api-management/` | `cdk/apimanagement/` | `Microsoft.ApiManagement` | `Service`, `Apis`, `Products`, etc. |
-| `resources/resource-group/` | `cdk/resources/resource-group.ts` | `Microsoft.Resources` | `ResourceGroups` |
+| Current Location (lib)               | New Location (cdk)                                   | Microsoft Namespace             | Export Name                                        |
+| ------------------------------------ | ---------------------------------------------------- | ------------------------------- | -------------------------------------------------- |
+| `resources/virtual-network/`         | `cdk/network/virtual-network.ts`                     | `Microsoft.Network`             | `VirtualNetworks`                                  |
+| `resources/subnet/`                  | `cdk/network/subnet.ts`                              | `Microsoft.Network`             | `Subnets`                                          |
+| `resources/network-security-group/`  | `cdk/network/network-security-group.ts`              | `Microsoft.Network`             | `NetworkSecurityGroups`                            |
+| `resources/public-ip-address/`       | `cdk/network/public-ip-address.ts`                   | `Microsoft.Network`             | `PublicIPAddresses`                                |
+| `resources/private-dns-zone/`        | `cdk/network/private-dns-zone.ts`                    | `Microsoft.Network`             | `PrivateDnsZones`                                  |
+| `resources/private-endpoint/`        | `cdk/network/private-endpoint.ts`                    | `Microsoft.Network`             | `PrivateEndpoints`                                 |
+| `resources/application-gateway/`     | `cdk/network/application-gateway.ts`                 | `Microsoft.Network`             | `ApplicationGateways`                              |
+| `resources/waf-policy/`              | `cdk/network/waf-policy.ts`                          | `Microsoft.Network`             | `ApplicationGatewayWebApplicationFirewallPolicies` |
+| `resources/storage-account/`         | `cdk/storage/storage-account.ts`                     | `Microsoft.Storage`             | `StorageAccounts`                                  |
+| `resources/app-service/`             | `cdk/web/app-service.ts`                             | `Microsoft.Web`                 | `Sites`                                            |
+| `resources/app-service-plan/`        | `cdk/web/app-service-plan.ts`                        | `Microsoft.Web`                 | `ServerFarms`                                      |
+| `resources/key-vault/`               | `cdk/keyvault/key-vault.ts`                          | `Microsoft.KeyVault`            | `Vaults`                                           |
+| `resources/sql-database/`            | `cdk/sql/sql-database.ts`                            | `Microsoft.Sql`                 | `Databases`                                        |
+| `resources/cosmos-db/`               | `cdk/documentdb/cosmos-db.ts`                        | `Microsoft.DocumentDB`          | `DatabaseAccounts`                                 |
+| `resources/application-insights/`    | `cdk/insights/application-insights.ts`               | `Microsoft.Insights`            | `Components`                                       |
+| `resources/action-group/`            | `cdk/insights/action-group.ts`                       | `Microsoft.Insights`            | `ActionGroups`                                     |
+| `resources/metric-alert/`            | `cdk/insights/metric-alert.ts`                       | `Microsoft.Insights`            | `MetricAlerts`                                     |
+| `resources/autoscale-setting/`       | `cdk/insights/autoscale-setting.ts`                  | `Microsoft.Insights`            | `AutoscaleSettings`                                |
+| `resources/diagnostic-setting/`      | `cdk/insights/diagnostic-setting.ts`                 | `Microsoft.Insights`            | `DiagnosticSettings`                               |
+| `resources/log-analytics-workspace/` | `cdk/operationalinsights/log-analytics-workspace.ts` | `Microsoft.OperationalInsights` | `Workspaces`                                       |
+| `resources/openai-service/`          | `cdk/cognitiveservices/openai-service.ts`            | `Microsoft.CognitiveServices`   | `Accounts`                                         |
+| `resources/search-service/`          | `cdk/search/search-service.ts`                       | `Microsoft.Search`              | `SearchServices`                                   |
+| `resources/api-management/`          | `cdk/apimanagement/`                                 | `Microsoft.ApiManagement`       | `Service`, `Apis`, `Products`, etc.                |
+| `resources/resource-group/`          | `cdk/resources/resource-group.ts`                    | `Microsoft.Resources`           | `ResourceGroups`                                   |
 
 #### Naming Convention for Exports
 
@@ -559,6 +568,7 @@ Class names will match Azure ARM resource type **plural names** to maintain cons
 ### Example: Network Package Structure
 
 **`packages/cdk/network/index.ts`**:
+
 ```typescript
 /**
  * Microsoft.Network resource constructs
@@ -592,6 +602,7 @@ export type { ApplicationGatewayWebApplicationFirewallPoliciesProps } from './wa
 ```
 
 **`packages/cdk/network/virtual-network.ts`**:
+
 ```typescript
 import { Resource, ResourceProps, ArmResource, ValidationResult } from '@atakora/lib';
 import { Construct } from '@atakora/lib';
@@ -641,8 +652,8 @@ export class VirtualNetworks extends Resource {
       location: this.location,
       tags: this.tags,
       properties: {
-        addressSpace: this.addressSpace
-      }
+        addressSpace: this.addressSpace,
+      },
     };
   }
 }
@@ -662,16 +673,19 @@ export class VirtualNetworks extends Resource {
 Move resources in priority order:
 
 **Week 2** - High-priority namespaces:
+
 - ✅ `Microsoft.Network` (VNet, Subnet, NSG, etc.)
 - ✅ `Microsoft.Storage` (StorageAccounts)
 - ✅ `Microsoft.Resources` (ResourceGroups)
 
 **Week 3** - Common application resources:
+
 - ✅ `Microsoft.Web` (Sites, ServerFarms)
 - ✅ `Microsoft.KeyVault` (Vaults)
 - ✅ `Microsoft.Sql` (Databases, Servers)
 
 **Week 4** - Monitoring and specialized services:
+
 - ✅ `Microsoft.Insights` (ApplicationInsights, Alerts, etc.)
 - ✅ `Microsoft.OperationalInsights` (Log Analytics)
 - ✅ `Microsoft.CognitiveServices` (OpenAI)
@@ -697,6 +711,7 @@ Move resources in priority order:
 Create temporary re-exports in `@atakora/lib` for smooth migration:
 
 **`packages/lib/src/resources/index.ts`** (deprecated):
+
 ```typescript
 /**
  * @deprecated Import from @atakora/cdk instead
@@ -732,6 +747,7 @@ export { StorageAccounts as StorageAccount } from '@atakora/cdk/storage';
 ### Alternative 1: Separate npm Packages per Namespace
 
 **Structure**:
+
 ```
 @atakora/cdk-network
 @atakora/cdk-storage
@@ -740,11 +756,13 @@ export { StorageAccounts as StorageAccount } from '@atakora/cdk/storage';
 ```
 
 **Pros**:
+
 - True package independence
 - Can version each namespace separately
 - Smaller individual package sizes
 
 **Cons**:
+
 - **Package explosion** - 15+ packages to maintain
 - **Version hell** - Users must ensure compatible versions across packages
 - **Installation burden** - `npm install` 10+ packages for a typical project
@@ -757,11 +775,13 @@ export { StorageAccounts as StorageAccount } from '@atakora/cdk/storage';
 **Structure**: Current monolithic structure
 
 **Pros**:
+
 - Simple - everything in one place
 - No migration needed
 - Single version to manage
 
 **Cons**:
+
 - **Bundle bloat** - Users download everything for minimal usage
 - **Slow builds** - Every change rebuilds entire library
 - **Poor organization** - Flat directory doesn't reflect Azure's structure
@@ -772,17 +792,20 @@ export { StorageAccounts as StorageAccount } from '@atakora/cdk/storage';
 ### Alternative 3: Multiple Entry Points in @atakora/lib
 
 **Structure**:
+
 ```typescript
 import { VirtualNetwork } from '@atakora/lib/network';
 import { StorageAccount } from '@atakora/lib/storage';
 ```
 
 **Pros**:
+
 - Single package to install
 - Organized namespaces
 - Tree-shakable
 
 **Cons**:
+
 - Mixes framework core with resource implementations
 - `@atakora/lib` becomes catch-all monolith
 - Less clear separation of concerns
@@ -844,7 +867,7 @@ This architectural change will be considered successful when:
 1. **Developer Experience**:
    - Single `npm install @atakora/cdk` provides all Azure resources
    - IDE autocomplete suggests available namespaces
-   - Import paths directly map to Microsoft.* namespaces
+   - Import paths directly map to Microsoft.\* namespaces
 
 2. **Bundle Size**:
    - Projects using only Network resources bundle <50% of full CDK size
@@ -925,7 +948,7 @@ This architectural change will be considered successful when:
 
 ### Summary
 
-The proposed CDK package architecture with subpath exports is architecturally sound and aligns with our core principles. The Microsoft.* namespace mapping provides excellent discoverability and the single-package approach avoids version management complexity. However, several modifications are required before implementation.
+The proposed CDK package architecture with subpath exports is architecturally sound and aligns with our core principles. The Microsoft.\* namespace mapping provides excellent discoverability and the single-package approach avoids version management complexity. However, several modifications are required before implementation.
 
 ### Required Modifications
 
@@ -934,6 +957,7 @@ The proposed CDK package architecture with subpath exports is architecturally so
 **Issue**: The subcategory organization (network/core/, network/security/) adds unnecessary complexity.
 
 **Required Change**: Flatten the physical structure within each namespace:
+
 ```
 cdk/network/
 ├── virtual-network.ts
@@ -970,6 +994,7 @@ Replace current success criteria with specific, measurable metrics:
 #### 3. Extended Migration Timeline
 
 Add **Week 0** for tooling and infrastructure:
+
 - Create jscodeshift codemod for automated migration
 - Set up integration test suite
 - Configure bundle size analysis
@@ -978,6 +1003,7 @@ Add **Week 0** for tooling and infrastructure:
 #### 4. Technical Requirements Section
 
 Add new section documenting:
+
 - Minimum Node.js version: 14.0+ (for full subpath export support)
 - TypeScript version: 4.5+ (for package exports type support)
 - Build tooling requirements (esbuild/webpack 5+)
@@ -986,6 +1012,7 @@ Add new section documenting:
 #### 5. Cross-Namespace Reference Strategy
 
 Add section on handling cross-namespace dependencies:
+
 - Use dependency injection pattern for loose coupling
 - Interfaces defined in @atakora/lib for shared contracts
 - Lazy resolution of cross-references via ARM expressions
@@ -995,7 +1022,7 @@ Add section on handling cross-namespace dependencies:
 
 The following aspects are approved without modification:
 
-1. **Microsoft.* Namespace Mapping**: Excellent approach for discoverability
+1. **Microsoft.\* Namespace Mapping**: Excellent approach for discoverability
 2. **Single Package with Subpath Exports**: Avoids version management complexity
 3. **Separation of Framework and Resources**: Clean architectural boundary
 4. **Backward Compatibility Strategy**: Deprecated re-exports provide smooth migration

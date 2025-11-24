@@ -2,7 +2,7 @@
 
 **Status**: Draft
 **Created**: 2025-10-14
-**Related**: [Gen 2 Core Design](./atakora-gen2-design.md), [Type Generation](./atakora-gen2-type-generation-intellisense.md), [Secrets Management](./atakora-gen2-secrets-config-management.md)
+**Related**: [Gen 2 Core Design](./Atakora-Gen2-Design.md), [Type Generation](./Atakora-Gen2-Type-Generation-Intellisense.md), [Secrets Management](./Atakora-Gen2-Secrets-Config-Management.md)
 
 ---
 
@@ -26,6 +26,7 @@ This document defines how Atakora tracks deployment state, manages incremental d
 ### Three-Layer State System
 
 **Layer 1: Azure Deployment History** (Primary source of truth)
+
 - Native ARM deployment tracking
 - Query via Azure Resource Manager API
 - Contains full deployment history, templates, outputs
@@ -33,6 +34,7 @@ This document defines how Atakora tracks deployment state, manages incremental d
 - Access: `az deployment group list --resource-group <rg>`
 
 **Layer 2: Synthesis Run ID Tags** (Resource grouping)
+
 - Unique tag on every resource: `atakora:synthesis-run-id`
 - Format: `synth-20251014-153000-a8b2c4`
 - Groups all resources deployed together
@@ -40,6 +42,7 @@ This document defines how Atakora tracks deployment state, manages incremental d
 - Changes every synthesis run
 
 **Layer 3: Deployment Metadata Storage** (Fast access cache)
+
 - Store `outputs.json` in Storage Account
 - Container: `deployments`
 - Path: `<backend-name>/<environment>/<synthesis-run-id>/outputs.json`
@@ -61,6 +64,7 @@ synth-20251025-091530-d4e8f2
 ```
 
 **Components:**
+
 - **Date**: `YYYYMMDD` (sortable, human-readable)
 - **Time**: `HHMMSS` (sortable, human-readable)
 - **Hash**: 6-char random hex (uniqueness guarantee)
@@ -87,6 +91,7 @@ const runId = generateSynthesisRunId();
 ### Where It's Used
 
 **1. Resource Tags:**
+
 ```json
 {
   "tags": {
@@ -98,12 +103,14 @@ const runId = generateSynthesisRunId();
 ```
 
 **2. Deployment Names:**
+
 ```
 Deployment name: userservice-nonprod-synth-20251014-153000-a8b2c4
 Resource group: rg-userservice-nonprod
 ```
 
 **3. Storage Paths:**
+
 ```
 Storage container: deployments
 Path: user-service/nonprod/synth-20251014-153000-a8b2c4/
@@ -114,6 +121,7 @@ Path: user-service/nonprod/synth-20251014-153000-a8b2c4/
 ```
 
 **4. ARM Template Output Directory:**
+
 ```
 arm.out/
   user-service/
@@ -342,6 +350,7 @@ arm.out/
 Uses Azure Blob Storage lease to prevent concurrent deployments.
 
 **Lock File Location:**
+
 ```
 Storage Account: <deployment-storage>
 Container: locks
@@ -349,6 +358,7 @@ Blob: <backend-name>-<environment>.lock
 ```
 
 **Lock Acquisition:**
+
 ```typescript
 // packages/lib/src/deployment/lock.ts
 
@@ -360,7 +370,7 @@ export async function acquireDeploymentLock(
   const lockBlob = getBlobClient(`${backend}-${environment}.lock`);
 
   // Create blob if doesn't exist
-  if (!await lockBlob.exists()) {
+  if (!(await lockBlob.exists())) {
     await lockBlob.upload('', 0);
   }
 
@@ -369,13 +379,16 @@ export async function acquireDeploymentLock(
     const lease = await lockBlob.getBlobLeaseClient().acquireLease(timeout / 1000);
 
     // Write lock metadata
-    await lockBlob.upload(JSON.stringify({
-      backend,
-      environment,
-      acquiredAt: new Date().toISOString(),
-      acquiredBy: getUserEmail(),
-      synthesisRunId: getCurrentSynthesisRunId(),
-    }), { leaseId: lease.leaseId });
+    await lockBlob.upload(
+      JSON.stringify({
+        backend,
+        environment,
+        acquiredAt: new Date().toISOString(),
+        acquiredBy: getUserEmail(),
+        synthesisRunId: getCurrentSynthesisRunId(),
+      }),
+      { leaseId: lease.leaseId }
+    );
 
     return lease;
   } catch (error) {
@@ -407,6 +420,7 @@ export async function releaseDeploymentLock(lease: BlobLease): Promise<void> {
 ```
 
 **Auto-Release on Timeout:**
+
 - Lease automatically expires after 15 minutes
 - Prevents permanent locks from crashed deployments
 - CLI can force-release: `atakora deploy unlock --force`
@@ -429,12 +443,14 @@ atakora deploy --env nonprod
 ```
 
 **Advantages:**
+
 - ✅ Simple implementation
 - ✅ ARM handles change detection
 - ✅ No state management complexity
 - ✅ Always converges to desired state
 
 **Diff Preview:**
+
 ```typescript
 // Compare current template vs last deployment
 const lastDeployment = await getLastDeployment(resourceGroup);
@@ -443,9 +459,9 @@ const currentTemplate = await synthesizeTemplate(backend);
 const diff = compareTemplates(lastDeployment.template, currentTemplate);
 
 console.log('Resources to be deployed:');
-diff.added.forEach(r => console.log(`  + ${r.type} (${r.name})`));
-diff.modified.forEach(r => console.log(`  ~ ${r.type} (${r.name})`));
-diff.removed.forEach(r => console.log(`  - ${r.type} (${r.name})`));
+diff.added.forEach((r) => console.log(`  + ${r.type} (${r.name})`));
+diff.modified.forEach((r) => console.log(`  ~ ${r.type} (${r.name})`));
+diff.removed.forEach((r) => console.log(`  - ${r.type} (${r.name})`));
 ```
 
 ### v2: Incremental Deployment (Resource Hashing)
@@ -453,6 +469,7 @@ diff.removed.forEach(r => console.log(`  - ${r.type} (${r.name})`));
 Future enhancement for large backends with many resources.
 
 **Resource Hash Tag:**
+
 ```json
 {
   "tags": {
@@ -463,6 +480,7 @@ Future enhancement for large backends with many resources.
 ```
 
 **Change Detection:**
+
 ```typescript
 // Hash current resource definition
 const currentHash = hashResource(resourceDefinition);
@@ -481,6 +499,7 @@ if (currentHash !== deployedHash) {
 ```
 
 **Benefits (v2):**
+
 - Faster deployments for large backends
 - Deploy only changed resources
 - Lower risk (fewer resources modified)
@@ -495,11 +514,13 @@ if (currentHash !== deployedHash) {
 Primary deployment command.
 
 **Usage:**
+
 ```bash
 atakora deploy [options]
 ```
 
 **Options:**
+
 ```
 --env <environment>      Environment to deploy to (default: from manifest)
 --force                  Skip confirmation prompts
@@ -511,6 +532,7 @@ atakora deploy [options]
 ```
 
 **Examples:**
+
 ```bash
 # Interactive deployment with diff preview
 atakora deploy --env nonprod
@@ -532,11 +554,13 @@ atakora deploy --env nonprod --force --auto-approve
 Show what would change without deploying.
 
 **Usage:**
+
 ```bash
 atakora diff [--env <environment>]
 ```
 
 **Output:**
+
 ```
 Changes that would be deployed to nonprod:
 
@@ -567,11 +591,13 @@ Configuration:
 List deployment history.
 
 **Usage:**
+
 ```bash
 atakora deployments list [--env <environment>] [--limit <n>]
 ```
 
 **Output:**
+
 ```
 Recent deployments for user-service (nonprod):
 
@@ -590,11 +616,13 @@ Use 'atakora deployments show <synth-run-id>' for details
 Show deployment details.
 
 **Usage:**
+
 ```bash
 atakora deployments show <synth-run-id> [--env <environment>]
 ```
 
 **Output:**
+
 ```
 Deployment: synth-20251014-153000-a8b2c4
 Backend: user-service
@@ -634,11 +662,13 @@ Logs:
 Rollback to a previous deployment.
 
 **Usage:**
+
 ```bash
 atakora rollback [--to <synth-run-id>] [--env <environment>]
 ```
 
 **Example:**
+
 ```bash
 # Rollback to previous deployment
 atakora rollback --env nonprod
@@ -648,6 +678,7 @@ atakora rollback --to synth-20251013-170000-e2f4a6 --env nonprod
 ```
 
 **How it works:**
+
 ```
 1. Query synthesis run ID from deployment history
 2. Retrieve ARM template from that deployment
@@ -657,6 +688,7 @@ atakora rollback --to synth-20251013-170000-e2f4a6 --env nonprod
 ```
 
 **v1 Limitation:**
+
 - Manual rollback only (must specify `--to`)
 - Automatic rollback in v2
 
@@ -667,11 +699,13 @@ atakora rollback --to synth-20251013-170000-e2f4a6 --env nonprod
 Detect manual changes to resources.
 
 **Usage:**
+
 ```bash
 atakora drift [--env <environment>]
 ```
 
 **Output:**
+
 ```
 ⚠️  Resource drift detected for user-service (nonprod)
 
@@ -690,6 +724,7 @@ Run 'atakora deploy --env nonprod' to restore to desired state
 ```
 
 **How it works:**
+
 ```typescript
 // Compare deployed resources vs expected state
 const expectedTemplate = await synthesizeTemplate(backend);
@@ -699,6 +734,7 @@ const drifted = detectDrift(expectedTemplate, deployedResources);
 ```
 
 **v1 Limitation:**
+
 - Detection only (warning)
 - No automatic repair
 - v2: `atakora drift --fix` to repair
@@ -712,6 +748,7 @@ const drifted = detectDrift(expectedTemplate, deployedResources);
 **Categories of Failures:**
 
 **1. Pre-Flight Failures** (Fast fail before deployment)
+
 ```
 ❌ Error: Azure authentication failed
 
@@ -732,6 +769,7 @@ Or deploy with:
 ```
 
 **2. Deployment Failures** (ARM deployment errors)
+
 ```
 ❌ Error: Deployment failed at Phase 1 (Infrastructure)
 
@@ -746,6 +784,7 @@ Deployment logs: arm.out/user-service/synth-20251014-153000-a8b2c4/deployment.lo
 ```
 
 **3. Post-Deployment Failures** (Configuration errors)
+
 ```
 ⚠️  Warning: Deployment succeeded but health check failed
 
@@ -765,6 +804,7 @@ Check logs:
 ### Error Recovery
 
 **Stuck Deployment:**
+
 ```bash
 # Release deployment lock
 atakora deploy unlock --env nonprod --force
@@ -774,6 +814,7 @@ atakora deploy --env nonprod
 ```
 
 **Partial Deployment:**
+
 ```bash
 # ARM templates are idempotent - safe to re-run
 atakora deploy --env nonprod
@@ -785,6 +826,7 @@ atakora deploy --env nonprod
 ```
 
 **Rollback After Failure:**
+
 ```bash
 # Rollback to last working deployment
 atakora rollback --env nonprod
@@ -799,6 +841,7 @@ atakora rollback --env nonprod
 ### GitHub Actions
 
 **Complete Workflow:**
+
 ```yaml
 # .github/workflows/deploy.yml
 name: Deploy to Azure
@@ -816,7 +859,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Full history for git metadata
+          fetch-depth: 0 # Full history for git metadata
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -867,6 +910,7 @@ jobs:
 ### Azure DevOps
 
 **Pipeline YAML:**
+
 ```yaml
 # azure-pipelines.yml
 trigger:
@@ -881,7 +925,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  - group: atakora-nonprod-secrets  # Variable group with secrets
+  - group: atakora-nonprod-secrets # Variable group with secrets
 
 stages:
   - stage: Build
@@ -967,7 +1011,7 @@ on:
 jobs:
   promote:
     runs-on: ubuntu-latest
-    environment: production  # Requires approval
+    environment: production # Requires approval
 
     steps:
       - uses: actions/checkout@v3
@@ -1035,6 +1079,7 @@ jobs:
 ### Naming Conventions
 
 **Format:**
+
 ```
 <resource-type>-<backend-name>-<environment>-<hash>
 
@@ -1051,12 +1096,7 @@ st<backend><env><hash>             (Storage - no hyphens, lowercase)
 // packages/lib/src/naming/resource-namer.ts
 
 export class ResourceNamer {
-  generateName(
-    resourceType: string,
-    backend: string,
-    environment: string,
-    hash: string
-  ): string {
+  generateName(resourceType: string, backend: string, environment: string, hash: string): string {
     const constraints = RESOURCE_CONSTRAINTS[resourceType];
 
     // Apply constraints
@@ -1080,11 +1120,7 @@ export class ResourceNamer {
     return name;
   }
 
-  private truncateWithWarning(
-    name: string,
-    maxLength: number,
-    resourceType: string
-  ): string {
+  private truncateWithWarning(name: string, maxLength: number, resourceType: string): string {
     const truncated = name.substring(0, maxLength);
 
     console.warn(
@@ -1109,14 +1145,15 @@ const RESOURCE_CONSTRAINTS = {
   'Microsoft.Storage/storageAccounts': {
     minLength: 3,
     maxLength: 24,
-    allowHyphens: false,  // No hyphens allowed!
-    caseSensitive: true,  // Must be lowercase
+    allowHyphens: false, // No hyphens allowed!
+    caseSensitive: true, // Must be lowercase
   },
   // ... other resource types
 };
 ```
 
 **Example Warning:**
+
 ```
 ⚠️  Resource name truncated to fit Storage Account length limit (24 chars):
     Original: stenterprisecustomerportalnonproda8b2c4
@@ -1216,31 +1253,37 @@ export async function validateDeployment(
 ## Future Enhancements (v2)
 
 ### Incremental Deployment
+
 - Resource-level hashing
 - Deploy only changed resources
 - Faster deployments for large backends
 
 ### Automatic Rollback
+
 - Detect deployment failures
 - Automatically rollback to last known good state
 - Configurable rollback strategy
 
 ### Drift Repair
+
 - Automatic repair of manual changes
 - `atakora drift --fix` command
 - Scheduled drift detection
 
 ### Deployment Preview
+
 - Terraform plan-style preview
 - Show exact changes before deployment
 - Cost estimation per change
 
 ### Multi-Region Deployment
+
 - Deploy to multiple regions
 - Traffic manager configuration
 - Regional failover
 
 ### Blue-Green Deployment
+
 - Zero-downtime deployments
 - Deploy to staging slot
 - Swap slots after validation
@@ -1261,6 +1304,7 @@ export async function validateDeployment(
 8. ✅ **Clear Error Messages** - Actionable resolution steps
 
 ### v1 Scope
+
 - Full ARM template deployment (idempotent)
 - Deployment locking
 - Pre-flight validation
@@ -1270,6 +1314,7 @@ export async function validateDeployment(
 - CI/CD examples
 
 ### v2 Enhancements
+
 - Incremental deployment (hash-based)
 - Automatic rollback
 - Drift detection and repair
@@ -1281,10 +1326,10 @@ export async function validateDeployment(
 
 ## Related Documents
 
-- [Gen 2 Core Design](./atakora-gen2-design.md)
-- [Type Generation & IntelliSense](./atakora-gen2-type-generation-intellisense.md)
-- [Secrets Management](./atakora-gen2-secrets-config-management.md)
-- [Dynamic Tagging System](./atakora-gen2-dynamic-tagging-system.md)
+- [Gen 2 Core Design](./Atakora-Gen2-Design.md)
+- [Type Generation & IntelliSense](./Atakora-Gen2-Type-Generation-Intellisense.md)
+- [Secrets Management](./Atakora-Gen2-Secrets-Config-Management.md)
+- [Dynamic Tagging System](./Atakora-Gen2-Dynamic-Tagging-System.md)
 - [Local Development](./atakora-gen2-local-development.md) (TODO)
 
 ---

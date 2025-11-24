@@ -21,7 +21,7 @@ export function defineFunction<TEnv extends Record<string, string> = {}>(
       // Ensure defaults
       timeout: config.timeout ?? Duration.minutes(5),
       memorySize: config.memorySize ?? 512,
-      environment: config.environment ?? {} as TEnv,
+      environment: config.environment ?? ({} as TEnv),
     },
   };
 }
@@ -194,22 +194,22 @@ interface ArmFunctionAppProps {
 
 // L2 Construct - Developer-friendly
 interface FunctionAppProps {
-  readonly functionAppName?: string;  // Auto-generated if not provided
-  readonly plan: IAppServicePlan;      // Reference to plan
+  readonly functionAppName?: string; // Auto-generated if not provided
+  readonly plan: IAppServicePlan; // Reference to plan
   readonly storageAccount: IStorageAccount; // Required for Functions
-  readonly runtime?: FunctionRuntime;  // Default: 'node'
-  readonly runtimeVersion?: string;    // Default: '18'
-  readonly location?: string;          // Default: from ResourceGroup
+  readonly runtime?: FunctionRuntime; // Default: 'node'
+  readonly runtimeVersion?: string; // Default: '18'
+  readonly location?: string; // Default: from ResourceGroup
   readonly environment?: Record<string, string>;
   readonly identity?: ManagedServiceIdentity;
   readonly vnetConfig?: VNetConfiguration;
   readonly tags?: Record<string, string>;
 
   // Function-specific settings
-  readonly dailyMemoryTimeQuota?: number;  // Consumption plan limit
+  readonly dailyMemoryTimeQuota?: number; // Consumption plan limit
   readonly preWarmedInstanceCount?: number; // Premium plan
   readonly maximumElasticWorkerCount?: number;
-  readonly functionTimeout?: Duration;      // Global timeout
+  readonly functionTimeout?: Duration; // Global timeout
   readonly healthCheckPath?: string;
   readonly cors?: CorsSettings;
 }
@@ -235,14 +235,14 @@ interface IFunctionApp {
 // Main Function Props - Updated for handler.ts + resource.ts pattern
 interface AzureFunctionProps {
   // Required - paths to function files
-  readonly handler: string;           // Path to handler.ts file
-  readonly resource?: string;         // Path to resource.ts file (optional for backward compat)
+  readonly handler: string; // Path to handler.ts file
+  readonly resource?: string; // Path to resource.ts file (optional for backward compat)
 
   // If resource is not provided, inline configuration can be used
   readonly inlineConfig?: FunctionConfig;
 
   // Optional Configuration
-  readonly functionName?: string;     // Auto-generated if not provided
+  readonly functionName?: string; // Auto-generated if not provided
 
   // Environment variable overrides (merged with resource.ts values)
   readonly environment?: Record<string, string | IResourceReference>;
@@ -255,8 +255,8 @@ interface AzureFunctionProps {
 interface IAzureFunction {
   readonly functionName: string;
   readonly functionId: string;
-  readonly triggerUrl?: string;    // For HTTP triggers
-  readonly functionKey?: string;   // For secured functions
+  readonly triggerUrl?: string; // For HTTP triggers
+  readonly functionKey?: string; // For secured functions
 
   // Methods
   grantInvoke(principal: IPrincipal): void;
@@ -272,24 +272,24 @@ interface IAzureFunction {
 // Base trigger type
 interface BaseTrigger {
   readonly type: string;
-  readonly name?: string;  // Binding name, auto-generated if not provided
+  readonly name?: string; // Binding name, auto-generated if not provided
 }
 
 // HTTP Trigger
 interface HttpTrigger extends BaseTrigger {
   readonly type: 'http';
-  readonly route?: string;           // API route template
-  readonly methods?: HttpMethod[];   // GET, POST, etc.
-  readonly authLevel?: AuthLevel;    // anonymous, function, admin
+  readonly route?: string; // API route template
+  readonly methods?: HttpMethod[]; // GET, POST, etc.
+  readonly authLevel?: AuthLevel; // anonymous, function, admin
   readonly webhookType?: WebhookType; // For webhook scenarios
 }
 
 // Timer Trigger
 interface TimerTrigger extends BaseTrigger {
   readonly type: 'timer';
-  readonly schedule: string;         // CRON expression or TimeSpan
-  readonly runOnStartup?: boolean;   // Run immediately on deploy
-  readonly useMonitor?: boolean;     // Track schedule status
+  readonly schedule: string; // CRON expression or TimeSpan
+  readonly runOnStartup?: boolean; // Run immediately on deploy
+  readonly useMonitor?: boolean; // Track schedule status
 }
 
 // Queue Trigger
@@ -297,7 +297,7 @@ interface QueueTrigger extends BaseTrigger {
   readonly type: 'queue';
   readonly queueName: string;
   readonly connection: string | IStorageAccount;
-  readonly batchSize?: number;       // Messages to process in parallel
+  readonly batchSize?: number; // Messages to process in parallel
   readonly visibilityTimeout?: Duration;
   readonly maxDequeueCount?: number;
 }
@@ -305,7 +305,7 @@ interface QueueTrigger extends BaseTrigger {
 // Service Bus Trigger
 interface ServiceBusTrigger extends BaseTrigger {
   readonly type: 'serviceBus';
-  readonly queueName?: string;       // Either queue or topic
+  readonly queueName?: string; // Either queue or topic
   readonly topicName?: string;
   readonly subscriptionName?: string;
   readonly connection: string | IServiceBusNamespace;
@@ -332,7 +332,7 @@ interface EventHubTrigger extends BaseTrigger {
   readonly type: 'eventHub';
   readonly eventHubName: string;
   readonly connection: string | IEventHubNamespace;
-  readonly consumerGroup?: string;   // Default: $Default
+  readonly consumerGroup?: string; // Default: $Default
   readonly maxBatchSize?: number;
   readonly prefetchCount?: number;
   readonly batchCheckpointFrequency?: number;
@@ -341,7 +341,7 @@ interface EventHubTrigger extends BaseTrigger {
 // Blob Trigger
 interface BlobTrigger extends BaseTrigger {
   readonly type: 'blob';
-  readonly path: string;              // Container/blob pattern
+  readonly path: string; // Container/blob pattern
   readonly connection: string | IStorageAccount;
   readonly pollInterval?: Duration;
   readonly maxDegreeOfParallelism?: number;
@@ -401,8 +401,8 @@ interface CosmosBinding extends FunctionBinding {
   readonly collectionName: string;
   readonly connection: string | ICosmosAccount;
   readonly partitionKey?: string;
-  readonly id?: string;              // For single document operations
-  readonly sqlQuery?: string;        // For queries
+  readonly id?: string; // For single document operations
+  readonly sqlQuery?: string; // For queries
   readonly preferredLocations?: string[];
 }
 
@@ -412,7 +412,7 @@ interface SignalRBinding extends FunctionBinding {
   readonly hubName: string;
   readonly connection: string | ISignalRService;
   readonly userId?: string;
-  readonly methods?: string[];       // For output: methods to invoke
+  readonly methods?: string[]; // For output: methods to invoke
 }
 ```
 
@@ -421,32 +421,32 @@ interface SignalRBinding extends FunctionBinding {
 ```typescript
 interface BuildOptions {
   // Bundling
-  readonly bundle?: boolean;         // Default: true
-  readonly external?: string[];      // Packages to exclude from bundle
+  readonly bundle?: boolean; // Default: true
+  readonly external?: string[]; // Packages to exclude from bundle
   readonly packages?: 'bundle' | 'external' | 'auto'; // Default: 'auto'
 
   // Optimization
-  readonly minify?: boolean;         // Default: true in prod
-  readonly treeShaking?: boolean;    // Default: true
+  readonly minify?: boolean; // Default: true in prod
+  readonly treeShaking?: boolean; // Default: true
   readonly sourcemap?: boolean | 'inline' | 'external'; // Default: 'external'
-  readonly target?: string;          // ES target, default: 'node18'
+  readonly target?: string; // ES target, default: 'node18'
 
   // TypeScript
-  readonly tsconfig?: string;        // Path to tsconfig
-  readonly typeCheck?: boolean;      // Run tsc for type checking
+  readonly tsconfig?: string; // Path to tsconfig
+  readonly typeCheck?: boolean; // Run tsc for type checking
 
   // Assets
   readonly loader?: Record<string, string>; // File loaders
-  readonly assetNames?: string;      // Asset naming pattern
-  readonly publicPath?: string;      // Public URL path
+  readonly assetNames?: string; // Asset naming pattern
+  readonly publicPath?: string; // Public URL path
 
   // Environment
   readonly define?: Record<string, string>; // Build-time constants
-  readonly inject?: string[];        // Auto-import modules
+  readonly inject?: string[]; // Auto-import modules
 
   // Caching
-  readonly cache?: boolean;          // Enable build cache
-  readonly cacheLocation?: string;   // Cache directory
+  readonly cache?: boolean; // Enable build cache
+  readonly cacheLocation?: string; // Cache directory
 }
 ```
 
@@ -541,7 +541,7 @@ enum FunctionRuntime {
   DOTNET = 'dotnet',
   JAVA = 'java',
   POWERSHELL = 'powershell',
-  CUSTOM = 'custom'
+  CUSTOM = 'custom',
 }
 
 interface FunctionAppRuntime {
@@ -565,16 +565,16 @@ interface CustomHandlerConfig {
 ```typescript
 interface TracingConfig {
   readonly enabled?: boolean;
-  readonly samplingRate?: number;    // 0.0 to 1.0
+  readonly samplingRate?: number; // 0.0 to 1.0
   readonly provider?: 'applicationInsights' | 'openTelemetry' | 'custom';
-  readonly customProvider?: string;  // Module to import
-  readonly propagators?: string[];   // Trace propagation formats
+  readonly customProvider?: string; // Module to import
+  readonly propagators?: string[]; // Trace propagation formats
 }
 
 interface LoggingConfig {
   readonly level?: LogLevel;
   readonly applicationInsights?: ApplicationInsightsConfig;
-  readonly customSink?: string;      // Module for custom logging
+  readonly customSink?: string; // Module for custom logging
   readonly structuredLogging?: boolean;
   readonly includeFunctionExecutionDetails?: boolean;
 }
@@ -599,7 +599,7 @@ enum LogLevel {
   WARNING = 'Warning',
   ERROR = 'Error',
   CRITICAL = 'Critical',
-  NONE = 'None'
+  NONE = 'None',
 }
 ```
 
@@ -609,12 +609,12 @@ enum LogLevel {
 enum AuthLevel {
   ANONYMOUS = 'anonymous',
   FUNCTION = 'function',
-  ADMIN = 'admin'
+  ADMIN = 'admin',
 }
 
 interface FunctionKey {
   readonly name: string;
-  readonly value?: string;           // Auto-generated if not provided
+  readonly value?: string; // Auto-generated if not provided
   readonly type: 'function' | 'master';
 }
 
@@ -663,6 +663,7 @@ class ArmReference {
 ### Basic HTTP Function with handler.ts + resource.ts
 
 **File: functions/api/resource.ts**
+
 ```typescript
 import { defineFunction } from '@atakora/functions';
 
@@ -676,20 +677,21 @@ export default defineFunction<ApiEnv>({
     type: 'http',
     route: 'api/users/{userId}',
     methods: ['GET', 'POST'],
-    authLevel: AuthLevel.FUNCTION
+    authLevel: AuthLevel.FUNCTION,
   },
   environment: {
     DATABASE_URL: '${COSMOS_ENDPOINT}',
-    API_KEY: '${API_SECRET_KEY}'
+    API_KEY: '${API_SECRET_KEY}',
   },
   timeout: Duration.seconds(30),
   role: {
-    managedIdentity: true
-  }
+    managedIdentity: true,
+  },
 });
 ```
 
 **File: functions/api/handler.ts**
+
 ```typescript
 import { HttpHandler, AzureFunctionContext, HttpRequest, HttpResponse } from '@atakora/functions';
 
@@ -706,18 +708,19 @@ export const handler: HttpHandler = async (
 
   return {
     status: 200,
-    body: { userId, message: 'Success' }
+    body: { userId, message: 'Success' },
   };
 };
 ```
 
 **File: app.ts**
+
 ```typescript
 const functionApp = new FunctionApp(resourceGroup, 'MyFunctions', {
   plan: consumptionPlan,
   storageAccount: storage,
   runtime: FunctionRuntime.NODE,
-  runtimeVersion: '18'
+  runtimeVersion: '18',
 });
 
 // Function automatically discovers resource.ts configuration
@@ -726,36 +729,40 @@ const apiFunction = new AzureFunction(functionApp, 'ApiEndpoint', {
   resource: './functions/api/resource.ts',
   environment: {
     COSMOS_ENDPOINT: cosmosDb.endpoint,
-    API_SECRET_KEY: keyVault.secret('api-key')
-  }
+    API_SECRET_KEY: keyVault.secret('api-key'),
+  },
 });
 ```
 
 ### Timer Function with Cosmos Output
 
 **File: functions/cleanup/resource.ts**
+
 ```typescript
 import { defineFunction } from '@atakora/functions';
 
 export default defineFunction({
   trigger: {
     type: 'timer',
-    schedule: '0 0 2 * * *',  // 2 AM daily
-    runOnStartup: false
+    schedule: '0 0 2 * * *', // 2 AM daily
+    runOnStartup: false,
   },
-  outputBindings: [{
-    type: 'cosmosDb',
-    direction: 'out',
-    name: 'deletedItems',
-    databaseName: 'audit',
-    collectionName: 'deletions',
-    connection: '${COSMOS_CONNECTION}'
-  }],
-  timeout: Duration.minutes(10)
+  outputBindings: [
+    {
+      type: 'cosmosDb',
+      direction: 'out',
+      name: 'deletedItems',
+      databaseName: 'audit',
+      collectionName: 'deletions',
+      connection: '${COSMOS_CONNECTION}',
+    },
+  ],
+  timeout: Duration.minutes(10),
 });
 ```
 
 **File: functions/cleanup/handler.ts**
+
 ```typescript
 import { TimerHandler, AzureFunctionContext, TimerInfo } from '@atakora/functions';
 
@@ -765,7 +772,7 @@ export const handler: TimerHandler = async (
 ): Promise<void> => {
   context.log.info('Cleanup function triggered', {
     isPastDue: timer.isPastDue,
-    nextRun: timer.scheduleStatus.next
+    nextRun: timer.scheduleStatus.next,
   });
 
   const deletedItems = [];
@@ -777,19 +784,21 @@ export const handler: TimerHandler = async (
 ```
 
 **File: app.ts**
+
 ```typescript
 const cleanupFunction = new AzureFunction(functionApp, 'Cleanup', {
   handler: './functions/cleanup/handler.ts',
   resource: './functions/cleanup/resource.ts',
   environment: {
-    COSMOS_CONNECTION: cosmosDb.connectionString
-  }
+    COSMOS_CONNECTION: cosmosDb.connectionString,
+  },
 });
 ```
 
 ### Queue Processing Function
 
 **File: functions/orders/resource.ts**
+
 ```typescript
 import { defineFunction } from '@atakora/functions';
 
@@ -804,30 +813,35 @@ export default defineFunction<OrderEnv>({
     queueName: 'orders',
     connection: '${STORAGE_CONNECTION}',
     batchSize: 10,
-    maxDequeueCount: 3
+    maxDequeueCount: 3,
   },
-  inputBindings: [{
-    type: 'table',
-    direction: 'in',
-    name: 'inventory',
-    tableName: 'inventory',
-    connection: '${STORAGE_CONNECTION}'
-  }],
-  outputBindings: [{
-    type: 'serviceBus',
-    direction: 'out',
-    name: 'notifications',
-    queueName: 'order-notifications',
-    connection: '${SERVICE_BUS_CONNECTION}'
-  }],
+  inputBindings: [
+    {
+      type: 'table',
+      direction: 'in',
+      name: 'inventory',
+      tableName: 'inventory',
+      connection: '${STORAGE_CONNECTION}',
+    },
+  ],
+  outputBindings: [
+    {
+      type: 'serviceBus',
+      direction: 'out',
+      name: 'notifications',
+      queueName: 'order-notifications',
+      connection: '${SERVICE_BUS_CONNECTION}',
+    },
+  ],
   environment: {
     MAX_RETRIES: '3',
-    NOTIFICATION_ENABLED: '${NOTIFICATION_FLAG}'
-  }
+    NOTIFICATION_ENABLED: '${NOTIFICATION_FLAG}',
+  },
 });
 ```
 
 **File: functions/orders/handler.ts**
+
 ```typescript
 import { QueueHandler, AzureFunctionContext } from '@atakora/functions';
 
@@ -848,7 +862,7 @@ export const handler: QueueHandler<OrderMessage> = async (
   // Process order logic
   const notification = {
     orderId: message.orderId,
-    status: 'processed'
+    status: 'processed',
   };
 
   // Output to Service Bus
@@ -859,6 +873,7 @@ export const handler: QueueHandler<OrderMessage> = async (
 ```
 
 **File: app.ts**
+
 ```typescript
 const orderProcessor = new AzureFunction(functionApp, 'OrderProcessor', {
   handler: './functions/orders/handler.ts',
@@ -866,8 +881,8 @@ const orderProcessor = new AzureFunction(functionApp, 'OrderProcessor', {
   environment: {
     STORAGE_CONNECTION: storage.connectionString,
     SERVICE_BUS_CONNECTION: serviceBus.connectionString,
-    NOTIFICATION_FLAG: 'true'
-  }
+    NOTIFICATION_FLAG: 'true',
+  },
 });
 ```
 

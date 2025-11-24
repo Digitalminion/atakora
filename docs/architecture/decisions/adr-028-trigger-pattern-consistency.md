@@ -10,6 +10,7 @@ Following ADR-019's queue processor pattern, we need consistent patterns for all
 4. Be technically accurate about Azure's architecture
 
 Azure Functions support many trigger types, each requiring different infrastructure:
+
 - Queue triggers (Storage Queue or Service Bus)
 - Timer triggers (no infrastructure, just schedule)
 - Event Grid triggers (Event Grid Topic/Subscription)
@@ -37,6 +38,7 @@ src/gen2/
 ### Pattern Details
 
 #### 1. Queue Processors
+
 ```
 queue-processors/
   order-processing/
@@ -44,10 +46,12 @@ queue-processors/
     handler.ts            # Processing logic
     README.md             # Documents both resources
 ```
+
 Helper: `defineQueueProcessor()`
 Creates: Storage/Service Bus Queue + Azure Function
 
 #### 2. Event Processors
+
 ```
 event-processors/
   user-registered/
@@ -55,10 +59,12 @@ event-processors/
     handler.ts            # Event handling logic
     README.md             # Documents event infrastructure
 ```
+
 Helper: `defineEventProcessor()`
 Creates: Event Grid Topic/Subscription OR Event Hub + Azure Function
 
 #### 3. Scheduled Jobs
+
 ```
 scheduled-jobs/
   daily-cleanup/
@@ -66,10 +72,12 @@ scheduled-jobs/
     handler.ts            # Job logic
     README.md             # Documents schedule and purpose
 ```
+
 Helper: `defineScheduledJob()`
 Creates: Azure Function with timer trigger (no additional infrastructure)
 
 #### 4. Blob Processors
+
 ```
 blob-processors/
   image-thumbnail/
@@ -77,10 +85,12 @@ blob-processors/
     handler.ts            # Blob processing logic
     README.md             # Documents container and triggers
 ```
+
 Helper: `defineBlobProcessor()`
 Creates: Storage Container + Azure Function with blob trigger
 
 #### 5. API Endpoints
+
 ```
 api-endpoints/
   users/
@@ -88,10 +98,12 @@ api-endpoints/
     handler.ts            # HTTP request handling
     README.md             # Documents routes and methods
 ```
+
 Helper: `defineApiEndpoint()`
 Creates: Azure Function with HTTP trigger
 
 #### 6. Change Processors
+
 ```
 change-processors/
   inventory-sync/
@@ -99,6 +111,7 @@ change-processors/
     handler.ts            # Change handling logic
     README.md             # Documents monitored collections
 ```
+
 Helper: `defineChangeProcessor()`
 Creates: Azure Function with Cosmos DB trigger + lease container
 
@@ -115,6 +128,7 @@ functions/
 ```
 
 **Rejected because**:
+
 - Focuses on technical trigger type rather than business purpose
 - Makes it harder to find related processors
 - Too Azure-specific, not portable to other clouds
@@ -131,6 +145,7 @@ events/
 ```
 
 **Rejected because**:
+
 - Separates related concerns
 - Unclear relationships between infrastructure and processors
 - More complex project structure

@@ -5,6 +5,7 @@
 The current backend definition uses a configuration-heavy approach with nested objects passed to `defineBackend()`. This pattern, while explicit, creates a "big JSON payload" feeling that doesn't align with modern TypeScript development patterns. The user has requested a more natural "setter style" where values are assigned using `= value` rather than passed as configuration objects.
 
 Current pattern feels like configuration:
+
 ```typescript
 defineBackend({
   data,
@@ -18,6 +19,7 @@ defineBackend({
 ```
 
 Desired pattern feels like code:
+
 ```typescript
 const backend = new Backend();
 backend.data = data;
@@ -55,17 +57,15 @@ backend.config.maxUploadSizeMb = 100;
 backend.config.allowedFileTypes = ['.csv', '.xlsx'];
 
 // Chained methods for complex configuration
-backend.networking
-  .forcePrivate()
-  .allowIPs('20.185.0.0/16', '52.173.0.0/16');
+backend.networking.forcePrivate().allowIPs('20.185.0.0/16', '52.173.0.0/16');
 
 backend.monitoring
   .metric('feedback-sentiment', 'gauge')
   .metric('api-latency-p99', 'histogram')
   .alert('high-error-rate')
-    .when('error_rate > 1%')
-    .severity('critical')
-    .action('page-oncall');
+  .when('error_rate > 1%')
+  .severity('critical')
+  .action('page-oncall');
 ```
 
 ### Component Registration Pattern
@@ -78,12 +78,7 @@ backend.processUpload = processUpload;
 backend.validateDataset = validateDataset;
 
 // Or use array assignment for bulk registration
-backend.functions = [
-  processUpload,
-  validateDataset,
-  generateReport,
-  sendNotification
-];
+backend.functions = [processUpload, validateDataset, generateReport, sendNotification];
 
 // Infrastructure components follow the same pattern
 backend.dataQualityQueue = dataQualityQueue;
@@ -102,19 +97,21 @@ backend.config.databaseName = 'colorai-db';
 
 // Complex configuration uses builders
 backend.performance
-  .functionPlan('Premium')  // or 'Consumption'
+  .functionPlan('Premium') // or 'Consumption'
   .alwaysOn(true)
   .maxInstances(10)
   .scaleRule('http-queue-length', 100, { scaleBy: 2 })
   .scaleRule('cpu-percentage', 70, { scaleBy: 1 });
 
 // Environment-aware configuration
-backend.when('production')
+backend
+  .when('production')
   .networking.forcePrivate()
   .performance.functionPlan('Premium')
   .authentication.requireMFA();
 
-backend.when('development')
+backend
+  .when('development')
   .networking.allowPublic()
   .performance.functionPlan('Consumption')
   .features.experimental();
@@ -145,7 +142,7 @@ class Backend {
           target[prop] = value;
         }
         return true;
-      }
+      },
     });
   }
 
@@ -161,6 +158,7 @@ class Backend {
 ## Alternatives Considered
 
 ### 1. Pure Builder Pattern
+
 ```typescript
 backend
   .withData(data)
@@ -168,9 +166,11 @@ backend
   .withSecret('SENDGRID_API_KEY', { required: true })
   .build();
 ```
+
 **Rejected**: Too verbose, doesn't feel like natural code assignment.
 
 ### 2. Decorator Pattern
+
 ```typescript
 @Backend()
 class ColorAIBackend {
@@ -179,12 +179,15 @@ class ColorAIBackend {
   @Secret({ required: true }) SENDGRID_API_KEY: string;
 }
 ```
+
 **Rejected**: Requires experimental decorators, adds complexity, not as intuitive.
 
 ### 3. Keep Current Configuration Pattern
+
 ```typescript
 defineBackend({ ... }, { ... });
 ```
+
 **Rejected**: Feels too much like configuration, not code. Doesn't provide progressive enhancement.
 
 ## Consequences

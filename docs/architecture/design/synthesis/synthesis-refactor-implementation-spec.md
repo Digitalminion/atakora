@@ -93,7 +93,7 @@ export class SynthesisContext {
       return {
         type: 'function',
         name: 'resourceId',
-        parameters: [this.parseResourceId(resourceId)]
+        parameters: [this.parseResourceId(resourceId)],
       };
     } else {
       // Cross-template - use deployment output
@@ -112,7 +112,7 @@ export class SynthesisContext {
       return {
         type: 'function',
         name: 'parameters',
-        parameters: [paramName]
+        parameters: [paramName],
       };
     } else {
       // Parameter might be in parent template - return as-is
@@ -120,7 +120,7 @@ export class SynthesisContext {
       return {
         type: 'function',
         name: 'parameters',
-        parameters: [paramName]
+        parameters: [paramName],
       };
     }
   }
@@ -146,12 +146,12 @@ export class SynthesisContext {
         {
           type: 'function',
           name: 'resourceId',
-          parameters: ['Microsoft.Resources/deployments', deploymentName]
+          parameters: ['Microsoft.Resources/deployments', deploymentName],
         },
         'outputs',
         outputName,
-        'value'
-      ]
+        'value',
+      ],
     };
   }
 
@@ -176,7 +176,7 @@ export class SynthesisContext {
     const parts = resourceId.split('/');
     return {
       type: parts.slice(0, -1).join('/'),
-      name: parts[parts.length - 1]
+      name: parts[parts.length - 1],
     };
   }
 
@@ -366,7 +366,7 @@ export class TemplateSplitter {
       maxTemplateSize: options.maxTemplateSize ?? 4 * 1024 * 1024, // 4MB
       groupingStrategy: options.groupingStrategy ?? 'minimize-cross-refs',
       preferLinkedTemplates: options.preferLinkedTemplates ?? false,
-      customGrouping: options.customGrouping ?? null
+      customGrouping: options.customGrouping ?? null,
     };
   }
 
@@ -495,10 +495,10 @@ export class TemplateSplitter {
 
       templates.set(templateName, {
         name: templateName,
-        resources: resources.map(r => r.id),
+        resources: resources.map((r) => r.id),
         estimatedSize: resources.reduce((sum, r) => sum + r.sizeEstimate, 0),
         isMain: templateName === 'main.json',
-        dependsOn: []
+        dependsOn: [],
       });
     }
 
@@ -515,7 +515,7 @@ export class TemplateSplitter {
             targetTemplate,
             sourceResource: resource.id,
             targetResource: dep,
-            dependencyType: 'dependsOn'
+            dependencyType: 'dependsOn',
           });
 
           // Update template dependencies
@@ -695,12 +695,12 @@ export class Synthesizer {
     context: SynthesisContext
   ): Promise<any> {
     const template = {
-      '$schema': 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+      $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
       contentVersion: '1.0.0.0',
       parameters: {},
       variables: {},
       resources: [],
-      outputs: {}
+      outputs: {},
     };
 
     // Generate resources for this template
@@ -733,7 +733,7 @@ export class Synthesizer {
       name: resource.name || 'unknown',
       dependencies: resource.dependencies || [],
       sizeEstimate: 1000, // Conservative estimate
-      templatePreference: 'any'
+      templatePreference: 'any',
     };
   }
 }
@@ -742,27 +742,32 @@ export class Synthesizer {
 ## Implementation Priorities
 
 ### Phase 1: Core Infrastructure (Day 1)
+
 1. **ResourceMetadata interface** - Define in types.ts
 2. **SynthesisContext class** - Implement with full test coverage
 3. **TemplateAssignments types** - Complete type system
 4. **Resource base class update** - Add toMetadata() method
 
 ### Phase 2: Template Splitting (Day 1-2)
+
 1. **TemplateSplitter refactoring** - Metadata-based splitting
 2. **Dependency graph implementation** - For optimization
 3. **Assignment strategies** - Multiple grouping options
 
 ### Phase 3: Pipeline Integration (Day 2-3)
+
 1. **Synthesizer refactoring** - New phased pipeline
 2. **ResourceTransformer updates** - Context propagation
 3. **Backwards compatibility** - Support unmigrated resources
 
 ### Phase 4: Resource Migration (Day 3-4)
+
 1. **Critical resources first** - FunctionApp, StorageAccount
 2. **L1 constructs** - Systematic migration
 3. **L2 constructs** - Update high-level abstractions
 
 ### Phase 5: Testing & Validation (Day 3-4)
+
 1. **Unit tests** - Each component individually
 2. **Integration tests** - Complete pipeline
 3. **E2E tests** - Actual deployments

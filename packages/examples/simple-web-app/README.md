@@ -73,6 +73,7 @@ npm install
 ```
 
 This installs:
+
 - `@atakora/lib` - Core framework
 - `@atakora/cdk` - Azure resource constructs
 - TypeScript and type definitions
@@ -123,6 +124,7 @@ npm run synth
 ```
 
 **Expected output**:
+
 ```
 ✓ Compiled TypeScript
 ✓ Synthesized 1 stack
@@ -226,14 +228,14 @@ app.synth();
 ```typescript
 const config = {
   dev: {
-    appServicePlanSku: 'B1',      // Basic tier
+    appServicePlanSku: 'B1', // Basic tier
     sqlDatabaseSku: 'Basic',
     storageSku: 'Standard_LRS',
   },
   prod: {
-    appServicePlanSku: 'P1v3',    // Premium tier
+    appServicePlanSku: 'P1v3', // Premium tier
     sqlDatabaseSku: 'S1',
-    storageSku: 'Standard_GRS',   // Geo-redundant
+    storageSku: 'Standard_GRS', // Geo-redundant
   },
 }[environment];
 ```
@@ -245,12 +247,14 @@ const appSubnet = new Subnets(stack, 'AppSubnet', {
   virtualNetworkName: vnet.name,
   subnetName: 'snet-app',
   addressPrefix: '10.0.1.0/24',
-  delegations: [{
-    name: 'app-service-delegation',
-    properties: {
-      serviceName: 'Microsoft.Web/serverFarms',
+  delegations: [
+    {
+      name: 'app-service-delegation',
+      properties: {
+        serviceName: 'Microsoft.Web/serverFarms',
+      },
     },
-  }],
+  ],
 });
 ```
 
@@ -270,7 +274,7 @@ appSettings: [
     value: appInsights.instrumentationKey,
   },
   // ...
-]
+];
 ```
 
 ## Available Commands
@@ -318,6 +322,7 @@ ENVIRONMENT=prod npm run deploy
 ```
 
 Each environment gets:
+
 - Separate resource group
 - Environment-appropriate SKUs
 - Environment-specific tags
@@ -371,7 +376,8 @@ const containerClient = blobServiceClient.getContainerClient('files');
 
 // Application Insights
 const appInsights = require('applicationinsights');
-appInsights.setup(process.env.APPINSIGHTS_INSTRUMENTATIONKEY)
+appInsights
+  .setup(process.env.APPINSIGHTS_INSTRUMENTATIONKEY)
   .setAutoDependencyCorrelation(true)
   .setAutoCollectRequests(true)
   .start();
@@ -382,6 +388,7 @@ appInsights.setup(process.env.APPINSIGHTS_INSTRUMENTATIONKEY)
 Approximate monthly costs (US East 2 region):
 
 ### Development Environment
+
 - **App Service Plan (B1)**: $13.14/month
 - **SQL Database (Basic)**: $4.99/month
 - **Storage Account (LRS, 10GB)**: $0.20/month
@@ -391,6 +398,7 @@ Approximate monthly costs (US East 2 region):
 **Total**: ~$20-25/month
 
 ### Production Environment
+
 - **App Service Plan (P1v3)**: $182.50/month
 - **SQL Database (S1)**: $30/month
 - **Storage Account (GRS, 100GB)**: $5/month

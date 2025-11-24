@@ -7,6 +7,7 @@ Learn how to build serverless applications with Azure Functions using Atakora's 
 Atakora provides a comprehensive framework for building Azure Functions applications with TypeScript, combining runtime handler types with infrastructure configuration following the Amplify Gen 2 pattern of separating code from configuration.
 
 **Key Benefits:**
+
 - Type-safe handler interfaces for all 18 Azure Functions trigger types
 - Separate runtime code (`handler.ts`) from infrastructure config (`resource.ts`)
 - Automatic function discovery and deployment
@@ -26,18 +27,20 @@ npm install @atakora/cdk
 Create a function directory with two files:
 
 **functions/api/handler.ts** (Runtime code):
+
 ```typescript
 import { HttpHandler } from '@atakora/cdk/functions';
 
 export const handler: HttpHandler = async (context, req) => {
   return {
     status: 200,
-    body: { message: 'Hello World' }
+    body: { message: 'Hello World' },
   };
 };
 ```
 
 **functions/api/resource.ts** (Infrastructure config):
+
 ```typescript
 import { defineFunction } from '@atakora/cdk/functions';
 
@@ -46,22 +49,23 @@ export default defineFunction({
     type: 'http',
     route: 'api/hello',
     methods: ['GET'],
-    authLevel: 'anonymous'
+    authLevel: 'anonymous',
   },
-  timeout: { seconds: 30 }
+  timeout: { seconds: 30 },
 });
 ```
 
 ### 2. Add Function App to Your Stack
 
 **infrastructure/app.ts**:
+
 ```typescript
 import { Stack, FunctionApp } from '@atakora/cdk';
 
 const stack = new Stack('MyApp');
 
 const functionApp = new FunctionApp(stack, 'Api', {
-  functionsPath: '../functions'
+  functionsPath: '../functions',
 });
 ```
 
@@ -80,6 +84,7 @@ Your HTTP function is now live at: `https://<app-name>.azurewebsites.net/api/hel
 Atakora provides type-safe handler interfaces for all Azure Functions trigger types:
 
 **Priority 1 - Core Triggers:**
+
 - `HttpHandler` - REST APIs and webhooks
 - `TimerHandler` - Scheduled tasks (CRON)
 - `QueueHandler` - Azure Storage Queue processing
@@ -91,15 +96,18 @@ Atakora provides type-safe handler interfaces for all Azure Functions trigger ty
 - `EventGridHandler` - Event routing
 
 **Priority 2 - IoT & Real-time:**
+
 - `IoTHubHandler` - IoT device messages
 - `SignalRNegotiateHandler` - Real-time connections
 
 **Priority 3 - Third-Party:**
+
 - `KafkaHandler` - Kafka event streaming
 - `RabbitMQHandler` - RabbitMQ messaging
 - `RedisStreamHandler` - Redis stream processing
 
 **Priority 4 - Durable Functions:**
+
 - `DurableOrchestratorHandler` - Workflow orchestration
 - `DurableActivityHandler` - Activity execution
 - `DurableEntityHandler` - Stateful entities
@@ -114,6 +122,7 @@ Atakora automatically discovers functions in your `functions/` directory. Each f
 2. **resource.ts** - Infrastructure config with default export from `defineFunction()`
 
 **Directory structure:**
+
 ```
 functions/
 ├── api/
@@ -128,6 +137,7 @@ functions/
 ```
 
 The discovery system:
+
 - Scans the functions directory for handler/resource pairs
 - Computes content hashes for cache invalidation
 - Validates function configurations
@@ -138,6 +148,7 @@ The discovery system:
 Use `${PLACEHOLDER}` syntax to reference environment variables defined in your infrastructure:
 
 **functions/api/resource.ts:**
+
 ```typescript
 export interface ApiEnv {
   readonly DATABASE_URL: string;
@@ -148,23 +159,25 @@ export default defineFunction<ApiEnv>({
   trigger: { type: 'http', route: 'api/users' },
   environment: {
     DATABASE_URL: '${COSMOS_ENDPOINT}',
-    API_KEY: '${API_SECRET}'
-  }
+    API_KEY: '${API_SECRET}',
+  },
 });
 ```
 
 **infrastructure/app.ts:**
+
 ```typescript
 const functionApp = new FunctionApp(stack, 'Api', {
   functionsPath: '../functions',
   environment: {
-    COSMOS_ENDPOINT: cosmosDb.endpoint,      // Resource reference
-    API_SECRET: keyVault.secret('api-key')   // ARM expression
-  }
+    COSMOS_ENDPOINT: cosmosDb.endpoint, // Resource reference
+    API_SECRET: keyVault.secret('api-key'), // ARM expression
+  },
 });
 ```
 
 **functions/api/handler.ts:**
+
 ```typescript
 export const handler: HttpHandler = async (context, req) => {
   // Environment variables are resolved and available
@@ -195,7 +208,7 @@ export const handler: HttpHandler = async (context, req) => {
   // Process authenticated request
   return {
     status: 200,
-    body: { userId: req.user.id }
+    body: { userId: req.user.id },
   };
 };
 ```
@@ -209,8 +222,8 @@ export default defineFunction({
     type: 'http',
     route: 'api/admin/{id}',
     methods: ['GET', 'DELETE'],
-    authLevel: AuthLevel.FUNCTION
-  }
+    authLevel: AuthLevel.FUNCTION,
+  },
 });
 ```
 
@@ -250,11 +263,11 @@ export default defineFunction({
   trigger: {
     type: 'queue',
     queueName: 'orders',
-    connection: '${STORAGE_CONNECTION}'
+    connection: '${STORAGE_CONNECTION}',
   },
   environment: {
-    STORAGE_CONNECTION: '${STORAGE_ACCOUNT_CONNECTION_STRING}'
-  }
+    STORAGE_CONNECTION: '${STORAGE_ACCOUNT_CONNECTION_STRING}',
+  },
 });
 ```
 
@@ -284,9 +297,9 @@ import { defineFunction } from '@atakora/cdk/functions';
 export default defineFunction({
   trigger: {
     type: 'timer',
-    schedule: '0 0 * * *'  // Run daily at midnight
+    schedule: '0 0 * * *', // Run daily at midnight
   },
-  timeout: { minutes: 5 }
+  timeout: { minutes: 5 },
 });
 ```
 
@@ -331,11 +344,11 @@ export default defineFunction({
     eventHubName: 'telemetry',
     connection: '${EVENTHUB_CONNECTION}',
     consumerGroup: '$Default',
-    cardinality: 'many'
+    cardinality: 'many',
   },
   environment: {
-    EVENTHUB_CONNECTION: '${EVENTHUB_CONNECTION_STRING}'
-  }
+    EVENTHUB_CONNECTION: '${EVENTHUB_CONNECTION_STRING}',
+  },
 });
 ```
 
@@ -432,7 +445,7 @@ export const handler: HttpHandler = async (context, req) => {
     context.log.error('Request failed', error);
     return {
       status: 500,
-      body: { error: 'Internal server error' }
+      body: { error: 'Internal server error' },
     };
   }
 };
@@ -501,8 +514,8 @@ export default defineFunction<FunctionEnv>({
   environment: {
     DATABASE_URL: '${COSMOS_ENDPOINT}',
     API_KEY: '${API_SECRET}',
-    LOG_LEVEL: 'info'
-  }
+    LOG_LEVEL: 'info',
+  },
 });
 ```
 
@@ -521,8 +534,8 @@ const functionApp = new FunctionApp(stack, 'Api', {
     // These automatically resolve to ARM template references
     COSMOS_ENDPOINT: cosmosDb.endpoint,
     STORAGE_CONNECTION: storageAccount.connectionString,
-    KEYVAULT_URI: keyVault.uri
-  }
+    KEYVAULT_URI: keyVault.uri,
+  },
 });
 ```
 
@@ -534,7 +547,7 @@ Define input and output bindings for advanced scenarios:
 export default defineFunction({
   trigger: {
     type: 'http',
-    route: 'api/users/{id}'
+    route: 'api/users/{id}',
   },
   bindings: {
     input: [
@@ -544,18 +557,18 @@ export default defineFunction({
         databaseName: 'mydb',
         collectionName: 'users',
         id: '{id}',
-        connection: '${COSMOS_CONNECTION}'
-      }
+        connection: '${COSMOS_CONNECTION}',
+      },
     ],
     output: [
       {
         type: 'queue',
         name: 'outputQueue',
         queueName: 'user-updates',
-        connection: '${STORAGE_CONNECTION}'
-      }
-    ]
-  }
+        connection: '${STORAGE_CONNECTION}',
+      },
+    ],
+  },
 });
 ```
 
@@ -588,7 +601,7 @@ describe('HTTP Handler', () => {
       url: '/api/test',
       headers: {},
       query: {},
-      params: {}
+      params: {},
     };
 
     const response = await handler(context, request);
@@ -620,16 +633,19 @@ describe('Function App', () => {
 ### Common Issues
 
 **Function not discovered:**
+
 - Verify `handler.ts` and `resource.ts` exist in function directory
 - Check that `resource.ts` has default export from `defineFunction()`
 - Ensure `handler.ts` exports a `handler` function
 
 **Environment variable not resolved:**
+
 - Verify placeholder syntax: `${VARIABLE_NAME}`
 - Check that variable is defined in FunctionApp `environment` config
 - Ensure resource references implement `IResourceReference` interface
 
 **Type errors:**
+
 - Import handler types from `@atakora/cdk/functions`
 - Provide type parameters for generic handlers: `QueueHandler<YourType>`
 - Check that function signature matches handler type

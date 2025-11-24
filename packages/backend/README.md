@@ -26,6 +26,7 @@ A revolutionary approach to building Azure backends where you define your data c
 ## Overview
 
 Traditional backend development requires writing thousands of lines of boilerplate:
+
 - REST API endpoints with routing, validation, error handling
 - Database schemas and migrations
 - Event queues and processors
@@ -44,7 +45,7 @@ User: c.model({
   email: a.string().required().email(),
   name: a.string().required(),
   role: a.enum(['user', 'admin']).default('user'),
-})
+});
 ```
 
 ### What You Get
@@ -76,6 +77,7 @@ Everything starts with the schema. Define your data models using three powerful 
 ### 2. Core vs Customization
 
 The backend requires only three things:
+
 - **Schema** - Your data models
 - **Authentication** - Security configuration (always required)
 - **Settings** - Global configuration (name, region, tags, etc.)
@@ -106,13 +108,13 @@ Everything is fully typed. IntelliSense guides you through the entire API:
 
 ```typescript
 // Auto-complete shows all available models
-backend.schema.User
-backend.schema.DataUploaded
+backend.schema.User;
+backend.schema.DataUploaded;
 
 // Auto-complete shows all attachment points
-backend.schema.DataUploaded.queue
-backend.storage.database
-backend.performance.cache
+backend.schema.DataUploaded.queue;
+backend.storage.database;
+backend.performance.cache;
 ```
 
 ## Getting Started
@@ -145,9 +147,7 @@ export const schema = defineSchema({
 import { defineAuth, auth } from '@atakora/component/auth';
 
 export const authentication = defineAuth({
-  Primary: auth.entra()
-    .tenant(process.env.AZURE_TENANT_ID!)
-    .clientId(process.env.AZURE_CLIENT_ID!),
+  Primary: auth.entra().tenant(process.env.AZURE_TENANT_ID!).clientId(process.env.AZURE_CLIENT_ID!),
 });
 
 // src/index.ts
@@ -187,20 +187,18 @@ import { defineSchema, a, c } from '@atakora/component';
 
 export const schema = defineSchema({
   schema: a.schema({
-    User: c.model({
-      id: a.id(),
-      email: a.string().required().email(),
-      name: a.string().required(),
-      role: a.enum(['user', 'admin', 'analyst']).default('user'),
-      organizationId: a.string().required(),
-      preferences: a.json(),
-      isActive: a.boolean().default(true),
-      lastLoginAt: a.datetime(),
-    })
-      .authorization(allow => [
-        allow.owner('id'),
-        allow.groups(['admin']).all(),
-      ])
+    User: c
+      .model({
+        id: a.id(),
+        email: a.string().required().email(),
+        name: a.string().required(),
+        role: a.enum(['user', 'admin', 'analyst']).default('user'),
+        organizationId: a.string().required(),
+        preferences: a.json(),
+        isActive: a.boolean().default(true),
+        lastLoginAt: a.datetime(),
+      })
+      .authorization((allow) => [allow.owner('id'), allow.groups(['admin']).all()])
       .indexes(['email', 'organizationId', 'role']),
   }),
 });
@@ -228,16 +226,16 @@ export const schema = defineSchema({
 **Field Types:**
 
 ```typescript
-a.id()                          // Auto-generated UUID
-a.string()                      // String
-a.number()                      // Number
-a.boolean()                     // Boolean
-a.datetime()                    // ISO 8601 datetime
-a.json()                        // Arbitrary JSON
-a.enum(['a', 'b', 'c'])        // Enum
-a.array(a.string())            // Array
-a.object({ field: a.string() }) // Nested object
-a.binary()                      // Binary data (for file uploads)
+a.id(); // Auto-generated UUID
+a.string(); // String
+a.number(); // Number
+a.boolean(); // Boolean
+a.datetime(); // ISO 8601 datetime
+a.json(); // Arbitrary JSON
+a.enum(['a', 'b', 'c']); // Enum
+a.array(a.string()); // Array
+a.object({ field: a.string() }); // Nested object
+a.binary(); // Binary data (for file uploads)
 ```
 
 **Validation:**
@@ -248,18 +246,11 @@ a.string()
   .email()
   .minLength(3)
   .maxLength(100)
-  .pattern(/^[a-z]+$/)
+  .pattern(/^[a-z]+$/);
 
-a.number()
-  .required()
-  .min(0)
-  .max(100)
-  .integer()
+a.number().required().min(0).max(100).integer();
 
-a.array(a.string())
-  .required()
-  .minItems(1)
-  .maxItems(10)
+a.array(a.string()).required().minItems(1).maxItems(10);
 ```
 
 **Authorization:**
@@ -332,9 +323,9 @@ import { defineEvents, configureEvent } from '@atakora/component/events';
 
 export const event = defineEvents({
   DataUploaded: configureEvent('DataUploaded')
-    .ttl(days(14))              // Message TTL
-    .visibility(minutes(5))     // Visibility timeout
-    .retries(10)                // Max retries
+    .ttl(days(14)) // Message TTL
+    .visibility(minutes(5)) // Visibility timeout
+    .retries(10) // Max retries
     .withProcessor(async (context, event) => {
       // Custom processing logic
       context.log(`Processing upload: ${event.fileName}`);
@@ -350,11 +341,7 @@ export const event = defineEvents({
         validatedAt: new Date(),
       });
     })
-    .monitoring(alerts =>
-      alerts
-        .onFailure('critical')
-        .onQueueDepth(100, 'warning')
-    ),
+    .monitoring((alerts) => alerts.onFailure('critical').onQueueDepth(100, 'warning')),
 });
 
 // src/index.ts - Attach custom processor
@@ -415,8 +402,8 @@ import { defineFunctions, configureFunction } from '@atakora/component/functions
 
 export const func = defineFunctions({
   GenerateReport: configureFunction('GenerateReport')
-    .memory(1024)              // MB
-    .timeout(minutes(10))      // Max execution time
+    .memory(1024) // MB
+    .timeout(minutes(10)) // Max execution time
     .withHandler(async (context, input) => {
       context.log(`Generating ${input.reportType} report for ${input.datasetId}`);
 
@@ -460,46 +447,37 @@ import { defineAuth, auth } from '@atakora/component/auth';
 
 export const authentication = defineAuth({
   // Primary authentication via Microsoft Entra ID (Azure AD)
-  Primary: auth.entra()
+  Primary: auth
+    .entra()
     .tenant(process.env.AZURE_TENANT_ID!)
     .clientId(process.env.AZURE_CLIENT_ID!)
-    .validateTokens(token =>
+    .validateTokens((token) =>
       token
         .audience(process.env.AZURE_CLIENT_ID!)
         .issuer(`https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/v2.0`)
         .validateLifetime()
         .clockSkew(300)
     )
-    .mapRoles(roles =>
+    .mapRoles((roles) =>
       roles
         .fromClaim('roles')
         .map('Admin', ['admin'])
         .map('Analyst', ['analyst', 'user'])
         .map('User', ['user'])
     )
-    .authorization(authz =>
+    .authorization((authz) =>
       authz
         .requireByDefault()
         .publicEndpoints(['/api/health', '/api/version'])
         .adminEndpoints(['/api/users', '/api/admin/*'])
     )
-    .mfa(mfa =>
-      mfa
-        .required(process.env.NODE_ENV === 'production')
-        .providers(['authenticator', 'sms'])
+    .mfa((mfa) =>
+      mfa.required(process.env.NODE_ENV === 'production').providers(['authenticator', 'sms'])
     )
-    .session(session =>
-      session
-        .duration('8h')
-        .sliding(true)
-        .renewBefore('30m')
-    ),
+    .session((session) => session.duration('8h').sliding(true).renewBefore('30m')),
 
   // API Keys for service-to-service authentication
-  ApiKeys: auth.apiKeys()
-    .enable()
-    .rotateEvery(90)
-    .requireHttps(),
+  ApiKeys: auth.apiKeys().enable().rotateEvery(90).requireHttps(),
 });
 ```
 
@@ -524,14 +502,16 @@ Define networking configuration in `src/network/resource.ts`:
 import { defineNetwork, network } from '@atakora/component/network';
 
 export const networking = defineNetwork({
-  Primary: network.vnet()
-    .access(access =>
-      access
-        .allowIps(['203.0.113.0/24'])  // Office IP range
-        .allowVnets([process.env.CORP_VNET_ID!])
-        .denyAll()  // Deny everything else
+  Primary: network
+    .vnet()
+    .access(
+      (access) =>
+        access
+          .allowIps(['203.0.113.0/24']) // Office IP range
+          .allowVnets([process.env.CORP_VNET_ID!])
+          .denyAll() // Deny everything else
     )
-    .cors(cors =>
+    .cors((cors) =>
       cors
         .allowOrigins(['https://app.example.com'])
         .allowMethods(['GET', 'POST', 'PUT', 'DELETE'])
@@ -539,17 +519,14 @@ export const networking = defineNetwork({
         .allowCredentials()
         .maxAge(3600)
     )
-    .tls(tls =>
-      tls
-        .minVersion('1.2')
-        .ciphers(['TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384'])
-    ),
+    .tls((tls) => tls.minVersion('1.2').ciphers(['TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384'])),
 
-  Firewall: network.waf()
+  Firewall: network
+    .waf()
     .enable(process.env.NODE_ENV === 'production')
     .mode('Prevention')
     .ruleSet('OWASP', '3.2')
-    .customRule('block-bots', rule =>
+    .customRule('block-bots', (rule) =>
       rule
         .priority(100)
         .matchVariable('RequestHeaders', 'User-Agent')
@@ -558,7 +535,8 @@ export const networking = defineNetwork({
         .action('Block')
     ),
 
-  DDoS: network.ddos()
+  DDoS: network
+    .ddos()
     .enable(process.env.NODE_ENV === 'production')
     .mode('VirtualNetworkInherited')
     .alertOnAttack(),
@@ -581,44 +559,29 @@ const isProd = process.env.NODE_ENV === 'production';
 
 export const data = defineStorage({
   // Blob Storage for files
-  BlobStorage: storage.account()
+  BlobStorage: storage
+    .account()
     .name('dataplatformstorage')
-    .redundancy(isProd ? 'GRS' : 'LRS')  // Geo-redundant in prod
-    .container('datasets', c =>
-      c.private()
-       .when(isProd, c => c.immutable(7))  // WORM compliance
-       .lifecycle(lc =>
-         lc.deleteAfter(365)
-           .archiveAfter(90)
-       )
+    .redundancy(isProd ? 'GRS' : 'LRS') // Geo-redundant in prod
+    .container('datasets', (c) =>
+      c
+        .private()
+        .when(isProd, (c) => c.immutable(7)) // WORM compliance
+        .lifecycle((lc) => lc.deleteAfter(365).archiveAfter(90))
     )
-    .container('reports', c =>
-      c.private()
-       .deleteAfter(30)
-    )
-    .encryption(enc =>
-      enc
-        .enable()
-        .keyVault(process.env.KEY_VAULT_ID!)
-        .rotateEvery(90)
-    ),
+    .container('reports', (c) => c.private().deleteAfter(30))
+    .encryption((enc) => enc.enable().keyVault(process.env.KEY_VAULT_ID!).rotateEvery(90)),
 
   // Cosmos DB for structured data
-  Database: storage.cosmosDb()
+  Database: storage
+    .cosmosDb()
     .name('data-platform-db')
     .mode(isProd ? 'Autoscale' : 'Serverless')
-    .consistency('Session')  // Balance between consistency and performance
-    .when(isProd, db =>
-      db
-        .maxThroughput(4000)
-        .multiRegion(['eastus', 'westus'])
-        .failover('automatic')
+    .consistency('Session') // Balance between consistency and performance
+    .when(isProd, (db) =>
+      db.maxThroughput(4000).multiRegion(['eastus', 'westus']).failover('automatic')
     )
-    .backup(backup =>
-      backup
-        .mode('Continuous')
-        .retention(30)
-    ),
+    .backup((backup) => backup.mode('Continuous').retention(30)),
 });
 
 // src/index.ts - Attach storage
@@ -636,23 +599,18 @@ import { defineCompute, compute } from '@atakora/component/compute';
 const isProd = process.env.NODE_ENV === 'production';
 
 export const functions = defineCompute({
-  FunctionApp: compute.functionApp()
+  FunctionApp: compute
+    .functionApp()
     .plan(isProd ? 'Premium' : 'Consumption')
-    .when(isProd, a => a.sku('EP1'))  // Elastic Premium 1
+    .when(isProd, (a) => a.sku('EP1')) // Elastic Premium 1
     .runtime('node', '20')
     .alwaysOn(isProd)
-    .scale(scale =>
-      scale
-        .max(isProd ? 20 : 10)
-        .when(isProd, s =>
-          s.min(2)  // Always 2 instances in prod
-           .rule('cpu-scale', rule =>
-             rule
-               .metric('CpuPercentage')
-               .threshold(70)
-               .scaleBy(2)
-           )
-        )
+    .scale((scale) =>
+      scale.max(isProd ? 20 : 10).when(isProd, (s) =>
+        s
+          .min(2) // Always 2 instances in prod
+          .rule('cpu-scale', (rule) => rule.metric('CpuPercentage').threshold(70).scaleBy(2))
+      )
     ),
 });
 
@@ -670,31 +628,23 @@ import { defineMonitoring, logs, insights } from '@atakora/component/monitoring'
 const isProd = process.env.NODE_ENV === 'production';
 
 export const monitoring = defineMonitoring({
-  AppInsights: insights.instance()
+  AppInsights: insights
+    .instance()
     .enable()
-    .sampling(isProd ? 50 : 100)  // Sample 50% in prod
+    .sampling(isProd ? 50 : 100) // Sample 50% in prod
     .adaptiveSampling(isProd)
     .liveMetrics()
     .trackDependencies()
     .trackPerformance(),
 
-  Alerts: logs.alerts()
-    .contacts(contacts =>
-      contacts
-        .email('ops@company.com')
-        .sms(process.env.ONCALL_PHONE!)
-    )
-    .rule('High Error Rate', rule =>
-      rule
-        .severity('Critical')
-        .frequency('5m')
-        .condition('requests/failed > 5%')
-        .action('critical')
+  Alerts: logs
+    .alerts()
+    .contacts((contacts) => contacts.email('ops@company.com').sms(process.env.ONCALL_PHONE!))
+    .rule('High Error Rate', (rule) =>
+      rule.severity('Critical').frequency('5m').condition('requests/failed > 5%').action('critical')
     ),
 
-  CustomMetrics: logs.metrics()
-    .counter('business.orders.created')
-    .gauge('business.queue.depth'),
+  CustomMetrics: logs.metrics().counter('business.orders.created').gauge('business.queue.depth'),
 });
 
 // src/index.ts - Attach monitoring
@@ -713,30 +663,27 @@ import { definePerformance, perf } from '@atakora/component/performance';
 const isProd = process.env.NODE_ENV === 'production';
 
 export const performance = definePerformance({
-  Cache: perf.redis()
+  Cache: perf
+    .redis()
     .enable(true)
-    .when(isProd, cache =>
-      cache.sku('Standard', 1)  // C1
+    .when(
+      isProd,
+      (cache) => cache.sku('Standard', 1) // C1
     )
-    .when(!isProd, cache =>
-      cache.provider('memory')
-    )
-    .policy(policy =>
+    .when(!isProd, (cache) => cache.provider('memory'))
+    .policy((policy) =>
       policy
-        .defaultTtl(300)  // 5 minutes
-        .ttlFor('users', 600)  // 10 minutes
+        .defaultTtl(300) // 5 minutes
+        .ttlFor('users', 600) // 10 minutes
         .invalidateOnWrite()
     ),
 
-  RateLimit: perf.rateLimiter()
+  RateLimit: perf
+    .rateLimiter()
     .enable()
-    .global(limit =>
-      limit.requests(1000).window('1m').burst(1500)
-    )
-    .perUser(limit =>
-      limit.requests(100).window('1m').burst(150)
-    )
-    .endpoint('POST /api/functions/generate-report', limit =>
+    .global((limit) => limit.requests(1000).window('1m').burst(1500))
+    .perUser((limit) => limit.requests(100).window('1m').burst(150))
+    .endpoint('POST /api/functions/generate-report', (limit) =>
       limit.requests(5).window('1m').burst(10)
     ),
 });
@@ -753,17 +700,19 @@ The attach pattern makes infrastructure customization explicit and transparent.
 ### Why Attach?
 
 **Before (implicit configuration):**
+
 ```typescript
 export const backend = defineBackend({
   schema,
   authentication,
-  storage: data,        // What's being customized?
-  monitoring: logs,     // What if I want defaults?
-  performance: perf,    // Hard to see what's custom vs default
+  storage: data, // What's being customized?
+  monitoring: logs, // What if I want defaults?
+  performance: perf, // Hard to see what's custom vs default
 });
 ```
 
 **After (explicit attachment):**
+
 ```typescript
 export const backend = defineBackend({
   schema,
@@ -786,20 +735,20 @@ Every infrastructure domain has attachment points:
 
 ```typescript
 // Schema models
-backend.schema.User                 // CRUD model
-backend.schema.DataUploaded         // Event model
-backend.schema.GenerateReport       // Function model
+backend.schema.User; // CRUD model
+backend.schema.DataUploaded; // Event model
+backend.schema.GenerateReport; // Function model
 
 // Schema attachments
-backend.schema.DataUploaded.queue.attach(event.DataUploaded)
-backend.schema.GenerateReport.function.attach(func.GenerateReport)
+backend.schema.DataUploaded.queue.attach(event.DataUploaded);
+backend.schema.GenerateReport.function.attach(func.GenerateReport);
 
 // Infrastructure domains
-backend.network.primary.attach(networking.Primary)
-backend.storage.database.attach(data.Database)
-backend.compute.functionApp.attach(functions.FunctionApp)
-backend.monitoring.insights.attach(monitoring.AppInsights)
-backend.performance.cache.attach(performance.Cache)
+backend.network.primary.attach(networking.Primary);
+backend.storage.database.attach(data.Database);
+backend.compute.functionApp.attach(functions.FunctionApp);
+backend.monitoring.insights.attach(monitoring.AppInsights);
+backend.performance.cache.attach(performance.Cache);
 ```
 
 ### Selective Attachments
@@ -834,9 +783,7 @@ export const schema = defineSchema({
 
 // auth/resource.ts
 export const authentication = defineAuth({
-  Primary: auth.entra()
-    .tenant(process.env.AZURE_TENANT_ID!)
-    .clientId(process.env.AZURE_CLIENT_ID!),
+  Primary: auth.entra().tenant(process.env.AZURE_TENANT_ID!).clientId(process.env.AZURE_CLIENT_ID!),
 });
 
 // index.ts
@@ -860,32 +807,43 @@ export const backend = defineBackend({
 export const schema = defineSchema({
   schema: a.schema({
     // CRUD models
-    Product: c.model({ /* ... */ }),
-    Order: c.model({ /* ... */ }),
+    Product: c.model({
+      /* ... */
+    }),
+    Order: c.model({
+      /* ... */
+    }),
 
     // Event models
     OrderPlaced: e.model({
       orderId: a.string().required(),
       userId: a.string().required(),
       total: a.number().required(),
-      items: a.array(a.object({ /* ... */ })),
+      items: a.array(
+        a.object({
+          /* ... */
+        })
+      ),
     }),
 
-    PaymentProcessed: e.model({ /* ... */ }),
-    OrderShipped: e.model({ /* ... */ }),
+    PaymentProcessed: e.model({
+      /* ... */
+    }),
+    OrderShipped: e.model({
+      /* ... */
+    }),
   }),
 });
 
 // event/resource.ts
 export const event = defineEvents({
-  OrderPlaced: configureEvent('OrderPlaced')
-    .withProcessor(async (context, event) => {
-      // Process payment
-      const payment = await processPayment(event);
+  OrderPlaced: configureEvent('OrderPlaced').withProcessor(async (context, event) => {
+    // Process payment
+    const payment = await processPayment(event);
 
-      // Publish next event
-      await context.publish('PaymentProcessed', payment);
-    }),
+    // Publish next event
+    await context.publish('PaymentProcessed', payment);
+  }),
 });
 
 // index.ts
@@ -898,12 +856,18 @@ backend.schema.OrderPlaced.queue.attach(event.OrderPlaced);
 // schema/resource.ts
 export const schema = defineSchema({
   schema: a.schema({
-    Dataset: c.model({ /* ... */ }),
+    Dataset: c.model({
+      /* ... */
+    }),
 
     ProcessData: f.model({
       input: {
         datasetId: a.string().required(),
-        transformations: a.array(a.object({ /* ... */ })),
+        transformations: a.array(
+          a.object({
+            /* ... */
+          })
+        ),
       },
       output: {
         resultUrl: a.string().url().required(),
@@ -957,12 +921,10 @@ backend.monitoring.alerts.attach(monitoring.Alerts);
 const isProd = process.env.NODE_ENV === 'production';
 
 export const data = defineStorage({
-  Database: storage.cosmosDb()
+  Database: storage
+    .cosmosDb()
     .mode(isProd ? 'Autoscale' : 'Serverless')
-    .when(isProd, db =>
-      db.multiRegion(['eastus', 'westus'])
-        .maxThroughput(10000)
-    ),
+    .when(isProd, (db) => db.multiRegion(['eastus', 'westus']).maxThroughput(10000)),
 });
 ```
 
@@ -971,12 +933,11 @@ export const data = defineStorage({
 ```typescript
 User: c.model({
   // ... fields
-})
-  .authorization(allow => [
-    allow.owner('id'),                              // Users manage own records
-    allow.groups(['admin']).all(),                  // Admins do everything
-    allow.groups(['analyst']).read(),               // Analysts read only
-  ])
+}).authorization((allow) => [
+  allow.owner('id'), // Users manage own records
+  allow.groups(['admin']).all(), // Admins do everything
+  allow.groups(['analyst']).read(), // Analysts read only
+]);
 ```
 
 ### 4. Use Indexes for Query Performance
@@ -984,15 +945,16 @@ User: c.model({
 ```typescript
 Project: c.model({
   // ... fields
-})
-  .indexes(['organizationId', 'status', 'createdAt'])  // Common query fields
+}).indexes(['organizationId', 'status', 'createdAt']); // Common query fields
 ```
 
 ### 5. Event-Driven > Polling
 
 ```typescript
 // Good: Event-driven
-DataUploaded: e.model({ /* ... */ })
+DataUploaded: e.model({
+  /* ... */
+});
 
 // Avoid: Polling for upload status
 ```
@@ -1033,13 +995,16 @@ src/
 ### Schema Types
 
 #### `c.model(fields)` - CRUD Model
+
 Generates REST API + Cosmos DB container
 
 **Methods:**
+
 - `.authorization(fn)` - Define access control
 - `.indexes(fields)` - Optimize query performance
 
 **Generates:**
+
 - `POST /api/{model-name}` - Create
 - `GET /api/{model-name}/:id` - Read
 - `PUT /api/{model-name}/:id` - Update
@@ -1047,17 +1012,21 @@ Generates REST API + Cosmos DB container
 - `GET /api/{model-name}` - List/search
 
 #### `e.model(fields)` - Event Model
+
 Generates event queue + processor
 
 **Generates:**
+
 - `POST /api/events/{event-name}` - Publish
 - Azure Storage Queue
 - Processor function
 
 #### `f.model({ input, output })` - Function Model
+
 Generates HTTP function
 
 **Generates:**
+
 - `POST /api/functions/{function-name}` - Invoke
 - Azure Function with HTTP trigger
 
@@ -1105,28 +1074,23 @@ All infrastructure uses fluent builder pattern:
 ```typescript
 builder()
   .method(value)
-  .method(nested =>
-    nested
-      .submethod(value)
-  )
-  .when(condition, builder =>
-    builder.conditionalMethod(value)
-  )
+  .method((nested) => nested.submethod(value))
+  .when(condition, (builder) => builder.conditionalMethod(value));
 ```
 
 ---
 
 ## Comparison with Other Frameworks
 
-| Feature | Atakora | AWS Amplify | Terraform | Azure Bicep |
-|---------|---------|-------------|-----------|-------------|
-| Schema-Centric | ✅ | ✅ | ❌ | ❌ |
-| Auto-generates APIs | ✅ | ✅ | ❌ | ❌ |
-| Auto-generates Events | ✅ | ⚠️ Limited | ❌ | ❌ |
-| TypeScript-first | ✅ | ⚠️ JS/TS | ⚠️ HCL | ⚠️ Bicep |
-| Azure-optimized | ✅ | ❌ AWS-only | ⚠️ Generic | ✅ |
-| Code Reduction | 70%+ | 60% | 0% | 0% |
-| Attach Pattern | ✅ | ✅ | ❌ | ❌ |
+| Feature               | Atakora | AWS Amplify | Terraform  | Azure Bicep |
+| --------------------- | ------- | ----------- | ---------- | ----------- |
+| Schema-Centric        | ✅      | ✅          | ❌         | ❌          |
+| Auto-generates APIs   | ✅      | ✅          | ❌         | ❌          |
+| Auto-generates Events | ✅      | ⚠️ Limited  | ❌         | ❌          |
+| TypeScript-first      | ✅      | ⚠️ JS/TS    | ⚠️ HCL     | ⚠️ Bicep    |
+| Azure-optimized       | ✅      | ❌ AWS-only | ⚠️ Generic | ✅          |
+| Code Reduction        | 70%+    | 60%         | 0%         | 0%          |
+| Attach Pattern        | ✅      | ✅          | ❌         | ❌          |
 
 **Atakora = Amplify Gen 2 DX + Azure-native + Infrastructure control**
 

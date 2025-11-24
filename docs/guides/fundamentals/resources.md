@@ -52,9 +52,10 @@ const storage = new StorageAccounts(stack, 'AppStorage', {
 
 ```typescript
 const vnet = new VirtualNetworks(
-  stack,          // ← scope (parent)
-  'MainVNet',     // ← id (unique within scope)
-  {               // ← properties
+  stack, // ← scope (parent)
+  'MainVNet', // ← id (unique within scope)
+  {
+    // ← properties
     virtualNetworkName: 'vnet-main-prod',
     addressSpace: {
       addressPrefixes: ['10.0.0.0/16'],
@@ -107,10 +108,7 @@ const appSubnet = new Subnets(vnet, 'AppSubnet', {
 const dataSubnet = new Subnets(vnet, 'DataSubnet', {
   subnetName: 'snet-data',
   addressPrefix: '10.0.3.0/24',
-  serviceEndpoints: [
-    { service: 'Microsoft.Storage' },
-    { service: 'Microsoft.Sql' },
-  ],
+  serviceEndpoints: [{ service: 'Microsoft.Storage' }, { service: 'Microsoft.Sql' }],
 });
 ```
 
@@ -151,9 +149,9 @@ TypeScript enforces required properties at compile time:
 ```typescript
 // ✓ Correct: All required properties provided
 const storage = new StorageAccounts(stack, 'Storage', {
-  storageAccountName: 'stappdata',     // Required
-  sku: { name: 'Standard_LRS' },       // Required
-  kind: 'StorageV2',                   // Required
+  storageAccountName: 'stappdata', // Required
+  sku: { name: 'Standard_LRS' }, // Required
+  kind: 'StorageV2', // Required
 });
 
 // ✗ Error: Missing required properties
@@ -187,12 +185,8 @@ const storage = new StorageAccounts(stack, 'Storage', {
   networkRuleSet: {
     defaultAction: 'Deny',
     bypass: 'AzureServices',
-    ipRules: [
-      { value: '203.0.113.0/24', action: 'Allow' },
-    ],
-    virtualNetworkRules: [
-      { id: webSubnet.id, action: 'Allow' },
-    ],
+    ipRules: [{ value: '203.0.113.0/24', action: 'Allow' }],
+    virtualNetworkRules: [{ id: webSubnet.id, action: 'Allow' }],
   },
 });
 ```
@@ -270,12 +264,7 @@ const publicIp = new PublicIPAddresses(stack, 'PublicIP', {
 ### Storage Resources
 
 ```typescript
-import {
-  StorageAccounts,
-  BlobServices,
-  BlobContainers,
-  FileShares,
-} from '@atakora/cdk/storage';
+import { StorageAccounts, BlobServices, BlobContainers, FileShares } from '@atakora/cdk/storage';
 
 // Storage Account
 const storage = new StorageAccounts(stack, 'Storage', {
@@ -310,11 +299,7 @@ const fileShare = new FileShares(storage, 'ConfigShare', {
 ### Web Resources
 
 ```typescript
-import {
-  ServerFarms,
-  Sites,
-  SiteConfig,
-} from '@atakora/cdk/web';
+import { ServerFarms, Sites, SiteConfig } from '@atakora/cdk/web';
 
 // App Service Plan
 const appServicePlan = new ServerFarms(stack, 'AppServicePlan', {
@@ -390,7 +375,8 @@ Reference resources that already exist in Azure:
 import { VirtualNetworks } from '@atakora/cdk/network';
 
 // Reference an existing VNet by ID
-const existingVNetId = '/subscriptions/xxx/resourceGroups/rg-shared/providers/Microsoft.Network/virtualNetworks/vnet-shared';
+const existingVNetId =
+  '/subscriptions/xxx/resourceGroups/rg-shared/providers/Microsoft.Network/virtualNetworks/vnet-shared';
 
 const webApp = new Sites(stack, 'WebApp', {
   siteName: 'webapp-main',
@@ -634,10 +620,7 @@ const fileShare = new FileShares(storage, 'FileShare', {...});
 Add validation to catch configuration errors early:
 
 ```typescript
-function createStorageAccount(
-  stack: ResourceGroupStack,
-  environment: string
-): StorageAccounts {
+function createStorageAccount(stack: ResourceGroupStack, environment: string): StorageAccounts {
   if (!['dev', 'staging', 'prod'].includes(environment)) {
     throw new Error(`Invalid environment: ${environment}`);
   }

@@ -1,0 +1,801 @@
+# Phase 3: Function Layer (Week 5-6)
+# Critical path: Auto-generate Azure Functions with CRUD operations and auth
+
+---
+# ============================================================================
+# FOUNDATION TASKS (Day 21-22) - Can run in parallel
+# ============================================================================
+
+- id: DEV-3-001
+  title: Implement FunctionSynthesizer constructor and setup
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-2-009]
+  phase: 3
+  description: |
+    Implement FunctionSynthesizer class constructor that initializes function
+    configuration, naming utilities, and template management.
+  acceptance_criteria:
+    - FunctionSynthesizer class created
+    - Constructor accepts schema, stack, dataResources, apiResources
+    - Initializes naming utility
+    - Sets up function template registry
+    - Unit test validates initialization
+    - JSDoc documentation complete
+  files:
+    - packages/component/src/synthesis/function-synthesizer.ts (create)
+    - packages/component/src/synthesis/function-synthesizer.spec.ts (create)
+
+- id: DEV-3-002
+  title: Create function code template types and registry
+  agent: devon
+  effort: 2h
+  dependencies: []
+  phase: 3
+  description: |
+    Create types and registry for function code templates.
+    Define template interface and template parameters.
+  acceptance_criteria:
+    - FunctionTemplate interface defined
+    - TemplateContext type with model, fields, validation info
+    - FunctionTemplateRegistry class for template management
+    - Registration methods for custom templates
+    - Unit tests for registry
+    - JSDoc documentation complete
+  files:
+    - packages/component/src/synthesis/templates/types.ts (create)
+    - packages/component/src/synthesis/templates/registry.ts (create)
+    - packages/component/src/synthesis/templates/registry.spec.ts (create)
+
+- id: DEV-3-003
+  title: Create validation code generation utilities
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-1-006]
+  phase: 3
+  description: |
+    Create utilities for generating validation code from field definitions.
+    Support all field types and validation rules.
+  acceptance_criteria:
+    - generateValidationCode() function for field validation
+    - Supports required field validation
+    - Supports type validation (string, number, boolean, etc.)
+    - Supports format validation (email, url, etc.)
+    - Supports range validation (min/max)
+    - Supports pattern validation (regex)
+    - Returns TypeScript code string
+    - Unit tests for all validation types
+  files:
+    - packages/component/src/synthesis/utils/validation-codegen.ts (create)
+    - packages/component/src/synthesis/utils/validation-codegen.spec.ts (create)
+    - packages/component/src/synthesis/utils/index.ts (modify)
+
+# ============================================================================
+# FUNCTION TEMPLATES (Day 22-25) - Can be parallelized across models
+# ============================================================================
+
+- id: GRACE-3-001
+  title: Create GET function template
+  agent: grace
+  effort: 4h
+  dependencies: [DEV-3-002]
+  phase: 3
+  description: |
+    Create template for GET /{resource}/{id} function that retrieves a single item
+    from Cosmos DB by ID.
+  acceptance_criteria:
+    - Template generates TypeScript function code
+    - Uses @azure/functions v4 API
+    - Connects to Cosmos DB using @azure/cosmos
+    - Retrieves item by ID from correct container
+    - Returns 200 with item or 404 if not found
+    - Includes error handling with proper status codes
+    - Template accepts model context (name, fields)
+    - Unit tests validate generated code
+  files:
+    - packages/component/src/synthesis/templates/get-function.ts (create)
+    - packages/component/src/synthesis/templates/get-function.spec.ts (create)
+
+- id: GRACE-3-002
+  title: Create LIST function template
+  agent: grace
+  effort: 4h
+  dependencies: [DEV-3-002]
+  phase: 3
+  description: |
+    Create template for GET /{resource} function that lists items with pagination
+    and filtering support.
+  acceptance_criteria:
+    - Template generates TypeScript function code
+    - Queries Cosmos DB container with pagination
+    - Supports query parameters (limit, offset, continuationToken)
+    - Supports filtering by field values
+    - Returns 200 with items array and pagination metadata
+    - Includes error handling
+    - Template accepts model context
+    - Unit tests validate generated code
+  files:
+    - packages/component/src/synthesis/templates/list-function.ts (create)
+    - packages/component/src/synthesis/templates/list-function.spec.ts (create)
+
+- id: GRACE-3-003
+  title: Create CREATE function template
+  agent: grace
+  effort: 4h
+  dependencies: [DEV-3-002, DEV-3-003]
+  phase: 3
+  description: |
+    Create template for POST /{resource} function that creates a new item
+    with validation.
+  acceptance_criteria:
+    - Template generates TypeScript function code
+    - Validates request body using validation utilities
+    - Generates UUID for id field
+    - Adds createdAt and updatedAt timestamps
+    - Creates item in Cosmos DB container
+    - Returns 201 with created item
+    - Returns 400 for validation errors
+    - Includes error handling
+    - Template accepts model context with validation rules
+    - Unit tests validate generated code
+  files:
+    - packages/component/src/synthesis/templates/create-function.ts (create)
+    - packages/component/src/synthesis/templates/create-function.spec.ts (create)
+
+- id: GRACE-3-004
+  title: Create UPDATE function template
+  agent: grace
+  effort: 4h
+  dependencies: [DEV-3-002, DEV-3-003]
+  phase: 3
+  description: |
+    Create template for PUT /{resource}/{id} function that updates an existing item
+    with validation.
+  acceptance_criteria:
+    - Template generates TypeScript function code
+    - Validates request body using validation utilities
+    - Retrieves existing item from Cosmos DB
+    - Merges updates with existing item
+    - Updates updatedAt timestamp
+    - Saves updated item to Cosmos DB
+    - Returns 200 with updated item or 404 if not found
+    - Returns 400 for validation errors
+    - Includes error handling
+    - Template accepts model context
+    - Unit tests validate generated code
+  files:
+    - packages/component/src/synthesis/templates/update-function.ts (create)
+    - packages/component/src/synthesis/templates/update-function.spec.ts (create)
+
+- id: GRACE-3-005
+  title: Create DELETE function template
+  agent: grace
+  effort: 3h
+  dependencies: [DEV-3-002]
+  phase: 3
+  description: |
+    Create template for DELETE /{resource}/{id} function that deletes an item
+    from Cosmos DB.
+  acceptance_criteria:
+    - Template generates TypeScript function code
+    - Deletes item by ID from Cosmos DB container
+    - Returns 204 on success
+    - Returns 404 if item not found
+    - Includes error handling
+    - Template accepts model context
+    - Unit tests validate generated code
+  files:
+    - packages/component/src/synthesis/templates/delete-function.ts (create)
+    - packages/component/src/synthesis/templates/delete-function.spec.ts (create)
+
+# ============================================================================
+# FUNCTION SYNTHESIZER IMPLEMENTATION (Day 24-27)
+# ============================================================================
+
+- id: DEV-3-004
+  title: Implement FunctionSynthesizer.synthesizeFunctionApp()
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-3-001, DEV-1-005]
+  phase: 3
+  description: |
+    Implement method to synthesize Function App using CDK FunctionApp construct.
+    Configure runtime, storage, and environment settings.
+  acceptance_criteria:
+    - synthesizeFunctionApp() method creates FunctionApp construct
+    - Uses naming utility for function app name generation
+    - Configures Node.js 20 runtime
+    - Links to storage account for function storage
+    - Environment-aware configuration (dev: consumption, prod: premium)
+    - Returns FunctionApp construct reference
+    - Integration test validates construct created
+  files:
+    - packages/component/src/synthesis/function-synthesizer.ts (modify)
+    - packages/component/src/synthesis/function-synthesizer.spec.ts (modify)
+
+- id: DEV-3-005
+  title: Implement FunctionSynthesizer.configureAppSettings()
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-3-004]
+  phase: 3
+  description: |
+    Implement method to configure Function App settings including Cosmos connection,
+    environment variables, and application insights.
+  acceptance_criteria:
+    - configureAppSettings() adds settings to FunctionApp
+    - Configures COSMOS_ENDPOINT from DataResources
+    - Configures COSMOS_KEY from DataResources
+    - Configures DATABASE_NAME from schema
+    - Configures APPLICATIONINSIGHTS_CONNECTION_STRING if monitoring enabled
+    - Configures NODE_ENV from environment
+    - Integration test validates settings configured
+  files:
+    - packages/component/src/synthesis/function-synthesizer.ts (modify)
+    - packages/component/src/synthesis/function-synthesizer.spec.ts (modify)
+
+- id: DEV-3-006
+  title: Implement FunctionSynthesizer.generateFunction()
+  agent: devon
+  effort: 4h
+  dependencies: [DEV-3-005, GRACE-3-001, GRACE-3-002, GRACE-3-003, GRACE-3-004, GRACE-3-005]
+  phase: 3
+  description: |
+    Implement method to generate a single function using appropriate template.
+    Handle template selection, context creation, and code generation.
+  acceptance_criteria:
+    - generateFunction() selects correct template for operation
+    - Creates template context from model definition
+    - Executes template to generate function code
+    - Creates FunctionDefinition with code, route, method
+    - Returns FunctionDefinition
+    - Unit tests for all operation types
+    - JSDoc documentation complete
+  files:
+    - packages/component/src/synthesis/function-synthesizer.ts (modify)
+    - packages/component/src/synthesis/function-synthesizer.spec.ts (modify)
+
+- id: DEV-3-007
+  title: Implement FunctionSynthesizer.generateCrudFunctions()
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-3-006]
+  phase: 3
+  description: |
+    Implement method to generate all CRUD functions for a model.
+    Create functions for get, list, create, update, and delete operations.
+  acceptance_criteria:
+    - generateCrudFunctions() creates 5 functions per model
+    - Generates get, list, create, update, delete functions
+    - Each function has correct route and HTTP method
+    - All functions share Cosmos DB configuration
+    - Returns array of FunctionDefinition objects
+    - Integration test validates all functions generated
+  files:
+    - packages/component/src/synthesis/function-synthesizer.ts (modify)
+    - packages/component/src/synthesis/function-synthesizer.spec.ts (modify)
+
+- id: DEV-3-008
+  title: Implement FunctionSynthesizer.synthesize() orchestration
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-3-007]
+  phase: 3
+  description: |
+    Implement main synthesize() method that orchestrates Function App and function creation.
+    Iterate over all CRUD models and generate functions for each.
+  acceptance_criteria:
+    - synthesize() method creates FunctionApp and all functions
+    - Configures app settings with Cosmos connection
+    - Iterates over schema models using getCrudModelNames()
+    - Generates CRUD functions for each model
+    - Returns FunctionResources with app and functions
+    - Integration test validates complete function hierarchy
+    - JSDoc documentation complete
+  files:
+    - packages/component/src/synthesis/function-synthesizer.ts (modify)
+    - packages/component/src/synthesis/function-synthesizer.spec.ts (modify)
+
+# ============================================================================
+# AUTHENTICATION INTEGRATION (Day 26-28)
+# ============================================================================
+
+- id: DEV-3-009
+  title: Create AuthIntegrator class
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-3-008]
+  phase: 3
+  description: |
+    Create AuthIntegrator class that integrates authentication configuration
+    with functions and API Management.
+  acceptance_criteria:
+    - AuthIntegrator class created
+    - Constructor accepts AuthObject, FunctionResources, ApiResources
+    - Methods for generating auth middleware
+    - Methods for configuring API policies
+    - Unit test validates initialization
+    - JSDoc documentation complete
+  files:
+    - packages/component/src/synthesis/auth-integrator.ts (create)
+    - packages/component/src/synthesis/auth-integrator.spec.ts (create)
+
+- id: DEV-3-010
+  title: Create auth middleware template
+  agent: devon
+  effort: 4h
+  dependencies: [DEV-3-009]
+  phase: 3
+  description: |
+    Create template for auth middleware that validates JWT tokens in Azure Functions.
+    Support Entra ID, custom JWT, and API key authentication.
+  acceptance_criteria:
+    - Template generates auth middleware TypeScript code
+    - Validates JWT tokens from Authorization header
+    - Supports Entra ID token validation
+    - Supports custom JWT token validation
+    - Supports API key validation
+    - Extracts user context from token claims
+    - Returns 401 for invalid tokens
+    - Template accepts auth configuration
+    - Unit tests validate generated code
+  files:
+    - packages/component/src/synthesis/templates/auth-middleware.ts (create)
+    - packages/component/src/synthesis/templates/auth-middleware.spec.ts (create)
+
+- id: DEV-3-011
+  title: Implement AuthIntegrator.generateAuthMiddleware()
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-3-010]
+  phase: 3
+  description: |
+    Implement method to generate auth middleware code and inject into functions.
+    Configure middleware based on authentication definition.
+  acceptance_criteria:
+    - generateAuthMiddleware() creates middleware code
+    - Injects middleware import into function files
+    - Configures middleware with auth settings (clientId, tenantId, etc.)
+    - Updates function code to use middleware
+    - Returns middleware file definition
+    - Integration test validates middleware generated
+  files:
+    - packages/component/src/synthesis/auth-integrator.ts (modify)
+    - packages/component/src/synthesis/auth-integrator.spec.ts (modify)
+
+- id: DEV-3-012
+  title: Implement AuthIntegrator.configureApiPolicies()
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-3-011]
+  phase: 3
+  description: |
+    Implement method to configure API Management policies for authentication.
+    Generate validate-jwt policies for Entra ID or custom JWT.
+  acceptance_criteria:
+    - configureApiPolicies() generates JWT validation policies
+    - Configures Entra ID OpenID configuration URL
+    - Configures audience and issuer validation
+    - Applies policies to all API operations
+    - Supports custom JWT validation
+    - Integration test validates policies applied
+  files:
+    - packages/component/src/synthesis/auth-integrator.ts (modify)
+    - packages/component/src/synthesis/auth-integrator.spec.ts (modify)
+
+- id: DEV-3-013
+  title: Implement AuthIntegrator.integrate() orchestration
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-3-012]
+  phase: 3
+  description: |
+    Implement main integrate() method that orchestrates authentication integration.
+    Apply auth middleware and policies if authentication is configured.
+  acceptance_criteria:
+    - integrate() checks if authentication is configured
+    - Generates auth middleware for functions
+    - Configures API Management policies
+    - Returns authentication artifacts
+    - Integration test validates complete auth integration
+    - JSDoc documentation complete
+  files:
+    - packages/component/src/synthesis/auth-integrator.ts (modify)
+    - packages/component/src/synthesis/auth-integrator.spec.ts (modify)
+
+# ============================================================================
+# FUNCTION PACKAGING (Day 27-29)
+# ============================================================================
+
+- id: GRACE-3-006
+  title: Create function package.json generator
+  agent: grace
+  effort: 2h
+  dependencies: [DEV-3-008]
+  phase: 3
+  description: |
+    Create function to generate package.json for function project.
+    Include required dependencies and scripts.
+  acceptance_criteria:
+    - generatePackageJson() creates valid package.json
+    - Includes @azure/functions dependency
+    - Includes @azure/cosmos dependency
+    - Includes uuid dependency
+    - Includes build and deployment scripts
+    - Configures Node.js version (20)
+    - Unit tests validate generated package.json
+  files:
+    - packages/component/src/synthesis/utils/package-generator.ts (create)
+    - packages/component/src/synthesis/utils/package-generator.spec.ts (create)
+    - packages/component/src/synthesis/utils/index.ts (modify)
+
+- id: GRACE-3-007
+  title: Create function tsconfig.json generator
+  agent: grace
+  effort: 1h
+  dependencies: [DEV-3-008]
+  phase: 3
+  description: |
+    Create function to generate tsconfig.json for function project.
+    Configure TypeScript compiler options for Azure Functions.
+  acceptance_criteria:
+    - generateTsConfig() creates valid tsconfig.json
+    - Configures target as ES2022
+    - Configures module as commonjs
+    - Configures outDir as dist
+    - Includes strict type checking
+    - Includes source maps
+    - Unit tests validate generated tsconfig.json
+  files:
+    - packages/component/src/synthesis/utils/tsconfig-generator.ts (create)
+    - packages/component/src/synthesis/utils/tsconfig-generator.spec.ts (create)
+
+- id: GRACE-3-008
+  title: Create function host.json generator
+  agent: grace
+  effort: 1h
+  dependencies: [DEV-3-008]
+  phase: 3
+  description: |
+    Create function to generate host.json for Azure Functions v4 runtime.
+    Configure logging, extensions, and runtime settings.
+  acceptance_criteria:
+    - generateHostJson() creates valid host.json
+    - Configures functions runtime version 4
+    - Configures logging levels
+    - Configures http extension settings
+    - Configures retry policies
+    - Unit tests validate generated host.json
+  files:
+    - packages/component/src/synthesis/utils/hostjson-generator.ts (create)
+    - packages/component/src/synthesis/utils/hostjson-generator.spec.ts (create)
+
+- id: GRACE-3-009
+  title: Implement function file writer
+  agent: grace
+  effort: 3h
+  dependencies: [GRACE-3-006, GRACE-3-007, GRACE-3-008]
+  phase: 3
+  description: |
+    Implement file writer that outputs function code to functions/ directory.
+    Create proper directory structure and write all files.
+  acceptance_criteria:
+    - writeFunctionFiles() creates functions/ directory
+    - Creates subdirectory for each function
+    - Writes index.ts for each function
+    - Writes shared auth middleware file
+    - Writes package.json, tsconfig.json, host.json
+    - Preserves directory structure
+    - Integration test validates files written correctly
+  files:
+    - packages/component/src/synthesis/utils/function-writer.ts (create)
+    - packages/component/src/synthesis/utils/function-writer.spec.ts (create)
+
+# ============================================================================
+# BACKEND SYNTHESIZER INTEGRATION (Day 28-30)
+# ============================================================================
+
+- id: DEV-3-014
+  title: Integrate FunctionSynthesizer into BackendSynthesizer
+  agent: devon
+  effort: 3h
+  dependencies: [DEV-3-008, DEV-3-013]
+  phase: 3
+  description: |
+    Integrate FunctionSynthesizer and AuthIntegrator into BackendSynthesizer
+    orchestration flow. Call after ApiSynthesizer completes.
+  acceptance_criteria:
+    - BackendSynthesizer creates FunctionSynthesizer instance
+    - Calls FunctionSynthesizer.synthesize() after ApiSynthesizer
+    - Passes DataResources and ApiResources to FunctionSynthesizer
+    - Creates AuthIntegrator instance if auth configured
+    - Calls AuthIntegrator.integrate() with function and API resources
+    - Stores FunctionResources
+    - Integration test validates complete flow
+  files:
+    - packages/component/src/synthesis/backend-synthesizer.ts (modify)
+    - packages/component/src/synthesis/backend-synthesizer.spec.ts (modify)
+
+- id: DEV-3-015
+  title: Add function file writing to synthesis output
+  agent: devon
+  effort: 2h
+  dependencies: [GRACE-3-009, DEV-3-014]
+  phase: 3
+  description: |
+    Add function file writing to BackendSynthesizer.synthesize() output.
+    Write all function code to functions/ directory.
+  acceptance_criteria:
+    - Uses function-writer utility
+    - Writes all function code files
+    - Writes package.json, tsconfig.json, host.json
+    - Writes auth middleware if configured
+    - Files written alongside arm.out/ and schemas/
+    - Integration test validates files created
+    - File paths included in SynthesisResult
+  files:
+    - packages/component/src/synthesis/backend-synthesizer.ts (modify)
+    - packages/component/src/synthesis/backend-synthesizer.spec.ts (modify)
+
+# ============================================================================
+# TESTING TASKS (Day 26-30) - Can run in parallel with development
+# ============================================================================
+
+- id: TEST-3-001
+  title: Write unit tests for validation code generation
+  agent: charlie
+  effort: 3h
+  dependencies: [DEV-3-003]
+  phase: 3
+  description: |
+    Write comprehensive unit tests for validation code generation
+    covering all field types and validation rules.
+  acceptance_criteria:
+    - Tests for required field validation
+    - Tests for type validation (string, number, etc.)
+    - Tests for format validation (email, url, etc.)
+    - Tests for range validation (min/max)
+    - Tests for pattern validation
+    - Validates generated code is syntactically correct
+    - 100% code coverage for validation-codegen.ts
+  files:
+    - packages/component/src/synthesis/utils/validation-codegen.spec.ts (modify)
+
+- id: TEST-3-002
+  title: Write unit tests for function templates
+  agent: charlie
+  effort: 4h
+  dependencies: [GRACE-3-001, GRACE-3-002, GRACE-3-003, GRACE-3-004, GRACE-3-005]
+  phase: 3
+  description: |
+    Write comprehensive unit tests for all function templates
+    validating generated code structure and correctness.
+  acceptance_criteria:
+    - Tests for GET template with various models
+    - Tests for LIST template with pagination
+    - Tests for CREATE template with validation
+    - Tests for UPDATE template with partial updates
+    - Tests for DELETE template
+    - Validates generated TypeScript compiles
+    - 100% code coverage for template files
+  files:
+    - packages/component/src/synthesis/templates/get-function.spec.ts (modify)
+    - packages/component/src/synthesis/templates/list-function.spec.ts (modify)
+    - packages/component/src/synthesis/templates/create-function.spec.ts (modify)
+    - packages/component/src/synthesis/templates/update-function.spec.ts (modify)
+    - packages/component/src/synthesis/templates/delete-function.spec.ts (modify)
+
+- id: TEST-3-003
+  title: Write unit tests for auth middleware template
+  agent: charlie
+  effort: 3h
+  dependencies: [DEV-3-010]
+  phase: 3
+  description: |
+    Write comprehensive unit tests for auth middleware template
+    covering all authentication methods.
+  acceptance_criteria:
+    - Tests for Entra ID JWT validation
+    - Tests for custom JWT validation
+    - Tests for API key validation
+    - Tests for missing/invalid tokens
+    - Tests for user context extraction
+    - Validates generated TypeScript compiles
+    - 100% code coverage for auth-middleware.ts
+  files:
+    - packages/component/src/synthesis/templates/auth-middleware.spec.ts (modify)
+
+- id: TEST-3-004
+  title: Write integration tests for FunctionSynthesizer
+  agent: charlie
+  effort: 4h
+  dependencies: [DEV-3-008]
+  phase: 3
+  description: |
+    Write integration tests for FunctionSynthesizer that validate complete
+    function generation with all CRUD operations.
+  acceptance_criteria:
+    - Test single model function generation
+    - Test multiple models function generation
+    - Test environment-specific configuration
+    - Test app settings configuration
+    - Validate all function files generated
+    - Validate TypeScript code compiles
+  files:
+    - packages/component/src/synthesis/function-synthesizer.integration.spec.ts (create)
+
+- id: TEST-3-005
+  title: Write integration tests for AuthIntegrator
+  agent: charlie
+  effort: 3h
+  dependencies: [DEV-3-013]
+  phase: 3
+  description: |
+    Write integration tests for AuthIntegrator that validate auth middleware
+    generation and API policy configuration.
+  acceptance_criteria:
+    - Test Entra ID auth integration
+    - Test custom JWT auth integration
+    - Test API key auth integration
+    - Test without authentication
+    - Validate middleware generated correctly
+    - Validate API policies applied
+  files:
+    - packages/component/src/synthesis/auth-integrator.integration.spec.ts (create)
+
+- id: TEST-3-006
+  title: Write E2E test for function layer synthesis
+  agent: charlie
+  effort: 4h
+  dependencies: [DEV-3-015]
+  phase: 3
+  description: |
+    Write end-to-end test that validates complete function layer synthesis
+    from schema to deployable function code.
+  acceptance_criteria:
+    - Test creates schema with multiple models
+    - Test creates backend with auth
+    - Test calls backend.synth()
+    - Validates Function App in ARM template
+    - Validates all function files in functions/
+    - Validates auth middleware generated
+    - Validates package.json, tsconfig.json, host.json
+    - Test cleanup removes generated files
+  files:
+    - packages/component/__tests__/synthesis/e2e-function-synthesis.test.ts (create)
+
+- id: TEST-3-007
+  title: Write E2E test for complete backend synthesis
+  agent: charlie
+  effort: 4h
+  dependencies: [DEV-3-015]
+  phase: 3
+  description: |
+    Write comprehensive end-to-end test that validates complete backend synthesis
+    with data, API, and function layers all working together.
+  acceptance_criteria:
+    - Test creates realistic schema (User, Project models)
+    - Test creates backend with auth and custom settings
+    - Test calls backend.synth()
+    - Validates complete ARM template (Cosmos, API, Functions)
+    - Validates OpenAPI spec in schemas/
+    - Validates all function code in functions/
+    - Validates resource dependencies in ARM
+    - Test cleanup removes all generated files
+  files:
+    - packages/component/__tests__/synthesis/e2e-complete-synthesis.test.ts (create)
+
+# ============================================================================
+# DOCUMENTATION TASKS (Day 28-30) - Can run in parallel with testing
+# ============================================================================
+
+- id: DOC-3-001
+  title: Create function synthesis architecture documentation
+  agent: ella
+  effort: 4h
+  dependencies: [DEV-3-014]
+  phase: 3
+  description: |
+    Create comprehensive documentation explaining function synthesis,
+    code generation, and authentication integration.
+  acceptance_criteria:
+    - Architecture diagram showing function synthesis flow
+    - Explanation of function template system
+    - Code generation process documented
+    - Authentication integration explained
+    - Code examples for function customization
+    - Troubleshooting guide for function issues
+    - Published to docs/design/synthesis/functions.md
+  files:
+    - docs/design/synthesis/functions.md (create)
+
+- id: DOC-3-002
+  title: Create function template customization guide
+  agent: ella
+  effort: 3h
+  dependencies: [GRACE-3-005, DEV-3-002]
+  phase: 3
+  description: |
+    Create guide explaining how to create and register custom function templates
+    for specialized operations beyond CRUD.
+  acceptance_criteria:
+    - How to create custom function templates
+    - Template context and parameters explained
+    - How to register templates with registry
+    - Examples of custom templates (batch operations, aggregations)
+    - How to override default templates
+    - Published to docs/user-guide/custom-functions.md
+  files:
+    - docs/user-guide/custom-functions.md (create)
+
+- id: DOC-3-003
+  title: Create authentication integration guide
+  agent: ella
+  effort: 4h
+  dependencies: [DEV-3-013]
+  phase: 3
+  description: |
+    Create comprehensive guide for authentication integration including
+    Entra ID, custom JWT, and API keys.
+  acceptance_criteria:
+    - Entra ID integration setup guide
+    - Custom JWT configuration guide
+    - API key authentication guide
+    - How to customize auth middleware
+    - Security best practices
+    - Troubleshooting auth issues
+    - Published to docs/user-guide/authentication.md
+  files:
+    - docs/user-guide/authentication.md (create)
+
+- id: DOC-3-004
+  title: Update synthesis user guide with function layer
+  agent: ella
+  effort: 2h
+  dependencies: [TEST-3-007]
+  phase: 3
+  description: |
+    Update synthesis user guide with complete examples including
+    data, API, and function layers.
+  acceptance_criteria:
+    - Updated quick start with complete synthesis
+    - Complete example showing all three layers
+    - How to inspect generated function code
+    - How to test functions locally
+    - How to deploy functions to Azure
+    - Published to docs/user-guide/synthesis.md
+  files:
+    - docs/user-guide/synthesis.md (modify)
+
+- id: DOC-3-005
+  title: Create deployment guide
+  agent: ella
+  effort: 3h
+  dependencies: [DEV-3-015]
+  phase: 3
+  description: |
+    Create guide for deploying generated infrastructure and functions to Azure.
+    Include Azure CLI commands and troubleshooting.
+  acceptance_criteria:
+    - Prerequisites (Azure CLI, subscription, resource group)
+    - How to deploy ARM templates
+    - How to build and deploy functions
+    - How to configure environment variables
+    - How to validate deployment
+    - Troubleshooting deployment issues
+    - Published to docs/user-guide/deployment.md
+  files:
+    - docs/user-guide/deployment.md (create)
+
+# ============================================================================
+# SUMMARY
+# ============================================================================
+# Total tickets: 30
+# devon: 12 tickets (32 hours)
+# grace: 9 tickets (22 hours)
+# charlie: 7 tickets (25 hours)
+# ella: 5 tickets (16 hours)
+#
+# Total estimated effort: 95 hours
+# Parallelization: ~45 hours (with 2-3 agents working simultaneously)
+# Calendar time: 10 working days (2 weeks)

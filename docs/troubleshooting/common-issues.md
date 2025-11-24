@@ -9,6 +9,7 @@
 ### Cannot Find Module '@atakora/lib'
 
 **Error**:
+
 ```
 Cannot find module '@atakora/lib'
 ```
@@ -16,6 +17,7 @@ Cannot find module '@atakora/lib'
 **Cause**: Package not installed
 
 **Solution**:
+
 ```bash
 npm install @atakora/lib @atakora/cdk
 ```
@@ -23,11 +25,13 @@ npm install @atakora/lib @atakora/cdk
 ### Permission Denied
 
 **Error**:
+
 ```
 EACCES: permission denied
 ```
 
 **Solution**:
+
 ```bash
 # Fix npm permissions (Unix/Linux/Mac)
 sudo chown -R $(whoami) ~/.npm
@@ -41,6 +45,7 @@ npx atakora init
 ### Authentication Failed
 
 **Error**:
+
 ```
 Authentication failed: AADSTS700016
 ```
@@ -48,11 +53,13 @@ Authentication failed: AADSTS700016
 **Solutions**:
 
 1. **Configure credentials**:
+
    ```bash
    atakora config set-credentials
    ```
 
 2. **Use Azure CLI**:
+
    ```bash
    az login
    az account set --subscription "Production"
@@ -68,11 +75,13 @@ Authentication failed: AADSTS700016
 ### Token Expired
 
 **Error**:
+
 ```
 Token has expired
 ```
 
 **Solution**:
+
 ```bash
 # Re-login
 az login
@@ -86,6 +95,7 @@ atakora config set-credentials
 ### TypeScript Compilation Errors
 
 **Error**:
+
 ```
 TS2304: Cannot find name 'process'
 ```
@@ -93,6 +103,7 @@ TS2304: Cannot find name 'process'
 **Solutions**:
 
 1. **Install type definitions**:
+
    ```bash
    npm install --save-dev @types/node
    ```
@@ -109,20 +120,23 @@ TS2304: Cannot find name 'process'
 ### Validation Errors
 
 **Error**:
+
 ```
 Validation failed: Missing required property 'addressSpace'
 ```
 
 **Solution**: Add required properties:
+
 ```typescript
 new VirtualNetwork(this, 'VNet', {
-  addressSpace: { addressPrefixes: ['10.0.0.0/16'] }  // Required
+  addressSpace: { addressPrefixes: ['10.0.0.0/16'] }, // Required
 });
 ```
 
 ### Circular Dependencies
 
 **Error**:
+
 ```
 Circular dependency detected
 ```
@@ -134,6 +148,7 @@ Circular dependency detected
 ### Resource Already Exists
 
 **Error**:
+
 ```
 StorageAccountAlreadyTaken
 ```
@@ -141,9 +156,10 @@ StorageAccountAlreadyTaken
 **Solutions**:
 
 1. **Use different name**:
+
    ```typescript
    const storage = new StorageAccount(this, 'Storage', {
-     name: 'stnewname'
+     name: 'stnewname',
    });
    ```
 
@@ -155,6 +171,7 @@ StorageAccountAlreadyTaken
 ### Template Validation Failed
 
 **Error**:
+
 ```
 Template validation failed
 ```
@@ -162,6 +179,7 @@ Template validation failed
 **Solutions**:
 
 1. **Check ARM template**:
+
    ```bash
    cat .atakora/arm.out/production/template.json | jq .
    ```
@@ -176,11 +194,13 @@ Template validation failed
 ### Permission Denied
 
 **Error**:
+
 ```
 AuthorizationFailed
 ```
 
 **Solution**: Request proper Azure RBAC role:
+
 ```bash
 az role assignment create \
   --role Contributor \
@@ -193,11 +213,13 @@ az role assignment create \
 ### Name Too Long
 
 **Error**:
+
 ```
 Name exceeds maximum length
 ```
 
 **Solution**: Shorten identifier:
+
 ```typescript
 // Too long
 const storage = new StorageAccount(this, 'VeryLongStorageAccountName', {});
@@ -209,11 +231,13 @@ const storage = new StorageAccount(this, 'Storage', {});
 ### Invalid Characters
 
 **Error**:
+
 ```
 Name contains invalid characters
 ```
 
 **Solution**: Use only allowed characters:
+
 ```typescript
 // Invalid
 const storage = new StorageAccount(this, 'My_Storage', {});
@@ -227,28 +251,32 @@ const storage = new StorageAccount(this, 'MyStorage', {});
 ### Undefined Reference
 
 **Error**:
+
 ```
 Cannot resolve reference to undefined resource
 ```
 
 **Solution**: Ensure resource exists before referencing:
+
 ```typescript
 const rg = new ResourceGroup(this, 'RG', {});
 
 // Now reference it
 const vnet = new VirtualNetwork(this, 'VNet', {
-  resourceGroup: rg  // Must be defined first
+  resourceGroup: rg, // Must be defined first
 });
 ```
 
 ### Environment Variable Not Set
 
 **Error**:
+
 ```
 process.env.SQL_PASSWORD is undefined
 ```
 
 **Solution**:
+
 ```bash
 # Set environment variable
 export SQL_PASSWORD="YourSecurePassword123!"
@@ -259,9 +287,9 @@ echo "SQL_PASSWORD=YourSecurePassword123!" > .env
 
 ## See Also
 
-- [Debugging Synthesis](./debugging-synthesis.md)
-- [Deployment Failures](./deployment-failures.md)
-- [CI/CD Problems](./ci-cd-problems.md)
+- [Debugging Synthesis](./Debugging-Synthesis.md)
+- [Deployment Failures](./Deployment-Failures.md)
+- [CI/CD Problems](./CI-CD-Problems.md)
 
 ---
 

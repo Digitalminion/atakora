@@ -5,6 +5,7 @@
 ### Example 1: Data Quality Queue
 
 #### Before (Current Implementation)
+
 ```typescript
 // packages/backend/src/gen2/queue-processors/data-quality/resource.ts
 
@@ -41,6 +42,7 @@ export const dataQualityQueue = defineQueue({
 ```
 
 #### After (New Fluent API)
+
 ```typescript
 // packages/backend/src/gen2/queue-processors/data-quality/resource.ts
 
@@ -53,16 +55,21 @@ export const dataQualityQueue = Queue('data-quality')
   .visibility(minutes(10))
   .retries(3)
   .withDeadLetterQueue()
-  .monitoring(alerts => alerts
-    .onDepth(greaterThan(1000)).warn()
-    .onMessageAge(olderThan(hours(1))).warn()
-    .onDeadLetter().error()
+  .monitoring((alerts) =>
+    alerts
+      .onDepth(greaterThan(1000))
+      .warn()
+      .onMessageAge(olderThan(hours(1)))
+      .warn()
+      .onDeadLetter()
+      .error()
   )
   .export();
 ```
 
 **Lines of code reduced**: From 24 lines to 10 lines (58% reduction)
 **Benefits**:
+
 - Clear, readable flow
 - Type-safe duration values
 - Intuitive alert configuration
@@ -71,6 +78,7 @@ export const dataQualityQueue = Queue('data-quality')
 ### Example 2: Email Queue with Advanced Features
 
 #### Before
+
 ```typescript
 // packages/backend/src/gen2/queue-processors/email/resource.ts
 
@@ -117,6 +125,7 @@ export const emailQueue = defineQueue({
 ```
 
 #### After
+
 ```typescript
 // packages/backend/src/gen2/queue-processors/email/resource.ts
 
@@ -131,17 +140,17 @@ export const emailQueue = Queue('email')
   .batchSize(10)
   .parallelism(5)
   .withDuplicateDetection(minutes(10))
-  .retry(exponentialBackoff()
-    .maxAttempts(5)
-    .initialDelay(seconds(5))
-    .maxDelay(minutes(5))
-  )
+  .retry(exponentialBackoff().maxAttempts(5).initialDelay(seconds(5)).maxDelay(minutes(5)))
   .withDeadLetterQueue()
   .deadLetterAfter(5)
-  .monitoring(alerts => alerts
-    .onDepth(greaterThan(500)).warn()
-    .onDepth(greaterThan(1000)).critical()
-    .onFailureRate(greaterThan(0.1)).error()
+  .monitoring((alerts) =>
+    alerts
+      .onDepth(greaterThan(500))
+      .warn()
+      .onDepth(greaterThan(1000))
+      .critical()
+      .onFailureRate(greaterThan(0.1))
+      .error()
   )
   .export();
 ```
@@ -149,6 +158,7 @@ export const emailQueue = Queue('email')
 ### Example 3: High-Throughput Event Processing Queue
 
 #### New API Only (Showcasing Presets)
+
 ```typescript
 // packages/backend/src/gen2/queue-processors/events/resource.ts
 
@@ -158,17 +168,21 @@ import { eventProcessor } from '../../functions/event-processor/resource';
 // Option 1: Using preset
 export const eventQueueSimple = Queue('events')
   .processor(eventProcessor)
-  .highThroughput()  // Applies: batchSize(32), parallelism(10), visibility(30s), ttl(1d)
+  .highThroughput() // Applies: batchSize(32), parallelism(10), visibility(30s), ttl(1d)
   .export();
 
 // Option 2: Preset with customization
 export const eventQueueCustom = Queue('events')
   .processor(eventProcessor)
   .highThroughput()
-  .ttl(hours(6))  // Override default TTL
-  .monitoring(alerts => alerts
-    .onDepth(greaterThan(100000)).critical().withEmail('oncall@company.com')
-    .onMessageAge(olderThan(hours(1))).warn()
+  .ttl(hours(6)) // Override default TTL
+  .monitoring((alerts) =>
+    alerts
+      .onDepth(greaterThan(100000))
+      .critical()
+      .withEmail('oncall@company.com')
+      .onMessageAge(olderThan(hours(1)))
+      .warn()
   )
   .withMetrics()
   .withTracing()
@@ -186,14 +200,18 @@ import { orderProcessor } from '../../functions/order-processor/resource';
 // Using the 'reliable' preset for mission-critical operations
 export const orderQueue = Queue('orders')
   .processor(orderProcessor)
-  .reliable()  // Applies: retries(5), DLQ, duplicate detection, aggressive retry
-  .withSessions()  // Ensure order processing for same customer
-  .withEncryption()  // Encrypt at rest
-  .monitoring(alerts => alerts
-    .onDeadLetter().critical()
-      .withEmail('orders-team@company.com')
-      .withWebhook('https://pagerduty.com/webhook/orders')
-    .onFailureRate(greaterThan(0.01)).error()  // Alert on 1% failure rate
+  .reliable() // Applies: retries(5), DLQ, duplicate detection, aggressive retry
+  .withSessions() // Ensure order processing for same customer
+  .withEncryption() // Encrypt at rest
+  .monitoring(
+    (alerts) =>
+      alerts
+        .onDeadLetter()
+        .critical()
+        .withEmail('orders-team@company.com')
+        .withWebhook('https://pagerduty.com/webhook/orders')
+        .onFailureRate(greaterThan(0.01))
+        .error() // Alert on 1% failure rate
   )
   .tags({
     team: 'orders',
@@ -213,13 +231,18 @@ import { mlTrainingProcessor } from '../../functions/ml-training-processor/resou
 
 export const mlTrainingQueue = Queue('ml-training')
   .processor(mlTrainingProcessor)
-  .longRunning()  // Preset: visibility(30m), lock(1h), ttl(14d), retries(1)
-  .lockDuration(hours(4))  // Override for very long processing
-  .monitoring(alerts => alerts
-    .onProcessingTime(greaterThan(hours(3))).warn()
-    .onProcessingTime(greaterThan(hours(6))).error()
-    .onMessageAge(olderThan(days(2))).warn()
-    .onDeadLetter().error()
+  .longRunning() // Preset: visibility(30m), lock(1h), ttl(14d), retries(1)
+  .lockDuration(hours(4)) // Override for very long processing
+  .monitoring((alerts) =>
+    alerts
+      .onProcessingTime(greaterThan(hours(3)))
+      .warn()
+      .onProcessingTime(greaterThan(hours(6)))
+      .error()
+      .onMessageAge(olderThan(days(2)))
+      .warn()
+      .onDeadLetter()
+      .error()
   )
   .withMetrics()
   .export();
@@ -230,6 +253,7 @@ export const mlTrainingQueue = Queue('ml-training')
 The same fluent pattern can be applied to function definitions:
 
 ### Before
+
 ```typescript
 export const dataQualityProcessor = defineFunction({
   name: 'data-quality-processor',
@@ -260,6 +284,7 @@ export const dataQualityProcessor = defineFunction({
 ```
 
 ### After
+
 ```typescript
 import { Function, MB, minutes, seconds } from '@atakora/component/functions';
 import { exponentialBackoff } from '@atakora/component/functions';
@@ -273,21 +298,15 @@ export const dataQualityProcessor = Function('data-quality-processor')
     COSMOS_CONNECTION: '@cosmos.connectionString',
     STORAGE_CONNECTION: '@storage.connectionString',
   })
-  .scale(scale => scale
-    .instances(0, 10)
-    .concurrency(5)
-  )
-  .retry(exponentialBackoff()
-    .maxAttempts(3)
-    .initialDelay(seconds(5))
-    .maxDelay(seconds(30))
-  )
+  .scale((scale) => scale.instances(0, 10).concurrency(5))
+  .retry(exponentialBackoff().maxAttempts(3).initialDelay(seconds(5)).maxDelay(seconds(30)))
   .export();
 ```
 
 ## Event Topic Examples
 
 ### Before
+
 ```typescript
 export const orderEventTopic = defineTopic({
   name: 'order-events',
@@ -321,38 +340,34 @@ export const orderEventTopic = defineTopic({
 ```
 
 ### After
+
 ```typescript
 import { Topic, greaterThan } from '@atakora/component/events';
 
 export const orderEventTopic = Topic('order-events')
   .subscription('payment-processor')
-    .endpoint(paymentFunction)
-    .filter(events => events.type('OrderCreated'))
-    .retries(5)
-    .withDeadLetter('payment-dlq')
+  .endpoint(paymentFunction)
+  .filter((events) => events.type('OrderCreated'))
+  .retries(5)
+  .withDeadLetter('payment-dlq')
   .subscription('inventory-updater')
-    .endpoint(inventoryFunction)
-    .filter(events => events
-      .type('OrderCreated')
-      .type('OrderCancelled')
-    )
-  .monitoring(alerts => alerts
-    .onPublishFailure(greaterThan(10)).error()
-  )
+  .endpoint(inventoryFunction)
+  .filter((events) => events.type('OrderCreated').type('OrderCancelled'))
+  .monitoring((alerts) => alerts.onPublishFailure(greaterThan(10)).error())
   .export();
 ```
 
 ## Progressive Enhancement Examples
 
 ### Starting Simple
+
 ```typescript
 // Minimum viable queue
-export const basicQueue = Queue('basic')
-  .processor(myProcessor)
-  .export();
+export const basicQueue = Queue('basic').processor(myProcessor).export();
 ```
 
 ### Adding Features Incrementally
+
 ```typescript
 // Add reliability
 export const basicQueueV2 = Queue('basic')
@@ -366,9 +381,7 @@ export const basicQueueV3 = Queue('basic')
   .processor(myProcessor)
   .retries(3)
   .withDeadLetterQueue()
-  .monitoring(alerts => alerts
-    .onDeadLetter().error()
-  )
+  .monitoring((alerts) => alerts.onDeadLetter().error())
   .export();
 
 // Add performance tuning
@@ -378,21 +391,18 @@ export const basicQueueV4 = Queue('basic')
   .withDeadLetterQueue()
   .batchSize(10)
   .parallelism(5)
-  .monitoring(alerts => alerts
-    .onDeadLetter().error()
-    .onDepth(greaterThan(1000)).warn()
-  )
+  .monitoring((alerts) => alerts.onDeadLetter().error().onDepth(greaterThan(1000)).warn())
   .export();
 ```
 
 ## Comparison: Lines of Code
 
-| Queue Type | Old API | New API | Reduction |
-|------------|---------|---------|-----------|
-| Simple Queue | 15 lines | 3 lines | 80% |
-| Standard Queue | 24 lines | 10 lines | 58% |
-| Complex Queue | 45 lines | 20 lines | 56% |
-| With Monitoring | 35 lines | 12 lines | 66% |
+| Queue Type      | Old API  | New API  | Reduction |
+| --------------- | -------- | -------- | --------- |
+| Simple Queue    | 15 lines | 3 lines  | 80%       |
+| Standard Queue  | 24 lines | 10 lines | 58%       |
+| Complex Queue   | 45 lines | 20 lines | 56%       |
+| With Monitoring | 35 lines | 12 lines | 66%       |
 
 ## Key Improvements
 
@@ -406,9 +416,11 @@ export const basicQueueV4 = Queue('basic')
 ## Developer Feedback Examples
 
 ### Before
+
 "This doesn't feel like a DX, it feels like a loose abstraction for an ARM template."
 
 ### After (Expected)
+
 "This feels like writing TypeScript! The API guides me through options, and I can start simple and add complexity as needed."
 
 "The autocomplete is amazing - I don't need to look at docs to understand what's available."

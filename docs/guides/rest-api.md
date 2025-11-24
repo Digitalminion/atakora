@@ -26,27 +26,27 @@ const getUserOperation = get('/users/{userId}')
     schema: {
       type: 'object',
       properties: {
-        userId: { type: 'string', format: 'uuid' }
-      }
-    }
+        userId: { type: 'string', format: 'uuid' },
+      },
+    },
   })
   .responses<User>({
     200: {
       description: 'User found',
       content: {
         'application/json': {
-          schema: UserSchema
-        }
-      }
+          schema: UserSchema,
+        },
+      },
     },
     404: {
       description: 'User not found',
       content: {
         'application/json': {
-          schema: ErrorResponseSchema
-        }
-      }
-    }
+          schema: ErrorResponseSchema,
+        },
+      },
+    },
   })
   .build();
 ```
@@ -63,27 +63,27 @@ const createUserOperation = post<CreateUserRequest>('/users')
     required: true,
     content: {
       'application/json': {
-        schema: CreateUserRequestSchema
-      }
-    }
+        schema: CreateUserRequestSchema,
+      },
+    },
   })
   .responses<User>({
     201: {
       description: 'User created successfully',
       content: {
         'application/json': {
-          schema: UserSchema
-        }
-      }
+          schema: UserSchema,
+        },
+      },
     },
     400: {
       description: 'Invalid request',
       content: {
         'application/json': {
-          schema: ErrorResponseSchema
-        }
-      }
-    }
+          schema: ErrorResponseSchema,
+        },
+      },
+    },
   })
   .build();
 ```
@@ -103,13 +103,13 @@ const operation = get('/users/{userId}')
     type: 'azureFunction',
     functionApp: myFunctionApp,
     functionName: 'GetUser',
-    authLevel: 'function'
+    authLevel: 'function',
   })
   .responses<User>({
     200: {
       description: 'User found',
-      content: { 'application/json': { schema: UserSchema } }
-    }
+      content: { 'application/json': { schema: UserSchema } },
+    },
   })
   .build();
 ```
@@ -124,13 +124,13 @@ const operation = get('/users/{userId}')
   .backend({
     type: 'appService',
     appService: myWebApp,
-    relativePath: '/api/users'
+    relativePath: '/api/users',
   })
   .responses<User>({
     200: {
       description: 'User found',
-      content: { 'application/json': { schema: UserSchema } }
-    }
+      content: { 'application/json': { schema: UserSchema } },
+    },
   })
   .build();
 ```
@@ -149,14 +149,14 @@ const operation = get('/users/{userId}')
     credentials: {
       type: 'apiKey',
       header: 'X-API-Key',
-      value: 'my-api-key'
-    }
+      value: 'my-api-key',
+    },
   })
   .responses<User>({
     200: {
       description: 'User found',
-      content: { 'application/json': { schema: UserSchema } }
-    }
+      content: { 'application/json': { schema: UserSchema } },
+    },
   })
   .build();
 ```
@@ -174,19 +174,19 @@ const listUsersOperation = get('/users')
       properties: {
         page: { type: 'integer', minimum: 1, default: 1 },
         pageSize: { type: 'integer', minimum: 1, maximum: 100, default: 20 },
-        sort: { type: 'string', enum: ['name', 'createdAt'], default: 'createdAt' }
-      }
-    }
+        sort: { type: 'string', enum: ['name', 'createdAt'], default: 'createdAt' },
+      },
+    },
   })
   .responses<PaginatedResponse<User>>({
     200: {
       description: 'List of users',
       content: {
         'application/json': {
-          schema: PaginatedUserResponseSchema
-        }
-      }
-    }
+          schema: PaginatedUserResponseSchema,
+        },
+      },
+    },
   })
   .build();
 ```
@@ -209,14 +209,14 @@ const operation = get('/users/{userId}')
       interval: 1000,
       backoffMultiplier: 2,
       maxInterval: 10000,
-      retryOn: [500, 502, 503, 504]
-    }
+      retryOn: [500, 502, 503, 504],
+    },
   })
   .responses<User>({
     200: {
       description: 'User found',
-      content: { 'application/json': { schema: UserSchema } }
-    }
+      content: { 'application/json': { schema: UserSchema } },
+    },
   })
   .build();
 ```
@@ -236,14 +236,14 @@ const operation = get('/users/{userId}')
       enabled: true,
       failureThreshold: 5,
       successThreshold: 2,
-      timeout: 60000
-    }
+      timeout: 60000,
+    },
   })
   .responses<User>({
     200: {
       description: 'User found',
-      content: { 'application/json': { schema: UserSchema } }
-    }
+      content: { 'application/json': { schema: UserSchema } },
+    },
   })
   .build();
 ```
@@ -265,14 +265,14 @@ const operation = get('/users/{userId}')
       timeout: 5,
       unhealthyThreshold: 3,
       healthyThreshold: 2,
-      expectedStatusCode: 200
-    }
+      expectedStatusCode: 200,
+    },
   })
   .responses<User>({
     200: {
       description: 'User found',
-      content: { 'application/json': { schema: UserSchema } }
-    }
+      content: { 'application/json': { schema: UserSchema } },
+    },
   })
   .build();
 ```
@@ -287,8 +287,8 @@ const op1 = get('/users/{userId}')
   .pathParams<{ userId: string }>({
     schema: {
       type: 'object',
-      properties: { userId: { type: 'string' } }
-    }
+      properties: { userId: { type: 'string' } },
+    },
   })
   .build();
 
@@ -297,8 +297,8 @@ const op2 = get('/users')
   .queryParams<{ search?: string }>({
     schema: {
       type: 'object',
-      properties: { search: { type: 'string' } }
-    }
+      properties: { search: { type: 'string' } },
+    },
   })
   .build();
 
@@ -307,8 +307,8 @@ const op3 = post<CreateUserRequest>('/users')
   .body<CreateUserRequest>({
     required: true,
     content: {
-      'application/json': { schema: CreateUserRequestSchema }
-    }
+      'application/json': { schema: CreateUserRequestSchema },
+    },
   })
   .build();
 
@@ -317,8 +317,8 @@ const op4 = get('/users/{userId}')
   .responses<User>({
     200: {
       description: 'User',
-      content: { 'application/json': { schema: UserSchema } }
-    }
+      content: { 'application/json': { schema: UserSchema } },
+    },
   })
   .build();
 ```
@@ -370,8 +370,8 @@ const ErrorResponseSchema: JsonSchema<ErrorResponse> = {
     title: { type: 'string' },
     status: { type: 'integer' },
     detail: { type: 'string' },
-    instance: { type: 'string', format: 'uri' }
-  }
+    instance: { type: 'string', format: 'uri' },
+  },
 };
 ```
 

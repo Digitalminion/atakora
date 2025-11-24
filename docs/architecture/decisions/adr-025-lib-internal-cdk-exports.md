@@ -13,10 +13,11 @@
 The Atakora framework currently consists of three packages with unclear boundaries regarding user-facing APIs:
 
 - **`@atakora/lib`**: Contains framework core (Construct, Resource, Stack classes), validation, synthesis, and naming utilities
-- **`@atakora/cdk`**: Contains Azure resource constructs organized by Microsoft.* namespaces
+- **`@atakora/cdk`**: Contains Azure resource constructs organized by Microsoft.\* namespaces
 - **`@atakora/cli`**: Contains CLI tooling for deployment and management
 
 Currently, the CDK package imports directly from `@atakora/lib`:
+
 ```typescript
 import { Construct, Resource } from '@atakora/lib';
 import type { ArmResource } from '@atakora/lib';
@@ -27,6 +28,7 @@ This creates several architectural issues:
 ### 1. Unclear API Boundaries
 
 Users are confused about what to import from where:
+
 - Should they import `Construct` from `@atakora/lib` or should it be available from CDK?
 - Is `@atakora/lib` a public API or internal framework code?
 - What happens when lib's internal APIs change?
@@ -34,6 +36,7 @@ Users are confused about what to import from where:
 ### 2. Coupling to Internal Implementation
 
 When users import directly from `@atakora/lib`, they:
+
 - Depend on internal implementation details
 - May use unstable APIs not intended for public consumption
 - Create tight coupling to framework internals
@@ -41,6 +44,7 @@ When users import directly from `@atakora/lib`, they:
 ### 3. Inconsistent Developer Experience
 
 Compare to established patterns:
+
 - **AWS CDK v2**: Users import everything from `aws-cdk-lib`, never from internal packages
 - **Angular**: Users import from `@angular/core`, `@angular/common`, not from internal packages
 - **.NET**: Users reference public assemblies, internal assemblies are marked as internal
@@ -48,6 +52,7 @@ Compare to established patterns:
 ### 4. Version Management Complexity
 
 With direct lib imports, users must:
+
 - Manage version compatibility between lib and CDK
 - Understand which lib APIs are stable vs internal
 - Deal with breaking changes in "internal" APIs they shouldn't be using
@@ -96,6 +101,7 @@ We will establish `@atakora/lib` as an **internal-only shared package** and have
 The root `@atakora/cdk` module will re-export all framework classes that users need:
 
 **`packages/cdk/index.ts`**:
+
 ```typescript
 /**
  * Atakora CDK - Azure Infrastructure as Code
@@ -172,16 +178,13 @@ export type {
 } from '@atakora/lib';
 
 // Type-only exports for synthesis (advanced users)
-export type {
-  CloudAssembly,
-  StackManifest,
-  ArmTemplate,
-} from '@atakora/lib';
+export type { CloudAssembly, StackManifest, ArmTemplate } from '@atakora/lib';
 ```
 
 #### 2. Package.json Configuration
 
 **`packages/cdk/package.json`**:
+
 ```json
 {
   "name": "@atakora/cdk",
@@ -214,12 +217,13 @@ export type {
 ```
 
 **`packages/lib/package.json`** (mark as internal):
+
 ```json
 {
   "name": "@atakora/lib",
   "version": "1.0.0",
   "description": "Internal framework for Atakora CDK - NOT FOR DIRECT USE",
-  "private": false,  // Still publishable, but documented as internal
+  "private": false, // Still publishable, but documented as internal
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "keywords": ["internal", "framework", "atakora-internal"]
@@ -229,6 +233,7 @@ export type {
 ### User Import Patterns
 
 #### Before (Current - Problematic)
+
 ```typescript
 // Users importing from multiple packages
 import { App, SubscriptionStack } from '@atakora/lib';
@@ -239,6 +244,7 @@ import { constructIdToPurpose } from '@atakora/lib';
 ```
 
 #### After (New - Clean)
+
 ```typescript
 // All framework imports from root CDK
 import { App, SubscriptionStack, constructIdToPurpose } from '@atakora/cdk';
@@ -315,10 +321,12 @@ import { StorageAccounts } from '@atakora/cdk/storage';
 **Structure**: Users import from both `@atakora/lib` and `@atakora/cdk`
 
 **Pros**:
+
 - No migration needed
 - Users have direct access to all APIs
 
 **Cons**:
+
 - Unclear boundaries between public and internal APIs
 - Users couple to internal implementation details
 - Version management complexity
@@ -331,10 +339,12 @@ import { StorageAccounts } from '@atakora/cdk/storage';
 **Structure**: Merge lib into CDK, single package for everything
 
 **Pros**:
+
 - Truly single package
 - No internal/external distinction needed
 
 **Cons**:
+
 - CLI would need to depend on CDK (includes all resources)
 - Loses separation between framework and resources
 - Harder to maintain framework/resource boundary
@@ -345,14 +355,17 @@ import { StorageAccounts } from '@atakora/cdk/storage';
 ### Alternative 3: Namespace-Specific Core Exports
 
 **Structure**: Each namespace re-exports its own core needs
+
 ```typescript
 import { Construct, Resource } from '@atakora/cdk/network';
 ```
 
 **Pros**:
+
 - Each namespace is self-contained
 
 **Cons**:
+
 - Massive duplication of exports
 - Confusing where to import framework classes from
 - Inconsistent import patterns
@@ -440,11 +453,13 @@ import { Construct, Resource } from '@atakora/cdk/network';
 ### Step 1: Update Package Installation
 
 **Before**:
+
 ```bash
 npm install @atakora/lib @atakora/cdk
 ```
 
 **After**:
+
 ```bash
 npm install @atakora/cdk
 ```
@@ -452,6 +467,7 @@ npm install @atakora/cdk
 ### Step 2: Update Imports
 
 **Framework Imports**:
+
 ```typescript
 // Before
 import { App, SubscriptionStack } from '@atakora/lib';
@@ -461,6 +477,7 @@ import { App, SubscriptionStack } from '@atakora/cdk';
 ```
 
 **Utility Imports**:
+
 ```typescript
 // Before
 import { constructIdToPurpose } from '@atakora/lib';
@@ -470,6 +487,7 @@ import { constructIdToPurpose } from '@atakora/cdk';
 ```
 
 **Type Imports**:
+
 ```typescript
 // Before
 import type { ArmResource, ValidationResult } from '@atakora/lib';
@@ -481,11 +499,13 @@ import type { ArmResource, ValidationResult } from '@atakora/cdk';
 ### Step 3: Automated Migration
 
 We will provide a codemod for automatic migration:
+
 ```bash
 npx @atakora/cdk-migrate update-imports
 ```
 
 This will:
+
 - Update all imports from `@atakora/lib` to `@atakora/cdk`
 - Preserve type-only imports
 - Update package.json dependencies
@@ -522,6 +542,7 @@ This will:
 ---
 
 **Next Steps**:
+
 1. Review and approve this ADR
 2. Implement Phase 1 (re-exports)
 3. Update documentation

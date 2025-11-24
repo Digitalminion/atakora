@@ -19,6 +19,7 @@ Added the `toMetadata()` method to FunctionApp class (lines 258-342):
 - **Metadata Flags**: Marks resources with large inline content (>10KB) for splitting decisions
 
 **Key Features**:
+
 ```typescript
 return {
   id: this.node.id,
@@ -47,6 +48,7 @@ Modified the `toArmTemplate()` method signature and implementation (lines 344-48
 - **Clean Output**: Returns `undefined` for dependsOn when array is empty
 
 **Context-Aware Logic**:
+
 ```typescript
 if (context && this.storageAccountName) {
   if (context.isInSameTemplate(this.storageAccountName)) {
@@ -64,6 +66,7 @@ if (context && this.storageAccountName) {
 **Problem**: FunctionApp was adding duplicate entries for `AzureWebJobsStorage` and `FUNCTIONS_WORKER_RUNTIME` - once from required settings and again from user environment variables.
 
 **Solution** (lines 419-432):
+
 ```typescript
 // Define reserved keys that should not be overridden
 const reservedKeys = new Set([
@@ -88,10 +91,13 @@ Object.entries(this.environment).forEach(([name, value]) => {
 
 **Solution** (lines 386-387, 396-397):
 Changed all occurrences from:
+
 ```typescript
 listKeys(..., '2025-01-01')
 ```
+
 To:
+
 ```typescript
 listKeys(..., '2023-01-01')
 ```

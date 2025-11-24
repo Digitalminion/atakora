@@ -43,9 +43,7 @@ Test individual constructs and stacks in isolation:
 it('creates storage with HTTPS only', () => {
   const stack = new MyStack();
   const template = stack.toTemplate();
-  const storage = template.resources.find(
-    r => r.type === 'Microsoft.Storage/storageAccounts'
-  );
+  const storage = template.resources.find((r) => r.type === 'Microsoft.Storage/storageAccounts');
   expect(storage.properties.supportsHttpsTrafficOnly).toBe(true);
 });
 ```
@@ -73,7 +71,7 @@ Test validation rules and schema compliance:
 it('rejects invalid SKU', () => {
   expect(() => {
     new StorageAccount(stack, 'storage', {
-      sku: { name: 'Invalid_SKU' }
+      sku: { name: 'Invalid_SKU' },
     });
   }).toThrow('Invalid SKU name');
 });
@@ -158,15 +156,11 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        'test/',
-        '**/*.test.ts'
-      ]
+      exclude: ['node_modules/', 'test/', '**/*.test.ts'],
     },
     testTimeout: 30000,
-    hookTimeout: 30000
-  }
+    hookTimeout: 30000,
+  },
 });
 ```
 
@@ -186,7 +180,7 @@ describe('WebApplicationStack', () => {
     const template = stack.toTemplate();
 
     // Verify resource types
-    const resourceTypes = template.resources.map(r => r.type);
+    const resourceTypes = template.resources.map((r) => r.type);
     expect(resourceTypes).toContain('Microsoft.Web/serverfarms');
     expect(resourceTypes).toContain('Microsoft.Web/sites');
     expect(resourceTypes).toContain('Microsoft.Storage/storageAccounts');
@@ -196,9 +190,7 @@ describe('WebApplicationStack', () => {
     const stack = new WebApplicationStack();
     const template = stack.toTemplate();
 
-    const plans = template.resources.filter(
-      r => r.type === 'Microsoft.Web/serverfarms'
-    );
+    const plans = template.resources.filter((r) => r.type === 'Microsoft.Web/serverfarms');
 
     expect(plans).toHaveLength(1);
   });
@@ -207,14 +199,12 @@ describe('WebApplicationStack', () => {
     const stack = new WebApplicationStack();
     const template = stack.toTemplate();
 
-    const plan = template.resources.find(
-      r => r.type === 'Microsoft.Web/serverfarms'
-    );
+    const plan = template.resources.find((r) => r.type === 'Microsoft.Web/serverfarms');
 
     expect(plan.sku).toEqual({
       name: 'B1',
       tier: 'Basic',
-      capacity: 1
+      capacity: 1,
     });
   });
 });
@@ -230,9 +220,7 @@ describe('StorageAccount configuration', () => {
     const stack = new MyStack();
     const template = stack.toTemplate();
 
-    const storage = template.resources.find(
-      r => r.type === 'Microsoft.Storage/storageAccounts'
-    );
+    const storage = template.resources.find((r) => r.type === 'Microsoft.Storage/storageAccounts');
 
     expect(storage.properties.supportsHttpsTrafficOnly).toBe(true);
   });
@@ -241,9 +229,7 @@ describe('StorageAccount configuration', () => {
     const stack = new MyStack();
     const template = stack.toTemplate();
 
-    const storage = template.resources.find(
-      r => r.type === 'Microsoft.Storage/storageAccounts'
-    );
+    const storage = template.resources.find((r) => r.type === 'Microsoft.Storage/storageAccounts');
 
     expect(storage.properties.minimumTlsVersion).toBe('TLS1_2');
   });
@@ -252,9 +238,7 @@ describe('StorageAccount configuration', () => {
     const stack = new MyStack();
     const template = stack.toTemplate();
 
-    const storage = template.resources.find(
-      r => r.type === 'Microsoft.Storage/storageAccounts'
-    );
+    const storage = template.resources.find((r) => r.type === 'Microsoft.Storage/storageAccounts');
 
     expect(storage.kind).toBe('StorageV2');
     expect(storage.properties.accessTier).toBe('Hot');
@@ -272,12 +256,8 @@ describe('Resource dependencies', () => {
     const stack = new MyStack();
     const template = stack.toTemplate();
 
-    const plan = template.resources.find(
-      r => r.type === 'Microsoft.Web/serverfarms'
-    );
-    const webApp = template.resources.find(
-      r => r.type === 'Microsoft.Web/sites'
-    );
+    const plan = template.resources.find((r) => r.type === 'Microsoft.Web/serverfarms');
+    const webApp = template.resources.find((r) => r.type === 'Microsoft.Web/sites');
 
     expect(webApp.properties.serverFarmId).toBe(
       `[resourceId('Microsoft.Web/serverfarms', '${plan.name}')]`
@@ -288,11 +268,9 @@ describe('Resource dependencies', () => {
     const stack = new NetworkStack();
     const template = stack.toTemplate();
 
-    const vnet = template.resources.find(
-      r => r.type === 'Microsoft.Network/virtualNetworks'
-    );
+    const vnet = template.resources.find((r) => r.type === 'Microsoft.Network/virtualNetworks');
     const subnet = template.resources.find(
-      r => r.type === 'Microsoft.Network/virtualNetworks/subnets'
+      (r) => r.type === 'Microsoft.Network/virtualNetworks/subnets'
     );
 
     expect(subnet.properties.virtualNetworkName).toBe(vnet.name);
@@ -302,15 +280,11 @@ describe('Resource dependencies', () => {
     const stack = new MyStack();
     const template = stack.toTemplate();
 
-    const storage = template.resources.find(
-      r => r.type === 'Microsoft.Storage/storageAccounts'
-    );
-    const webApp = template.resources.find(
-      r => r.type === 'Microsoft.Web/sites'
-    );
+    const storage = template.resources.find((r) => r.type === 'Microsoft.Storage/storageAccounts');
+    const webApp = template.resources.find((r) => r.type === 'Microsoft.Web/sites');
 
     const storageSettings = webApp.properties.siteConfig.appSettings.filter(
-      s => s.name === 'STORAGE_ACCOUNT_NAME'
+      (s) => s.name === 'STORAGE_ACCOUNT_NAME'
     );
 
     expect(storageSettings).toHaveLength(1);
@@ -329,9 +303,7 @@ describe('EnvironmentStack', () => {
     const stack = new EnvironmentStack({ environment: 'dev' });
     const template = stack.toTemplate();
 
-    const plan = template.resources.find(
-      r => r.type === 'Microsoft.Web/serverfarms'
-    );
+    const plan = template.resources.find((r) => r.type === 'Microsoft.Web/serverfarms');
 
     expect(plan.sku.name).toBe('B1');
     expect(plan.sku.tier).toBe('Basic');
@@ -341,9 +313,7 @@ describe('EnvironmentStack', () => {
     const stack = new EnvironmentStack({ environment: 'prod' });
     const template = stack.toTemplate();
 
-    const plan = template.resources.find(
-      r => r.type === 'Microsoft.Web/serverfarms'
-    );
+    const plan = template.resources.find((r) => r.type === 'Microsoft.Web/serverfarms');
 
     expect(plan.sku.name).toBe('P1v2');
     expect(plan.sku.tier).toBe('PremiumV2');
@@ -353,12 +323,12 @@ describe('EnvironmentStack', () => {
     const devStack = new EnvironmentStack({ environment: 'dev' });
     const prodStack = new EnvironmentStack({ environment: 'prod' });
 
-    const devCache = devStack.toTemplate().resources.filter(
-      r => r.type === 'Microsoft.Cache/redis'
-    );
-    const prodCache = prodStack.toTemplate().resources.filter(
-      r => r.type === 'Microsoft.Cache/redis'
-    );
+    const devCache = devStack
+      .toTemplate()
+      .resources.filter((r) => r.type === 'Microsoft.Cache/redis');
+    const prodCache = prodStack
+      .toTemplate()
+      .resources.filter((r) => r.type === 'Microsoft.Cache/redis');
 
     expect(devCache).toHaveLength(0);
     expect(prodCache).toHaveLength(1);
@@ -420,9 +390,7 @@ describe('WebApp configuration', () => {
     const stack = new WebApplicationStack();
     const template = stack.toTemplate();
 
-    const webApp = template.resources.find(
-      r => r.type === 'Microsoft.Web/sites'
-    );
+    const webApp = template.resources.find((r) => r.type === 'Microsoft.Web/sites');
 
     // Only snapshot the site config, not the entire resource
     expect(webApp.properties.siteConfig).toMatchSnapshot();
@@ -450,8 +418,8 @@ function normalizeDynamicValues(template: any) {
     ...template,
     resources: template.resources.map((r: any) => ({
       ...r,
-      name: r.name.replace(/-[a-f0-9]{12}$/, '-HASH') // Remove hash
-    }))
+      name: r.name.replace(/-[a-f0-9]{12}$/, '-HASH'), // Remove hash
+    })),
   };
 }
 ```
@@ -472,7 +440,7 @@ describe('Storage Account validation', () => {
       new StorageAccount(stack, 'storage', {
         resourceGroup: rg,
         location: 'eastus',
-        sku: { name: 'Invalid_SKU' as any }
+        sku: { name: 'Invalid_SKU' as any },
       });
     }).toThrow(/Invalid SKU/);
   });
@@ -486,8 +454,8 @@ describe('Storage Account validation', () => {
         resourceGroup: rg,
         location: 'eastus',
         properties: {
-          minimumTlsVersion: 'TLS1_0' as any
-        }
+          minimumTlsVersion: 'TLS1_0' as any,
+        },
       });
     }).toThrow(/minimum TLS version/i);
   });
@@ -501,8 +469,8 @@ describe('Storage Account validation', () => {
         resourceGroup: rg,
         location: 'eastus',
         properties: {
-          supportsHttpsTrafficOnly: false
-        }
+          supportsHttpsTrafficOnly: false,
+        },
       });
     }).toThrow(/HTTPS.*required/i);
   });
@@ -523,7 +491,7 @@ describe('Custom naming validators', () => {
       new StorageAccount(stack, 'storage', {
         resourceGroup: rg,
         location: 'eastus',
-        name: 'MyStorageAccount' // Invalid: contains uppercase
+        name: 'MyStorageAccount', // Invalid: contains uppercase
       });
     }).toThrow(/lowercase/i);
   });
@@ -536,7 +504,7 @@ describe('Custom naming validators', () => {
       new StorageAccount(stack, 'storage', {
         resourceGroup: rg,
         location: 'eastus',
-        name: 'a'.repeat(25) // Invalid: exceeds 24 character limit
+        name: 'a'.repeat(25), // Invalid: exceeds 24 character limit
       });
     }).toThrow(/24 characters/i);
   });
@@ -564,7 +532,7 @@ describe('Synthesis validation', () => {
 
     new WebApp(stack, 'webapp', {
       resourceGroup: rg,
-      location: 'eastus'
+      location: 'eastus',
       // Missing required serverFarmId
     } as any);
 
@@ -643,10 +611,10 @@ vi.mock('@azure/storage-blob', () => ({
     fromConnectionString: vi.fn(() => ({
       getProperties: vi.fn().mockResolvedValue({
         accountKind: 'StorageV2',
-        encryption: { services: { blob: { enabled: true } } }
-      })
-    }))
-  }
+        encryption: { services: { blob: { enabled: true } } },
+      }),
+    })),
+  },
 }));
 
 describe('Storage operations', () => {
@@ -670,40 +638,72 @@ describe('Storage operations', () => {
 // ✅ Good: Organized with describe blocks
 describe('WebApplicationStack', () => {
   describe('Resource creation', () => {
-    it('creates app service plan', () => { /* ... */ });
-    it('creates web app', () => { /* ... */ });
-    it('creates storage account', () => { /* ... */ });
+    it('creates app service plan', () => {
+      /* ... */
+    });
+    it('creates web app', () => {
+      /* ... */
+    });
+    it('creates storage account', () => {
+      /* ... */
+    });
   });
 
   describe('Configuration', () => {
-    it('enables HTTPS only', () => { /* ... */ });
-    it('configures always on', () => { /* ... */ });
+    it('enables HTTPS only', () => {
+      /* ... */
+    });
+    it('configures always on', () => {
+      /* ... */
+    });
   });
 
   describe('Environment variations', () => {
-    it('uses Basic SKU in dev', () => { /* ... */ });
-    it('uses Premium SKU in prod', () => { /* ... */ });
+    it('uses Basic SKU in dev', () => {
+      /* ... */
+    });
+    it('uses Premium SKU in prod', () => {
+      /* ... */
+    });
   });
 });
 
 // ❌ Avoid: Flat test structure
-it('test 1', () => { /* ... */ });
-it('test 2', () => { /* ... */ });
-it('test 3', () => { /* ... */ });
+it('test 1', () => {
+  /* ... */
+});
+it('test 2', () => {
+  /* ... */
+});
+it('test 3', () => {
+  /* ... */
+});
 ```
 
 ### 2. Descriptive Test Names
 
 ```typescript
 // ✅ Good: Clear, specific test names
-it('enforces HTTPS-only traffic on storage account', () => { /* ... */ });
-it('configures web app with minimum TLS 1.2', () => { /* ... */ });
-it('creates Premium SKU plan for production environment', () => { /* ... */ });
+it('enforces HTTPS-only traffic on storage account', () => {
+  /* ... */
+});
+it('configures web app with minimum TLS 1.2', () => {
+  /* ... */
+});
+it('creates Premium SKU plan for production environment', () => {
+  /* ... */
+});
 
 // ❌ Avoid: Vague test names
-it('tests storage', () => { /* ... */ });
-it('works correctly', () => { /* ... */ });
-it('test 1', () => { /* ... */ });
+it('tests storage', () => {
+  /* ... */
+});
+it('works correctly', () => {
+  /* ... */
+});
+it('test 1', () => {
+  /* ... */
+});
 ```
 
 ### 3. Arrange-Act-Assert Pattern
@@ -718,14 +718,12 @@ it('creates storage account with correct properties', () => {
   new StorageAccount(stack, 'storage', {
     resourceGroup: rg,
     location: 'eastus',
-    sku: { name: 'Standard_LRS' }
+    sku: { name: 'Standard_LRS' },
   });
   const template = stack.toTemplate();
 
   // Assert - Verify results
-  const storage = template.resources.find(
-    r => r.type === 'Microsoft.Storage/storageAccounts'
-  );
+  const storage = template.resources.find((r) => r.type === 'Microsoft.Storage/storageAccounts');
   expect(storage.sku.name).toBe('Standard_LRS');
   expect(storage.properties.supportsHttpsTrafficOnly).toBe(true);
 });
@@ -785,7 +783,7 @@ describe('Storage tests', () => {
 
     new StorageAccount(stack, 'storage', {
       resourceGroup: rg,
-      location: rg.location
+      location: rg.location,
     });
 
     const template = stack.toTemplate();
@@ -807,17 +805,17 @@ describe('Resource tagging', () => {
       tags: {
         environment: 'production',
         project: 'webapp',
-        owner: 'platform-team'
-      }
+        owner: 'platform-team',
+      },
     });
 
     const template = stack.toTemplate();
 
-    template.resources.forEach(resource => {
+    template.resources.forEach((resource) => {
       expect(resource.tags).toEqual({
         environment: 'production',
         project: 'webapp',
-        owner: 'platform-team'
+        owner: 'platform-team',
       });
     });
   });
@@ -830,14 +828,12 @@ describe('Resource tagging', () => {
 describe('Multi-region deployment', () => {
   const regions = ['eastus', 'westus', 'centralus'];
 
-  regions.forEach(region => {
+  regions.forEach((region) => {
     it(`deploys to ${region}`, () => {
       const stack = new MultiRegionStack({ region });
       const template = stack.toTemplate();
 
-      const resources = template.resources.filter(
-        r => r.location === region
-      );
+      const resources = template.resources.filter((r) => r.location === region);
 
       expect(resources.length).toBeGreaterThan(0);
     });
@@ -858,8 +854,8 @@ describe('Government Cloud compatibility', () => {
     expect(webApp.properties.hostNameSslStates).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          name: expect.stringMatching(/\.azurewebsites\.us$/)
-        })
+          name: expect.stringMatching(/\.azurewebsites\.us$/),
+        }),
       ])
     );
   });
@@ -870,7 +866,7 @@ describe('Government Cloud compatibility', () => {
 
     const govCloudRegions = ['usgovvirginia', 'usgovarizona', 'usgovtexas'];
 
-    template.resources.forEach(resource => {
+    template.resources.forEach((resource) => {
       if (resource.location) {
         expect(govCloudRegions).toContain(resource.location.toLowerCase());
       }
@@ -888,6 +884,7 @@ describe('Government Cloud compatibility', () => {
 **Cause**: Environment differences, timing issues, or resource cleanup problems.
 
 **Solution**:
+
 ```typescript
 // Use consistent test timeouts
 describe('Integration tests', () => {
@@ -907,6 +904,7 @@ afterAll(async () => {
 **Cause**: Infrastructure changed intentionally but snapshots weren't updated.
 
 **Solution**:
+
 ```bash
 # Review the changes
 npm test
@@ -924,6 +922,7 @@ git commit -m "Update snapshots for infrastructure changes"
 **Cause**: Tests depend on external state or timing.
 
 **Solution**:
+
 ```typescript
 // ❌ Flaky: Depends on external state
 it('reads from production database', async () => {
@@ -950,7 +949,7 @@ it('processes user data correctly', async () => {
 ## Related Documentation
 
 - [Validation](../validation/README.md) - Understanding validation rules
-- [Common Issues](../../troubleshooting/common-issues.md) - Troubleshooting tests
+- [Common Issues](../../troubleshooting/Common-Issues.md) - Troubleshooting tests
 - [CLI Reference](../../reference/cli/README.md) - CLI commands for testing
 
 ---

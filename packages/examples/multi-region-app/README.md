@@ -7,6 +7,7 @@
 ## Overview
 
 This example demonstrates a multi-region, highly available web application with:
+
 - Regional deployments (East US, West US 2)
 - Traffic Manager for global load balancing
 - Geo-replicated storage
@@ -51,27 +52,27 @@ class RegionalStack extends Stack {
   constructor(scope: App, id: string, region: string) {
     super(scope, id, {
       environment: 'production',
-      location: region
+      location: region,
     });
 
     const rg = new ResourceGroup(this, 'ResourceGroup', {
-      location: this.location
+      location: this.location,
     });
 
     const plan = new AppServicePlan(this, 'AppPlan', {
       resourceGroup: rg,
-      sku: { name: 'P1v2', tier: 'PremiumV2' }
+      sku: { name: 'P1v2', tier: 'PremiumV2' },
     });
 
     this.webApp = new WebApp(this, 'WebApp', {
       resourceGroup: rg,
       serverFarmId: plan.id,
-      httpsOnly: true
+      httpsOnly: true,
     });
 
     this.storage = new StorageAccount(this, 'Storage', {
       resourceGroup: rg,
-      sku: { name: 'Standard_GRS' }  // Geo-replicated
+      sku: { name: 'Standard_GRS' }, // Geo-replicated
     });
   }
 }
@@ -140,6 +141,7 @@ az network traffic-manager endpoint update \
 ## Cost Estimate
 
 Monthly cost (per region):
+
 - App Service Plan (P1v2): ~$150
 - Storage (GRS): ~$25
 - Traffic Manager: ~$1

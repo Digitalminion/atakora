@@ -11,23 +11,27 @@ Atakora is a TypeScript infrastructure-as-code framework for Azure, inspired by 
 ## Core Principles
 
 ### 1. Type Safety First
+
 - Strict TypeScript with no implicit `any`
 - Compile-time validation
 - IntelliSense support
 
 ### 2. Construct Tree Pattern
+
 - Hierarchical resource organization
 - Context flows down the tree
 - Scoped dependencies
 
 ### 3. Multi-Level Abstractions
+
 - **L1 Constructs**: Direct ARM mapping (ArmVirtualNetwork)
 - **L2 Constructs**: Intent-based API (VirtualNetwork)
 - **L3 Constructs**: Pattern-based (WebAppInfrastructure)
 
 ### 4. Modular Architecture
+
 - Core library (@atakora/lib)
-- Service namespaces (@atakora/cdk/*)
+- Service namespaces (@atakora/cdk/\*)
 - CLI tooling (@atakora/cli)
 
 ## System Architecture
@@ -114,6 +118,7 @@ App (root)
 ```
 
 Each node:
+
 - Has a unique path
 - Inherits context from parent
 - Can reference siblings/parents
@@ -147,7 +152,7 @@ class MyStack extends Stack {
   constructor(scope: App, id: string) {
     super(scope, id, {
       environment: 'production',
-      location: 'eastus'
+      location: 'eastus',
     });
 
     // Auto-generated name: rg-mystack-production-eastus
@@ -188,7 +193,7 @@ Detailed design decisions:
 
 Technical specifications:
 
-- **[Project Structure](../design/architecture/project-structure-spec.md)** - Codebase organization
+- **[Project Structure](../design/architecture/PROJECT-STRUCTURE-SPEC.md)** - Codebase organization
 - **[Validation Integration](../design/architecture/validation-integration-plan.md)** - Validation implementation
 - **[Success Metrics](../design/architecture/validation-success-metrics.md)** - Quality metrics
 

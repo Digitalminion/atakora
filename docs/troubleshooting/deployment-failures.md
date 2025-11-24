@@ -13,6 +13,7 @@ This guide helps you diagnose and fix Azure deployment failures.
 ### Resource Already Exists
 
 **Error**:
+
 ```
 StorageAccountAlreadyTaken: The storage account name 'stmyapp' is already taken
 ```
@@ -20,13 +21,15 @@ StorageAccountAlreadyTaken: The storage account name 'stmyapp' is already taken
 **Solutions**:
 
 1. **Use unique name**:
+
    ```typescript
    const storage = new StorageAccount(this, 'Storage', {
-     name: 'stuniquename'
+     name: 'stuniquename',
    });
    ```
 
 2. **Delete existing resource**:
+
    ```bash
    az storage account delete \
      --name stmyapp \
@@ -43,6 +46,7 @@ StorageAccountAlreadyTaken: The storage account name 'stmyapp' is already taken
 ### Template Validation Failed
 
 **Error**:
+
 ```
 InvalidTemplate: Deployment template validation failed
 ```
@@ -50,6 +54,7 @@ InvalidTemplate: Deployment template validation failed
 **Debug**:
 
 1. **View error details**:
+
    ```bash
    az deployment group validate \
      --resource-group rg-myapp-prod-eastus \
@@ -58,6 +63,7 @@ InvalidTemplate: Deployment template validation failed
    ```
 
 2. **Check template syntax**:
+
    ```bash
    cat .atakora/arm.out/production/template.json | jq .
    ```
@@ -72,6 +78,7 @@ InvalidTemplate: Deployment template validation failed
 ### Permission Errors
 
 **Error**:
+
 ```
 AuthorizationFailed: You do not have permission to perform action
 'Microsoft.Resources/deployments/write'
@@ -80,11 +87,13 @@ AuthorizationFailed: You do not have permission to perform action
 **Solutions**:
 
 1. **Check current user**:
+
    ```bash
    az account show
    ```
 
 2. **Check role assignments**:
+
    ```bash
    az role assignment list \
      --assignee <user-or-sp> \
@@ -103,6 +112,7 @@ AuthorizationFailed: You do not have permission to perform action
 ### Deployment Timeout
 
 **Error**:
+
 ```
 Deployment timed out after 3600 seconds
 ```
@@ -110,11 +120,13 @@ Deployment timed out after 3600 seconds
 **Solutions**:
 
 1. **Increase timeout**:
+
    ```bash
    atakora deploy --timeout 7200  # 2 hours
    ```
 
 2. **Deploy without waiting**:
+
    ```bash
    atakora deploy --no-wait
    ```
@@ -124,6 +136,7 @@ Deployment timed out after 3600 seconds
 ### Quota Exceeded
 
 **Error**:
+
 ```
 QuotaExceeded: Operation could not be completed as it results in exceeding quota limits
 ```
@@ -131,6 +144,7 @@ QuotaExceeded: Operation could not be completed as it results in exceeding quota
 **Solutions**:
 
 1. **Check quota**:
+
    ```bash
    az vm list-usage --location eastus --output table
    ```
@@ -143,7 +157,7 @@ QuotaExceeded: Operation could not be completed as it results in exceeding quota
    ```typescript
    super(scope, id, {
      environment: 'production',
-     location: 'westus2'  // Try different region
+     location: 'westus2', // Try different region
    });
    ```
 
@@ -224,7 +238,7 @@ atakora deploy
 
 ## See Also
 
-- [Common Issues](./common-issues.md)
+- [Common Issues](./Common-Issues.md)
 - [Deployment Guide](../guides/fundamentals/deployment.md)
 - [`atakora deploy`](../reference/cli/deploy.md)
 

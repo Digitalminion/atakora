@@ -46,6 +46,7 @@ docs/
 ## Reference Examples: Best-in-Class Documentation
 
 ### 1. **AWS CDK Documentation**
+
 - **Link**: https://docs.aws.amazon.com/cdk/v2/guide/home.html
 - **Structure**:
   - Getting Started (quick wins)
@@ -61,6 +62,7 @@ docs/
   - ✅ Consistent navigation sidebar
 
 ### 2. **Stripe API Documentation**
+
 - **Link**: https://docs.stripe.com/
 - **Structure**:
   - Quick Start
@@ -77,6 +79,7 @@ docs/
   - ✅ Version picker
 
 ### 3. **React Documentation (react.dev)**
+
 - **Link**: https://react.dev/
 - **Structure**:
   - Learn React (tutorial-based)
@@ -91,6 +94,7 @@ docs/
   - ✅ Next/Previous navigation
 
 ### 4. **Kubernetes Documentation**
+
 - **Link**: https://kubernetes.io/docs/
 - **Structure**:
   - Getting Started
@@ -106,6 +110,7 @@ docs/
   - ✅ Glossary of terms
 
 ### 5. **Terraform Documentation**
+
 - **Link**: https://developer.hashicorp.com/terraform/docs
 - **Structure**:
   - Intro & Getting Started
@@ -235,10 +240,10 @@ docs/
 │
 └── troubleshooting/             # 🆕 Problem-solving guides
     ├── README.md
-    ├── common-issues.md
-    ├── debugging-synthesis.md
-    ├── deployment-failures.md
-    └── ci-cd-problems.md
+    ├── Common-Issues.md
+    ├── Debugging-Synthesis.md
+    ├── Deployment-Failures.md
+    └── CI-CD-Problems.md
 ```
 
 ---
@@ -261,10 +266,13 @@ next: ../next-page.md
 # Page Title
 
 <!-- Breadcrumb navigation -->
+
 [Home](/) > [Guides](/guides) > [Tutorials](/guides/tutorials) > This Page
 
 <!-- Quick links box -->
+
 > **Quick Links**
+>
 > - [Related Guide 1](./related.md)
 > - [API Reference](/reference/api/core.md)
 > - [Example Project](/examples/simple-web-app)
@@ -278,6 +286,7 @@ next: ../next-page.md
 Continue to: [Next Topic](./next-page.md)
 
 **Related Reading**:
+
 - [Related Topic 1](./related1.md)
 - [Related Topic 2](./related2.md)
 ```
@@ -285,6 +294,7 @@ Continue to: [Next Topic](./next-page.md)
 ### 2. Consistent Formatting Standards
 
 **Code Examples**:
+
 - Always include imports
 - Show complete working examples
 - Use realistic names (not "foo", "bar")
@@ -292,6 +302,7 @@ Continue to: [Next Topic](./next-page.md)
 - Include both TypeScript and JavaScript tabs where applicable
 
 **Example**:
+
 ````markdown
 ```typescript
 // Import core framework
@@ -305,17 +316,17 @@ import { StorageAccounts } from '@atakora/cdk/storage';
 const app = new App();
 const stack = new ResourceGroupStack(app, 'WebApp', {
   resourceGroupName: 'rg-webapp-prod',
-  location: 'eastus2'
+  location: 'eastus2',
 });
 
 // Define infrastructure
 const vnet = new VirtualNetworks(stack, 'VNet', {
   virtualNetworkName: 'vnet-webapp',
-  addressSpace: { addressPrefixes: ['10.0.0.0/16'] }
+  addressSpace: { addressPrefixes: ['10.0.0.0/16'] },
 });
 
 const storage = new StorageAccounts(stack, 'Storage', {
-  accountName: 'stwebappprod'
+  accountName: 'stwebappprod',
 });
 
 // Synthesize ARM templates
@@ -324,7 +335,8 @@ app.synth();
 ````
 
 **Callouts & Admonitions**:
-````markdown
+
+```markdown
 > ✅ **Best Practice**: Always validate templates before deployment
 
 > ⚠️ **Warning**: Government cloud requires different authentication
@@ -334,9 +346,10 @@ app.synth();
 > ⛔ **Important**: This is a breaking change in v2.0.0
 
 > 📝 **Note**: This feature requires CLI version 1.2.0 or higher
-````
+```
 
 **Diagrams**:
+
 - Use Mermaid for simple flowcharts
 - SVG for complex architecture diagrams
 - Screenshots for UI/CLI output
@@ -344,6 +357,7 @@ app.synth();
 ### 3. Search & Index
 
 Create `docs/GLOSSARY.md`:
+
 ```markdown
 # Glossary
 
@@ -361,6 +375,7 @@ Create `docs/GLOSSARY.md`:
 ```
 
 Create `docs/INDEX.md`:
+
 ```markdown
 # Documentation Index
 
@@ -370,6 +385,7 @@ Alphabetical index of all documentation pages with descriptions.
 ### 4. Version Indicators
 
 For features in specific versions:
+
 ```markdown
 > **Available in**: v1.2.0+
 
@@ -383,6 +399,7 @@ For features in specific versions:
 ## Documentation Tasks for Ella
 
 ### Phase 1: Foundation & Structure (Week 1)
+
 **Priority: High**
 
 1. **Create main landing page** (`docs/README.md`)
@@ -405,6 +422,7 @@ For features in specific versions:
    - Build cross-reference "Related Reading" sections
 
 ### Phase 2: Getting Started Experience (Week 2)
+
 **Priority: High**
 
 4. **Write getting-started guide**
@@ -420,6 +438,7 @@ For features in specific versions:
    - Deployment workflow
 
 ### Phase 3: Comprehensive Guides (Weeks 3-4)
+
 **Priority: Medium**
 
 6. **Write end-to-end tutorials**
@@ -441,6 +460,7 @@ For features in specific versions:
    - Custom validator guide
 
 ### Phase 4: Reference Documentation (Weeks 5-6)
+
 **Priority: Medium**
 
 9. **Create detailed CLI reference**
@@ -462,6 +482,7 @@ For features in specific versions:
     - Create ARM template output reference
 
 ### Phase 5: Architecture & Contributing (Week 7)
+
 **Priority: Low**
 
 12. **Consolidate architecture documentation**
@@ -483,6 +504,7 @@ For features in specific versions:
     - CI/CD problems
 
 ### Phase 6: Examples & Polish (Week 8)
+
 **Priority: Low**
 
 15. **Create example projects**

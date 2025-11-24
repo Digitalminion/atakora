@@ -25,11 +25,11 @@ const getUserOperation: IRestOperation = {
         userId: {
           type: 'string',
           format: 'uuid',
-          description: 'User unique identifier'
-        }
+          description: 'User unique identifier',
+        },
       },
-      required: ['userId']
-    }
+      required: ['userId'],
+    },
   },
   queryParameters: {
     schema: {
@@ -37,10 +37,10 @@ const getUserOperation: IRestOperation = {
       properties: {
         includeDeleted: {
           type: 'boolean',
-          default: false
-        }
-      }
-    }
+          default: false,
+        },
+      },
+    },
   },
   responses: {
     200: {
@@ -52,21 +52,21 @@ const getUserOperation: IRestOperation = {
             properties: {
               id: { type: 'string' },
               name: { type: 'string' },
-              email: { type: 'string' }
-            }
-          }
-        }
-      }
+              email: { type: 'string' },
+            },
+          },
+        },
+      },
     },
     404: {
-      description: 'User not found'
-    }
+      description: 'User not found',
+    },
   },
   backend: {
     type: 'azureFunction',
     functionApp: userFunctionApp,
-    functionName: 'GetUser'
-  }
+    functionName: 'GetUser',
+  },
 };
 ```
 
@@ -132,26 +132,27 @@ const getUserOperation: IRestOperation = {
 
 ## Field-by-Field Mapping Table
 
-| IRestOperation Field | ARM Field | Transformation Logic |
-|---------------------|-----------|---------------------|
-| `method` | `properties.method` | Direct copy (GET, POST, etc.) |
-| `path` | `properties.urlTemplate` | Direct copy (must use {param} syntax) |
-| `operationId` | ARM resource name component | Sanitize for ARM naming rules |
-| `summary` | `properties.displayName` | Direct copy, fallback to operationId |
-| `description` | `properties.description` | Direct copy |
-| `pathParameters` | `properties.templateParameters` | See Path Parameters section |
-| `queryParameters` | `properties.request.queryParameters` | See Query Parameters section |
-| `headerParameters` | `properties.request.headers` | See Header Parameters section |
-| `requestBody` | `properties.request.representations` | See Request Body section |
-| `responses` | `properties.responses` | See Response section |
-| `backend` | Separate policy resource | See Backend Mapping section |
-| `policies` | Separate policy resource | See Policy Mapping section |
-| `tags` | Not mapped to ARM | Used for OpenAPI export only |
-| `deprecated` | Not mapped to ARM | Used for OpenAPI export only |
+| IRestOperation Field | ARM Field                            | Transformation Logic                  |
+| -------------------- | ------------------------------------ | ------------------------------------- |
+| `method`             | `properties.method`                  | Direct copy (GET, POST, etc.)         |
+| `path`               | `properties.urlTemplate`             | Direct copy (must use {param} syntax) |
+| `operationId`        | ARM resource name component          | Sanitize for ARM naming rules         |
+| `summary`            | `properties.displayName`             | Direct copy, fallback to operationId  |
+| `description`        | `properties.description`             | Direct copy                           |
+| `pathParameters`     | `properties.templateParameters`      | See Path Parameters section           |
+| `queryParameters`    | `properties.request.queryParameters` | See Query Parameters section          |
+| `headerParameters`   | `properties.request.headers`         | See Header Parameters section         |
+| `requestBody`        | `properties.request.representations` | See Request Body section              |
+| `responses`          | `properties.responses`               | See Response section                  |
+| `backend`            | Separate policy resource             | See Backend Mapping section           |
+| `policies`           | Separate policy resource             | See Policy Mapping section            |
+| `tags`               | Not mapped to ARM                    | Used for OpenAPI export only          |
+| `deprecated`         | Not mapped to ARM                    | Used for OpenAPI export only          |
 
 ## Path Parameters Mapping
 
 ### Input Format
+
 ```typescript
 pathParameters: {
   schema: {
@@ -175,6 +176,7 @@ pathParameters: {
 ```
 
 ### Output Format
+
 ```json
 {
   "templateParameters": [
@@ -198,6 +200,7 @@ pathParameters: {
 ```
 
 ### Mapping Rules
+
 - Extract parameter names from `path` using regex: `/{([^}]+)}/g`
 - Match each path param to `pathParameters.schema.properties[name]`
 - `required` = true for all path parameters (ARM requirement)
@@ -209,6 +212,7 @@ pathParameters: {
 ## Query Parameters Mapping
 
 ### Input Format
+
 ```typescript
 queryParameters: {
   schema: {
@@ -236,6 +240,7 @@ queryParameters: {
 ```
 
 ### Output Format
+
 ```json
 {
   "request": {
@@ -269,6 +274,7 @@ queryParameters: {
 ```
 
 ### Mapping Rules
+
 - Iterate `queryParameters.schema.properties`
 - `required` from `queryParameters.schema.required` array
 - `type` maps from JSON Schema to ARM (string, integer, boolean, array)
@@ -279,6 +285,7 @@ queryParameters: {
 ## Header Parameters Mapping
 
 ### Input Format
+
 ```typescript
 headerParameters: {
   schema: {
@@ -298,6 +305,7 @@ headerParameters: {
 ```
 
 ### Output Format
+
 ```json
 {
   "request": {
@@ -323,6 +331,7 @@ headerParameters: {
 ```
 
 ### Mapping Rules
+
 - Same as query parameters
 - Header names are case-insensitive but preserve casing
 - `required` typically false for headers
@@ -330,6 +339,7 @@ headerParameters: {
 ## Request Body Mapping
 
 ### Input Format
+
 ```typescript
 requestBody: {
   description: 'User creation data',
@@ -364,6 +374,7 @@ requestBody: {
 ```
 
 ### Output Format
+
 ```json
 {
   "request": {
@@ -386,6 +397,7 @@ requestBody: {
 ```
 
 ### Mapping Rules
+
 - Iterate `requestBody.content` keys (content types)
 - Each content type becomes a representation
 - `schemaId`: Reference to registered schema (if using API Management schema registry)
@@ -396,6 +408,7 @@ requestBody: {
 ## Response Mapping
 
 ### Input Format
+
 ```typescript
 responses: {
   200: {
@@ -438,6 +451,7 @@ responses: {
 ```
 
 ### Output Format
+
 ```json
 {
   "responses": [
@@ -484,6 +498,7 @@ responses: {
 ```
 
 ### Mapping Rules
+
 - Iterate response status codes
 - `statusCode`: Numeric HTTP status code
 - `description`: Response description
@@ -496,6 +511,7 @@ responses: {
 ### Azure Function Backend
 
 #### Input
+
 ```typescript
 backend: {
   type: 'azureFunction',
@@ -507,6 +523,7 @@ backend: {
 ```
 
 #### Backend Resource Output
+
 ```json
 {
   "type": "Microsoft.ApiManagement/service/backends",
@@ -528,13 +545,12 @@ backend: {
       "validateCertificateName": true
     }
   },
-  "dependsOn": [
-    "[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"
-  ]
+  "dependsOn": ["[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]"]
 }
 ```
 
 #### Policy Resource Output
+
 ```json
 {
   "type": "Microsoft.ApiManagement/service/apis/operations/policies",
@@ -554,6 +570,7 @@ backend: {
 ### App Service Backend
 
 #### Input
+
 ```typescript
 backend: {
   type: 'appService',
@@ -564,6 +581,7 @@ backend: {
 ```
 
 #### Output
+
 ```json
 {
   "type": "Microsoft.ApiManagement/service/backends",
@@ -589,6 +607,7 @@ backend: {
 ### HTTP Endpoint Backend
 
 #### Input
+
 ```typescript
 backend: {
   type: 'httpEndpoint',
@@ -608,6 +627,7 @@ backend: {
 ```
 
 #### Output
+
 ```json
 {
   "type": "Microsoft.ApiManagement/service/backends",
@@ -647,26 +667,26 @@ backend: {
 
 ### JSON Schema to ARM Type
 
-| JSON Schema | ARM Type | Notes |
-|------------|----------|-------|
-| `string` | `string` | Direct mapping |
-| `number` | `number` | Direct mapping |
-| `integer` | `integer` | Preserve integer distinction |
-| `boolean` | `boolean` | Direct mapping |
-| `array` | `array` | Direct mapping |
-| `object` | `object` | For complex parameters |
-| `null` | Not supported | Use `nullable: true` instead |
+| JSON Schema | ARM Type      | Notes                        |
+| ----------- | ------------- | ---------------------------- |
+| `string`    | `string`      | Direct mapping               |
+| `number`    | `number`      | Direct mapping               |
+| `integer`   | `integer`     | Preserve integer distinction |
+| `boolean`   | `boolean`     | Direct mapping               |
+| `array`     | `array`       | Direct mapping               |
+| `object`    | `object`      | For complex parameters       |
+| `null`      | Not supported | Use `nullable: true` instead |
 
 ### Content Type Mapping
 
-| OpenAPI Content Type | ARM Representation |
-|---------------------|-------------------|
-| `application/json` | `contentType: "application/json"` |
-| `application/xml` | `contentType: "application/xml"` |
+| OpenAPI Content Type                | ARM Representation                                 |
+| ----------------------------------- | -------------------------------------------------- |
+| `application/json`                  | `contentType: "application/json"`                  |
+| `application/xml`                   | `contentType: "application/xml"`                   |
 | `application/x-www-form-urlencoded` | `contentType: "application/x-www-form-urlencoded"` |
-| `multipart/form-data` | `contentType: "multipart/form-data"` |
-| `text/plain` | `contentType: "text/plain"` |
-| `application/octet-stream` | `contentType: "application/octet-stream"` |
+| `multipart/form-data`               | `contentType: "multipart/form-data"`               |
+| `text/plain`                        | `contentType: "text/plain"`                        |
+| `application/octet-stream`          | `contentType: "application/octet-stream"`          |
 
 ## ARM Naming Conventions
 
@@ -689,22 +709,22 @@ backend: {
 
 ```javascript
 // Function App URL
-"[concat('https://', reference(resourceId('Microsoft.Web/sites', parameters('functionAppName'))).defaultHostName, '/api')]"
+"[concat('https://', reference(resourceId('Microsoft.Web/sites', parameters('functionAppName'))).defaultHostName, '/api')]";
 
 // Function Key
-"[listKeys(resourceId('Microsoft.Web/sites/host', parameters('functionAppName'), 'default'), '2021-02-01').functionKeys.default]"
+"[listKeys(resourceId('Microsoft.Web/sites/host', parameters('functionAppName'), 'default'), '2021-02-01').functionKeys.default]";
 
 // Resource ID
-"[resourceId('Microsoft.ApiManagement/service/apis', parameters('apiManagementServiceName'), parameters('apiName'))]"
+"[resourceId('Microsoft.ApiManagement/service/apis', parameters('apiManagementServiceName'), parameters('apiName'))]";
 
 // Conditional
-"[if(parameters('enableCors'), 'true', 'false')]"
+"[if(parameters('enableCors'), 'true', 'false')]";
 
 // Parameter Reference
-"[parameters('parameterName')]"
+"[parameters('parameterName')]";
 
 // Variable Reference
-"[variables('variableName')]"
+"[variables('variableName')]";
 ```
 
 ## Edge Cases
@@ -719,9 +739,9 @@ if (!operation.operationId) {
 
 function sanitizePath(path: string): string {
   return path
-    .replace(/^\//, '')           // Remove leading slash
-    .replace(/\//g, '_')          // Replace slashes with underscores
-    .replace(/[{}]/g, '')         // Remove braces
+    .replace(/^\//, '') // Remove leading slash
+    .replace(/\//g, '_') // Replace slashes with underscores
+    .replace(/[{}]/g, '') // Remove braces
     .replace(/[^a-zA-Z0-9_]/g, '_'); // Replace invalid chars
 }
 ```
@@ -732,7 +752,7 @@ function sanitizePath(path: string): string {
 // Operation must have at least one response for ARM
 if (!operation.responses || Object.keys(operation.responses).length === 0) {
   operation.responses = {
-    200: { description: 'Success' }
+    200: { description: 'Success' },
   };
 }
 ```

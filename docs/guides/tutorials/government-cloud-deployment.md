@@ -14,14 +14,14 @@ Deploy infrastructure to Azure Government Cloud with specialized configurations 
 
 ## Azure Government vs Commercial Cloud
 
-| Feature | Commercial | Government |
-|---------|------------|------------|
-| **Endpoints** | `.azure.com` | `.usgovcloudapi.net` |
-| **Regions** | Worldwide | US-only (Gov regions) |
-| **Compliance** | Standard | FedRAMP High, DoD IL5/IL6 |
-| **Services** | All services | Subset of services |
-| **Data residency** | Global | US-only |
-| **Personnel** | Global | US persons only |
+| Feature            | Commercial   | Government                |
+| ------------------ | ------------ | ------------------------- |
+| **Endpoints**      | `.azure.com` | `.usgovcloudapi.net`      |
+| **Regions**        | Worldwide    | US-only (Gov regions)     |
+| **Compliance**     | Standard     | FedRAMP High, DoD IL5/IL6 |
+| **Services**       | All services | Subset of services        |
+| **Data residency** | Global       | US-only                   |
+| **Personnel**      | Global       | US persons only           |
 
 ## Prerequisites
 
@@ -56,6 +56,7 @@ atakora config set subscription "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 ```
 
 **Government Cloud endpoints**:
+
 ```
 Resource Manager: https://management.usgovcloudapi.net
 Portal: https://portal.azure.us
@@ -76,23 +77,15 @@ import {
   PrivateEndpoints,
   ExpressRouteCircuits,
 } from '@atakora/cdk/network';
-import {
-  StorageAccounts,
-  BlobServices,
-} from '@atakora/cdk/storage';
+import { StorageAccounts, BlobServices } from '@atakora/cdk/storage';
 import {
   Servers as SqlServers,
   Databases as SqlDatabases,
   TransparentDataEncryptions,
   AuditingSettings,
 } from '@atakora/cdk/sql';
-import {
-  Vaults as KeyVaults,
-  Secrets,
-} from '@atakora/cdk/keyvault';
-import {
-  Workspaces as LogAnalyticsWorkspaces,
-} from '@atakora/cdk/insights';
+import { Vaults as KeyVaults, Secrets } from '@atakora/cdk/keyvault';
+import { Workspaces as LogAnalyticsWorkspaces } from '@atakora/cdk/insights';
 
 // Government Cloud configuration
 const config = {
@@ -536,6 +529,7 @@ az policy assignment create \
 Not all Azure services are available in Government Cloud:
 
 **Available**:
+
 - Virtual Machines, Virtual Networks
 - Storage Accounts, SQL Database
 - App Service, Functions
@@ -543,11 +537,13 @@ Not all Azure services are available in Government Cloud:
 - Cosmos DB, Redis Cache
 
 **Limited availability**:
+
 - Azure Kubernetes Service
 - Cognitive Services
 - Azure DevOps
 
 **Not available**:
+
 - Some preview features
 - Certain AI/ML services
 - Some third-party marketplace offerings
@@ -555,6 +551,7 @@ Not all Azure services are available in Government Cloud:
 ### Region Limitations
 
 Government regions:
+
 - US Gov Virginia
 - US Gov Texas
 - US Gov Arizona
@@ -592,6 +589,7 @@ az login
 ### Service Not Available
 
 Check service availability:
+
 ```bash
 # List available services in Government Cloud
 az provider list --query "[].{namespace:namespace, state:registrationState}" --output table

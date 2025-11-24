@@ -38,6 +38,7 @@ Atakora's REST API implementation provides a type-safe, OpenAPI-compliant way to
 ### When to Use REST APIs
 
 REST APIs are ideal when you need:
+
 - **Public-facing APIs** that follow industry standards
 - **Integration with third-party systems** expecting REST/HTTP
 - **Simple CRUD operations** on resources
@@ -91,8 +92,8 @@ const UserSchema = {
     id: { type: 'string', format: 'uuid' },
     name: { type: 'string', minLength: 1, maxLength: 100 },
     email: { type: 'string', format: 'email' },
-    createdAt: { type: 'string', format: 'date-time' }
-  }
+    createdAt: { type: 'string', format: 'date-time' },
+  },
 } as const;
 
 const CreateUserRequestSchema = {
@@ -100,8 +101,8 @@ const CreateUserRequestSchema = {
   required: ['name', 'email'],
   properties: {
     name: { type: 'string', minLength: 1, maxLength: 100 },
-    email: { type: 'string', format: 'email' }
-  }
+    email: { type: 'string', format: 'email' },
+  },
 } as const;
 
 // Create a stack
@@ -123,19 +124,19 @@ class UserApiStack extends Stack {
             userId: {
               type: 'string',
               format: 'uuid',
-              description: 'Unique user identifier'
-            }
-          }
-        }
+              description: 'Unique user identifier',
+            },
+          },
+        },
       })
       .responses<User>({
         200: {
           description: 'User found successfully',
           content: {
             'application/json': {
-              schema: UserSchema
-            }
-          }
+              schema: UserSchema,
+            },
+          },
         },
         404: {
           description: 'User not found',
@@ -147,12 +148,12 @@ class UserApiStack extends Stack {
                   type: { type: 'string' },
                   title: { type: 'string' },
                   status: { type: 'integer' },
-                  detail: { type: 'string' }
-                }
-              }
-            }
-          }
-        }
+                  detail: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
       })
       .build();
 
@@ -166,18 +167,18 @@ class UserApiStack extends Stack {
         description: 'User data for creation',
         content: {
           'application/json': {
-            schema: CreateUserRequestSchema
-          }
-        }
+            schema: CreateUserRequestSchema,
+          },
+        },
       })
       .responses<User>({
         201: {
           description: 'User created successfully',
           content: {
             'application/json': {
-              schema: UserSchema
-            }
-          }
+              schema: UserSchema,
+            },
+          },
         },
         400: {
           description: 'Invalid request body',
@@ -189,12 +190,12 @@ class UserApiStack extends Stack {
                   type: { type: 'string' },
                   title: { type: 'string' },
                   status: { type: 'integer' },
-                  detail: { type: 'string' }
-                }
-              }
-            }
-          }
-        }
+                  detail: { type: 'string' },
+                },
+              },
+            },
+          },
+        },
       })
       .build();
   }
@@ -217,16 +218,16 @@ Every REST operation has three required components:
 import { get } from '@atakora/cdk/api/rest';
 
 const operation = get('/resource/{id}')
-  .operationId('getResource')        // Unique identifier
-  .summary('Get resource by ID')     // Brief description
-  .description('Full description')   // Detailed explanation
+  .operationId('getResource') // Unique identifier
+  .summary('Get resource by ID') // Brief description
+  .description('Full description') // Detailed explanation
   .responses({
     200: {
       description: 'Success',
       content: {
-        'application/json': { schema: ResourceSchema }
-      }
-    }
+        'application/json': { schema: ResourceSchema },
+      },
+    },
   })
   .build();
 ```
@@ -245,15 +246,15 @@ const operation = get('/users/{userId}/orders/{orderId}')
         userId: {
           type: 'string',
           format: 'uuid',
-          description: 'Unique user identifier'
+          description: 'Unique user identifier',
         },
         orderId: {
           type: 'string',
           format: 'uuid',
-          description: 'Unique order identifier'
-        }
-      }
-    }
+          description: 'Unique order identifier',
+        },
+      },
+    },
   })
   // ... rest of operation
   .build();
@@ -279,27 +280,27 @@ const operation = get('/users')
         status: {
           type: 'string',
           enum: ['active', 'inactive'],
-          description: 'Filter by user status'
+          description: 'Filter by user status',
         },
         page: {
           type: 'integer',
           minimum: 1,
           default: 1,
-          description: 'Page number'
+          description: 'Page number',
         },
         pageSize: {
           type: 'integer',
           minimum: 1,
           maximum: 100,
           default: 20,
-          description: 'Items per page'
+          description: 'Items per page',
         },
         sort: {
           type: 'string',
-          description: 'Sort field and direction (e.g., "createdAt:desc")'
-        }
-      }
-    }
+          description: 'Sort field and direction (e.g., "createdAt:desc")',
+        },
+      },
+    },
   })
   .build();
 ```
@@ -327,11 +328,11 @@ const operation = post<CreateProductRequest>('/products')
           properties: {
             name: { type: 'string', minLength: 1 },
             price: { type: 'number', minimum: 0 },
-            category: { type: 'string' }
-          }
-        }
-      }
-    }
+            category: { type: 'string' },
+          },
+        },
+      },
+    },
   })
   .build();
 ```
@@ -346,27 +347,27 @@ const operation = post('/users')
     201: {
       description: 'User created successfully',
       content: {
-        'application/json': { schema: UserSchema }
-      }
+        'application/json': { schema: UserSchema },
+      },
     },
     400: {
       description: 'Invalid request data',
       content: {
-        'application/json': { schema: ErrorSchema }
-      }
+        'application/json': { schema: ErrorSchema },
+      },
     },
     409: {
       description: 'User already exists',
       content: {
-        'application/json': { schema: ErrorSchema }
-      }
+        'application/json': { schema: ErrorSchema },
+      },
     },
     500: {
       description: 'Internal server error',
       content: {
-        'application/json': { schema: ErrorSchema }
-      }
-    }
+        'application/json': { schema: ErrorSchema },
+      },
+    },
   })
   .build();
 ```
@@ -411,8 +412,8 @@ const exporter = new OpenApiExporter(operations, {
   description: 'API for managing users',
   contact: {
     name: 'API Support',
-    email: 'support@example.com'
-  }
+    email: 'support@example.com',
+  },
 });
 
 const openApiSpec = exporter.export('3.0.3');
@@ -454,19 +455,23 @@ import { ApiVersionManager } from '@atakora/cdk/api/rest/advanced';
 const versionManager = new ApiVersionManager({
   strategy: 'path',
   defaultVersion: 'v1',
-  versionFormat: 'prefixed'
+  versionFormat: 'prefixed',
 });
 
 // Define v1 operation
 const getUserV1 = get('/v1/users/{userId}')
   .operationId('getUserV1')
-  .responses<UserV1>({ /* ... */ })
+  .responses<UserV1>({
+    /* ... */
+  })
   .build();
 
 // Define v2 operation with breaking changes
 const getUserV2 = get('/v2/users/{userId}')
   .operationId('getUserV2')
-  .responses<UserV2>({ /* ... */ })
+  .responses<UserV2>({
+    /* ... */
+  })
   .build();
 ```
 
@@ -479,7 +484,7 @@ const versionManager = new ApiVersionManager({
   strategy: 'header',
   headerName: 'Api-Version',
   defaultVersion: '2023-01-01',
-  versionFormat: 'date'
+  versionFormat: 'date',
 });
 
 const operation = get('/users/{userId}')
@@ -490,10 +495,10 @@ const operation = get('/users/{userId}')
         'Api-Version': {
           type: 'string',
           enum: ['2023-01-01', '2023-06-01', '2024-01-01'],
-          description: 'API version date'
-        }
-      }
-    }
+          description: 'API version date',
+        },
+      },
+    },
   })
   .build();
 ```
@@ -507,7 +512,7 @@ const versionManager = new ApiVersionManager({
   strategy: 'queryParameter',
   parameterName: 'api-version',
   defaultVersion: '1.0',
-  versionFormat: 'semver'
+  versionFormat: 'semver',
 });
 
 const operation = get('/users/{userId}')
@@ -518,10 +523,10 @@ const operation = get('/users/{userId}')
         'api-version': {
           type: 'string',
           enum: ['1.0', '1.1', '2.0'],
-          default: '1.0'
-        }
-      }
-    }
+          default: '1.0',
+        },
+      },
+    },
   })
   .build();
 ```
@@ -541,9 +546,9 @@ const deprecationManager = new VersionDeprecationManager({
       deprecatedAt: new Date('2024-01-01'),
       sunsetAt: new Date('2024-06-01'),
       message: 'v1 is deprecated. Please migrate to v2.',
-      migrationGuide: 'https://docs.example.com/migration/v1-to-v2'
-    }
-  ]
+      migrationGuide: 'https://docs.example.com/migration/v1-to-v2',
+    },
+  ],
 });
 
 // Automatically adds Deprecation, Sunset, and Link headers
@@ -571,7 +576,7 @@ const paginationHelper = offsetPagination<User>({
   strategy: 'offset',
   defaultPageSize: 20,
   maxPageSize: 100,
-  includeTotalCount: true
+  includeTotalCount: true,
 });
 
 const operation = get('/users')
@@ -587,12 +592,12 @@ const operation = get('/users')
             properties: {
               id: { type: 'string' },
               name: { type: 'string' },
-              email: { type: 'string' }
-            }
-          })
-        }
-      }
-    }
+              email: { type: 'string' },
+            },
+          }),
+        },
+      },
+    },
   })
   .build();
 
@@ -624,7 +629,7 @@ const paginationHelper = cursorPagination<User>({
   strategy: 'cursor',
   defaultPageSize: 20,
   maxPageSize: 100,
-  cursorEncoding: 'base64'
+  cursorEncoding: 'base64',
 });
 
 const operation = get('/users')
@@ -634,10 +639,10 @@ const operation = get('/users')
       description: 'Cursor-paginated users',
       content: {
         'application/json': {
-          schema: paginationHelper.createResponseSchema(UserSchema)
-        }
-      }
-    }
+          schema: paginationHelper.createResponseSchema(UserSchema),
+        },
+      },
+    },
   })
   .build();
 
@@ -667,7 +672,7 @@ const paginationHelper = pagePagination<User>({
   strategy: 'page',
   defaultPageSize: 20,
   maxPageSize: 100,
-  includeTotalCount: true
+  includeTotalCount: true,
 });
 
 const paginatedOperation = paginationHelper.addToOperation(operation);
@@ -713,7 +718,7 @@ Standard OAuth 2.0 with multiple grant types:
 ```typescript
 const operation = get('/users')
   .security({
-    oauth2: ['users:read', 'users:write']
+    oauth2: ['users:read', 'users:write'],
   })
   .build();
 
@@ -730,13 +735,13 @@ const authConfig = {
             tokenUrl: 'https://auth.example.com/oauth/token',
             scopes: {
               'users:read': 'Read user data',
-              'users:write': 'Modify user data'
-            }
-          }
-        }
-      }
-    }
-  ]
+              'users:write': 'Modify user data',
+            },
+          },
+        },
+      },
+    },
+  ],
 };
 ```
 
@@ -756,10 +761,10 @@ const authManager = new AuthenticationManager({
         tenantId: 'your-tenant-id',
         clientId: 'your-client-id',
         audience: 'api://your-api',
-        instance: 'https://login.microsoftonline.com' // or .us for Gov Cloud
-      }
-    }
-  ]
+        instance: 'https://login.microsoftonline.com', // or .us for Gov Cloud
+      },
+    },
+  ],
 });
 
 const authPolicies = authManager.createAuthenticationPolicies();
@@ -772,7 +777,7 @@ Simple API key in header or query parameter:
 ```typescript
 const operation = get('/users')
   .security({
-    apiKey: []
+    apiKey: [],
   })
   .build();
 
@@ -781,8 +786,8 @@ const apiKeyConfig = {
   type: 'apiKey',
   config: {
     in: 'header',
-    name: 'X-API-Key'
-  }
+    name: 'X-API-Key',
+  },
 };
 ```
 
@@ -797,15 +802,15 @@ const authorizationConfig = {
     {
       type: 'rbac',
       roles: ['admin', 'editor'],
-      requireAll: false // User needs at least one of these roles
-    }
-  ]
+      requireAll: false, // User needs at least one of these roles
+    },
+  ],
 };
 
 const operation = post('/users')
   .security({ oauth2: ['users:write'] })
   .policies({
-    inbound: authManager.createAuthorizationPolicies(authorizationConfig)
+    inbound: authManager.createAuthorizationPolicies(authorizationConfig),
   })
   .build();
 ```
@@ -827,8 +832,8 @@ const cachingHelper = new HttpCachingHelper({
   defaultTtl: 300, // 5 minutes
   varyBy: {
     headers: ['Accept-Language'],
-    queryParameters: ['includeDeleted']
-  }
+    queryParameters: ['includeDeleted'],
+  },
 });
 
 const operation = get('/users/{userId}')
@@ -837,21 +842,21 @@ const operation = get('/users/{userId}')
     200: {
       description: 'User found',
       headers: {
-        'ETag': {
+        ETag: {
           schema: { type: 'string' },
-          description: 'Entity tag for caching'
+          description: 'Entity tag for caching',
         },
         'Cache-Control': {
-          schema: { type: 'string' }
-        }
-      }
+          schema: { type: 'string' },
+        },
+      },
     },
     304: {
-      description: 'Not Modified'
-    }
+      description: 'Not Modified',
+    },
   })
   .policies({
-    outbound: [cachingHelper.createETagPolicy()]
+    outbound: [cachingHelper.createETagPolicy()],
   })
   .build();
 ```
@@ -864,7 +869,7 @@ Use Last-Modified headers:
 const cachingHelper = new HttpCachingHelper({
   enabled: true,
   strategy: 'lastModified',
-  defaultTtl: 600
+  defaultTtl: 600,
 });
 
 const lastModifiedPolicy = cachingHelper.createLastModifiedPolicy();
@@ -884,18 +889,18 @@ const operation = get('/users/{userId}')
       properties: {
         'If-None-Match': {
           type: 'string',
-          description: 'ETag for conditional request'
+          description: 'ETag for conditional request',
         },
         'If-Modified-Since': {
           type: 'string',
           format: 'date-time',
-          description: 'Date for conditional request'
-        }
-      }
-    }
+          description: 'Date for conditional request',
+        },
+      },
+    },
   })
   .policies({
-    inbound: [conditionalPolicy]
+    inbound: [conditionalPolicy],
   })
   .build();
 ```
@@ -920,32 +925,34 @@ const rateLimiter = new RateLimiter({
     {
       scope: 'perApiKey',
       limit: 1000,
-      window: 3600 // 1 hour
-    }
-  ]
+      window: 3600, // 1 hour
+    },
+  ],
 });
 
 const rateLimitPolicy = rateLimiter.createPolicy({
   scope: 'perApiKey',
   limit: 1000,
-  window: 3600
+  window: 3600,
 });
 
 const operation = get('/users')
   .policies({
-    inbound: [rateLimitPolicy]
+    inbound: [rateLimitPolicy],
   })
   .responses({
-    200: { /* ... */ },
+    200: {
+      /* ... */
+    },
     429: {
       description: 'Too many requests',
       headers: {
         'X-RateLimit-Limit': { schema: { type: 'integer' } },
         'X-RateLimit-Remaining': { schema: { type: 'integer' } },
         'X-RateLimit-Reset': { schema: { type: 'integer' } },
-        'Retry-After': { schema: { type: 'integer' } }
-      }
-    }
+        'Retry-After': { schema: { type: 'integer' } },
+      },
+    },
   })
   .build();
 ```
@@ -958,7 +965,7 @@ Different limits for authenticated users:
 const userLimitPolicy = rateLimiter.createPolicy({
   scope: 'perUser',
   limit: 5000,
-  window: 3600
+  window: 3600,
 });
 ```
 
@@ -970,7 +977,7 @@ Protect your entire API:
 const globalLimitPolicy = rateLimiter.createPolicy({
   scope: 'global',
   limit: 100000,
-  window: 3600
+  window: 3600,
 });
 ```
 
@@ -983,47 +990,67 @@ Complete create, read, update, delete pattern:
 ```typescript
 // List resources with pagination
 const list = get('/users')
-  .queryParams<{ page?: number; pageSize?: number }>({ /* ... */ })
-  .responses<PaginatedResponse<User>>({ /* ... */ })
+  .queryParams<{ page?: number; pageSize?: number }>({
+    /* ... */
+  })
+  .responses<PaginatedResponse<User>>({
+    /* ... */
+  })
   .build();
 
 // Get single resource
 const getOne = get('/users/{userId}')
-  .pathParams<{ userId: string }>({ /* ... */ })
-  .responses<User>({ /* ... */ })
+  .pathParams<{ userId: string }>({
+    /* ... */
+  })
+  .responses<User>({
+    /* ... */
+  })
   .build();
 
 // Create resource
 const create = post<CreateUserRequest>('/users')
-  .body<CreateUserRequest>({ /* ... */ })
+  .body<CreateUserRequest>({
+    /* ... */
+  })
   .responses<User>({
-    201: { description: 'Created' }
+    201: { description: 'Created' },
   })
   .build();
 
 // Update resource (full replacement)
 const update = put<UpdateUserRequest>('/users/{userId}')
-  .pathParams<{ userId: string }>({ /* ... */ })
-  .body<UpdateUserRequest>({ /* ... */ })
+  .pathParams<{ userId: string }>({
+    /* ... */
+  })
+  .body<UpdateUserRequest>({
+    /* ... */
+  })
   .responses<User>({
-    200: { description: 'Updated' }
+    200: { description: 'Updated' },
   })
   .build();
 
 // Partial update
 const patch = patch<Partial<User>>('/users/{userId}')
-  .pathParams<{ userId: string }>({ /* ... */ })
-  .body<Partial<User>>({ /* ... */ })
+  .pathParams<{ userId: string }>({
+    /* ... */
+  })
+  .body<Partial<User>>({
+    /* ... */
+  })
   .responses<User>({
-    200: { description: 'Patched' }
+    200: { description: 'Patched' },
   })
   .build();
 
 // Delete resource
 const remove = del('/users/{userId}')
-  .pathParams<{ userId: string }>({ /* ... */ })
+  .pathParams<{ userId: string }>({
+    /* ... */
+  })
   .responses({
-    204: { description: 'Deleted' }
+    204: { description: 'Deleted' },
   })
   .build();
 ```
@@ -1044,20 +1071,20 @@ const uploadFile = post('/files')
           properties: {
             file: {
               type: 'string',
-              format: 'binary'
+              format: 'binary',
             },
             description: {
-              type: 'string'
-            }
-          }
-        }
-      }
-    }
+              type: 'string',
+            },
+          },
+        },
+      },
+    },
   })
   .responses<{ fileId: string; url: string }>({
     201: {
-      description: 'File uploaded successfully'
-    }
+      description: 'File uploaded successfully',
+    },
   })
   .build();
 ```
@@ -1092,17 +1119,17 @@ const batch = post<BatchRequest>('/batch')
                 properties: {
                   method: {
                     type: 'string',
-                    enum: ['POST', 'PUT', 'DELETE']
+                    enum: ['POST', 'PUT', 'DELETE'],
                   },
                   path: { type: 'string' },
-                  body: { }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+                  body: {},
+                },
+              },
+            },
+          },
+        },
+      },
+    },
   })
   .build();
 ```
@@ -1117,18 +1144,20 @@ import { FilteringHelper, SortingHelper } from '@atakora/cdk/api/rest/advanced';
 const filterHelper = new FilteringHelper({
   enabled: true,
   syntax: 'rsql',
-  allowedFields: ['name', 'email', 'status', 'createdAt']
+  allowedFields: ['name', 'email', 'status', 'createdAt'],
 });
 
 const sortHelper = new SortingHelper({
   enabled: true,
   allowedFields: ['name', 'createdAt', 'email'],
-  defaultSort: [{ field: 'createdAt', direction: 'desc' }]
+  defaultSort: [{ field: 'createdAt', direction: 'desc' }],
 });
 
 let searchOperation = get('/users/search')
   .operationId('searchUsers')
-  .responses<PaginatedResponse<User>>({ /* ... */ })
+  .responses<PaginatedResponse<User>>({
+    /* ... */
+  })
   .build();
 
 searchOperation = filterHelper.addFilterParams(searchOperation);
@@ -1164,12 +1193,12 @@ const operation = get('/users/{userId}')
   .summary('Get user by ID')
   .description(
     'Retrieves a single user by their unique identifier. ' +
-    'Returns user profile information including name, email, and account status.'
+      'Returns user profile information including name, email, and account status.'
   )
   .tags('Users', 'Public API')
   .externalDocs({
     url: 'https://docs.example.com/api/users#get-user',
-    description: 'Full API documentation'
+    description: 'Full API documentation',
   })
   .build();
 ```
@@ -1208,11 +1237,11 @@ const operation = post('/orders')
         'Idempotency-Key': {
           type: 'string',
           format: 'uuid',
-          description: 'Unique key to prevent duplicate processing'
-        }
+          description: 'Unique key to prevent duplicate processing',
+        },
       },
-      required: ['Idempotency-Key']
-    }
+      required: ['Idempotency-Key'],
+    },
   })
   .build();
 ```
@@ -1223,8 +1252,7 @@ Even if you only have v1, plan for future versions:
 
 ```typescript
 // Use path versioning
-const operation = get('/v1/users/{userId}')
-  .build();
+const operation = get('/v1/users/{userId}').build();
 
 // Or header versioning with default
 const operation = get('/users/{userId}')
@@ -1233,10 +1261,10 @@ const operation = get('/users/{userId}')
       properties: {
         'Api-Version': {
           type: 'string',
-          default: '2024-01-01'
-        }
-      }
-    }
+          default: '2024-01-01',
+        },
+      },
+    },
   })
   .build();
 ```
@@ -1253,15 +1281,15 @@ const schema = {
     email: {
       type: 'string',
       format: 'email',
-      maxLength: 255
+      maxLength: 255,
     },
     password: {
       type: 'string',
       minLength: 8,
       maxLength: 128,
-      pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$' // Require mixed case and number
-    }
-  }
+      pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$', // Require mixed case and number
+    },
+  },
 };
 ```
 
@@ -1271,10 +1299,10 @@ Return consistent error format:
 
 ```typescript
 interface ProblemDetails {
-  type: string;      // URI reference identifying problem type
-  title: string;     // Human-readable summary
-  status: number;    // HTTP status code
-  detail?: string;   // Human-readable explanation
+  type: string; // URI reference identifying problem type
+  title: string; // Human-readable summary
+  status: number; // HTTP status code
+  detail?: string; // Human-readable explanation
   instance?: string; // URI reference to specific occurrence
 }
 
@@ -1286,8 +1314,8 @@ const ErrorSchema = {
     title: { type: 'string' },
     status: { type: 'integer' },
     detail: { type: 'string' },
-    instance: { type: 'string', format: 'uri' }
-  }
+    instance: { type: 'string', format: 'uri' },
+  },
 };
 ```
 
@@ -1305,9 +1333,9 @@ const operation = options('/users')
         'Access-Control-Allow-Origin': { schema: { type: 'string' } },
         'Access-Control-Allow-Methods': { schema: { type: 'string' } },
         'Access-Control-Allow-Headers': { schema: { type: 'string' } },
-        'Access-Control-Max-Age': { schema: { type: 'integer' } }
-      }
-    }
+        'Access-Control-Max-Age': { schema: { type: 'integer' } },
+      },
+    },
   })
   .build();
 ```
@@ -1330,10 +1358,10 @@ const authConfig = {
         tenantId: 'your-gov-tenant-id',
         clientId: 'your-client-id',
         instance: 'https://login.microsoftonline.us', // Government cloud
-        audience: 'api://your-api'
-      }
-    }
-  ]
+        audience: 'api://your-api',
+      },
+    },
+  ],
 };
 ```
 
@@ -1347,7 +1375,7 @@ const operation = get('/users')
   .backend({
     type: 'azureFunction',
     functionApp: govCloudFunctionApp, // Must be in .us region
-    functionName: 'GetUser'
+    functionName: 'GetUser',
   })
   .build();
 ```
@@ -1364,9 +1392,9 @@ const govRateLimiter = new RateLimiter({
     {
       scope: 'perUser',
       limit: 10000, // Higher limits for government users
-      window: 3600
-    }
-  ]
+      window: 3600,
+    },
+  ],
 });
 ```
 
@@ -1384,8 +1412,8 @@ const observability = new ObservabilityHelper({
     logRequests: true,
     logResponses: true,
     maskSensitiveData: true,
-    sensitiveFields: ['ssn', 'password', 'creditCard']
-  }
+    sensitiveFields: ['ssn', 'password', 'creditCard'],
+  },
 });
 
 const loggingPolicies = observability.createLoggingPolicies();
@@ -1395,7 +1423,7 @@ const loggingPolicies = observability.createLoggingPolicies();
 
 ## Next Steps
 
-- Explore the [REST API Examples](../examples/rest-api-examples.md) for complete working code
+- Explore the [REST API Examples](../examples/REST-API.md) for complete working code
 - Review the [REST API Reference](../reference/api/rest-api-reference.md) for detailed API documentation
 - Check the [Migration Guide](./rest-api-migration.md) for migrating from other platforms
 - See the [Troubleshooting Guide](./rest-api-troubleshooting.md) for common issues and solutions

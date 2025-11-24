@@ -13,7 +13,7 @@ This document evaluates TypeScript libraries for OpenAPI 3.0/3.1 processing in t
 5. **Bundle Size**: Impact on package size
 6. **Government Cloud**: No dependencies on restricted services
 7. **Maintenance**: Active development and community support
-8. **Azure Integration**: Support for Azure-specific extensions (x-ms-*)
+8. **Azure Integration**: Support for Azure-specific extensions (x-ms-\*)
 9. **Performance**: Speed of parsing, validation, and type generation
 
 ## Libraries Evaluated
@@ -25,6 +25,7 @@ This document evaluates TypeScript libraries for OpenAPI 3.0/3.1 processing in t
 **Bundle Size**: ~50KB (tree-shakeable)
 
 #### Strengths
+
 - Excellent TypeScript type generation from OpenAPI specs
 - Zero runtime dependencies - purely build-time
 - Fast type generation (< 1s for medium specs)
@@ -34,17 +35,20 @@ This document evaluates TypeScript libraries for OpenAPI 3.0/3.1 processing in t
 - Active development with strong community
 
 #### Weaknesses
+
 - Type generation only - no runtime validation
-- Limited Azure x-ms-* extension support
+- Limited Azure x-ms-\* extension support
 - No validation of OpenAPI spec structure
 - Requires additional tools for runtime needs
 
 #### Government Cloud Compatibility
+
 - **COMPATIBLE**: Pure build-time tool with no external service dependencies
 - No telemetry or cloud service calls
 - Fully offline capable
 
 #### Use Case Fit
+
 **Primary Use**: Build-time type generation from OpenAPI specs
 
 ```typescript
@@ -66,6 +70,7 @@ type CreateUserRequest = paths['/users']['post']['requestBody']['content']['appl
 **Bundle Size**: ~120KB
 
 #### Strengths
+
 - Comprehensive $ref resolution (local, remote, circular)
 - Supports JSON Schema Draft 4/6/7 and OpenAPI
 - Handles external references via HTTP/HTTPS
@@ -74,11 +79,13 @@ type CreateUserRequest = paths['/users']['post']['requestBody']['content']['appl
 - Can bundle multi-file specs into single document
 
 #### Weaknesses
+
 - Primarily focused on references, not full OpenAPI validation
 - Moderate bundle size
 - Node.js filesystem dependencies may complicate browser use
 
 #### Government Cloud Compatibility
+
 - **COMPATIBLE WITH CAUTION**: Can make HTTP requests to resolve external refs
 - Must configure to prevent unauthorized external requests
 - Filesystem access requires careful security review
@@ -88,9 +95,9 @@ type CreateUserRequest = paths['/users']['post']['requestBody']['content']['appl
 const parser = new $RefParser();
 const spec = await parser.dereference('openapi.yaml', {
   resolve: {
-    http: false,  // Disable in Government cloud
-    https: false  // Disable in Government cloud
-  }
+    http: false, // Disable in Government cloud
+    https: false, // Disable in Government cloud
+  },
 });
 ```
 
@@ -105,6 +112,7 @@ const spec = await parser.dereference('openapi.yaml', {
 **Bundle Size**: ~150KB (with ajv-formats)
 
 #### Strengths
+
 - Industry standard JSON Schema validator
 - Excellent performance (fastest validator)
 - Supports JSON Schema Draft 2019-09 and 2020-12
@@ -114,17 +122,20 @@ const spec = await parser.dereference('openapi.yaml', {
 - Strong error messages with detailed paths
 
 #### Weaknesses
+
 - Not OpenAPI-specific (requires adapter)
 - Complex API for advanced use cases
 - Bundle size increases with format validators
 - Requires separate OpenAPI-to-JSON Schema conversion
 
 #### Government Cloud Compatibility
+
 - **FULLY COMPATIBLE**: No external service dependencies
 - All validation is local
 - No telemetry or network calls
 
 #### Use Case Fit
+
 **Primary Use**: Runtime validation of request/response against schemas
 
 ```typescript
@@ -151,6 +162,7 @@ if (!validate(data)) {
 **Bundle Size**: < 5KB (type definitions only)
 
 #### Strengths
+
 - Official TypeScript types for OpenAPI 3.0 and 3.1
 - Comprehensive coverage of OpenAPI specification
 - Type-only package (zero runtime cost)
@@ -158,14 +170,17 @@ if (!validate(data)) {
 - Includes types for all OpenAPI objects
 
 #### Weaknesses
+
 - Type definitions only - no runtime functionality
-- Does not include Azure x-ms-* extensions
+- Does not include Azure x-ms-\* extensions
 - No validation or parsing capabilities
 
 #### Government Cloud Compatibility
+
 - **FULLY COMPATIBLE**: Type definitions only, no runtime code
 
 #### Use Case Fit
+
 **Primary Use**: Type definitions for OpenAPI objects in our codebase
 
 ```typescript
@@ -187,6 +202,7 @@ function processSpec(spec: OpenAPIV3.Document): void {
 **Bundle Size**: ~150KB
 
 #### Strengths
+
 - Validates and dereferences OpenAPI/Swagger specs
 - Supports OpenAPI 2.0, 3.0, and 3.1
 - Built-in $ref resolution
@@ -194,12 +210,14 @@ function processSpec(spec: OpenAPIV3.Document): void {
 - Can convert Swagger 2.0 to OpenAPI 3.0
 
 #### Weaknesses
+
 - Larger bundle size
 - Overlaps with json-schema-ref-parser
 - Some features unnecessary for our use case
 - Less frequently updated than alternatives
 
 #### Government Cloud Compatibility
+
 - **COMPATIBLE WITH CAUTION**: Can make external HTTP requests
 - Same concerns as json-schema-ref-parser
 - Must configure to disable remote resolution
@@ -215,18 +233,21 @@ function processSpec(spec: OpenAPIV3.Document): void {
 **Bundle Size**: ~80KB
 
 #### Strengths
+
 - Builder pattern for creating OpenAPI specs
 - Type-safe API construction
 - Supports OpenAPI 3.0 and 3.1
 - Includes helper utilities
 
 #### Weaknesses
+
 - Focused on spec creation, not parsing
 - No validation capabilities
 - Limited community adoption
 - Less active development
 
 #### Government Cloud Compatibility
+
 - **FULLY COMPATIBLE**: No external dependencies
 
 **Score**: 6/10
@@ -244,7 +265,7 @@ import openapiTS from 'openapi-typescript';
 
 await openapiTS(spec, {
   output: './generated/types.ts',
-  exportType: true
+  exportType: true,
 });
 
 // 2. Type Definitions: openapi-types
@@ -256,7 +277,7 @@ import type { OpenAPIV3 } from 'openapi-types';
 import $RefParser from '@apidevtools/json-schema-ref-parser';
 
 const bundled = await $RefParser.bundle(spec, {
-  resolve: { http: false, https: false } // Government cloud safety
+  resolve: { http: false, https: false }, // Government cloud safety
 });
 ```
 
@@ -279,7 +300,7 @@ ajv.addKeyword({
   compile: (schema) => (data) => {
     // Validate Azure enum metadata
     return true;
-  }
+  },
 });
 ```
 
@@ -322,9 +343,9 @@ export const GOVERNMENT_CLOUD_CONFIG = {
             throw new Error('Unauthorized file access');
           }
           return file.read();
-        }
-      }
-    }
+        },
+      },
+    },
   },
 
   // Validation - use local schemas only
@@ -332,30 +353,33 @@ export const GOVERNMENT_CLOUD_CONFIG = {
     schemaId: 'auto',
     loadSchema: false, // Don't auto-load external schemas
     strict: true,
-    validateFormats: true
+    validateFormats: true,
   },
 
   // Type generation - offline only
   typeGeneration: {
     remote: false,
-    localOnly: true
-  }
+    localOnly: true,
+  },
 };
 ```
 
 ## Security Considerations
 
 ### 1. Reference Resolution
+
 - **Risk**: External $ref could point to malicious URLs
 - **Mitigation**: Disable HTTP/HTTPS resolution in production
 - **Recommendation**: Pre-bundle all specs before deployment
 
 ### 2. Validation Injection
+
 - **Risk**: Malicious schemas with ReDoS patterns
 - **Mitigation**: Use ajv with strict mode and timeout limits
 - **Recommendation**: Validate schemas at build time
 
 ### 3. Filesystem Access
+
 - **Risk**: Path traversal via file:// refs
 - **Mitigation**: Whitelist allowed directories
 - **Recommendation**: Use absolute paths with validation
@@ -363,18 +387,21 @@ export const GOVERNMENT_CLOUD_CONFIG = {
 ## Performance Benchmarks
 
 ### Type Generation (openapi-typescript)
+
 - Small spec (50 paths): ~200ms
 - Medium spec (200 paths): ~800ms
 - Large spec (1000 paths): ~4s
 - **Conclusion**: Acceptable for build-time generation
 
 ### Reference Resolution (json-schema-ref-parser)
+
 - Small spec (10 refs): ~50ms
 - Medium spec (100 refs): ~300ms
 - Large spec (500 refs): ~2s
 - **Conclusion**: Fast enough for build-time bundling
 
 ### Runtime Validation (ajv)
+
 - Simple schema: ~0.1ms per validation
 - Complex schema (nested objects): ~0.5ms per validation
 - Large array (1000 items): ~50ms
@@ -397,24 +424,28 @@ Development Dependencies (not in bundle):
 ## Migration Path
 
 ### Phase 1: Type Generation
+
 1. Add openapi-typescript to dev dependencies
 2. Create build script for type generation
 3. Generate types from existing OpenAPI specs
 4. Integrate into TypeScript compilation
 
 ### Phase 2: Validation
+
 1. Add ajv and ajv-formats to runtime dependencies
 2. Implement validation layer
 3. Add custom keywords for Azure extensions
 4. Write comprehensive validation tests
 
 ### Phase 3: Reference Resolution
+
 1. Add json-schema-ref-parser to dev dependencies
 2. Create bundling script for multi-file specs
 3. Implement local-only resolution
 4. Test with Government cloud restrictions
 
 ### Phase 4: Integration
+
 1. Integrate with OpenApiImporter (ADR-014)
 2. Connect to RestOperationBuilder
 3. Implement breaking change detection
@@ -423,16 +454,19 @@ Development Dependencies (not in bundle):
 ## Alternatives Considered
 
 ### Rejected: openapi-validator
+
 - **Reason**: Primarily for OpenAPI spec validation, not schema validation
 - **Issue**: Doesn't provide runtime request/response validation
 - **Decision**: Use ajv instead for runtime validation
 
 ### Rejected: swagger-client
+
 - **Reason**: Generates API clients, not types
 - **Issue**: Too opinionated, doesn't fit our architecture
 - **Decision**: Use openapi-typescript for type generation
 
 ### Rejected: typebox
+
 - **Reason**: Runtime schema builder, not OpenAPI parser
 - **Issue**: Would require converting OpenAPI to TypeBox schemas
 - **Decision**: Use ajv with native JSON Schema support

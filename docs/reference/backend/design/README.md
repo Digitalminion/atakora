@@ -7,6 +7,7 @@ This folder documents all the default configurations that Atakora provides out-o
 **Convention over Configuration**: Atakora makes opinionated choices that work well for 90% of applications. You only need to override defaults when your specific requirements differ.
 
 **Environment-Aware**: Defaults automatically adjust based on `NODE_ENV`:
+
 - `development` - Optimized for fast iteration, low cost, verbose logging
 - `staging` - Production-like but with more observability
 - `production` - Optimized for performance, reliability, and security
@@ -51,16 +52,18 @@ This folder documents all the default configurations that Atakora provides out-o
 ### Development Environment
 
 ```typescript
-NODE_ENV=development
+NODE_ENV = development;
 ```
 
 **Optimized for:**
+
 - Fast iteration
 - Minimal cost
 - Verbose logging
 - Easy debugging
 
 **Defaults:**
+
 - Function App: Consumption plan, auto-scale 0-200
 - Cosmos DB: Serverless mode
 - Storage: LRS (local redundancy)
@@ -75,16 +78,18 @@ NODE_ENV=development
 ### Production Environment
 
 ```typescript
-NODE_ENV=production
+NODE_ENV = production;
 ```
 
 **Optimized for:**
+
 - High availability
 - Performance
 - Security
 - Cost efficiency
 
 **Defaults:**
+
 - Function App: Premium EP1, always-on, min 2 instances
 - Cosmos DB: Autoscale mode, multi-region (if configured)
 - Storage: GRS (geo-redundant)
@@ -102,12 +107,14 @@ NODE_ENV=production
 ### When to Override Defaults
 
 **Use defaults when:**
+
 - ✅ Building an MVP or prototype
 - ✅ Standard CRUD application
 - ✅ Typical API usage patterns
 - ✅ Standard security requirements
 
 **Override when:**
+
 - ⚠️ High-traffic application (>10K req/min)
 - ⚠️ Large data volumes (>100GB)
 - ⚠️ Special compliance requirements (HIPAA, PCI-DSS)
@@ -127,59 +134,61 @@ export const backend = defineBackend({
 
 // Override specific parts
 backend.storage.database.attach(
-  storage.cosmosDb()
-    .mode('Autoscale')          // Override: use autoscale instead of serverless
-    .maxThroughput(10000)       // Override: higher throughput
-    .multiRegion(['eastus', 'westus'])  // Override: multi-region
+  storage
+    .cosmosDb()
+    .mode('Autoscale') // Override: use autoscale instead of serverless
+    .maxThroughput(10000) // Override: higher throughput
+    .multiRegion(['eastus', 'westus']) // Override: multi-region
 );
 ```
 
 ## Default Values by Environment
 
-| Configuration | Development | Production |
-|--------------|-------------|------------|
-| **Function App** |
-| Plan | Consumption | Premium EP1 |
-| Always On | false | true |
-| Min Instances | 0 | 2 |
-| Max Instances | 200 | 20 |
-| Timeout | 230s | 600s |
-| **Cosmos DB** |
-| Mode | Serverless | Autoscale |
-| Consistency | Session | Session |
-| Regions | Single | Single (multi if configured) |
-| Backup | Periodic (7 days) | Continuous (30 days) |
-| Max RU/s | N/A | 4000 |
-| **Storage** |
-| Redundancy | LRS | GRS |
-| Access Tier | Hot | Hot |
-| Soft Delete | 7 days | 7 days |
-| Versioning | Disabled | Enabled |
-| **Networking** |
-| CORS Origins | `*` | Explicit list required |
-| TLS Version | 1.2 | 1.2 |
-| Public Access | Enabled | Enabled (unless VNet) |
-| Private Endpoints | No | No (unless VNet) |
-| **Monitoring** |
-| Sampling | 100% | 50% |
-| Retention | 30 days | 90 days |
-| Daily Cap | None | 100 GB |
-| Log Level | Debug | Info |
-| **Security** |
-| MFA Required | No | Yes (if configured) |
-| Token Lifetime | 8 hours | 8 hours |
-| API Key Rotation | 365 days | 90 days |
-| **Performance** |
-| Caching | None | None (unless attached) |
-| CDN | Disabled | Disabled (unless attached) |
-| Compression | Enabled | Enabled |
-| Rate Limiting | Basic (1000/min) | Basic (1000/min) |
+| Configuration     | Development       | Production                   |
+| ----------------- | ----------------- | ---------------------------- |
+| **Function App**  |
+| Plan              | Consumption       | Premium EP1                  |
+| Always On         | false             | true                         |
+| Min Instances     | 0                 | 2                            |
+| Max Instances     | 200               | 20                           |
+| Timeout           | 230s              | 600s                         |
+| **Cosmos DB**     |
+| Mode              | Serverless        | Autoscale                    |
+| Consistency       | Session           | Session                      |
+| Regions           | Single            | Single (multi if configured) |
+| Backup            | Periodic (7 days) | Continuous (30 days)         |
+| Max RU/s          | N/A               | 4000                         |
+| **Storage**       |
+| Redundancy        | LRS               | GRS                          |
+| Access Tier       | Hot               | Hot                          |
+| Soft Delete       | 7 days            | 7 days                       |
+| Versioning        | Disabled          | Enabled                      |
+| **Networking**    |
+| CORS Origins      | `*`               | Explicit list required       |
+| TLS Version       | 1.2               | 1.2                          |
+| Public Access     | Enabled           | Enabled (unless VNet)        |
+| Private Endpoints | No                | No (unless VNet)             |
+| **Monitoring**    |
+| Sampling          | 100%              | 50%                          |
+| Retention         | 30 days           | 90 days                      |
+| Daily Cap         | None              | 100 GB                       |
+| Log Level         | Debug             | Info                         |
+| **Security**      |
+| MFA Required      | No                | Yes (if configured)          |
+| Token Lifetime    | 8 hours           | 8 hours                      |
+| API Key Rotation  | 365 days          | 90 days                      |
+| **Performance**   |
+| Caching           | None              | None (unless attached)       |
+| CDN               | Disabled          | Disabled (unless attached)   |
+| Compression       | Enabled           | Enabled                      |
+| Rate Limiting     | Basic (1000/min)  | Basic (1000/min)             |
 
 ## Cost Implications
 
 ### Using All Defaults
 
 **Development:**
+
 ```
 Function App (Consumption):  $0 (free tier)
 Cosmos DB (Serverless):      $5
@@ -191,6 +200,7 @@ Total:                       ~$10/month
 ```
 
 **Production:**
+
 ```
 Function App (Premium EP1):  $160
 Cosmos DB (Autoscale 4K):    $240
@@ -204,21 +214,25 @@ Total:                       ~$470/month
 ### With Custom Overrides
 
 **Adding Redis Cache:**
+
 ```
 + Redis (Standard C1):       $75/month
 ```
 
 **Adding Application Gateway + WAF:**
+
 ```
 + App Gateway + WAF:         $300/month
 ```
 
 **Adding DDoS Protection:**
+
 ```
 + DDoS Standard:             $2,944/month
 ```
 
 **Adding Multi-Region Cosmos:**
+
 ```
 × Cosmos DB cost by 2:       $480/month (instead of $240)
 ```
@@ -231,10 +245,11 @@ Total:                       ~$470/month
 User: c.model({
   id: a.id(),
   email: a.string().required(),
-})
+});
 ```
 
 **Defaults:**
+
 - ✅ 5 REST endpoints (POST, GET, PUT, DELETE, LIST)
 - ✅ Cosmos DB container with `/id` partition key
 - ✅ Automatic indexing on all fields
@@ -246,6 +261,7 @@ User: c.model({
 - ✅ Application Insights tracking
 
 **Override with:**
+
 - `.partitionKey('organizationId')` - Custom partition key
 - `.indexes(['email'])` - Specific indexes
 - `.authorization(...)` - Access control
@@ -260,10 +276,11 @@ User: c.model({
 DataUploaded: e.model({
   datasetId: a.string().required(),
   fileUrl: a.string().url().required(),
-})
+});
 ```
 
 **Defaults:**
+
 - ✅ 1 REST endpoint (POST /api/events/data-uploaded)
 - ✅ Azure Storage Queue (not Service Bus)
 - ✅ Visibility timeout: 5 minutes
@@ -275,12 +292,13 @@ DataUploaded: e.model({
 - ✅ Application Insights tracking
 
 **Override with:**
+
 ```typescript
 backend.schema.DataUploaded.queue.attach(
   configureEvent('DataUploaded')
-    .ttl(days(7))              // Override TTL
-    .visibility(minutes(2))    // Override visibility
-    .retries(10)               // Override retries
+    .ttl(days(7)) // Override TTL
+    .visibility(minutes(2)) // Override visibility
+    .retries(10) // Override retries
     .withProcessor(async (context, event) => {
       // Custom processing logic
     })
@@ -295,10 +313,11 @@ backend.schema.DataUploaded.queue.attach(
 GenerateReport: f.model({
   input: { datasetId: a.string().required() },
   output: { reportUrl: a.string().url().required() },
-})
+});
 ```
 
 **Defaults:**
+
 - ✅ 1 REST endpoint (POST /api/functions/generate-report)
 - ✅ Authentication required
 - ✅ Input validation
@@ -310,11 +329,12 @@ GenerateReport: f.model({
 - ✅ Application Insights tracking
 
 **Override with:**
+
 ```typescript
 backend.schema.GenerateReport.function.attach(
   configureFunction('GenerateReport')
-    .memory(2048)              // Override memory
-    .timeout(minutes(15))      // Override timeout
+    .memory(2048) // Override memory
+    .timeout(minutes(15)) // Override timeout
     .withHandler(async (context, input) => {
       // Custom implementation
     })
@@ -326,16 +346,19 @@ backend.schema.GenerateReport.function.attach(
 Atakora's defaults are based on:
 
 **Azure Best Practices:**
+
 - Well-Architected Framework
 - Security baselines
 - Cost optimization
 
 **Real-World Usage:**
+
 - Tested in production applications
 - Performance benchmarked
 - Cost-optimized
 
 **Common Patterns:**
+
 - 90th percentile of typical applications
 - Standard security requirements
 - Typical scaling needs
@@ -345,12 +368,14 @@ Atakora's defaults are based on:
 ### Defaults Not Working?
 
 **Check Environment:**
+
 ```bash
 echo $NODE_ENV
 # Should be 'development' or 'production'
 ```
 
 **Verify Configuration:**
+
 ```bash
 npm run atakora inspect
 
@@ -361,6 +386,7 @@ npm run atakora inspect
 ```
 
 **Review Deployment Logs:**
+
 ```bash
 npm run atakora deploy --verbose
 
@@ -373,11 +399,13 @@ npm run atakora deploy --verbose
 ### When Defaults Change
 
 Atakora may update defaults in new versions:
+
 - Breaking changes: Major version bump (v1 → v2)
 - New defaults: Minor version bump (v1.1 → v1.2)
 - Bug fixes: Patch version bump (v1.1.1 → v1.1.2)
 
 **Pinning Defaults:**
+
 ```typescript
 // Lock to specific version
 backend.defaults.version('1.5.0');

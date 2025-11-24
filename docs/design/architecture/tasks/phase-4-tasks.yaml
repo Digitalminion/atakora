@@ -1,0 +1,406 @@
+# Phase 4: Testing and Validation (Week 7)
+# Critical path: Validate complete system with deployment and E2E tests
+
+---
+# ============================================================================
+# DEPLOYMENT VALIDATION (Day 31-33)
+# ============================================================================
+
+- id: GRACE-4-001
+  title: Create deployment script for ARM templates
+  agent: grace
+  effort: 3h
+  dependencies: [DEV-3-015]
+  phase: 4
+  description: |
+    Create deployment script that deploys generated ARM templates to Azure
+    using Azure CLI. Support resource group creation and parameter injection.
+  acceptance_criteria:
+    - Script accepts ARM template path and parameters
+    - Creates resource group if it doesn't exist
+    - Deploys ARM template using az deployment group create
+    - Monitors deployment progress
+    - Reports deployment status and outputs
+    - Handles deployment failures gracefully
+    - Script is executable and documented
+  files:
+    - scripts/deploy-arm.sh (create)
+    - scripts/deploy-arm.ps1 (create)
+    - scripts/README.md (create)
+
+- id: GRACE-4-002
+  title: Create function deployment script
+  agent: grace
+  effort: 3h
+  dependencies: [GRACE-4-001]
+  phase: 4
+  description: |
+    Create deployment script that builds and deploys generated functions to Azure
+    Function App. Handle TypeScript compilation and dependency installation.
+  acceptance_criteria:
+    - Script builds function code (npm install, tsc)
+    - Creates deployment package (.zip)
+    - Deploys to Azure Function App using az functionapp deployment
+    - Verifies function app is running
+    - Reports deployment status
+    - Handles deployment failures gracefully
+    - Script is executable and documented
+  files:
+    - scripts/deploy-functions.sh (create)
+    - scripts/deploy-functions.ps1 (create)
+    - scripts/README.md (modify)
+
+- id: GRACE-4-003
+  title: Create end-to-end deployment script
+  agent: grace
+  effort: 2h
+  dependencies: [GRACE-4-002]
+  phase: 4
+  description: |
+    Create orchestration script that runs complete deployment: ARM templates,
+    functions, and configuration. Support environment-specific deployments.
+  acceptance_criteria:
+    - Script orchestrates full deployment workflow
+    - Deploys ARM templates first
+    - Waits for infrastructure deployment to complete
+    - Extracts outputs from ARM deployment (URLs, keys)
+    - Configures function app settings with outputs
+    - Deploys functions
+    - Validates deployment success
+    - Script is executable and documented
+  files:
+    - scripts/deploy.sh (create)
+    - scripts/deploy.ps1 (create)
+    - scripts/README.md (modify)
+
+- id: TEST-4-001
+  title: Write deployment validation tests
+  agent: charlie
+  effort: 4h
+  dependencies: [GRACE-4-003]
+  phase: 4
+  description: |
+    Write tests that validate deployment scripts work correctly.
+    Use mock Azure CLI commands and validate script behavior.
+  acceptance_criteria:
+    - Tests for ARM deployment script
+    - Tests for function deployment script
+    - Tests for end-to-end deployment script
+    - Validates error handling for deployment failures
+    - Validates parameter passing
+    - Validates output capture and parsing
+    - Can run without actual Azure credentials (mocked)
+  files:
+    - scripts/__tests__/deploy-arm.test.sh (create)
+    - scripts/__tests__/deploy-functions.test.sh (create)
+    - scripts/__tests__/deploy.test.sh (create)
+
+# ============================================================================
+# API TESTING (Day 32-34)
+# ============================================================================
+
+- id: TEST-4-002
+  title: Create API test suite setup
+  agent: charlie
+  effort: 2h
+  dependencies: [DEV-3-015]
+  phase: 4
+  description: |
+    Create test suite infrastructure for API testing including test utilities,
+    fixtures, and configuration management.
+  acceptance_criteria:
+    - Test suite structure created
+    - HTTP client utility for API calls
+    - Test data fixtures for models
+    - Configuration management for API endpoints
+    - Authentication token management
+    - Cleanup utilities for test data
+    - Documentation for test suite usage
+  files:
+    - packages/component/__tests__/api/setup.ts (create)
+    - packages/component/__tests__/api/fixtures.ts (create)
+    - packages/component/__tests__/api/client.ts (create)
+    - packages/component/__tests__/api/README.md (create)
+
+- id: TEST-4-003
+  title: Write CRUD operation API tests
+  agent: charlie
+  effort: 4h
+  dependencies: [TEST-4-002]
+  phase: 4
+  description: |
+    Write comprehensive API tests for all CRUD operations.
+    Test against deployed infrastructure or local mock.
+  acceptance_criteria:
+    - Tests for POST /resources (create)
+    - Tests for GET /resources/{id} (get)
+    - Tests for GET /resources (list with pagination)
+    - Tests for PUT /resources/{id} (update)
+    - Tests for DELETE /resources/{id} (delete)
+    - Tests for validation errors (400 responses)
+    - Tests for not found errors (404 responses)
+    - Tests run against real or mocked API
+  files:
+    - packages/component/__tests__/api/crud-operations.test.ts (create)
+
+- id: TEST-4-004
+  title: Write authentication API tests
+  agent: charlie
+  effort: 3h
+  dependencies: [TEST-4-002]
+  phase: 4
+  description: |
+    Write tests for API authentication including valid tokens, invalid tokens,
+    missing tokens, and expired tokens.
+  acceptance_criteria:
+    - Tests for valid JWT token (200 responses)
+    - Tests for invalid JWT token (401 responses)
+    - Tests for missing Authorization header (401 responses)
+    - Tests for expired JWT token (401 responses)
+    - Tests for API key authentication if configured
+    - Tests verify user context is extracted from token
+    - Tests run against real or mocked API
+  files:
+    - packages/component/__tests__/api/authentication.test.ts (create)
+
+- id: TEST-4-005
+  title: Write API policy tests
+  agent: charlie
+  effort: 3h
+  dependencies: [TEST-4-002]
+  phase: 4
+  description: |
+    Write tests for API Management policies including rate limiting,
+    CORS, and caching behavior.
+  acceptance_criteria:
+    - Tests for rate limiting (429 responses after limit)
+    - Tests for CORS headers in responses
+    - Tests for cache headers in GET responses
+    - Tests for cache behavior (304 Not Modified)
+    - Tests for policy customization
+    - Tests run against real or mocked API
+  files:
+    - packages/component/__tests__/api/policies.test.ts (create)
+
+# ============================================================================
+# PERFORMANCE TESTING (Day 33-35)
+# ============================================================================
+
+- id: TEST-4-006
+  title: Create performance test infrastructure
+  agent: charlie
+  effort: 3h
+  dependencies: [TEST-4-003]
+  phase: 4
+  description: |
+    Create infrastructure for performance testing including load generation,
+    metrics collection, and reporting.
+  acceptance_criteria:
+    - Load generation utility using autocannon or k6
+    - Metrics collection (latency, throughput, errors)
+    - Performance reporting utilities
+    - Configuration for different load profiles
+    - Documentation for running performance tests
+  files:
+    - packages/component/__tests__/performance/setup.ts (create)
+    - packages/component/__tests__/performance/load-generator.ts (create)
+    - packages/component/__tests__/performance/metrics.ts (create)
+    - packages/component/__tests__/performance/README.md (create)
+
+- id: TEST-4-007
+  title: Write CRUD operation performance tests
+  agent: charlie
+  effort: 4h
+  dependencies: [TEST-4-006]
+  phase: 4
+  description: |
+    Write performance tests for CRUD operations measuring latency,
+    throughput, and success rate under load.
+  acceptance_criteria:
+    - Test GET operation latency (p50, p95, p99)
+    - Test LIST operation latency with pagination
+    - Test CREATE operation throughput
+    - Test UPDATE operation latency
+    - Test DELETE operation latency
+    - Test concurrent operations (10, 50, 100 users)
+    - Validate acceptable performance (< 500ms p95 for GET)
+    - Generate performance report
+  files:
+    - packages/component/__tests__/performance/crud-performance.test.ts (create)
+
+- id: TEST-4-008
+  title: Write cold start performance tests
+  agent: charlie
+  effort: 3h
+  dependencies: [TEST-4-006]
+  phase: 4
+  description: |
+    Write tests for Azure Functions cold start performance.
+    Measure first invocation latency after idle period.
+  acceptance_criteria:
+    - Test cold start latency for each function
+    - Test warm invocation latency
+    - Compare cold vs warm latency
+    - Test cold start frequency under varying load
+    - Validate acceptable cold start times (< 3s)
+    - Generate cold start report
+  files:
+    - packages/component/__tests__/performance/cold-start.test.ts (create)
+
+# ============================================================================
+# DOCUMENTATION VALIDATION (Day 34-35)
+# ============================================================================
+
+- id: DOC-4-001
+  title: Validate all code examples in documentation
+  agent: ella
+  effort: 4h
+  dependencies: [DOC-3-004]
+  phase: 4
+  description: |
+    Review all documentation and validate that code examples are correct,
+    complete, and executable. Fix any errors or outdated examples.
+  acceptance_criteria:
+    - All code examples extracted and tested
+    - TypeScript examples compile without errors
+    - Shell script examples are syntactically correct
+    - Examples are up-to-date with current API
+    - Missing examples added where needed
+    - Documentation review report created
+  files:
+    - docs/validation/code-examples-report.md (create)
+    - docs/user-guide/*.md (modify as needed)
+    - docs/design/synthesis/*.md (modify as needed)
+
+- id: DOC-4-002
+  title: Create comprehensive examples repository
+  agent: ella
+  effort: 4h
+  dependencies: [TEST-4-003]
+  phase: 4
+  description: |
+    Create repository of complete, runnable examples demonstrating
+    common use cases and patterns.
+  acceptance_criteria:
+    - Simple CRUD example (User model)
+    - Multi-model example (User, Project, Task)
+    - Authentication example with Entra ID
+    - Custom function example
+    - Multi-environment example (dev, staging, prod)
+    - Each example is self-contained and runnable
+    - README with instructions for each example
+  files:
+    - examples/simple-crud/README.md (create)
+    - examples/simple-crud/index.ts (create)
+    - examples/multi-model/README.md (create)
+    - examples/multi-model/index.ts (create)
+    - examples/with-auth/README.md (create)
+    - examples/with-auth/index.ts (create)
+    - examples/custom-functions/README.md (create)
+    - examples/custom-functions/index.ts (create)
+    - examples/multi-environment/README.md (create)
+    - examples/multi-environment/index.ts (create)
+    - examples/README.md (create)
+
+- id: DOC-4-003
+  title: Create troubleshooting guide
+  agent: ella
+  effort: 3h
+  dependencies: [TEST-4-004, TEST-4-005]
+  phase: 4
+  description: |
+    Create comprehensive troubleshooting guide covering common issues,
+    error messages, and solutions.
+  acceptance_criteria:
+    - Common synthesis errors documented
+    - Deployment errors documented
+    - Runtime errors documented
+    - Authentication errors documented
+    - Performance issues documented
+    - Each error includes cause and solution
+    - Debug mode instructions included
+    - Published to docs/troubleshooting.md
+  files:
+    - docs/troubleshooting.md (create)
+
+# ============================================================================
+# FINAL VALIDATION (Day 35)
+# ============================================================================
+
+- id: TEST-4-009
+  title: Run complete test suite validation
+  agent: charlie
+  effort: 4h
+  dependencies: [TEST-4-008]
+  phase: 4
+  description: |
+    Run complete test suite covering all phases and validate all tests pass.
+    Generate comprehensive test report.
+  acceptance_criteria:
+    - All unit tests pass (100% of Phase 1-3 tests)
+    - All integration tests pass
+    - All E2E tests pass
+    - All API tests pass
+    - All performance tests pass
+    - Test coverage meets requirements (>80%)
+    - Test report generated with metrics
+    - No critical failures or flaky tests
+  files:
+    - reports/test-suite-validation.md (create)
+    - reports/test-coverage-report.md (create)
+
+- id: GRACE-4-004
+  title: Create CI/CD pipeline configuration
+  agent: grace
+  effort: 4h
+  dependencies: [GRACE-4-003, TEST-4-009]
+  phase: 4
+  description: |
+    Create CI/CD pipeline configuration for automated testing and deployment.
+    Support GitHub Actions and Azure DevOps.
+  acceptance_criteria:
+    - GitHub Actions workflow for CI (test, build, lint)
+    - GitHub Actions workflow for CD (deploy to staging/prod)
+    - Azure DevOps pipeline configuration
+    - Environment-specific deployment jobs
+    - Automated testing in CI
+    - Deployment approval gates for prod
+    - Documentation for pipeline setup
+  files:
+    - .github/workflows/ci.yml (create)
+    - .github/workflows/cd.yml (create)
+    - azure-pipelines.yml (create)
+    - docs/ci-cd.md (create)
+
+- id: DOC-4-004
+  title: Create Phase 4 completion summary
+  agent: ella
+  effort: 2h
+  dependencies: [TEST-4-009, GRACE-4-004]
+  phase: 4
+  description: |
+    Create comprehensive summary of Phase 4 completion including
+    test results, deployment validation, and readiness assessment.
+  acceptance_criteria:
+    - Summary of all testing completed
+    - Test metrics and coverage statistics
+    - Deployment validation results
+    - Performance benchmarks
+    - Documentation completeness assessment
+    - Known issues and limitations
+    - Readiness for production use
+    - Published to docs/phase-4-summary.md
+  files:
+    - docs/phase-4-summary.md (create)
+
+# ============================================================================
+# SUMMARY
+# ============================================================================
+# Total tickets: 15
+# grace: 4 tickets (12 hours)
+# charlie: 8 tickets (30 hours)
+# ella: 3 tickets (13 hours)
+#
+# Total estimated effort: 55 hours
+# Parallelization: ~25 hours (with 2-3 agents working simultaneously)
+# Calendar time: 5 working days (1 week)

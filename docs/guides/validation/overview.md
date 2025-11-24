@@ -36,7 +36,7 @@ import { Stack, ResourceGroup, StorageAccount } from '@atakora/lib';
 // 1. TypeScript validates types as you write
 const stack = new Stack('my-stack');
 const rg = new ResourceGroup(stack, 'rg', {
-  location: 'eastus'  // TypeScript ensures this is a valid Location type
+  location: 'eastus', // TypeScript ensures this is a valid Location type
 });
 
 // 2. Construct validates properties on instantiation
@@ -44,16 +44,16 @@ const storage = new StorageAccount(stack, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   sku: {
-    name: 'Standard_LRS'  // Validated against allowed SKU values
+    name: 'Standard_LRS', // Validated against allowed SKU values
   },
   properties: {
-    supportsHttpsTrafficOnly: true,  // Validated as required
-    minimumTlsVersion: 'TLS1_2'     // Validated against allowed versions
-  }
+    supportsHttpsTrafficOnly: true, // Validated as required
+    minimumTlsVersion: 'TLS1_2', // Validated against allowed versions
+  },
 });
 
 // 3. Stack validation runs during synthesis
-const template = stack.synthesize();  // Validates dependencies, circular refs, etc.
+const template = stack.synthesize(); // Validates dependencies, circular refs, etc.
 ```
 
 ## Validation Phases
@@ -67,18 +67,19 @@ TypeScript provides the first layer of validation through its type system:
 const storage = new StorageAccount(stack, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
-  sku: { name: 'Standard_LRS' }
+  sku: { name: 'Standard_LRS' },
 });
 
 // ❌ TypeScript Error: Type mismatch
 const storage = new StorageAccount(stack, 'storage', {
   resourceGroup: rg,
-  location: 123,  // Type 'number' is not assignable to type 'Location'
-  sku: { name: 'Standard_LRS' }
+  location: 123, // Type 'number' is not assignable to type 'Location'
+  sku: { name: 'Standard_LRS' },
 });
 ```
 
 **Benefits**:
+
 - Instant feedback in IDE
 - Catches type errors before running code
 - Autocomplete for valid values
@@ -102,15 +103,13 @@ export class StorageAccount extends Resource {
     if (props.name && !this.isValidStorageAccountName(props.name)) {
       throw new ValidationError(
         `Invalid storage account name: ${props.name}. ` +
-        'Names must be lowercase alphanumeric, 3-24 characters.'
+          'Names must be lowercase alphanumeric, 3-24 characters.'
       );
     }
 
     // Validate combinations
     if (props.kind === 'FileStorage' && props.sku.name !== 'Premium_LRS') {
-      throw new ValidationError(
-        'FileStorage kind requires Premium_LRS SKU'
-      );
+      throw new ValidationError('FileStorage kind requires Premium_LRS SKU');
     }
 
     // Apply defaults and create resource
@@ -124,6 +123,7 @@ export class StorageAccount extends Resource {
 ```
 
 **Benefits**:
+
 - Immediate error feedback
 - Context-specific validation
 - Clear error messages
@@ -186,17 +186,13 @@ export class Stack {
     // Check for circular dependencies
     const cycles = this.detectCycles(graph);
     if (cycles.length > 0) {
-      throw new ValidationError(
-        `Circular dependencies detected: ${cycles.join(', ')}`
-      );
+      throw new ValidationError(`Circular dependencies detected: ${cycles.join(', ')}`);
     }
 
     // Check for missing dependencies
     const missingDeps = this.findMissingDependencies(graph);
     if (missingDeps.length > 0) {
-      throw new ValidationError(
-        `Missing dependencies: ${missingDeps.join(', ')}`
-      );
+      throw new ValidationError(`Missing dependencies: ${missingDeps.join(', ')}`);
     }
   }
 
@@ -208,7 +204,7 @@ export class Stack {
       if (names.has(key)) {
         throw new ValidationError(
           `Duplicate resource name: ${resource.type} '${resource.name}' ` +
-          `already defined at ${names.get(key)}`
+            `already defined at ${names.get(key)}`
         );
       }
       names.set(key, resource.location);
@@ -240,7 +236,7 @@ export class TemplateValidator {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -250,7 +246,7 @@ export class TemplateValidator {
     const validate = ajv.compile(armTemplateSchema);
 
     if (!validate(template)) {
-      return validate.errors?.map(err => err.message) || [];
+      return validate.errors?.map((err) => err.message) || [];
     }
 
     return [];
@@ -258,7 +254,7 @@ export class TemplateValidator {
 
   private validateReferences(template: Template): string[] {
     const errors: string[] = [];
-    const resourceIds = new Set(template.resources.map(r => r.id));
+    const resourceIds = new Set(template.resources.map((r) => r.id));
 
     for (const resource of template.resources) {
       // Find all resourceId() references
@@ -266,9 +262,7 @@ export class TemplateValidator {
 
       for (const ref of refs) {
         if (!resourceIds.has(ref)) {
-          errors.push(
-            `Resource ${resource.name} references non-existent resource: ${ref}`
-          );
+          errors.push(`Resource ${resource.name} references non-existent resource: ${ref}`);
         }
       }
     }
@@ -371,19 +365,19 @@ export const enforceRequiredTags: ValidationRule = {
   severity: 'error',
   validate: (resource: Resource) => {
     const requiredTags = ['environment', 'owner', 'costCenter', 'project'];
-    const missingTags = requiredTags.filter(tag => !resource.tags?.[tag]);
+    const missingTags = requiredTags.filter((tag) => !resource.tags?.[tag]);
 
     if (missingTags.length > 0) {
       return {
         isValid: false,
         message: `Missing required tags: ${missingTags.join(', ')}`,
         resource: resource.id,
-        suggestion: `Add tags: ${missingTags.map(t => `${t}: "value"`).join(', ')}`
+        suggestion: `Add tags: ${missingTags.map((t) => `${t}: "value"`).join(', ')}`,
       };
     }
 
     return { isValid: true };
-  }
+  },
 };
 
 // Enforce naming convention
@@ -391,19 +385,19 @@ export const enforceNamingConvention: ValidationRule = {
   name: 'enforce-naming-convention',
   severity: 'warning',
   validate: (resource: Resource) => {
-    const pattern = /^[a-z]+-[a-z]+-[a-z]+$/;  // e.g., "webapp-prod-001"
+    const pattern = /^[a-z]+-[a-z]+-[a-z]+$/; // e.g., "webapp-prod-001"
 
     if (!pattern.test(resource.name)) {
       return {
         isValid: false,
         message: `Resource name '${resource.name}' doesn't follow naming convention`,
         resource: resource.id,
-        suggestion: `Use pattern: <resource-type>-<environment>-<identifier>`
+        suggestion: `Use pattern: <resource-type>-<environment>-<identifier>`,
       };
     }
 
     return { isValid: true };
-  }
+  },
 };
 
 // Register custom rules
@@ -441,7 +435,7 @@ export const validateProductionResources: ValidationRule = {
         return {
           isValid: false,
           message: 'Production web apps must have AlwaysOn enabled',
-          resource: resource.id
+          resource: resource.id,
         };
       }
 
@@ -450,13 +444,13 @@ export const validateProductionResources: ValidationRule = {
           isValid: false,
           message: 'Production storage should use Premium SKUs for better performance',
           resource: resource.id,
-          severity: 'warning'
+          severity: 'warning',
         };
       }
     }
 
     return { isValid: true };
-  }
+  },
 };
 ```
 
@@ -542,17 +536,13 @@ TypeScript types guide validation:
 
 ```typescript
 // Define strict types
-export type StorageAccountSku =
-  | 'Standard_LRS'
-  | 'Standard_GRS'
-  | 'Standard_RAGRS'
-  | 'Premium_LRS';
+export type StorageAccountSku = 'Standard_LRS' | 'Standard_GRS' | 'Standard_RAGRS' | 'Premium_LRS';
 
 export interface StorageAccountProps {
   resourceGroup: ResourceGroup;
   location: Location;
   sku: {
-    name: StorageAccountSku;  // Only valid SKUs accepted
+    name: StorageAccountSku; // Only valid SKUs accepted
   };
   kind?: 'Storage' | 'StorageV2' | 'BlobStorage' | 'FileStorage';
   properties?: {
@@ -566,8 +556,8 @@ const storage = new StorageAccount(stack, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   sku: {
-    name: 'Invalid_SKU'  // ❌ TypeScript error before runtime
-  }
+    name: 'Invalid_SKU', // ❌ TypeScript error before runtime
+  },
 });
 ```
 
@@ -616,15 +606,15 @@ For large projects:
 // 1. Skip validation in development (not recommended)
 const stack = new Stack('my-stack', {
   validation: {
-    enabled: process.env.NODE_ENV === 'production'
-  }
+    enabled: process.env.NODE_ENV === 'production',
+  },
 });
 
 // 2. Selective validation
 const stack = new Stack('my-stack', {
   validation: {
-    rules: ['critical-only']  // Only run critical validations
-  }
+    rules: ['critical-only'], // Only run critical validations
+  },
 });
 
 // 3. Parallel validation (automatic in Atakora)
@@ -641,7 +631,7 @@ const stack = new Stack('my-stack', {
 
 - [Core Concepts](../core-concepts/README.md) - Understanding stacks and constructs
 - [CLI Reference](../../reference/cli/README.md) - Validation command options
-- [Troubleshooting](../../troubleshooting/common-issues.md) - Solving validation problems
+- [Troubleshooting](../../troubleshooting/Common-Issues.md) - Solving validation problems
 
 ---
 

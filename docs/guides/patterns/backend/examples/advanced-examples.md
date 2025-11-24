@@ -32,13 +32,13 @@ import {
   type IResourceRequirement,
   type ProviderContext,
   type ValidationResult,
-  BaseProvider
+  BaseProvider,
 } from '@atakora/component/backend';
 import { Construct } from '@atakora/cdk';
 import {
   ServiceBusNamespace,
   ServiceBusQueue,
-  ServiceBusTopic
+  ServiceBusTopic,
 } from '@cdktf/provider-azurerm/lib/servicebus';
 
 export interface ServiceBusConfig {
@@ -72,7 +72,7 @@ export class ServiceBusProvider extends BaseProvider implements IResourceProvide
       resourceGroupName: scope.node.tryGetContext('resourceGroupName'),
       location: context.location,
       sku: config.sku || 'Standard',
-      tags: context.tags
+      tags: context.tags,
     });
 
     // Create queues
@@ -80,7 +80,7 @@ export class ServiceBusProvider extends BaseProvider implements IResourceProvide
       new ServiceBusQueue(scope, `${requirement.requirementKey}-queue-${index}`, {
         name: queue.name,
         namespaceId: namespace.id,
-        maxSizeInMegabytes: queue.maxSize || 1024
+        maxSizeInMegabytes: queue.maxSize || 1024,
       });
     });
 
@@ -89,16 +89,14 @@ export class ServiceBusProvider extends BaseProvider implements IResourceProvide
       new ServiceBusTopic(scope, `${requirement.requirementKey}-topic-${index}`, {
         name: topic.name,
         namespaceId: namespace.id,
-        maxSizeInMegabytes: topic.maxSize || 1024
+        maxSizeInMegabytes: topic.maxSize || 1024,
       });
     });
 
     return namespace;
   }
 
-  mergeRequirements(
-    requirements: ReadonlyArray<IResourceRequirement>
-  ): IResourceRequirement {
+  mergeRequirements(requirements: ReadonlyArray<IResourceRequirement>): IResourceRequirement {
     // Merge multiple Service Bus requirements
     const allQueues: Array<{ name: string; maxSize?: number }> = [];
     const allTopics: Array<{ name: string; maxSize?: number }> = [];
@@ -126,22 +124,18 @@ export class ServiceBusProvider extends BaseProvider implements IResourceProvide
     }
 
     // Deduplicate queues and topics by name
-    const uniqueQueues = Array.from(
-      new Map(allQueues.map(q => [q.name, q])).values()
-    );
-    const uniqueTopics = Array.from(
-      new Map(allTopics.map(t => [t.name, t])).values()
-    );
+    const uniqueQueues = Array.from(new Map(allQueues.map((q) => [q.name, q])).values());
+    const uniqueTopics = Array.from(new Map(allTopics.map((t) => [t.name, t])).values());
 
     return {
       resourceType: 'servicebus',
       requirementKey: 'shared-servicebus',
-      priority: Math.max(...requirements.map(r => r.priority || 10)),
+      priority: Math.max(...requirements.map((r) => r.priority || 10)),
       config: {
         sku: highestSku,
         queues: uniqueQueues,
-        topics: uniqueTopics
-      }
+        topics: uniqueTopics,
+      },
     };
   }
 
@@ -162,13 +156,11 @@ export class ServiceBusProvider extends BaseProvider implements IResourceProvide
 
     // Validate naming
     const allNames = [
-      ...(config.queues?.map(q => q.name) || []),
-      ...(config.topics?.map(t => t.name) || [])
+      ...(config.queues?.map((q) => q.name) || []),
+      ...(config.topics?.map((t) => t.name) || []),
     ];
 
-    const duplicates = allNames.filter((name, index) =>
-      allNames.indexOf(name) !== index
-    );
+    const duplicates = allNames.filter((name, index) => allNames.indexOf(name) !== index);
 
     if (duplicates.length > 0) {
       errors.push(`Duplicate queue/topic names: ${duplicates.join(', ')}`);
@@ -177,7 +169,7 @@ export class ServiceBusProvider extends BaseProvider implements IResourceProvide
     return {
       valid: errors.length === 0,
       errors: errors.length > 0 ? errors : undefined,
-      warnings: warnings.length > 0 ? warnings : undefined
+      warnings: warnings.length > 0 ? warnings : undefined,
     };
   }
 }
@@ -204,48 +196,51 @@ class EventDrivenComponent {
           componentId,
           componentType: 'EventDrivenComponent',
           config: componentConfig,
-          getRequirements: () => [{
-            resourceType: 'servicebus',
-            requirementKey: `${componentId}-servicebus`,
-            priority: 20,
-            config: {
-              sku: 'Standard',
-              queues: [
-                { name: 'orders-queue', maxSize: 2048 },
-                { name: 'notifications-queue', maxSize: 1024 }
-              ],
-              topics: [
-                { name: 'events-topic', maxSize: 2048 }
-              ]
-            }
-          }],
+          getRequirements: () => [
+            {
+              resourceType: 'servicebus',
+              requirementKey: `${componentId}-servicebus`,
+              priority: 20,
+              config: {
+                sku: 'Standard',
+                queues: [
+                  { name: 'orders-queue', maxSize: 2048 },
+                  { name: 'notifications-queue', maxSize: 1024 },
+                ],
+                topics: [{ name: 'events-topic', maxSize: 2048 }],
+              },
+            },
+          ],
           initialize: (resources, scope) => {
             // Initialize with Service Bus
           },
           validateResources: () => ({ valid: true }),
-          getOutputs: () => ({})
+          getOutputs: () => ({}),
         };
-      }
+      },
     };
   }
 }
 
-const backend = defineBackend({
-  orderProcessor: EventDrivenComponent.define('OrderProcessor', {}),
-  notificationService: EventDrivenComponent.define('NotificationService', {})
-}, {
-  environment: 'production',
-  location: 'eastus',
-  // Register custom provider
-  providers: [
-    new ServiceBusProvider(),
-    // Default providers still included
-  ]
-});
+const backend = defineBackend(
+  {
+    orderProcessor: EventDrivenComponent.define('OrderProcessor', {}),
+    notificationService: EventDrivenComponent.define('NotificationService', {}),
+  },
+  {
+    environment: 'production',
+    location: 'eastus',
+    // Register custom provider
+    providers: [
+      new ServiceBusProvider(),
+      // Default providers still included
+    ],
+  }
+);
 
 const stack = new ResourceGroupStack(app, 'EventDrivenStack', {
   resourceGroupName: 'rg-eventdriven-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 backend.addToStack(stack);
@@ -285,54 +280,57 @@ const app = new App();
 const regions = [
   { name: 'eastus', displayName: 'US East' },
   { name: 'westeurope', displayName: 'West Europe' },
-  { name: 'southeastasia', displayName: 'Southeast Asia' }
+  { name: 'southeastasia', displayName: 'Southeast Asia' },
 ];
 
 // Create backend for each region
-const backends = regions.map(region => {
-  const backend = defineBackend({
-    // API components
-    userApi: CrudApi.define('UserApi', {
-      entityName: 'User',
-      schema: {
-        id: 'string',
-        email: 'string',
-        name: 'string',
-        region: 'string'
-      },
-      partitionKey: '/region' // Partition by region for geo-distribution
-    }),
+const backends = regions.map((region) => {
+  const backend = defineBackend(
+    {
+      // API components
+      userApi: CrudApi.define('UserApi', {
+        entityName: 'User',
+        schema: {
+          id: 'string',
+          email: 'string',
+          name: 'string',
+          region: 'string',
+        },
+        partitionKey: '/region', // Partition by region for geo-distribution
+      }),
 
-    productApi: CrudApi.define('ProductApi', {
-      entityName: 'Product',
-      schema: {
-        id: 'string',
-        name: 'string',
-        price: 'number',
-        region: 'string'
-      },
-      partitionKey: '/region'
-    })
-  }, {
-    environment: 'production',
-    location: region.name,
-    monitoring: {
-      enabled: true,
-      retentionDays: 90,
-      workspaceName: `myapp-workspace-${region.name}`
+      productApi: CrudApi.define('ProductApi', {
+        entityName: 'Product',
+        schema: {
+          id: 'string',
+          name: 'string',
+          price: 'number',
+          region: 'string',
+        },
+        partitionKey: '/region',
+      }),
     },
-    tags: {
-      region: region.name,
-      regionDisplay: region.displayName,
-      multiRegion: 'true',
-      project: 'global-app'
+    {
+      environment: 'production',
+      location: region.name,
+      monitoring: {
+        enabled: true,
+        retentionDays: 90,
+        workspaceName: `myapp-workspace-${region.name}`,
+      },
+      tags: {
+        region: region.name,
+        regionDisplay: region.displayName,
+        multiRegion: 'true',
+        project: 'global-app',
+      },
     }
-  });
+  );
 
   // Create regional stack
   const stack = new ResourceGroupStack(app, `GlobalStack-${region.name}`, {
     resourceGroupName: `rg-global-${region.name}`,
-    location: region.name
+    location: region.name,
   });
 
   backend.addToStack(stack);
@@ -342,37 +340,40 @@ const backends = regions.map(region => {
     backend,
     endpoints: {
       userApi: backend.components.userApi.apiEndpoint,
-      productApi: backend.components.productApi.apiEndpoint
-    }
+      productApi: backend.components.productApi.apiEndpoint,
+    },
   };
 });
 
 // Create global CDN frontend that routes to regional backends
-const globalFrontend = defineBackend({
-  website: StaticSiteWithCdn.define('GlobalWebsite', {
-    indexDocument: 'index.html',
-    enableSpaMode: true,
-    customDomain: 'app.example.com',
-    dnsZoneName: 'example.com',
-    // CDN configuration for global distribution
-    enableCompression: true,
-    cacheMaxAge: 3600,
-    cors: {
-      allowedOrigins: ['*']
-    }
-  })
-}, {
-  environment: 'production',
-  location: 'eastus', // Primary region for frontend
-  tags: {
-    tier: 'frontend',
-    multiRegion: 'true'
+const globalFrontend = defineBackend(
+  {
+    website: StaticSiteWithCdn.define('GlobalWebsite', {
+      indexDocument: 'index.html',
+      enableSpaMode: true,
+      customDomain: 'app.example.com',
+      dnsZoneName: 'example.com',
+      // CDN configuration for global distribution
+      enableCompression: true,
+      cacheMaxAge: 3600,
+      cors: {
+        allowedOrigins: ['*'],
+      },
+    }),
+  },
+  {
+    environment: 'production',
+    location: 'eastus', // Primary region for frontend
+    tags: {
+      tier: 'frontend',
+      multiRegion: 'true',
+    },
   }
-});
+);
 
 const frontendStack = new ResourceGroupStack(app, 'GlobalFrontendStack', {
   resourceGroupName: 'rg-global-frontend',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 globalFrontend.addToStack(frontendStack);
@@ -391,9 +392,9 @@ console.log('\nGlobal Frontend:', globalFrontend.components.website.cdnEndpoint)
 const routingConfig = {
   regions: backends.map(({ region, endpoints }) => ({
     region,
-    endpoints
+    endpoints,
   })),
-  routingStrategy: 'geo-proximity' // Route to nearest region
+  routingStrategy: 'geo-proximity', // Route to nearest region
 };
 
 console.log('\nRouting Configuration:', JSON.stringify(routingConfig, null, 2));
@@ -450,7 +451,7 @@ import {
   VirtualNetwork,
   Subnet,
   NetworkSecurityGroup,
-  NetworkSecurityRule
+  NetworkSecurityRule,
 } from '@cdktf/provider-azurerm/lib/network';
 
 const app = new App();
@@ -458,7 +459,7 @@ const app = new App();
 // Create network infrastructure first
 const stack = new ResourceGroupStack(app, 'SecureStack', {
   resourceGroupName: 'rg-secure-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 // Create VNet
@@ -466,7 +467,7 @@ const vnet = new VirtualNetwork(stack, 'vnet', {
   name: 'vnet-secure-prod',
   resourceGroupName: 'rg-secure-prod',
   location: 'eastus',
-  addressSpace: ['10.0.0.0/16']
+  addressSpace: ['10.0.0.0/16'],
 });
 
 // Create subnet for backend services
@@ -475,18 +476,16 @@ const backendSubnet = new Subnet(stack, 'backend-subnet', {
   resourceGroupName: 'rg-secure-prod',
   virtualNetworkName: vnet.name,
   addressPrefixes: ['10.0.1.0/24'],
-  serviceEndpoints: [
-    'Microsoft.AzureCosmosDB',
-    'Microsoft.Storage',
-    'Microsoft.Web'
+  serviceEndpoints: ['Microsoft.AzureCosmosDB', 'Microsoft.Storage', 'Microsoft.Web'],
+  delegation: [
+    {
+      name: 'app-service-delegation',
+      serviceDelegation: {
+        name: 'Microsoft.Web/serverFarms',
+        actions: ['Microsoft.Network/virtualNetworks/subnets/action'],
+      },
+    },
   ],
-  delegation: [{
-    name: 'app-service-delegation',
-    serviceDelegation: {
-      name: 'Microsoft.Web/serverFarms',
-      actions: ['Microsoft.Network/virtualNetworks/subnets/action']
-    }
-  }]
 });
 
 // Create private endpoint subnet
@@ -495,14 +494,14 @@ const privateEndpointSubnet = new Subnet(stack, 'private-endpoint-subnet', {
   resourceGroupName: 'rg-secure-prod',
   virtualNetworkName: vnet.name,
   addressPrefixes: ['10.0.2.0/24'],
-  privateEndpointNetworkPoliciesEnabled: false
+  privateEndpointNetworkPoliciesEnabled: false,
 });
 
 // Create NSG with strict rules
 const nsg = new NetworkSecurityGroup(stack, 'backend-nsg', {
   name: 'nsg-backend-prod',
   resourceGroupName: 'rg-secure-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 // Allow only internal traffic
@@ -517,7 +516,7 @@ new NetworkSecurityRule(stack, 'allow-internal', {
   sourcePortRange: '*',
   destinationPortRange: '443',
   sourceAddressPrefix: 'VirtualNetwork',
-  destinationAddressPrefix: 'VirtualNetwork'
+  destinationAddressPrefix: 'VirtualNetwork',
 });
 
 new NetworkSecurityRule(stack, 'deny-internet', {
@@ -531,63 +530,62 @@ new NetworkSecurityRule(stack, 'deny-internet', {
   sourcePortRange: '*',
   destinationPortRange: '*',
   sourceAddressPrefix: 'Internet',
-  destinationAddressPrefix: '*'
+  destinationAddressPrefix: '*',
 });
 
 // Create backend with network isolation
-const backend = defineBackend({
-  userApi: CrudApi.define('UserApi', {
-    entityName: 'User',
-    schema: {
-      id: 'string',
-      email: 'string',
-      name: 'string',
-      sensitiveData: 'string'
-    },
-    partitionKey: '/id'
-  }),
+const backend = defineBackend(
+  {
+    userApi: CrudApi.define('UserApi', {
+      entityName: 'User',
+      schema: {
+        id: 'string',
+        email: 'string',
+        name: 'string',
+        sensitiveData: 'string',
+      },
+      partitionKey: '/id',
+    }),
 
-  auditApi: CrudApi.define('AuditApi', {
-    entityName: 'AuditLog',
-    schema: {
-      id: 'string',
-      action: 'string',
-      userId: 'string',
-      timestamp: 'timestamp',
-      ipAddress: 'string'
-    },
-    partitionKey: '/userId'
-  })
-}, {
-  environment: 'production',
-  location: 'eastus',
-
-  // Full network isolation
-  networking: {
-    mode: 'isolated',
-    vnetName: vnet.name,
-    subnetName: backendSubnet.name,
-    privateEndpoints: true,
-    serviceTags: [
-      'AzureCosmosDB',
-      'Storage',
-      'AzureFunctions'
-    ]
+    auditApi: CrudApi.define('AuditApi', {
+      entityName: 'AuditLog',
+      schema: {
+        id: 'string',
+        action: 'string',
+        userId: 'string',
+        timestamp: 'timestamp',
+        ipAddress: 'string',
+      },
+      partitionKey: '/userId',
+    }),
   },
+  {
+    environment: 'production',
+    location: 'eastus',
 
-  // Monitoring (still works with network isolation)
-  monitoring: {
-    enabled: true,
-    retentionDays: 180 // Longer retention for audit logs
-  },
+    // Full network isolation
+    networking: {
+      mode: 'isolated',
+      vnetName: vnet.name,
+      subnetName: backendSubnet.name,
+      privateEndpoints: true,
+      serviceTags: ['AzureCosmosDB', 'Storage', 'AzureFunctions'],
+    },
 
-  tags: {
-    security: 'high',
-    compliance: 'pci-dss',
-    dataClassification: 'confidential',
-    networkIsolation: 'full'
+    // Monitoring (still works with network isolation)
+    monitoring: {
+      enabled: true,
+      retentionDays: 180, // Longer retention for audit logs
+    },
+
+    tags: {
+      security: 'high',
+      compliance: 'pci-dss',
+      dataClassification: 'confidential',
+      networkIsolation: 'full',
+    },
   }
-});
+);
 
 backend.addToStack(stack);
 
@@ -648,22 +646,22 @@ const config = {
     userManagement: true,
     productCatalog: true,
     orderProcessing: true,
-    analytics: true
+    analytics: true,
   },
   monitoring: {
     enabled: true,
-    retentionDays: 90
+    retentionDays: 90,
   },
   networking: {
     isolated: true,
-    vnetName: 'myapp-vnet'
-  }
+    vnetName: 'myapp-vnet',
+  },
 };
 
 // Start with builder
 let backendBuilder = defineBackend({
   environment: config.environment,
-  location: 'eastus'
+  location: 'eastus',
 });
 
 // Conditionally add components based on config
@@ -672,7 +670,7 @@ if (config.features.userManagement) {
     CrudApi.define('UserApi', {
       entityName: 'User',
       schema: { id: 'string', name: 'string', email: 'string' },
-      partitionKey: '/id'
+      partitionKey: '/id',
     })
   );
 }
@@ -682,7 +680,7 @@ if (config.features.productCatalog) {
     CrudApi.define('ProductApi', {
       entityName: 'Product',
       schema: { id: 'string', name: 'string', price: 'number' },
-      partitionKey: '/id'
+      partitionKey: '/id',
     })
   );
 }
@@ -693,7 +691,7 @@ if (config.features.orderProcessing) {
       CrudApi.define('OrderApi', {
         entityName: 'Order',
         schema: { id: 'string', userId: 'string', total: 'number' },
-        partitionKey: '/userId'
+        partitionKey: '/userId',
       })
     )
     .addComponent(
@@ -703,9 +701,9 @@ if (config.features.orderProcessing) {
         functions: {
           'process-order': {
             trigger: 'queue',
-            queueName: 'orders'
-          }
-        }
+            queueName: 'orders',
+          },
+        },
       })
     );
 }
@@ -718,9 +716,9 @@ if (config.features.analytics) {
       functions: {
         'aggregate-metrics': {
           trigger: 'timer',
-          schedule: '0 0 * * * *' // Hourly
-        }
-      }
+          schedule: '0 0 * * * *', // Hourly
+        },
+      },
     })
   );
 }
@@ -730,7 +728,7 @@ if (config.monitoring.enabled) {
   backendBuilder = backendBuilder.withMonitoring({
     enabled: true,
     retentionDays: config.monitoring.retentionDays,
-    samplingPercentage: config.environment === 'production' ? 100 : 10
+    samplingPercentage: config.environment === 'production' ? 100 : 10,
   });
 }
 
@@ -740,7 +738,7 @@ if (config.networking.isolated) {
     mode: 'isolated',
     vnetName: config.networking.vnetName,
     subnetName: 'backend-subnet',
-    privateEndpoints: true
+    privateEndpoints: true,
   });
 }
 
@@ -749,7 +747,7 @@ backendBuilder = backendBuilder.withTags({
   environment: config.environment,
   project: 'myapp',
   managedBy: 'atakora',
-  configDriven: 'true'
+  configDriven: 'true',
 });
 
 // Build the backend
@@ -758,7 +756,7 @@ const backend = backendBuilder.build();
 // Create stack and add backend
 const stack = new ResourceGroupStack(app, 'ConfigDrivenStack', {
   resourceGroupName: `rg-myapp-${config.environment}`,
-  location: 'eastus'
+  location: 'eastus',
 });
 
 backend.addToStack(stack);
@@ -801,55 +799,58 @@ import { App } from '@cdktf/core';
 const app = new App();
 
 // Define strict resource limits
-const backend = defineBackend({
-  userApi: CrudApi.define('UserApi', {
-    entityName: 'User',
-    schema: { id: 'string', name: 'string' },
-    partitionKey: '/id'
-  }),
+const backend = defineBackend(
+  {
+    userApi: CrudApi.define('UserApi', {
+      entityName: 'User',
+      schema: { id: 'string', name: 'string' },
+      partitionKey: '/id',
+    }),
 
-  productApi: CrudApi.define('ProductApi', {
-    entityName: 'Product',
-    schema: { id: 'string', name: 'string' },
-    partitionKey: '/id'
-  }),
+    productApi: CrudApi.define('ProductApi', {
+      entityName: 'Product',
+      schema: { id: 'string', name: 'string' },
+      partitionKey: '/id',
+    }),
 
-  orderApi: CrudApi.define('OrderApi', {
-    entityName: 'Order',
-    schema: { id: 'string', userId: 'string' },
-    partitionKey: '/userId'
-  })
-}, {
-  environment: 'production',
-  location: 'eastus',
-
-  // Configure resource limits
-  limits: {
-    // Maximum Cosmos DB accounts (default: unlimited)
-    maxCosmosAccounts: 1,
-
-    // Maximum Function Apps (default: unlimited)
-    maxFunctionApps: 1,
-
-    // Maximum Storage Accounts (default: unlimited)
-    maxStorageAccounts: 2,
-
-    // Maximum functions per Function App (default: unlimited)
-    maxFunctionsPerApp: 50,
-
-    // Maximum containers per Storage Account (default: unlimited)
-    maxContainersPerStorage: 10
+    orderApi: CrudApi.define('OrderApi', {
+      entityName: 'Order',
+      schema: { id: 'string', userId: 'string' },
+      partitionKey: '/userId',
+    }),
   },
+  {
+    environment: 'production',
+    location: 'eastus',
 
-  tags: {
-    resourceLimits: 'enforced',
-    quotaManagement: 'enabled'
+    // Configure resource limits
+    limits: {
+      // Maximum Cosmos DB accounts (default: unlimited)
+      maxCosmosAccounts: 1,
+
+      // Maximum Function Apps (default: unlimited)
+      maxFunctionApps: 1,
+
+      // Maximum Storage Accounts (default: unlimited)
+      maxStorageAccounts: 2,
+
+      // Maximum functions per Function App (default: unlimited)
+      maxFunctionsPerApp: 50,
+
+      // Maximum containers per Storage Account (default: unlimited)
+      maxContainersPerStorage: 10,
+    },
+
+    tags: {
+      resourceLimits: 'enforced',
+      quotaManagement: 'enabled',
+    },
   }
-});
+);
 
 const stack = new ResourceGroupStack(app, 'LimitedResourceStack', {
   resourceGroupName: 'rg-limited-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 // This will succeed - stays within limits
@@ -917,7 +918,10 @@ import { defineBackend } from '@atakora/component/backend';
 import { CrudApi } from '@atakora/component/crud';
 import { ResourceGroupStack } from '@atakora/cdk';
 import { App } from '@cdktf/core';
-import { TrafficManagerProfile, TrafficManagerEndpoint } from '@cdktf/provider-azurerm/lib/trafficmanager';
+import {
+  TrafficManagerProfile,
+  TrafficManagerEndpoint,
+} from '@cdktf/provider-azurerm/lib/trafficmanager';
 
 const app = new App();
 
@@ -927,32 +931,35 @@ const inactiveColor = activeColor === 'blue' ? 'green' : 'blue';
 
 // Define backend for BOTH colors
 const colors = ['blue', 'green'];
-const deployments = colors.map(color => {
-  const backend = defineBackend({
-    userApi: CrudApi.define('UserApi', {
-      entityName: 'User',
-      schema: { id: 'string', name: 'string', email: 'string' },
-      partitionKey: '/id'
-    }),
+const deployments = colors.map((color) => {
+  const backend = defineBackend(
+    {
+      userApi: CrudApi.define('UserApi', {
+        entityName: 'User',
+        schema: { id: 'string', name: 'string', email: 'string' },
+        partitionKey: '/id',
+      }),
 
-    productApi: CrudApi.define('ProductApi', {
-      entityName: 'Product',
-      schema: { id: 'string', name: 'string', price: 'number' },
-      partitionKey: '/id'
-    })
-  }, {
-    environment: 'production',
-    location: 'eastus',
-    tags: {
-      deployment: color,
-      active: color === activeColor ? 'true' : 'false',
-      version: process.env.VERSION || '1.0.0'
+      productApi: CrudApi.define('ProductApi', {
+        entityName: 'Product',
+        schema: { id: 'string', name: 'string', price: 'number' },
+        partitionKey: '/id',
+      }),
+    },
+    {
+      environment: 'production',
+      location: 'eastus',
+      tags: {
+        deployment: color,
+        active: color === activeColor ? 'true' : 'false',
+        version: process.env.VERSION || '1.0.0',
+      },
     }
-  });
+  );
 
   const stack = new ResourceGroupStack(app, `AppStack-${color}`, {
     resourceGroupName: `rg-app-${color}-prod`,
-    location: 'eastus'
+    location: 'eastus',
   });
 
   backend.addToStack(stack);
@@ -962,15 +969,15 @@ const deployments = colors.map(color => {
     backend,
     endpoints: {
       userApi: backend.components.userApi.apiEndpoint,
-      productApi: backend.components.productApi.apiEndpoint
-    }
+      productApi: backend.components.productApi.apiEndpoint,
+    },
   };
 });
 
 // Create Traffic Manager for routing
 const stack = new ResourceGroupStack(app, 'TrafficManagerStack', {
   resourceGroupName: 'rg-app-routing',
-  location: 'global' // Traffic Manager is global
+  location: 'global', // Traffic Manager is global
 });
 
 const trafficManager = new TrafficManagerProfile(stack, 'traffic-manager', {
@@ -979,7 +986,7 @@ const trafficManager = new TrafficManagerProfile(stack, 'traffic-manager', {
   trafficRoutingMethod: 'Weighted', // Can switch between blue/green
   dnsConfig: {
     relativeName: 'myapp-prod',
-    ttl: 30 // Low TTL for fast switching
+    ttl: 30, // Low TTL for fast switching
   },
   monitorConfig: {
     protocol: 'HTTPS',
@@ -987,8 +994,8 @@ const trafficManager = new TrafficManagerProfile(stack, 'traffic-manager', {
     path: '/health',
     intervalInSeconds: 30,
     timeoutInSeconds: 10,
-    toleratedNumberOfFailures: 3
-  }
+    toleratedNumberOfFailures: 3,
+  },
 });
 
 // Add endpoints for both colors
@@ -1001,7 +1008,7 @@ deployments.forEach(({ color, endpoints }) => {
     type: 'azureEndpoints',
     target: endpoints.userApi, // Use userApi as example
     weight,
-    priority: color === 'blue' ? 1 : 2
+    priority: color === 'blue' ? 1 : 2,
   });
 });
 
@@ -1011,7 +1018,10 @@ console.log(`Inactive Color: ${inactiveColor}`);
 
 deployments.forEach(({ color, endpoints }) => {
   console.log(`\n${color.toUpperCase()} Deployment:`);
-  console.log('  Status:', color === activeColor ? 'ACTIVE (100% traffic)' : 'STANDBY (0% traffic)');
+  console.log(
+    '  Status:',
+    color === activeColor ? 'ACTIVE (100% traffic)' : 'STANDBY (0% traffic)'
+  );
   console.log('  User API:', endpoints.userApi);
   console.log('  Product API:', endpoints.productApi);
 });
@@ -1087,70 +1097,73 @@ const app = new App();
 const tenants = [
   { id: 'tenant-acme', name: 'Acme Corp', tier: 'enterprise' },
   { id: 'tenant-globex', name: 'Globex Inc', tier: 'professional' },
-  { id: 'tenant-initech', name: 'Initech LLC', tier: 'basic' }
+  { id: 'tenant-initech', name: 'Initech LLC', tier: 'basic' },
 ];
 
 // Create backend with tenant-aware components
-const backend = defineBackend({
-  // Shared authentication API
-  authApi: CrudApi.define('AuthApi', {
-    entityName: 'User',
-    schema: {
-      id: 'string',
-      tenantId: 'string',
-      email: 'string',
-      role: 'string',
-      permissions: 'array'
-    },
-    partitionKey: '/tenantId' // Partition by tenant for isolation
-  }),
+const backend = defineBackend(
+  {
+    // Shared authentication API
+    authApi: CrudApi.define('AuthApi', {
+      entityName: 'User',
+      schema: {
+        id: 'string',
+        tenantId: 'string',
+        email: 'string',
+        role: 'string',
+        permissions: 'array',
+      },
+      partitionKey: '/tenantId', // Partition by tenant for isolation
+    }),
 
-  // Shared data API with tenant isolation
-  dataApi: CrudApi.define('DataApi', {
-    entityName: 'Data',
-    schema: {
-      id: 'string',
-      tenantId: 'string',
-      name: 'string',
-      value: 'string',
-      createdAt: 'timestamp'
-    },
-    partitionKey: '/tenantId' // Critical: Ensures data isolation
-  }),
+    // Shared data API with tenant isolation
+    dataApi: CrudApi.define('DataApi', {
+      entityName: 'Data',
+      schema: {
+        id: 'string',
+        tenantId: 'string',
+        name: 'string',
+        value: 'string',
+        createdAt: 'timestamp',
+      },
+      partitionKey: '/tenantId', // Critical: Ensures data isolation
+    }),
 
-  // Tenant management API
-  tenantApi: CrudApi.define('TenantApi', {
-    entityName: 'Tenant',
-    schema: {
-      id: 'string',
-      name: 'string',
-      tier: 'string',
-      status: 'string',
-      limits: 'object',
-      createdAt: 'timestamp'
-    },
-    partitionKey: '/id'
-  })
-}, {
-  environment: 'production',
-  location: 'eastus',
-
-  // Monitoring with tenant context
-  monitoring: {
-    enabled: true,
-    retentionDays: 90
+    // Tenant management API
+    tenantApi: CrudApi.define('TenantApi', {
+      entityName: 'Tenant',
+      schema: {
+        id: 'string',
+        name: 'string',
+        tier: 'string',
+        status: 'string',
+        limits: 'object',
+        createdAt: 'timestamp',
+      },
+      partitionKey: '/id',
+    }),
   },
+  {
+    environment: 'production',
+    location: 'eastus',
 
-  tags: {
-    architecture: 'multi-tenant',
-    isolation: 'logical', // Logical isolation via partition keys
-    tenantCount: tenants.length.toString()
+    // Monitoring with tenant context
+    monitoring: {
+      enabled: true,
+      retentionDays: 90,
+    },
+
+    tags: {
+      architecture: 'multi-tenant',
+      isolation: 'logical', // Logical isolation via partition keys
+      tenantCount: tenants.length.toString(),
+    },
   }
-});
+);
 
 const stack = new ResourceGroupStack(app, 'MultiTenantStack', {
   resourceGroupName: 'rg-saas-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 backend.addToStack(stack);
@@ -1159,7 +1172,7 @@ backend.addToStack(stack);
 console.log('\n=== Multi-Tenant SaaS Architecture ===');
 console.log(`Total Tenants: ${tenants.length}`);
 
-tenants.forEach(tenant => {
+tenants.forEach((tenant) => {
   console.log(`\n${tenant.name}:`);
   console.log(`  ID: ${tenant.id}`);
   console.log(`  Tier: ${tenant.tier}`);
@@ -1202,11 +1215,13 @@ app.synth();
 #### 1. Partition Key Isolation (Used Above)
 
 Pros:
+
 - Cost-effective (shared infrastructure)
 - Good performance
 - Simple to implement
 
 Cons:
+
 - Logical isolation only
 - All tenants share throughput
 - Risk of noisy neighbor
@@ -1215,22 +1230,26 @@ Cons:
 
 ```typescript
 // Create separate database per tenant
-tenants.map(tenant =>
+tenants.map((tenant) =>
   CrudApi.define(`DataApi-${tenant.id}`, {
     entityName: 'Data',
-    schema: { /*...*/ },
+    schema: {
+      /*...*/
+    },
     partitionKey: '/id', // No need for tenantId
-    databaseName: `db-${tenant.id}` // Separate database
+    databaseName: `db-${tenant.id}`, // Separate database
   })
 );
 ```
 
 Pros:
+
 - Strong isolation
 - Independent throughput
 - Easier compliance
 
 Cons:
+
 - Higher cost
 - More resources to manage
 
@@ -1238,22 +1257,29 @@ Cons:
 
 ```typescript
 // Separate backend per tenant (or group of tenants)
-tenants.map(tenant =>
-  defineBackend({
-    dataApi: CrudApi.define('DataApi', { /*...*/ })
-  }, {
-    environment: `tenant-${tenant.id}`,
-    tags: { tenantId: tenant.id }
-  })
+tenants.map((tenant) =>
+  defineBackend(
+    {
+      dataApi: CrudApi.define('DataApi', {
+        /*...*/
+      }),
+    },
+    {
+      environment: `tenant-${tenant.id}`,
+      tags: { tenantId: tenant.id },
+    }
+  )
 );
 ```
 
 Pros:
+
 - Complete isolation
 - Independent resources
 - Regulatory compliance
 
 Cons:
+
 - Highest cost
 - Most complex to manage
 - Scales linearly
@@ -1283,114 +1309,120 @@ const primaryRegion = 'eastus';
 const drRegion = 'westus2';
 
 // PRIMARY DEPLOYMENT
-const primaryBackend = defineBackend({
-  userApi: CrudApi.define('UserApi', {
-    entityName: 'User',
-    schema: {
-      id: 'string',
-      email: 'string',
-      name: 'string',
-      lastModified: 'timestamp'
-    },
-    partitionKey: '/id'
-  }),
+const primaryBackend = defineBackend(
+  {
+    userApi: CrudApi.define('UserApi', {
+      entityName: 'User',
+      schema: {
+        id: 'string',
+        email: 'string',
+        name: 'string',
+        lastModified: 'timestamp',
+      },
+      partitionKey: '/id',
+    }),
 
-  transactionApi: CrudApi.define('TransactionApi', {
-    entityName: 'Transaction',
-    schema: {
-      id: 'string',
-      userId: 'string',
-      amount: 'number',
-      timestamp: 'timestamp'
-    },
-    partitionKey: '/userId'
-  })
-}, {
-  environment: 'production',
-  location: primaryRegion,
-
-  // Enable geo-replication for Cosmos DB
-  cosmosConfig: {
-    enableMultiRegion: true,
-    failoverPolicies: [
-      { locationName: primaryRegion, priority: 0 },
-      { locationName: drRegion, priority: 1 }
-    ],
-    consistencyLevel: 'Session', // Balance between consistency and availability
-    enableAutomaticFailover: true
+    transactionApi: CrudApi.define('TransactionApi', {
+      entityName: 'Transaction',
+      schema: {
+        id: 'string',
+        userId: 'string',
+        amount: 'number',
+        timestamp: 'timestamp',
+      },
+      partitionKey: '/userId',
+    }),
   },
+  {
+    environment: 'production',
+    location: primaryRegion,
 
-  monitoring: {
-    enabled: true,
-    retentionDays: 180, // Longer retention for DR scenarios
-    workspaceName: 'dr-workspace-primary'
-  },
+    // Enable geo-replication for Cosmos DB
+    cosmosConfig: {
+      enableMultiRegion: true,
+      failoverPolicies: [
+        { locationName: primaryRegion, priority: 0 },
+        { locationName: drRegion, priority: 1 },
+      ],
+      consistencyLevel: 'Session', // Balance between consistency and availability
+      enableAutomaticFailover: true,
+    },
 
-  tags: {
-    role: 'primary',
-    dr: 'enabled',
-    rto: '1-hour',
-    rpo: '15-minutes'
+    monitoring: {
+      enabled: true,
+      retentionDays: 180, // Longer retention for DR scenarios
+      workspaceName: 'dr-workspace-primary',
+    },
+
+    tags: {
+      role: 'primary',
+      dr: 'enabled',
+      rto: '1-hour',
+      rpo: '15-minutes',
+    },
   }
-});
+);
 
 const primaryStack = new ResourceGroupStack(app, 'PrimaryStack', {
   resourceGroupName: 'rg-app-primary',
-  location: primaryRegion
+  location: primaryRegion,
 });
 
 primaryBackend.addToStack(primaryStack);
 
 // DR DEPLOYMENT (Standby)
-const drBackend = defineBackend({
-  userApi: CrudApi.define('UserApi', {
-    entityName: 'User',
-    schema: {
-      id: 'string',
-      email: 'string',
-      name: 'string',
-      lastModified: 'timestamp'
-    },
-    partitionKey: '/id'
-  }),
+const drBackend = defineBackend(
+  {
+    userApi: CrudApi.define('UserApi', {
+      entityName: 'User',
+      schema: {
+        id: 'string',
+        email: 'string',
+        name: 'string',
+        lastModified: 'timestamp',
+      },
+      partitionKey: '/id',
+    }),
 
-  transactionApi: CrudApi.define('TransactionApi', {
-    entityName: 'Transaction',
-    schema: {
-      id: 'string',
-      userId: 'string',
-      amount: 'number',
-      timestamp: 'timestamp'
-    },
-    partitionKey: '/userId'
-  })
-}, {
-  environment: 'production-dr',
-  location: drRegion,
-
-  // Point to replicated Cosmos DB
-  cosmosConfig: {
-    useExisting: true, // Use replicated data from primary
-    accountName: 'cosmos-app-primary', // Same Cosmos account
-    readLocation: drRegion // Read from DR region
+    transactionApi: CrudApi.define('TransactionApi', {
+      entityName: 'Transaction',
+      schema: {
+        id: 'string',
+        userId: 'string',
+        amount: 'number',
+        timestamp: 'timestamp',
+      },
+      partitionKey: '/userId',
+    }),
   },
+  {
+    environment: 'production-dr',
+    location: drRegion,
 
-  monitoring: {
-    enabled: true,
-    retentionDays: 180,
-    workspaceName: 'dr-workspace-secondary'
-  },
+    // Point to replicated Cosmos DB
+    cosmosConfig: {
+      useExisting: true, // Use replicated data from primary
+      accountName: 'cosmos-app-primary', // Same Cosmos account
+      readLocation: drRegion, // Read from DR region
+    },
 
-  tags: {
-    role: 'dr',
-    dr: 'enabled',
-    status: 'standby'
+    monitoring: {
+      enabled: true,
+      retentionDays: 180,
+      workspaceName: 'dr-workspace-secondary',
+    },
+
+    tags: {
+      role: 'dr',
+      dr: 'enabled',
+      status: 'standby',
+    },
   }
-});
+);
 
 const drStack = new ResourceGroupStack(app, 'DRStack', {
   resourceGroupName: 'rg-app-dr',
-  location: drRegion
+  location: drRegion,
 });
 
 drBackend.addToStack(drStack);
@@ -1430,26 +1462,26 @@ const drTests = {
   daily: {
     name: 'Health Check',
     description: 'Verify DR resources are healthy',
-    duration: '5 minutes'
+    duration: '5 minutes',
   },
 
   weekly: {
     name: 'Read-Only Test',
     description: 'Execute read queries against DR',
-    duration: '30 minutes'
+    duration: '30 minutes',
   },
 
   monthly: {
     name: 'Full Failover Drill',
     description: 'Complete failover and failback',
-    duration: '4 hours'
+    duration: '4 hours',
   },
 
   quarterly: {
     name: 'Data Consistency Audit',
     description: 'Verify primary and DR data match',
-    duration: '8 hours'
-  }
+    duration: '8 hours',
+  },
 };
 ```
 
@@ -1473,4 +1505,4 @@ After reviewing these advanced examples:
 - [Migration Guide](../migration-guide.md)
 - [Best Practices](../best-practices.md)
 - [Troubleshooting](../troubleshooting.md)
-- [Architecture Documentation](../../../../../architecture/decisions/backend-architecture-design.md)
+- [Architecture Documentation](../../../../../architecture/decisions/Backend-Architecture-Design.md)

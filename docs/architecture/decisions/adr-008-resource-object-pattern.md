@@ -5,6 +5,7 @@
 We are implementing a GraphQL/REST API stack system for Azure API Management that requires a clear, type-safe pattern for defining API resources. These resources need to be self-describing, include backend configuration, and support both GraphQL and REST paradigms while maintaining developer ergonomics.
 
 The current Azure API Management constructs in our CDK focus on infrastructure deployment, but we need a higher-level abstraction for defining API resources that can:
+
 - Auto-generate endpoints and field names from resource definitions
 - Support both REST collections and GraphQL fields
 - Handle pluralization correctly (including edge cases)
@@ -37,13 +38,27 @@ abstract class ApiResource<T = any> {
   }
 
   // Immutable getters for resource metadata
-  get name(): string { return this._name; }
-  get fieldName(): string { return this._name.charAt(0).toLowerCase() + this._name.slice(1); }
-  get collectionFieldName(): string { return this._pluralizer.pluralize(this.fieldName); }
-  get endpoint(): string { return this._endpoint; }
-  get collectionEndpoint(): string { return `/${this.endpoint}`; }
-  get itemEndpoint(): string { return `/${this.endpoint}/{${this._idField}}`; }
-  get idField(): string { return this._idField; }
+  get name(): string {
+    return this._name;
+  }
+  get fieldName(): string {
+    return this._name.charAt(0).toLowerCase() + this._name.slice(1);
+  }
+  get collectionFieldName(): string {
+    return this._pluralizer.pluralize(this.fieldName);
+  }
+  get endpoint(): string {
+    return this._endpoint;
+  }
+  get collectionEndpoint(): string {
+    return `/${this.endpoint}`;
+  }
+  get itemEndpoint(): string {
+    return `/${this.endpoint}/{${this._idField}}`;
+  }
+  get idField(): string {
+    return this._idField;
+  }
 }
 ```
 
@@ -56,27 +71,27 @@ class ProductResource extends ApiResource<Product> {
     super('product', {
       idField: 'productId',
       endpoint: 'products', // optional override
-      pluralizer: new SmartPluralizer() // handles product -> products
+      pluralizer: new SmartPluralizer(), // handles product -> products
     });
 
     // Configure fields
     this.field('productId', {
       type: 'string',
       description: 'Unique product identifier',
-      required: true
+      required: true,
     });
 
     this.field('name', {
       type: 'string',
       description: 'Product display name',
       required: true,
-      validation: { minLength: 1, maxLength: 100 }
+      validation: { minLength: 1, maxLength: 100 },
     });
 
     this.field('inventory', {
       type: 'object',
       resolver: this.resolveInventory,
-      description: 'Real-time inventory information'
+      description: 'Real-time inventory information',
     });
   }
 
@@ -88,11 +103,7 @@ class ProductResource extends ApiResource<Product> {
 
 // Usage in API stack
 const api = new GraphQLApiStack(stack, 'API', {
-  resources: [
-    new ProductResource(),
-    new InventoryResource(),
-    new EmployeeResource()
-  ]
+  resources: [new ProductResource(), new InventoryResource(), new EmployeeResource()],
 });
 ```
 
@@ -108,12 +119,13 @@ const productResource = {
   fields: {
     productId: { type: 'string', required: true },
     name: { type: 'string', required: true },
-    inventory: { type: 'object', resolver: resolveInventory }
-  }
+    inventory: { type: 'object', resolver: resolveInventory },
+  },
 };
 ```
 
 **Rejected because:**
+
 - No type safety for field definitions
 - No validation at configuration time
 - Difficult to extend with custom logic
@@ -132,6 +144,7 @@ const productResource = ResourceBuilder.create('product')
 ```
 
 **Rejected because:**
+
 - More verbose for common cases
 - Doesn't leverage TypeScript's class features
 - Harder to create reusable resource types
@@ -145,13 +158,14 @@ const productResource = composeResource(
   withIdField('productId'),
   withFields({
     productId: stringField({ required: true }),
-    name: stringField({ required: true })
+    name: stringField({ required: true }),
   }),
   withResolver('inventory', resolveInventory)
 );
 ```
 
 **Rejected because:**
+
 - Less familiar pattern for most developers
 - More complex mental model
 - Harder to debug and trace
@@ -178,11 +192,18 @@ class SmartPluralizer implements IPluralizer {
     [/sis$/i, 'ses'],
     [/([ti])um$/i, '$1a'],
     [/s$/i, 's'],
-    [/$/, 's']
+    [/$/, 's'],
   ];
 
   private readonly uncountable = new Set([
-    'sheep', 'fish', 'deer', 'moose', 'series', 'species', 'money', 'data'
+    'sheep',
+    'fish',
+    'deer',
+    'moose',
+    'series',
+    'species',
+    'money',
+    'data',
   ]);
 
   private readonly irregular = new Map([
@@ -192,7 +213,7 @@ class SmartPluralizer implements IPluralizer {
     ['child', 'children'],
     ['tooth', 'teeth'],
     ['foot', 'feet'],
-    ['goose', 'geese']
+    ['goose', 'geese'],
   ]);
 
   pluralize(singular: string): string {
@@ -252,10 +273,7 @@ type IdStrategy =
   | { type: 'composite'; fields: string[] };
 
 class ApiResource<T> {
-  constructor(
-    name: string,
-    config?: ResourceConfig & { idStrategy?: IdStrategy }
-  ) {
+  constructor(name: string, config?: ResourceConfig & { idStrategy?: IdStrategy }) {
     // Configure ID field based on strategy
     this.configureIdField(config?.idStrategy);
   }
@@ -268,7 +286,9 @@ class ApiResource<T> {
       case 'uuid':
         this.field(this._idField, {
           type: 'string',
-          validation: { pattern: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i }
+          validation: {
+            pattern: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+          },
         });
         break;
       // ... other strategies

@@ -25,14 +25,15 @@ All enum types (SKUs, tiers, kinds, etc.) must be imported from `@atakora/lib` s
 import { schema } from '@atakora/lib';
 
 export const StorageAccountSkuName = schema.storage.StorageAccountSkuName;
-export type StorageAccountSkuName = typeof StorageAccountSkuName[keyof typeof StorageAccountSkuName];
+export type StorageAccountSkuName =
+  (typeof StorageAccountSkuName)[keyof typeof StorageAccountSkuName];
 ```
 
 ```typescript
 // ❌ INCORRECT
 export enum StorageAccountSkuName {
   STANDARD_LRS = 'Standard_LRS',
-  STANDARD_GRS = 'Standard_GRS'
+  STANDARD_GRS = 'Standard_GRS',
 }
 ```
 
@@ -62,7 +63,7 @@ import { schema } from '@atakora/lib';
 
 // 1. Import and re-export enum types from schema
 export const EnumName = schema.namespace.EnumName;
-export type EnumName = typeof EnumName[keyof typeof EnumName];
+export type EnumName = (typeof EnumName)[keyof typeof EnumName];
 
 // 2. Define local interfaces using schema types
 export interface ArmResourceProps {
@@ -98,16 +99,19 @@ For existing non-compliant code:
 ## Alternatives Considered
 
 ### Alternative 1: Keep Status Quo
+
 - **Pros**: No migration effort required
 - **Cons**: Continued type duplication, maintenance burden, inconsistency
 - **Rejected because**: Technical debt will compound over time
 
 ### Alternative 2: Generate All Types Locally
+
 - **Pros**: Full control over type definitions
 - **Cons**: Massive duplication, no single source of truth
 - **Rejected because**: Violates DRY principle, increases maintenance
 
 ### Alternative 3: Use Raw ARM Types Directly
+
 - **Pros**: Direct mapping to ARM
 - **Cons**: Poor developer experience, verbose, not TypeScript-idiomatic
 - **Rejected because**: CDK aims to provide better DevEx than raw ARM

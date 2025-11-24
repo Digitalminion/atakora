@@ -18,6 +18,7 @@ Atakora provides L2 constructs for six categories of application services:
 ### Complete Monitoring Setup
 
 The typical monitoring architecture consists of:
+
 - **Log Analytics Workspace**: Central log aggregation and querying
 - **Application Insights**: Application performance monitoring (APM)
 - **Action Groups**: Alert notification routing
@@ -27,14 +28,25 @@ The typical monitoring architecture consists of:
 
 ```typescript
 import { Workspaces } from '@atakora/cdk/operationalinsights';
-import { Components, ActionGroups, MetricAlerts, DiagnosticSettings, AutoscaleSettings } from '@atakora/cdk/insights';
-import { ApplicationType, PublicNetworkAccess, MetricAlertOperator, TimeAggregation } from '@atakora/cdk/insights';
+import {
+  Components,
+  ActionGroups,
+  MetricAlerts,
+  DiagnosticSettings,
+  AutoscaleSettings,
+} from '@atakora/cdk/insights';
+import {
+  ApplicationType,
+  PublicNetworkAccess,
+  MetricAlertOperator,
+  TimeAggregation,
+} from '@atakora/cdk/insights';
 
 // Step 1: Create Log Analytics Workspace (foundation for all monitoring)
 const workspace = new Workspaces(resourceGroup, 'Monitoring', {
   retentionInDays: 90,
   dailyQuotaGb: 10,
-  tags: { purpose: 'centralized-logging' }
+  tags: { purpose: 'centralized-logging' },
 });
 
 // Step 2: Create Application Insights for APM
@@ -46,25 +58,23 @@ const appInsights = new Components(resourceGroup, 'WebApp', {
   publicNetworkAccessForIngestion: PublicNetworkAccess.DISABLED,
   publicNetworkAccessForQuery: PublicNetworkAccess.DISABLED,
   // Sample 20% of telemetry in non-prod to reduce costs
-  samplingPercentage: 20
+  samplingPercentage: 20,
 });
 
 // Step 3: Create Action Group for alert routing
 const actionGroup = new ActionGroups(resourceGroup, 'OpsTeam', {
   groupShortName: 'ops',
   emailReceivers: [
-    { name: 'ops-team', emailAddress: 'ops@example.com', useCommonAlertSchema: true }
+    { name: 'ops-team', emailAddress: 'ops@example.com', useCommonAlertSchema: true },
   ],
-  smsReceivers: [
-    { name: 'on-call', countryCode: '1', phoneNumber: '5551234567' }
-  ],
+  smsReceivers: [{ name: 'on-call', countryCode: '1', phoneNumber: '5551234567' }],
   webhookReceivers: [
     {
       name: 'slack',
       serviceUri: 'https://hooks.slack.com/services/YOUR/WEBHOOK/URL',
-      useCommonAlertSchema: true
-    }
-  ]
+      useCommonAlertSchema: true,
+    },
+  ],
 });
 
 // Step 4: Create metric alerts for critical metrics
@@ -76,9 +86,9 @@ const cpuAlert = new MetricAlerts(resourceGroup, 'HighCpu', {
   operator: MetricAlertOperator.GREATER_THAN,
   threshold: 80,
   timeAggregation: TimeAggregation.AVERAGE,
-  evaluationFrequency: 'PT1M',  // Check every minute
-  windowSize: 'PT5M',            // Over 5-minute window
-  actions: [{ actionGroupId: actionGroup.actionGroupId }]
+  evaluationFrequency: 'PT1M', // Check every minute
+  windowSize: 'PT5M', // Over 5-minute window
+  actions: [{ actionGroupId: actionGroup.actionGroupId }],
 });
 
 // Step 5: Enable diagnostic settings on resources
@@ -87,7 +97,7 @@ const diagnostics = new DiagnosticSettings(webApp, 'Diagnostics', {
   workspace: { workspaceId: workspace.workspaceId },
   logCategories: 'all',
   enableAllMetrics: true,
-  retentionDays: 30
+  retentionDays: 30,
 });
 
 // Step 6: Configure autoscaling based on metrics
@@ -106,14 +116,14 @@ const autoscale = new AutoscaleSettings(resourceGroup, 'WebAppAutoscale', {
         timeWindow: 'PT5M',
         timeAggregation: 'Average',
         operator: 'GreaterThan',
-        threshold: 70
+        threshold: 70,
       },
       scaleAction: {
         direction: 'Increase',
         type: 'ChangeCount',
         value: '1',
-        cooldown: 'PT5M'
-      }
+        cooldown: 'PT5M',
+      },
     },
     {
       metricTrigger: {
@@ -124,28 +134,30 @@ const autoscale = new AutoscaleSettings(resourceGroup, 'WebAppAutoscale', {
         timeWindow: 'PT5M',
         timeAggregation: 'Average',
         operator: 'LessThan',
-        threshold: 30
+        threshold: 30,
       },
       scaleAction: {
         direction: 'Decrease',
         type: 'ChangeCount',
         value: '1',
-        cooldown: 'PT5M'
-      }
-    }
-  ]
+        cooldown: 'PT5M',
+      },
+    },
+  ],
 });
 ```
 
 ### Monitoring Best Practices
 
 **Log Analytics Workspace**:
+
 - Use a single workspace per environment for unified querying
 - Set retention based on compliance needs (30-730 days)
 - Configure daily quota caps to prevent cost overruns
 - Disable public network access and use private link for security
 
 **Application Insights**:
+
 - Always use workspace-based mode (classic mode is deprecated)
 - Use connection string instead of instrumentation key
 - Enable sampling in non-production to reduce costs
@@ -153,24 +165,28 @@ const autoscale = new AutoscaleSettings(resourceGroup, 'WebAppAutoscale', {
 - Set appropriate retention (30-90 days typical)
 
 **Action Groups**:
+
 - Use short name (max 12 chars) that appears in SMS/email
 - Enable common alert schema for structured notifications
 - Configure multiple notification channels for redundancy
 - Use webhook receivers for integration with ChatOps tools
 
 **Metric Alerts**:
+
 - Set severity appropriately (0=Critical, 1=Error, 2=Warning, 3=Info, 4=Verbose)
 - Use evaluation frequency wisely (more frequent = higher cost)
 - Configure window size larger than frequency for accurate aggregation
 - Enable auto-mitigation to automatically resolve alerts
 
 **Diagnostic Settings**:
+
 - Enable for all production resources
 - Route to Log Analytics for querying and alerting
 - Use Storage for long-term archival
 - Use Event Hub for real-time streaming
 
 **Autoscale**:
+
 - Set appropriate min/max to prevent under/over-provisioning
 - Use cooldown periods to prevent flapping
 - Configure both scale-up and scale-down rules
@@ -182,20 +198,25 @@ const autoscale = new AutoscaleSettings(resourceGroup, 'WebAppAutoscale', {
 
 ```typescript
 import { Service, Api, Product, Subscription } from '@atakora/cdk/apimanagement';
-import { ApiManagementSkuName, VirtualNetworkType, ApiType, Protocol } from '@atakora/cdk/apimanagement';
+import {
+  ApiManagementSkuName,
+  VirtualNetworkType,
+  ApiType,
+  Protocol,
+} from '@atakora/cdk/apimanagement';
 
 // Step 1: Create API Management service
 const apim = new Service(resourceGroup, 'Gateway', {
   publisherName: 'Your Organization',
   publisherEmail: 'api-admin@example.com',
   sku: ApiManagementSkuName.PREMIUM,
-  capacity: 2,  // For HA across zones
+  capacity: 2, // For HA across zones
   // Enable VNet integration for internal APIs
   virtualNetworkType: VirtualNetworkType.INTERNAL,
   subnetId: '/subscriptions/.../subnets/apim-subnet',
   // Enable system-assigned identity for Key Vault access
   enableSystemIdentity: true,
-  tags: { purpose: 'api-gateway' }
+  tags: { purpose: 'api-gateway' },
 });
 
 // Step 2: Define APIs
@@ -205,7 +226,7 @@ const authApi = new Api(apim, 'AuthAPI', {
   serviceUrl: 'https://auth-backend.internal.example.com',
   apiType: ApiType.HTTP,
   protocols: [Protocol.HTTPS],
-  subscriptionRequired: true
+  subscriptionRequired: true,
 });
 
 // Step 3: Create products to group APIs
@@ -214,14 +235,14 @@ const internalProduct = new Product(apim, 'InternalAPIs', {
   description: 'APIs for internal use only',
   subscriptionRequired: true,
   approvalRequired: true,
-  apis: [authApi.apiId]
+  apis: [authApi.apiId],
 });
 
 // Step 4: Create subscriptions for API consumers
 const partnerSubscription = new Subscription(apim, 'PartnerAccess', {
   scope: internalProduct.productId,
   displayName: 'Partner Organization Subscription',
-  allowTracing: false  // Disable for security
+  allowTracing: false, // Disable for security
 });
 
 // Step 5: Configure Application Insights for API telemetry
@@ -231,6 +252,7 @@ apim.enableApplicationInsights(appInsights);
 ### API Management Patterns
 
 **SKU Selection**:
+
 - **Consumption**: Serverless, pay-per-call, limited features
 - **Developer**: Non-production, no SLA, single unit
 - **Basic**: Production workloads, 99.95% SLA
@@ -238,12 +260,14 @@ apim.enableApplicationInsights(appInsights);
 - **Premium**: Enterprise features, VNet, multi-region, higher scale
 
 **VNet Integration**:
+
 - **External**: Gateway accessible from internet, backend in VNet
 - **Internal**: Gateway accessible only from VNet
 - Requires Premium SKU
 - Supports UDR and NSG for traffic control
 
 **Security Best Practices**:
+
 - Disable legacy TLS protocols (1.0, 1.1, SSL 3.0)
 - Use client certificates for backend authentication
 - Enable subscription keys for API access control
@@ -256,14 +280,19 @@ apim.enableApplicationInsights(appInsights);
 
 ```typescript
 import { ServerFarms, Sites } from '@atakora/cdk/web';
-import { ServerFarmSkuName, FtpsState, MinTlsVersion, ConnectionStringType } from '@atakora/cdk/web';
+import {
+  ServerFarmSkuName,
+  FtpsState,
+  MinTlsVersion,
+  ConnectionStringType,
+} from '@atakora/cdk/web';
 
 // Step 1: Create App Service Plan
 const plan = new ServerFarms(resourceGroup, 'WebPlan', {
-  sku: ServerFarmSkuName.P1V3,  // Premium v3 for production
-  capacity: 2,  // Multiple instances for HA
-  zoneRedundant: true,  // Spread across AZs
-  kind: 'linux'  // Linux containers
+  sku: ServerFarmSkuName.P1V3, // Premium v3 for production
+  capacity: 2, // Multiple instances for HA
+  zoneRedundant: true, // Spread across AZs
+  kind: 'linux', // Linux containers
 });
 
 // Step 2: Create Web App
@@ -281,14 +310,17 @@ const webApp = new Sites(resourceGroup, 'WebApp', {
   vnetRouteAllEnabled: true,
   // Enable managed identity
   identity: { type: 'SystemAssigned' },
-  tags: { purpose: 'web-frontend' }
+  tags: { purpose: 'web-frontend' },
 });
 
 // Step 3: Configure app settings
 webApp.addAppSetting('ENVIRONMENT', 'production');
 webApp.addAppSetting('APPINSIGHTS_INSTRUMENTATIONKEY', appInsights.instrumentationKey);
 webApp.addAppSetting('KEY_VAULT_URL', 'https://kv-example.vault.azure.net/');
-webApp.addAppSetting('DATABASE_URL', '@Microsoft.KeyVault(SecretUri=https://kv.vault.azure.net/secrets/db-url)');
+webApp.addAppSetting(
+  'DATABASE_URL',
+  '@Microsoft.KeyVault(SecretUri=https://kv.vault.azure.net/secrets/db-url)'
+);
 
 // Step 4: Configure connection strings
 webApp.addConnectionString(
@@ -304,12 +336,14 @@ keyVault.grantSecretsReader(webApp);
 ### Web App Best Practices
 
 **Scaling**:
+
 - Use Premium V3 for best price/performance
 - Enable zone redundancy for 99.95% SLA
 - Configure autoscaling for variable load
 - Use slots for zero-downtime deployments
 
 **Security**:
+
 - Always enable HTTPS only
 - Disable FTP/FTPS (use deployment center instead)
 - Use TLS 1.2 minimum
@@ -317,12 +351,14 @@ keyVault.grantSecretsReader(webApp);
 - Store secrets in Key Vault, reference via app settings
 
 **Networking**:
+
 - Use VNet integration for outbound connectivity
 - Use Private Endpoints for inbound (Premium SKU)
 - Enable route all traffic for full VNet routing
 - Configure IP restrictions for additional security
 
 **Monitoring**:
+
 - Enable Application Insights auto-instrumentation
 - Configure health check path
 - Enable detailed error logging
@@ -338,19 +374,17 @@ import { PublicNetworkAccess, NetworkRuleAction } from '@atakora/cdk/cognitivese
 
 // Create OpenAI Service with security lockdown
 const openai = new Accounts(resourceGroup, 'AI', {
-  sku: 'S0',  // Standard SKU for production
+  sku: 'S0', // Standard SKU for production
   // Security: Disable public access after deployment
-  publicNetworkAccess: PublicNetworkAccess.ENABLED,  // Required during deployment
+  publicNetworkAccess: PublicNetworkAccess.ENABLED, // Required during deployment
   networkAcls: {
     defaultAction: NetworkRuleAction.DENY,
-    virtualNetworkRules: [
-      { id: '/subscriptions/.../subnets/app-subnet' }
-    ],
+    virtualNetworkRules: [{ id: '/subscriptions/.../subnets/app-subnet' }],
     ipRules: [
-      { value: '203.0.113.0/24' }  // Allowed IP ranges
-    ]
+      { value: '203.0.113.0/24' }, // Allowed IP ranges
+    ],
   },
-  tags: { purpose: 'llm-inference' }
+  tags: { purpose: 'llm-inference' },
 });
 
 // Deploy models via Azure Portal or ARM templates
@@ -360,18 +394,21 @@ const openai = new Accounts(resourceGroup, 'AI', {
 ### OpenAI Best Practices
 
 **Deployment Considerations**:
+
 - Public access must be enabled during initial ARM deployment
 - Configure network ACLs post-deployment or via policy
 - Use private endpoints for production workloads
 - Custom subdomain automatically matches account name
 
 **Security**:
+
 - Use managed identity for authentication
 - Store API keys in Key Vault
 - Implement rate limiting at application layer
 - Monitor usage and costs via Log Analytics
 
 **Cost Optimization**:
+
 - Use appropriate models for workload (GPT-3.5 vs GPT-4)
 - Implement caching for repeated queries
 - Use streaming for long responses
@@ -388,33 +425,34 @@ import { SearchServiceSku, HostingMode, PublicNetworkAccess } from '@atakora/cdk
 // Create search service
 const search = new SearchServices(resourceGroup, 'Search', {
   sku: SearchServiceSku.STANDARD,
-  replicaCount: 3,  // For HA and query performance
-  partitionCount: 2,  // For index size and throughput
+  replicaCount: 3, // For HA and query performance
+  partitionCount: 2, // For index size and throughput
   hostingMode: HostingMode.DEFAULT,
   publicNetworkAccess: PublicNetworkAccess.DISABLED,
   networkRuleSet: {
-    ipRules: [
-      { value: '203.0.113.0/24' }
-    ]
+    ipRules: [{ value: '203.0.113.0/24' }],
   },
-  tags: { purpose: 'document-search' }
+  tags: { purpose: 'document-search' },
 });
 ```
 
 ### Search Best Practices
 
 **SKU Selection**:
+
 - **Free**: Development only, 50MB limit, 3 indexes
 - **Basic**: Small production workloads, 2GB, 5 indexes
 - **Standard**: Production, up to 25GB per partition
 - **Standard3**: Large scale, up to 200GB per partition
 
 **Scaling**:
+
 - Replicas: Increase for query performance and HA
 - Partitions: Increase for index size and indexing throughput
 - Storage per partition: Basic (2GB), S1 (25GB), S2 (100GB), S3 (200GB)
 
 **Performance**:
+
 - Use semantic search for better relevance
 - Implement query caching
 - Use search suggestions for autocomplete
@@ -425,6 +463,7 @@ const search = new SearchServices(resourceGroup, 'Search', {
 All application services are available in Azure Government Cloud with these differences:
 
 **Endpoints**:
+
 - Application Insights: `https://monitor.azure.us` (vs `.com`)
 - API Management: `*.azure-api.us` (vs `.azure-api.net`)
 - App Service: `*.azurewebsites.us` (vs `.net`)
@@ -432,17 +471,20 @@ All application services are available in Azure Government Cloud with these diff
 - Search: `*.search.windows.us` (vs `.net`)
 
 **Compliance**:
+
 - FedRAMP High authorization
 - DoD Impact Level 5 certification
 - CJIS, ITAR, IRS 1075 compliance
 - Data sovereignty in US government datacenters
 
 **Feature Availability**:
+
 - Most features identical to commercial cloud
 - Some preview features may lag commercial rollout
 - OpenAI models subject to separate approval process
 
 **Networking**:
+
 - Use government cloud VNet peering
 - ExpressRoute available via government circuits
 - Private Link fully supported
@@ -488,30 +530,35 @@ apiApp.addAppSetting('OPENAI_ENDPOINT', `https://${openai.customSubDomainName}.o
 ## Cost Optimization
 
 **Monitoring**:
+
 - Use sampling to reduce Application Insights ingestion
 - Set daily quota caps on Log Analytics workspaces
 - Archive old logs to cheaper storage tiers
 - Use 30-day retention for non-production
 
 **API Management**:
+
 - Use Consumption SKU for variable workloads
 - Cache responses to reduce backend calls
 - Implement rate limiting to prevent abuse
 - Monitor and optimize API usage patterns
 
 **Web Apps**:
+
 - Use Basic/Standard for dev/test
 - Use Premium V3 for production (better value than v1/v2)
 - Enable autoscaling to match demand
 - Use deployment slots instead of separate apps
 
 **AI Services**:
+
 - Choose appropriate models (GPT-3.5 vs GPT-4)
 - Implement prompt caching
 - Use embeddings for retrieval before generation
 - Monitor token usage and set budgets
 
 **Search**:
+
 - Right-size SKU to workload
 - Use Basic for small datasets
 - Optimize index schema to reduce storage

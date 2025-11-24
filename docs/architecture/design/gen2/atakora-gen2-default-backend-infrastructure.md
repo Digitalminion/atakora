@@ -13,6 +13,7 @@ This document defines the default infrastructure that should be provisioned auto
 **Secure by Default, Flexible by Design**
 
 Every backend should include:
+
 1. **Core compute and storage** - Function App, Storage
 2. **Observability** - Logging and monitoring
 3. **Security** - Secrets management, identity, encryption
@@ -29,7 +30,7 @@ Every backend should include:
 const functionApp = new FunctionApp(stack, 'functions', {
   runtime: 'node:20',
   plan: {
-    sku: environment === 'prod' ? 'EP1' : 'Y1',  // Premium in prod, Consumption in dev
+    sku: environment === 'prod' ? 'EP1' : 'Y1', // Premium in prod, Consumption in dev
     tier: environment === 'prod' ? 'ElasticPremium' : 'Dynamic',
   },
   settings: {
@@ -41,6 +42,7 @@ const functionApp = new FunctionApp(stack, 'functions', {
 ```
 
 **Why?**
+
 - Functions are the core compute model for serverless backends
 - Premium plan (EP1) in production for VNet integration and always-on
 - Consumption plan (Y1) in dev for cost savings
@@ -58,30 +60,24 @@ const storage = new StorageAccount(stack, 'storage', {
     containers: [
       { name: 'function-packages', publicAccess: 'None' },
       { name: 'uploads', publicAccess: 'None' },
-      { name: 'assets', publicAccess: 'Blob' },  // Public for CDN
+      { name: 'assets', publicAccess: 'Blob' }, // Public for CDN
     ],
   },
 
   // Queue for async processing
   queueServices: {
-    queues: [
-      { name: 'tasks' },
-      { name: 'notifications' },
-      { name: 'deadletter' },
-    ],
+    queues: [{ name: 'tasks' }, { name: 'notifications' }, { name: 'deadletter' }],
   },
 
   // Table for lightweight data
   tableServices: {
-    tables: [
-      { name: 'logs' },
-      { name: 'sessions' },
-    ],
+    tables: [{ name: 'logs' }, { name: 'sessions' }],
   },
 });
 ```
 
 **Why?**
+
 - Functions need storage for code packages
 - Blob containers for file uploads and assets
 - Queues for async task processing
@@ -110,6 +106,7 @@ functionApp.settings.APPLICATIONINSIGHTS_CONNECTION_STRING = appInsights.connect
 ```
 
 **Why?**
+
 - Application Insights for distributed tracing, metrics, and errors
 - Log Analytics for centralized log aggregation
 - Essential for troubleshooting production issues
@@ -120,19 +117,17 @@ functionApp.settings.APPLICATIONINSIGHTS_CONNECTION_STRING = appInsights.connect
 ```typescript
 const cosmosAccount = new DatabaseAccount(stack, 'cosmos', {
   databaseAccountOfferType: 'Standard',
-  locations: [
-    { locationName: geography, failoverPriority: 0 },
-  ],
+  locations: [{ locationName: geography, failoverPriority: 0 }],
   consistencyPolicy: {
     defaultConsistencyLevel: 'Session',
   },
   capabilities: [
-    { name: 'EnableServerless' },  // Serverless in dev
+    { name: 'EnableServerless' }, // Serverless in dev
   ],
   enableAutomaticFailover: environment === 'prod',
   enableMultipleWriteLocations: environment === 'prod',
   backupPolicy: {
-    type: 'Continuous',  // Point-in-time restore
+    type: 'Continuous', // Point-in-time restore
     continuousModeProperties: {
       tier: 'Continuous7Days',
     },
@@ -142,14 +137,18 @@ const cosmosAccount = new DatabaseAccount(stack, 'cosmos', {
 const database = new SqlDatabase(cosmosAccount, 'db', {
   name: `${project}-db`,
   options: {
-    autoscaleSettings: environment === 'prod' ? {
-      maxThroughput: 4000,
-    } : undefined,
+    autoscaleSettings:
+      environment === 'prod'
+        ? {
+            maxThroughput: 4000,
+          }
+        : undefined,
   },
 });
 ```
 
 **Why?**
+
 - NoSQL database for flexible schema
 - Serverless mode in dev for cost efficiency
 - Autoscale in production
@@ -171,9 +170,7 @@ const keyVault = new Vault(stack, 'vault', {
   networkAcls: {
     defaultAction: 'Deny',
     bypass: 'AzureServices',
-    virtualNetworkRules: [
-      { id: vnet.subnets[0].id },
-    ],
+    virtualNetworkRules: [{ id: vnet.subnets[0].id }],
   },
 });
 
@@ -184,6 +181,7 @@ keyVault.addSecret('jwt-secret', generateSecureToken());
 ```
 
 **Why?**
+
 - Centralized secrets management
 - Never store secrets in app settings
 - Soft delete + purge protection in production
@@ -220,6 +218,7 @@ new RoleAssignment(stack, 'func-storage-access', {
 ```
 
 **Why?**
+
 - No connection strings or keys in environment variables
 - Managed identity for passwordless authentication
 - Automatic key rotation
@@ -236,10 +235,12 @@ const vnet = new VirtualNetwork(stack, 'vnet', {
     {
       name: 'functions',
       addressPrefix: '10.0.1.0/24',
-      delegations: [{
-        name: 'function-delegation',
-        serviceName: 'Microsoft.Web/serverFarms',
-      }],
+      delegations: [
+        {
+          name: 'function-delegation',
+          serviceName: 'Microsoft.Web/serverFarms',
+        },
+      ],
     },
     {
       name: 'private-endpoints',
@@ -254,10 +255,11 @@ const vnet = new VirtualNetwork(stack, 'vnet', {
 });
 
 // VNet integration for Function App
-functionApp.virtualNetworkSubnetId = vnet.subnets.find(s => s.name === 'functions').id;
+functionApp.virtualNetworkSubnetId = vnet.subnets.find((s) => s.name === 'functions').id;
 ```
 
 **Why?**
+
 - Isolate backend resources from public internet
 - Required for private endpoints
 - Control inbound/outbound traffic
@@ -268,38 +270,46 @@ functionApp.virtualNetworkSubnetId = vnet.subnets.find(s => s.name === 'function
 ```typescript
 // Cosmos DB private endpoint
 const cosmosPrivateEndpoint = new PrivateEndpoint(stack, 'cosmos-pe', {
-  subnet: vnet.subnets.find(s => s.name === 'private-endpoints'),
-  privateLinkServiceConnections: [{
-    name: 'cosmos-connection',
-    privateLinkServiceId: cosmosAccount.id,
-    groupIds: ['Sql'],
-  }],
+  subnet: vnet.subnets.find((s) => s.name === 'private-endpoints'),
+  privateLinkServiceConnections: [
+    {
+      name: 'cosmos-connection',
+      privateLinkServiceId: cosmosAccount.id,
+      groupIds: ['Sql'],
+    },
+  ],
 });
 
 // Storage private endpoints (blob, queue, table)
-const storagePrivateEndpoints = ['blob', 'queue', 'table'].map(service =>
-  new PrivateEndpoint(stack, `storage-${service}-pe`, {
-    subnet: vnet.subnets.find(s => s.name === 'private-endpoints'),
-    privateLinkServiceConnections: [{
-      name: `storage-${service}-connection`,
-      privateLinkServiceId: storage.id,
-      groupIds: [service],
-    }],
-  })
+const storagePrivateEndpoints = ['blob', 'queue', 'table'].map(
+  (service) =>
+    new PrivateEndpoint(stack, `storage-${service}-pe`, {
+      subnet: vnet.subnets.find((s) => s.name === 'private-endpoints'),
+      privateLinkServiceConnections: [
+        {
+          name: `storage-${service}-connection`,
+          privateLinkServiceId: storage.id,
+          groupIds: [service],
+        },
+      ],
+    })
 );
 
 // Key Vault private endpoint
 const vaultPrivateEndpoint = new PrivateEndpoint(stack, 'vault-pe', {
-  subnet: vnet.subnets.find(s => s.name === 'private-endpoints'),
-  privateLinkServiceConnections: [{
-    name: 'vault-connection',
-    privateLinkServiceId: keyVault.id,
-    groupIds: ['vault'],
-  }],
+  subnet: vnet.subnets.find((s) => s.name === 'private-endpoints'),
+  privateLinkServiceConnections: [
+    {
+      name: 'vault-connection',
+      privateLinkServiceId: keyVault.id,
+      groupIds: ['vault'],
+    },
+  ],
 });
 ```
 
 **Why?**
+
 - Keep data services off public internet
 - Traffic stays within Azure backbone
 - Compliance requirement for many industries
@@ -316,16 +326,18 @@ const apim = new ApiManagementService(stack, 'apim', {
   publisherName: organization,
   publisherEmail: 'api@company.com',
 
-  virtualNetworkType: 'Internal',  // Internal VNet integration
+  virtualNetworkType: 'Internal', // Internal VNet integration
   virtualNetworkConfiguration: {
-    subnetResourceId: vnet.subnets.find(s => s.name === 'apim').id,
+    subnetResourceId: vnet.subnets.find((s) => s.name === 'apim').id,
   },
 
   // Application Insights integration
-  loggers: [{
-    name: 'apim-logger',
-    resourceId: appInsights.id,
-  }],
+  loggers: [
+    {
+      name: 'apim-logger',
+      resourceId: appInsights.id,
+    },
+  ],
 });
 
 // Import Function App APIs
@@ -340,6 +352,7 @@ apim.importFunctionApp(functionApp, {
 ```
 
 **Why?**
+
 - Single entry point for all APIs
 - Rate limiting and throttling
 - Response caching
@@ -371,16 +384,14 @@ const serviceBus = new ServiceBusNamespace(stack, 'bus', {
   topics: [
     {
       name: 'order-events',
-      subscriptions: [
-        { name: 'notification-service' },
-        { name: 'analytics-service' },
-      ],
+      subscriptions: [{ name: 'notification-service' }, { name: 'analytics-service' }],
     },
   ],
 });
 ```
 
 **Why?**
+
 - Reliable message queuing
 - Dead letter queues for failed messages
 - Pub/sub with topics and subscriptions
@@ -409,6 +420,7 @@ const b2c = new B2CTenant(stack, 'auth', {
 ```
 
 **Why?**
+
 - User authentication and management
 - Social identity providers
 - Customizable user flows
@@ -429,6 +441,7 @@ const redis = new RedisCache(stack, 'cache', {
 ```
 
 **Why?**
+
 - Session state management
 - Response caching
 - Rate limiting counters
@@ -453,6 +466,7 @@ const cdn = new CdnProfile(stack, 'cdn', {
 ```
 
 **Why?**
+
 - Global content delivery
 - Reduce latency for static assets
 - Offload traffic from origin
@@ -466,15 +480,18 @@ const acr = new ContainerRegistry(stack, 'registry', {
 
   networkRuleSet: {
     defaultAction: 'Deny',
-    virtualNetworkRules: [{
-      action: 'Allow',
-      virtualNetworkResourceId: vnet.subnets.find(s => s.name === 'functions').id,
-    }],
+    virtualNetworkRules: [
+      {
+        action: 'Allow',
+        virtualNetworkResourceId: vnet.subnets.find((s) => s.name === 'functions').id,
+      },
+    ],
   },
 });
 ```
 
 **Why?**
+
 - Store custom container images
 - Private container registry
 - VNet-integrated for security
@@ -537,6 +554,7 @@ const backend = defineBackend({
 ```
 
 **Provisions**:
+
 - Function App (Consumption/Premium based on environment)
 - Storage Account (with containers and queues)
 - Cosmos DB (Serverless/Autoscale based on environment)
@@ -548,61 +566,67 @@ const backend = defineBackend({
 ### Custom Configuration
 
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-  processUploadFunction,
-}, {
-  // Override defaults
-  functionApp: {
-    plan: 'EP2',  // Larger plan
-    alwaysOn: true,
+const backend = defineBackend(
+  {
+    feedbackApi,
+    processUploadFunction,
   },
-
-  cosmos: {
-    consistencyLevel: 'Strong',
-    regions: ['eastus2', 'westus2'],
-  },
-
-  networking: {
-    vnet: true,  // Force VNet even in dev
-    privateEndpoints: true,
-  },
-
-  optional: {
-    apim: true,  // Enable API Management
-    serviceBus: true,  // Use Service Bus instead of Storage Queues
-    redis: true,  // Enable Redis cache
-    cdn: true,  // Enable CDN
-  },
-
-  monitoring: {
-    alerts: {
-      functionErrors: { threshold: 10, window: 5 },
-      cosmosRU: { threshold: 3000 },
-      storageLatency: { threshold: 1000 },
+  {
+    // Override defaults
+    functionApp: {
+      plan: 'EP2', // Larger plan
+      alwaysOn: true,
     },
-  },
-});
+
+    cosmos: {
+      consistencyLevel: 'Strong',
+      regions: ['eastus2', 'westus2'],
+    },
+
+    networking: {
+      vnet: true, // Force VNet even in dev
+      privateEndpoints: true,
+    },
+
+    optional: {
+      apim: true, // Enable API Management
+      serviceBus: true, // Use Service Bus instead of Storage Queues
+      redis: true, // Enable Redis cache
+      cdn: true, // Enable CDN
+    },
+
+    monitoring: {
+      alerts: {
+        functionErrors: { threshold: 10, window: 5 },
+        cosmosRU: { threshold: 3000 },
+        storageLatency: { threshold: 1000 },
+      },
+    },
+  }
+);
 ```
 
 ### Opt-Out of Defaults
 
 ```typescript
-const backend = defineBackend({
-  feedbackApi,
-}, {
-  defaults: {
-    vnet: false,  // Don't create VNet
-    privateEndpoints: false,  // Public endpoints only
+const backend = defineBackend(
+  {
+    feedbackApi,
   },
+  {
+    defaults: {
+      vnet: false, // Don't create VNet
+      privateEndpoints: false, // Public endpoints only
+    },
 
-  // Use external resources
-  external: {
-    cosmos: existingCosmosAccount,
-    storage: existingStorageAccount,
-    keyVault: existingKeyVault,
-  },
-});
+    // Use external resources
+    external: {
+      cosmos: existingCosmosAccount,
+      storage: existingStorageAccount,
+      keyVault: existingKeyVault,
+    },
+  }
+);
 ```
 
 ## Diagnostic Settings (All Resources)
@@ -621,14 +645,13 @@ function configureDiagnostics(resource: ArmResource) {
       { category: 'AllMetrics', enabled: true, retentionDays: 30 },
     ],
 
-    metrics: [
-      { category: 'AllMetrics', enabled: true, retentionDays: 30 },
-    ],
+    metrics: [{ category: 'AllMetrics', enabled: true, retentionDays: 30 }],
   });
 }
 ```
 
 **Applied to**:
+
 - Function App
 - Storage Account
 - Cosmos DB
@@ -646,13 +669,13 @@ const alerts = {
   'Function Errors': {
     metric: 'FunctionExecutionErrors',
     threshold: 10,
-    window: 5,  // minutes
+    window: 5, // minutes
     severity: 'Error',
   },
 
   'Function Duration': {
     metric: 'FunctionExecutionDuration',
-    threshold: 30000,  // 30 seconds
+    threshold: 30000, // 30 seconds
     window: 5,
     severity: 'Warning',
   },
@@ -676,7 +699,7 @@ const alerts = {
   // Storage
   'Storage Latency': {
     metric: 'SuccessE2ELatency',
-    threshold: 1000,  // 1 second
+    threshold: 1000, // 1 second
     window: 5,
     severity: 'Warning',
   },
@@ -809,6 +832,7 @@ This provides a **secure, observable, production-ready backend** with minimal co
 ---
 
 **Next Steps:**
+
 1. Review and approve default infrastructure
 2. Implement Backend class with all default resources
 3. Add environment-specific configuration

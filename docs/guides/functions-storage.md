@@ -39,7 +39,7 @@ import { ResourceGroupStack } from '@atakora/cdk';
 
 const stack = new ResourceGroupStack(app, 'MyStack', {
   resourceGroupName: 'rg-myapp-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 // Create a Functions App - storage is automatically created
@@ -47,8 +47,8 @@ const functionsApp = new FunctionsApp(stack, 'Api', {
   runtime: FunctionRuntime.NODE,
   runtimeVersion: '20',
   environment: {
-    NODE_ENV: 'production'
-  }
+    NODE_ENV: 'production',
+  },
 });
 
 // Access the automatically created storage if needed
@@ -70,7 +70,7 @@ const dataStorage = new StorageAccounts(stack, 'DataStorage', {
 
 const functionsApp = new FunctionsApp(stack, 'Api', {
   runtime: FunctionRuntime.NODE,
-  existingStorage: dataStorage  // DO NOT DO THIS
+  existingStorage: dataStorage, // DO NOT DO THIS
 });
 ```
 
@@ -81,17 +81,17 @@ const functionsApp = new FunctionsApp(stack, 'Api', {
 ```typescript
 // WRONG - Do not share storage between Functions Apps
 const sharedStorage = new StorageAccounts(stack, 'SharedStorage', {
-  location: 'eastus'
+  location: 'eastus',
 });
 
 const api = new FunctionsApp(stack, 'Api', {
   runtime: FunctionRuntime.NODE,
-  existingStorage: sharedStorage  // DO NOT DO THIS
+  existingStorage: sharedStorage, // DO NOT DO THIS
 });
 
 const background = new FunctionsApp(stack, 'Background', {
   runtime: FunctionRuntime.NODE,
-  existingStorage: sharedStorage  // DO NOT DO THIS
+  existingStorage: sharedStorage, // DO NOT DO THIS
 });
 ```
 
@@ -102,12 +102,12 @@ const background = new FunctionsApp(stack, 'Background', {
 ```typescript
 // WRONG - Do not pre-create storage for Functions
 const functionStorage = new StorageAccounts(stack, 'FunctionStorage', {
-  location: 'eastus'
+  location: 'eastus',
 });
 
 const functionsApp = new FunctionsApp(stack, 'Api', {
   runtime: FunctionRuntime.NODE,
-  existingStorage: functionStorage  // DO NOT DO THIS
+  existingStorage: functionStorage, // DO NOT DO THIS
 });
 ```
 
@@ -119,13 +119,13 @@ const functionsApp = new FunctionsApp(stack, 'Api', {
 // CORRECT - Each Functions App automatically creates its own storage
 const apiApp = new FunctionsApp(stack, 'Api', {
   runtime: FunctionRuntime.NODE,
-  runtimeVersion: '20'
+  runtimeVersion: '20',
   // No existingStorage parameter - storage created automatically
 });
 
 const backgroundApp = new FunctionsApp(stack, 'Background', {
   runtime: FunctionRuntime.PYTHON,
-  runtimeVersion: '3.11'
+  runtimeVersion: '3.11',
   // No existingStorage parameter - separate storage created automatically
 });
 
@@ -151,13 +151,13 @@ const dataStorage = new StorageAccounts(stack, 'DataStorage', {
 // API Functions App - gets its own runtime storage
 const apiApp = new FunctionsApp(stack, 'Api', {
   runtime: FunctionRuntime.NODE,
-  runtimeVersion: '20'
+  runtimeVersion: '20',
 });
 
 // Background processing Functions App - gets separate runtime storage
 const backgroundApp = new FunctionsApp(stack, 'Background', {
   runtime: FunctionRuntime.NODE,
-  runtimeVersion: '20'
+  runtimeVersion: '20',
 });
 
 // Three separate storage accounts:
@@ -189,6 +189,7 @@ st{type}{org}{project}{env}{geo}{instance}func
 Example: `stfnmyorgprodeastus2001func`
 
 Where:
+
 - `st` = Storage account prefix
 - `fn` = Functions storage type
 - `myorg` = Organization name (truncated if needed)
@@ -203,7 +204,7 @@ If you need to reference the storage account (for example, to grant permissions)
 
 ```typescript
 const functionsApp = new FunctionsApp(stack, 'Api', {
-  runtime: FunctionRuntime.NODE
+  runtime: FunctionRuntime.NODE,
 });
 
 // Access storage properties
@@ -237,7 +238,7 @@ You should not. This storage is for the Functions runtime only. If your function
 ```typescript
 // Functions App with automatic runtime storage
 const functionsApp = new FunctionsApp(stack, 'Api', {
-  runtime: FunctionRuntime.NODE
+  runtime: FunctionRuntime.NODE,
 });
 
 // Separate storage for your application's data
@@ -247,10 +248,7 @@ const appDataStorage = new StorageAccounts(stack, 'AppData', {
 });
 
 // Pass the application storage connection to functions via environment variables
-functionsApp.addEnvironmentVariable(
-  'APP_STORAGE_CONNECTION',
-  appDataStorage.connectionString
-);
+functionsApp.addEnvironmentVariable('APP_STORAGE_CONNECTION', appDataStorage.connectionString);
 ```
 
 ### Can I share storage in development to save costs?
@@ -282,7 +280,7 @@ If you have an existing deployment using shared storage, you'll need to migrate:
 
 ## See Also
 
-- [Azure Functions Basic Usage Examples](../examples/functions-basic-usage.md)
-- [Getting Started with Functions Apps](../getting-started/functions-app.md)
+- [Azure Functions Basic Usage Examples](../examples/Basic-Functions.md)
+- [Getting Started with Functions Apps](../getting-started/04-Functions-App.md)
 - [Storage Account Best Practices](https://learn.microsoft.com/azure/storage/common/storage-account-overview)
 - [Azure Functions Storage Considerations](https://learn.microsoft.com/azure/azure-functions/storage-considerations)

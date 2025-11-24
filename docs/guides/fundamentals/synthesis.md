@@ -139,6 +139,7 @@ App
 ```
 
 During traversal, Atakora:
+
 - Collects all resources
 - Builds a dependency graph
 - Identifies stack boundaries
@@ -233,6 +234,7 @@ arm.out/
 Each stack produces a template file:
 
 **infrastructure.template.json**:
+
 ```json
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
@@ -249,6 +251,7 @@ Each stack produces a template file:
 Parameter values are stored separately:
 
 **infrastructure.parameters.json**:
+
 ```json
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
@@ -266,6 +269,7 @@ Parameter values are stored separately:
 The manifest contains deployment metadata:
 
 **manifest.json**:
+
 ```json
 {
   "version": "1.0.0",
@@ -489,9 +493,9 @@ const app = new AzureApp({
   organization: 'Contoso',
   project: 'WebApp',
   validation: {
-    enabled: true,        // Enable validation
-    strictMode: false,    // Warnings as errors
-    skipNaming: false,    // Skip naming validation
+    enabled: true, // Enable validation
+    strictMode: false, // Warnings as errors
+    skipNaming: false, // Skip naming validation
   },
 });
 ```
@@ -582,6 +586,7 @@ const webApp = new Sites(stack, 'WebApp', {
 **Problem**: Synthesis fails with an error.
 
 **Solution**: Check the error message and ensure:
+
 - All required properties are provided
 - Resource names are valid
 - Dependencies are not circular
@@ -638,7 +643,7 @@ const appStack = new ResourceGroupStack(app, 'Application', {...});
 - **[App and Stacks](./app-and-stacks.md)** - Understanding the construct tree
 - **[Resources](./resources.md)** - Working with Azure resources
 - **[Deployment](./deployment.md)** - Deploying synthesized templates to Azure
-- **[Debugging Synthesis](../../troubleshooting/debugging-synthesis.md)** - Troubleshoot synthesis issues
+- **[Debugging Synthesis](../../troubleshooting/Debugging-Synthesis.md)** - Troubleshoot synthesis issues
 - **[ARM Template Output Reference](../../reference/arm-template-output.md)** - Understanding generated templates
 
 ---

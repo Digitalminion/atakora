@@ -29,12 +29,16 @@ Implement a `defineBackend()` function that acts as a resource orchestrator and 
 // Phase 1: Component Declaration (Requirements Gathering)
 const userApi = CrudApi.define('UserApi', {
   entityName: 'User',
-  schema: { /* ... */ }
+  schema: {
+    /* ... */
+  },
 });
 
 const productApi = CrudApi.define('ProductApi', {
   entityName: 'Product',
-  schema: { /* ... */ }
+  schema: {
+    /* ... */
+  },
 });
 
 // Phase 2: Backend Definition (Resource Orchestration)
@@ -43,7 +47,7 @@ const backend = defineBackend({
   productApi,
   // Additional configuration
   monitoring: true,
-  networking: 'isolated'
+  networking: 'isolated',
 });
 
 // Phase 3: Stack Integration (CDK Synthesis)
@@ -53,6 +57,7 @@ backend.addToStack(stack);
 ## Alternatives Considered
 
 ### Alternative 1: Factory Pattern with Central Registry
+
 ```typescript
 const factory = new ComponentFactory();
 factory.register('cosmosDb', sharedCosmosDb);
@@ -60,12 +65,14 @@ const userApi = factory.createCrudApi('UserApi', props);
 ```
 
 **Rejected because:**
+
 - Requires pre-creating and registering all shared resources
 - Loses type inference between components and resources
 - Difficult to determine what resources are needed upfront
 - Creates tight coupling between components and factory
 
 ### Alternative 2: Inheritance-Based Sharing
+
 ```typescript
 class SharedResourceStack extends ResourceGroupStack {
   cosmosDb: DatabaseAccounts;
@@ -75,20 +82,23 @@ const userApi = new CrudApi(sharedStack, 'UserApi', props);
 ```
 
 **Rejected because:**
+
 - Forces all components into the same stack
 - Limits flexibility in resource organization
 - Breaks single responsibility principle
 - Makes testing and modularity difficult
 
 ### Alternative 3: Global Resource Pool
+
 ```typescript
 ResourcePool.register('cosmos-primary', cosmosDb);
 const userApi = new CrudApi(stack, 'UserApi', {
-  cosmosDb: ResourcePool.get('cosmos-primary')
+  cosmosDb: ResourcePool.get('cosmos-primary'),
 });
 ```
 
 **Rejected because:**
+
 - Creates global state and coupling
 - Makes testing difficult
 - Resource lifecycle management becomes unclear
@@ -138,21 +148,25 @@ The implementation will be considered successful when:
 ## Implementation Phases
 
 ### Phase 1: Core Infrastructure (Week 1)
+
 - Resource requirement interfaces
 - Backend construct base class
 - Resource provider registry
 
 ### Phase 2: Component Integration (Week 2)
+
 - Update CrudApi to support pattern
 - Update FunctionsApp to support pattern
 - Create shared resource providers
 
 ### Phase 3: Advanced Features (Week 3)
+
 - Configuration merging strategies
 - Resource limit handling
 - Monitoring and diagnostics integration
 
 ### Phase 4: Migration and Documentation (Week 4)
+
 - Migration guide for existing components
 - Complete API documentation
 - Example applications

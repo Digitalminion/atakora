@@ -7,6 +7,7 @@ Building on the REST API Core Architecture defined in ADR-014, we need to implem
 Azure API Management provides capabilities for many of these features, but we need to design how they integrate with our TypeScript-first approach while ensuring they work seamlessly in both Government and Commercial clouds.
 
 Current requirements:
+
 - Multiple API versioning strategies (path, header, query, content negotiation)
 - Standard pagination patterns (offset, cursor, page-based)
 - Filtering, sorting, and field selection
@@ -35,17 +36,17 @@ export interface ApiVersioningConfig {
 }
 
 export type VersioningStrategy =
-  | 'path'                // /v1/users, /v2/users
-  | 'header'              // Api-Version: 2023-01-01
-  | 'queryParameter'      // ?api-version=2
-  | 'contentNegotiation'  // Accept: application/vnd.api.v2+json
-  | 'custom';             // Custom extraction logic
+  | 'path' // /v1/users, /v2/users
+  | 'header' // Api-Version: 2023-01-01
+  | 'queryParameter' // ?api-version=2
+  | 'contentNegotiation' // Accept: application/vnd.api.v2+json
+  | 'custom'; // Custom extraction logic
 
 export type VersionFormat =
-  | 'numeric'       // 1, 2, 3
-  | 'semver'        // 1.0.0, 2.1.0
-  | 'date'          // 2023-01-01
-  | 'prefixed';     // v1, v2
+  | 'numeric' // 1, 2, 3
+  | 'semver' // 1.0.0, 2.1.0
+  | 'date' // 2023-01-01
+  | 'prefixed'; // v1, v2
 
 // Deprecated version configuration
 export interface DeprecatedVersion {
@@ -68,12 +69,12 @@ export class PathBasedVersioning implements IVersioningStrategy {
   applyVersion(operation: IRestOperation, version: string): IRestOperation {
     return {
       ...operation,
-      path: `/${version}${operation.path}`
+      path: `/${version}${operation.path}`,
     };
   }
 
   generateVersionedPaths(operation: IRestOperation, versions: string[]): IRestOperation[] {
-    return versions.map(version => this.applyVersion(operation, version));
+    return versions.map((version) => this.applyVersion(operation, version));
   }
 }
 
@@ -98,11 +99,11 @@ export class HeaderBasedVersioning implements IVersioningStrategy {
               type: 'string',
               description: `API version (e.g., ${version})`,
               enum: this.config.supportedVersions,
-              default: this.config.defaultVersion
-            }
-          }
-        }
-      }
+              default: this.config.defaultVersion,
+            },
+          },
+        },
+      },
     };
   }
 
@@ -112,7 +113,7 @@ export class HeaderBasedVersioning implements IVersioningStrategy {
       name: this.config.headerName,
       required: !this.config.defaultVersion,
       failedStatusCode: 400,
-      failedErrorMessage: `Missing or invalid ${this.config.headerName} header`
+      failedErrorMessage: `Missing or invalid ${this.config.headerName} header`,
     });
   }
 }
@@ -138,11 +139,11 @@ export class QueryParameterVersioning implements IVersioningStrategy {
               type: 'string',
               description: 'API version',
               enum: this.config.supportedVersions,
-              default: this.config.defaultVersion
-            }
-          }
-        }
-      }
+              default: this.config.defaultVersion,
+            },
+          },
+        },
+      },
     };
   }
 }
@@ -179,14 +180,14 @@ export class ContentNegotiationVersioning implements IVersioningStrategy {
 
         versionedResponses[statusCode] = {
           ...response,
-          content: versionedContent
+          content: versionedContent,
         };
       }
     }
 
     return {
       ...operation,
-      responses: versionedResponses
+      responses: versionedResponses,
     };
   }
 }
@@ -197,12 +198,12 @@ export class VersionDeprecationManager {
 
   // Check if version is deprecated
   isDeprecated(version: string): boolean {
-    return this.config.deprecatedVersions?.some(v => v.version === version) || false;
+    return this.config.deprecatedVersions?.some((v) => v.version === version) || false;
   }
 
   // Get deprecation info
   getDeprecationInfo(version: string): DeprecatedVersion | undefined {
-    return this.config.deprecatedVersions?.find(v => v.version === version);
+    return this.config.deprecatedVersions?.find((v) => v.version === version);
   }
 
   // Create deprecation warning policy
@@ -213,16 +214,22 @@ export class VersionDeprecationManager {
     return setHeader({
       name: 'Deprecation',
       value: 'true',
-      existsAction: 'override'
-    }).and(setHeader({
-      name: 'Sunset',
-      value: info.sunsetAt?.toUTCString() || '',
-      existsAction: 'override'
-    })).and(setHeader({
-      name: 'Link',
-      value: info.migrationGuide ? `<${info.migrationGuide}>; rel="deprecation"` : '',
-      existsAction: 'override'
-    }));
+      existsAction: 'override',
+    })
+      .and(
+        setHeader({
+          name: 'Sunset',
+          value: info.sunsetAt?.toUTCString() || '',
+          existsAction: 'override',
+        })
+      )
+      .and(
+        setHeader({
+          name: 'Link',
+          value: info.migrationGuide ? `<${info.migrationGuide}>; rel="deprecation"` : '',
+          existsAction: 'override',
+        })
+      );
   }
 
   // Check if version has reached sunset
@@ -242,8 +249,8 @@ export class VersionDeprecationManager {
         title: 'Gone',
         status: 410,
         detail: `API version ${version} has been sunset and is no longer available`,
-        instance: '@request.url'
-      }
+        instance: '@request.url',
+      },
     });
   }
 }
@@ -320,28 +327,28 @@ export class PaginationHelper {
           type: 'integer',
           minimum: 0,
           default: 0,
-          description: 'Number of items to skip'
+          description: 'Number of items to skip',
         };
         queryProperties.limit = {
           type: 'integer',
           minimum: 1,
           maximum: config.maxPageSize,
           default: config.defaultPageSize,
-          description: 'Maximum number of items to return'
+          description: 'Maximum number of items to return',
         };
         break;
 
       case 'cursor':
         queryProperties.cursor = {
           type: 'string',
-          description: 'Pagination cursor for next page'
+          description: 'Pagination cursor for next page',
         };
         queryProperties.limit = {
           type: 'integer',
           minimum: 1,
           maximum: config.maxPageSize,
           default: config.defaultPageSize,
-          description: 'Maximum number of items to return'
+          description: 'Maximum number of items to return',
         };
         break;
 
@@ -350,14 +357,14 @@ export class PaginationHelper {
           type: 'integer',
           minimum: 1,
           default: 1,
-          description: 'Page number'
+          description: 'Page number',
         };
         queryProperties.pageSize = {
           type: 'integer',
           minimum: 1,
           maximum: config.maxPageSize,
           default: config.defaultPageSize,
-          description: 'Number of items per page'
+          description: 'Number of items per page',
         };
         break;
     }
@@ -368,9 +375,9 @@ export class PaginationHelper {
         ...operation.queryParameters,
         schema: {
           ...operation.queryParameters?.schema,
-          properties: queryProperties
-        }
-      }
+          properties: queryProperties,
+        },
+      },
     };
   }
 
@@ -388,10 +395,10 @@ export class PaginationHelper {
         data: {
           type: 'array',
           items: itemSchema,
-          description: 'Array of items in current page'
+          description: 'Array of items in current page',
         },
-        metadata: metadataSchema
-      }
+        metadata: metadataSchema,
+      },
     };
   }
 
@@ -402,21 +409,21 @@ export class PaginationHelper {
       properties: {
         totalCount: {
           type: 'integer',
-          description: 'Total number of items across all pages'
+          description: 'Total number of items across all pages',
         },
         hasNextPage: {
           type: 'boolean',
-          description: 'Indicates if there is a next page'
+          description: 'Indicates if there is a next page',
         },
         hasPreviousPage: {
           type: 'boolean',
-          description: 'Indicates if there is a previous page'
+          description: 'Indicates if there is a previous page',
         },
         pageSize: {
           type: 'integer',
-          description: 'Number of items in current page'
-        }
-      }
+          description: 'Number of items in current page',
+        },
+      },
     };
 
     switch (strategy) {
@@ -427,13 +434,13 @@ export class PaginationHelper {
             ...baseSchema.properties,
             offset: {
               type: 'integer',
-              description: 'Current offset value'
+              description: 'Current offset value',
             },
             limit: {
               type: 'integer',
-              description: 'Current limit value'
-            }
-          }
+              description: 'Current limit value',
+            },
+          },
         };
 
       case 'cursor':
@@ -444,14 +451,14 @@ export class PaginationHelper {
             nextCursor: {
               type: 'string',
               nullable: true,
-              description: 'Cursor for next page'
+              description: 'Cursor for next page',
             },
             previousCursor: {
               type: 'string',
               nullable: true,
-              description: 'Cursor for previous page'
-            }
-          }
+              description: 'Cursor for previous page',
+            },
+          },
         };
 
       case 'page':
@@ -461,13 +468,13 @@ export class PaginationHelper {
             ...baseSchema.properties,
             currentPage: {
               type: 'integer',
-              description: 'Current page number'
+              description: 'Current page number',
             },
             totalPages: {
               type: 'integer',
-              description: 'Total number of pages'
-            }
-          }
+              description: 'Total number of pages',
+            },
+          },
         };
 
       default:
@@ -498,7 +505,7 @@ export class PaginationHelper {
 
         return string.Join(", ", links);
       }`,
-      existsAction: 'override'
+      existsAction: 'override',
     });
   }
 }
@@ -520,14 +527,14 @@ export interface FilteringConfig {
 export type FilterSyntax = 'rsql' | 'odata' | 'mongo' | 'simple';
 
 export type FilterOperator =
-  | 'eq'   // Equal
-  | 'ne'   // Not equal
-  | 'gt'   // Greater than
-  | 'gte'  // Greater than or equal
-  | 'lt'   // Less than
-  | 'lte'  // Less than or equal
-  | 'in'   // In array
-  | 'nin'  // Not in array
+  | 'eq' // Equal
+  | 'ne' // Not equal
+  | 'gt' // Greater than
+  | 'gte' // Greater than or equal
+  | 'lt' // Less than
+  | 'lte' // Less than or equal
+  | 'in' // In array
+  | 'nin' // Not in array
   | 'like' // Pattern match
   | 'contains'
   | 'startsWith'
@@ -551,7 +558,7 @@ export interface SortField {
 export interface FieldSelectionConfig {
   readonly enabled: boolean;
   readonly parameterName?: string; // Default: 'fields'
-  readonly separator?: string;     // Default: ','
+  readonly separator?: string; // Default: ','
   readonly allowedFields?: string[];
   readonly deniedFields?: string[];
   readonly alwaysInclude?: string[]; // Fields always included (e.g., 'id')
@@ -578,7 +585,7 @@ export class FilteringHelper {
         queryProperties.filter = {
           type: 'string',
           description: 'RSQL filter expression',
-          example: 'status==active;category==electronics'
+          example: 'status==active;category==electronics',
         };
         break;
 
@@ -587,7 +594,7 @@ export class FilteringHelper {
         queryProperties.$filter = {
           type: 'string',
           description: 'OData filter expression',
-          example: "status eq 'active' and category eq 'electronics'"
+          example: "status eq 'active' and category eq 'electronics'",
         };
         break;
 
@@ -596,7 +603,7 @@ export class FilteringHelper {
         queryProperties.filter = {
           type: 'string',
           description: 'MongoDB-style filter JSON',
-          example: '{"status":"active","category":"electronics"}'
+          example: '{"status":"active","category":"electronics"}',
         };
         break;
     }
@@ -607,9 +614,9 @@ export class FilteringHelper {
         ...operation.queryParameters,
         schema: {
           ...operation.queryParameters?.schema,
-          properties: queryProperties
-        }
-      }
+          properties: queryProperties,
+        },
+      },
     };
   }
 
@@ -654,7 +661,7 @@ export class FilteringHelper {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -680,7 +687,7 @@ export class FilteringHelper {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -705,7 +712,7 @@ export class FilteringHelper {
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -720,13 +727,13 @@ export class FilteringHelper {
               filter: {
                 type: 'string',
                 // Custom validation would be in C# policy expression
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       ],
       errorMessage: 'Invalid filter parameters',
-      errorStatusCode: 400
+      errorStatusCode: 400,
     });
   }
 }
@@ -745,9 +752,9 @@ export class SortingHelper {
       type: 'string',
       description: 'Sort fields: field1:asc,field2:desc',
       example: 'createdAt:desc,name:asc',
-      default: this.config.defaultSort ?
-        this.config.defaultSort.map(s => `${s.field}:${s.direction}`).join(',') :
-        undefined
+      default: this.config.defaultSort
+        ? this.config.defaultSort.map((s) => `${s.field}:${s.direction}`).join(',')
+        : undefined,
     };
 
     return {
@@ -756,19 +763,19 @@ export class SortingHelper {
         ...operation.queryParameters,
         schema: {
           ...operation.queryParameters?.schema,
-          properties: queryProperties
-        }
-      }
+          properties: queryProperties,
+        },
+      },
     };
   }
 
   // Parse sort parameter
   parseSort(sort: string): SortField[] {
-    return sort.split(',').map(part => {
+    return sort.split(',').map((part) => {
       const [field, direction = 'asc'] = part.split(':');
       return {
         field: field.trim(),
-        direction: direction.toLowerCase() as 'asc' | 'desc'
+        direction: direction.toLowerCase() as 'asc' | 'desc',
       };
     });
   }
@@ -799,7 +806,7 @@ export class SortingHelper {
     return {
       valid: errors.length === 0,
       errors,
-      fields
+      fields,
     };
   }
 }
@@ -818,7 +825,7 @@ export class FieldSelectionHelper {
     queryProperties[paramName] = {
       type: 'string',
       description: `Comma-separated list of fields to include (e.g., id,name,email)`,
-      example: 'id,name,email'
+      example: 'id,name,email',
     };
 
     return {
@@ -827,16 +834,16 @@ export class FieldSelectionHelper {
         ...operation.queryParameters,
         schema: {
           ...operation.queryParameters?.schema,
-          properties: queryProperties
-        }
-      }
+          properties: queryProperties,
+        },
+      },
     };
   }
 
   // Parse fields parameter
   parseFields(fields: string): string[] {
     const separator = this.config.separator || ',';
-    const parsed = fields.split(separator).map(f => f.trim());
+    const parsed = fields.split(separator).map((f) => f.trim());
 
     // Always include required fields
     if (this.config.alwaysInclude) {
@@ -864,7 +871,7 @@ export class FieldSelectionHelper {
     return {
       valid: errors.length === 0,
       errors,
-      fields: parsed
+      fields: parsed,
     };
   }
 
@@ -890,10 +897,10 @@ export class FieldSelectionHelper {
               }
 
               return filtered.ToString();
-            }`
-          })
-        ]
-      }
+            }`,
+          }),
+        ],
+      },
     });
   }
 }
@@ -1291,7 +1298,7 @@ export class AuthenticationManager {
       audiences: [],
       openIdConfigUrl: `${config.authorizationUrl}/.well-known/openid-configuration`,
       failedValidationStatusCode: 401,
-      failedValidationErrorMessage: 'Unauthorized'
+      failedValidationErrorMessage: 'Unauthorized',
     });
   }
 
@@ -1301,13 +1308,11 @@ export class AuthenticationManager {
     return validateJwt({
       headerName: 'Authorization',
       scheme: 'Bearer',
-      requiredClaims: [
-        { name: 'aud', match: 'all', values: [config.audience || config.clientId] }
-      ],
+      requiredClaims: [{ name: 'aud', match: 'all', values: [config.audience || config.clientId] }],
       audiences: [config.audience || config.clientId],
       openIdConfigUrl: openIdUrl,
       failedValidationStatusCode: 401,
-      failedValidationErrorMessage: 'Unauthorized - Invalid Azure AD token'
+      failedValidationErrorMessage: 'Unauthorized - Invalid Azure AD token',
     });
   }
 
@@ -1318,7 +1323,7 @@ export class AuthenticationManager {
           name: config.name,
           required: true,
           failedStatusCode: 401,
-          failedErrorMessage: 'Missing or invalid API key'
+          failedErrorMessage: 'Missing or invalid API key',
         });
 
       case 'query':
@@ -1332,11 +1337,11 @@ export class AuthenticationManager {
                   type: 'https://httpstatuses.io/401',
                   title: 'Unauthorized',
                   status: 401,
-                  detail: 'Missing or invalid API key'
-                }
-              })
-            ]
-          }
+                  detail: 'Missing or invalid API key',
+                },
+              }),
+            ],
+          },
         });
 
       default:
@@ -1355,25 +1360,27 @@ export class AuthenticationManager {
               type: 'https://httpstatuses.io/401',
               title: 'Unauthorized',
               status: 401,
-              detail: 'Client certificate required'
-            }
-          })
-        ]
+              detail: 'Client certificate required',
+            },
+          }),
+        ],
       },
-      otherwise: config.thumbprints ? {
-        condition: `@(!new[] { ${config.thumbprints.map(t => `"${t}"`).join(', ')} }.Contains(context.Request.Certificate.Thumbprint))`,
-        operations: [
-          returnResponse({
-            statusCode: 403,
-            body: {
-              type: 'https://httpstatuses.io/403',
-              title: 'Forbidden',
-              status: 403,
-              detail: 'Client certificate not authorized'
-            }
-          })
-        ]
-      } : undefined
+      otherwise: config.thumbprints
+        ? {
+            condition: `@(!new[] { ${config.thumbprints.map((t) => `"${t}"`).join(', ')} }.Contains(context.Request.Certificate.Thumbprint))`,
+            operations: [
+              returnResponse({
+                statusCode: 403,
+                body: {
+                  type: 'https://httpstatuses.io/403',
+                  title: 'Forbidden',
+                  status: 403,
+                  detail: 'Client certificate not authorized',
+                },
+              }),
+            ],
+          }
+        : undefined,
     });
   }
 
@@ -1397,8 +1404,12 @@ export class AuthenticationManager {
 
   private createRbacPolicy(rule: RbacRule): IPolicy {
     const rolesCheck = rule.requireAll
-      ? rule.roles.map(role => `context.User.Claims.Any(c => c.Type == "roles" && c.Value == "${role}")`).join(' && ')
-      : rule.roles.map(role => `context.User.Claims.Any(c => c.Type == "roles" && c.Value == "${role}")`).join(' || ');
+      ? rule.roles
+          .map((role) => `context.User.Claims.Any(c => c.Type == "roles" && c.Value == "${role}")`)
+          .join(' && ')
+      : rule.roles
+          .map((role) => `context.User.Claims.Any(c => c.Type == "roles" && c.Value == "${role}")`)
+          .join(' || ');
 
     return choose({
       when: {
@@ -1410,22 +1421,18 @@ export class AuthenticationManager {
               type: 'https://httpstatuses.io/403',
               title: 'Forbidden',
               status: 403,
-              detail: `Required roles: ${rule.roles.join(', ')}`
-            }
-          })
-        ]
-      }
+              detail: `Required roles: ${rule.roles.join(', ')}`,
+            },
+          }),
+        ],
+      },
     });
   }
 
   private createAbacPolicy(rule: AbacRule): IPolicy {
-    const conditions = rule.conditions.map(cond =>
-      this.buildAbacCondition(cond)
-    );
+    const conditions = rule.conditions.map((cond) => this.buildAbacCondition(cond));
 
-    const combined = rule.combinator === 'AND'
-      ? conditions.join(' && ')
-      : conditions.join(' || ');
+    const combined = rule.combinator === 'AND' ? conditions.join(' && ') : conditions.join(' || ');
 
     return choose({
       when: {
@@ -1437,11 +1444,11 @@ export class AuthenticationManager {
               type: 'https://httpstatuses.io/403',
               title: 'Forbidden',
               status: 403,
-              detail: 'Access denied based on attributes'
-            }
-          })
-        ]
-      }
+              detail: 'Access denied based on attributes',
+            },
+          }),
+        ],
+      },
     });
   }
 
@@ -1690,25 +1697,29 @@ export class ValidationHelper {
     if (!this.config.validateResponse) return noop();
 
     return choose({
-      when: Object.entries(operation.responses).map(([statusCode, response]) => {
-        if (!response?.content) return null;
+      when: Object.entries(operation.responses)
+        .map(([statusCode, response]) => {
+          if (!response?.content) return null;
 
-        const schema = this.getResponseSchema(response);
-        if (!schema) return null;
+          const schema = this.getResponseSchema(response);
+          if (!schema) return null;
 
-        return {
-          condition: `@(context.Response.StatusCode == ${statusCode})`,
-          operations: [
-            validate({
-              content: [{
-                schema,
-                errorMessage: `Response does not match schema for status ${statusCode}`,
-                errorStatusCode: 500
-              }]
-            })
-          ]
-        };
-      }).filter(Boolean)
+          return {
+            condition: `@(context.Response.StatusCode == ${statusCode})`,
+            operations: [
+              validate({
+                content: [
+                  {
+                    schema,
+                    errorMessage: `Response does not match schema for status ${statusCode}`,
+                    errorStatusCode: 500,
+                  },
+                ],
+              }),
+            ],
+          };
+        })
+        .filter(Boolean),
     });
   }
 
@@ -1717,7 +1728,7 @@ export class ValidationHelper {
       when: {
         condition: `@{
           var contentType = context.Request.Headers.GetValueOrDefault("Content-Type", "");
-          var allowed = new[] { ${allowedTypes.map(t => `"${t}"`).join(', ')} };
+          var allowed = new[] { ${allowedTypes.map((t) => `"${t}"`).join(', ')} };
           return !allowed.Any(a => contentType.StartsWith(a));
         }`,
         operations: [
@@ -1727,11 +1738,11 @@ export class ValidationHelper {
               type: 'https://httpstatuses.io/415',
               title: 'Unsupported Media Type',
               status: 415,
-              detail: `Content-Type must be one of: ${allowedTypes.join(', ')}`
-            }
-          })
-        ]
-      }
+              detail: `Content-Type must be one of: ${allowedTypes.join(', ')}`,
+            },
+          }),
+        ],
+      },
     });
   }
 
@@ -1746,11 +1757,11 @@ export class ValidationHelper {
               type: 'https://httpstatuses.io/413',
               title: 'Payload Too Large',
               status: 413,
-              detail: `Request body must not exceed ${maxSize} bytes`
-            }
-          })
-        ]
-      }
+              detail: `Request body must not exceed ${maxSize} bytes`,
+            },
+          }),
+        ],
+      },
     });
   }
 
@@ -1761,15 +1772,19 @@ export class ValidationHelper {
     if (!mediaType?.schema) return noop();
 
     return validate({
-      content: [{
-        schema: mediaType.schema,
-        errorMessage: 'Request body validation failed',
-        errorStatusCode: 400
-      }],
-      errors: [{
-        source: 'body',
-        reason: 'Schema validation failed'
-      }]
+      content: [
+        {
+          schema: mediaType.schema,
+          errorMessage: 'Request body validation failed',
+          errorStatusCode: 400,
+        },
+      ],
+      errors: [
+        {
+          source: 'body',
+          reason: 'Schema validation failed',
+        },
+      ],
     });
   }
 
@@ -1779,34 +1794,38 @@ export class ValidationHelper {
     // Validate path parameters
     if (operation.pathParameters?.schema.required) {
       for (const param of operation.pathParameters.schema.required) {
-        checks.push(checkHeader({
-          name: `path-${param}`,
-          required: true,
-          failedStatusCode: 400,
-          failedErrorMessage: `Missing required path parameter: ${param}`
-        }));
+        checks.push(
+          checkHeader({
+            name: `path-${param}`,
+            required: true,
+            failedStatusCode: 400,
+            failedErrorMessage: `Missing required path parameter: ${param}`,
+          })
+        );
       }
     }
 
     // Validate query parameters
     if (operation.queryParameters?.schema.required) {
       for (const param of operation.queryParameters.schema.required) {
-        checks.push(choose({
-          when: {
-            condition: `@(!context.Request.Url.Query.ContainsKey("${param}"))`,
-            operations: [
-              returnResponse({
-                statusCode: 400,
-                body: {
-                  type: 'https://httpstatuses.io/400',
-                  title: 'Bad Request',
-                  status: 400,
-                  detail: `Missing required query parameter: ${param}`
-                }
-              })
-            ]
-          }
-        }));
+        checks.push(
+          choose({
+            when: {
+              condition: `@(!context.Request.Url.Query.ContainsKey("${param}"))`,
+              operations: [
+                returnResponse({
+                  statusCode: 400,
+                  body: {
+                    type: 'https://httpstatuses.io/400',
+                    title: 'Bad Request',
+                    status: 400,
+                    detail: `Missing required query parameter: ${param}`,
+                  },
+                }),
+              ],
+            },
+          })
+        );
       }
     }
 
@@ -1833,7 +1852,7 @@ export class ValidationHelper {
         body = System.Text.RegularExpressions.Regex.Replace(body, @"on\w+\s*=", "", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 
         return body;
-      }`
+      }`,
     });
   }
 }
@@ -1851,7 +1870,7 @@ export class ProblemDetailsFactory {
       title: 'Bad Request',
       status: 400,
       detail: detail || 'The request is invalid',
-      ...extensions
+      ...extensions,
     };
   }
 
@@ -1861,7 +1880,7 @@ export class ProblemDetailsFactory {
       title: 'Unauthorized',
       status: 401,
       detail: detail || 'Authentication is required',
-      ...extensions
+      ...extensions,
     };
   }
 
@@ -1871,7 +1890,7 @@ export class ProblemDetailsFactory {
       title: 'Forbidden',
       status: 403,
       detail: detail || 'Access to this resource is forbidden',
-      ...extensions
+      ...extensions,
     };
   }
 
@@ -1881,7 +1900,7 @@ export class ProblemDetailsFactory {
       title: 'Not Found',
       status: 404,
       detail: resource ? `${resource} not found` : 'The requested resource was not found',
-      ...extensions
+      ...extensions,
     };
   }
 
@@ -1891,7 +1910,7 @@ export class ProblemDetailsFactory {
       title: 'Conflict',
       status: 409,
       detail: detail || 'The request conflicts with the current state',
-      ...extensions
+      ...extensions,
     };
   }
 
@@ -1905,48 +1924,39 @@ export class ProblemDetailsFactory {
       status: 422,
       detail: 'Validation failed',
       errors: validationErrors,
-      ...extensions
+      ...extensions,
     };
   }
 
-  static tooManyRequests(
-    retryAfter?: number,
-    extensions?: Record<string, any>
-  ): ErrorResponse {
+  static tooManyRequests(retryAfter?: number, extensions?: Record<string, any>): ErrorResponse {
     return {
       type: 'https://httpstatuses.io/429',
       title: 'Too Many Requests',
       status: 429,
       detail: 'Rate limit exceeded',
       retryAfter,
-      ...extensions
+      ...extensions,
     };
   }
 
-  static internalServerError(
-    detail?: string,
-    extensions?: Record<string, any>
-  ): ErrorResponse {
+  static internalServerError(detail?: string, extensions?: Record<string, any>): ErrorResponse {
     return {
       type: 'https://httpstatuses.io/500',
       title: 'Internal Server Error',
       status: 500,
       detail: detail || 'An unexpected error occurred',
-      ...extensions
+      ...extensions,
     };
   }
 
-  static serviceUnavailable(
-    retryAfter?: number,
-    extensions?: Record<string, any>
-  ): ErrorResponse {
+  static serviceUnavailable(retryAfter?: number, extensions?: Record<string, any>): ErrorResponse {
     return {
       type: 'https://httpstatuses.io/503',
       title: 'Service Unavailable',
       status: 503,
       detail: 'The service is temporarily unavailable',
       retryAfter,
-      ...extensions
+      ...extensions,
     };
   }
 
@@ -1968,18 +1978,18 @@ export class ProblemDetailsFactory {
             };
 
             return JsonConvert.SerializeObject(problem);
-          }`
+          }`,
         }),
         setHeader({
           name: 'Content-Type',
           value: 'application/problem+json',
-          existsAction: 'override'
+          existsAction: 'override',
         }),
         setStatus({
           code: '@(context.Response.StatusCode)',
-          reason: '@(context.LastError.Reason)'
-        })
-      ]
+          reason: '@(context.LastError.Reason)',
+        }),
+      ],
     });
   }
 
@@ -1990,21 +2000,24 @@ export class ProblemDetailsFactory {
   ): IPolicy {
     return onError({
       operations: [
-        ...(logErrors ? [
-          trace({
-            severity: 'error',
-            message: '@(context.LastError.Message)',
-            variables: {
-              source: '@(context.LastError.Source)',
-              reason: '@(context.LastError.Reason)',
-              stackTrace: includeStackTrace ? '@(context.LastError.StackTrace)' : undefined
-            }
-          })
-        ] : []),
+        ...(logErrors
+          ? [
+              trace({
+                severity: 'error',
+                message: '@(context.LastError.Message)',
+                variables: {
+                  source: '@(context.LastError.Source)',
+                  reason: '@(context.LastError.Reason)',
+                  stackTrace: includeStackTrace ? '@(context.LastError.StackTrace)' : undefined,
+                },
+              }),
+            ]
+          : []),
         choose({
           when: [
             {
-              condition: '@(context.Response.StatusCode >= 400 && context.Response.StatusCode < 500)',
+              condition:
+                '@(context.Response.StatusCode >= 400 && context.Response.StatusCode < 500)',
               operations: [
                 returnResponse({
                   statusCode: '@(context.Response.StatusCode)',
@@ -2014,14 +2027,14 @@ export class ProblemDetailsFactory {
                     status: '@(context.Response.StatusCode)',
                     detail: '@(context.LastError.Message)',
                     instance: '@(context.Request.Url.Path)',
-                    traceId: '@(context.RequestId)'
+                    traceId: '@(context.RequestId)',
                   },
                   setHeaders: {
-                    'Content-Type': 'application/problem+json'
-                  }
-                })
-              ]
-            }
+                    'Content-Type': 'application/problem+json',
+                  },
+                }),
+              ],
+            },
           ],
           otherwise: {
             condition: 'true',
@@ -2032,20 +2045,20 @@ export class ProblemDetailsFactory {
                   type: 'https://httpstatuses.io/500',
                   title: 'Internal Server Error',
                   status: 500,
-                  detail: includeStackTrace ?
-                    '@(context.LastError.Message)' :
-                    'An unexpected error occurred',
+                  detail: includeStackTrace
+                    ? '@(context.LastError.Message)'
+                    : 'An unexpected error occurred',
                   instance: '@(context.Request.Url.Path)',
-                  traceId: '@(context.RequestId)'
+                  traceId: '@(context.RequestId)',
                 },
                 setHeaders: {
-                  'Content-Type': 'application/problem+json'
-                }
-              })
-            ]
-          }
-        })
-      ]
+                  'Content-Type': 'application/problem+json',
+                },
+              }),
+            ],
+          },
+        }),
+      ],
     });
   }
 }
@@ -2334,6 +2347,7 @@ export class ObservabilityHelper {
 Implement only basic REST operations without advanced features:
 
 **Rejected because:**
+
 - Insufficient for production use cases
 - Security vulnerabilities without proper rate limiting and validation
 - Poor developer experience without pagination and filtering
@@ -2344,6 +2358,7 @@ Implement only basic REST operations without advanced features:
 Rely entirely on third-party libraries (Express, Fastify) for advanced features:
 
 **Rejected because:**
+
 - Not optimized for Azure API Management
 - Additional dependencies and complexity
 - May not support Government cloud
@@ -2354,6 +2369,7 @@ Rely entirely on third-party libraries (Express, Fastify) for advanced features:
 Generate all policies and configurations from annotations:
 
 **Rejected because:**
+
 - Less flexible than programmatic approach
 - Harder to customize
 - Requires complex code generation pipeline
@@ -2398,36 +2414,42 @@ Generate all policies and configurations from annotations:
 ## Implementation Roadmap
 
 ### Phase 1: Versioning & Pagination (Week 1)
+
 - Implement all versioning strategies
 - Add pagination helpers
 - Create deprecation manager
 - Unit tests for versioning and pagination
 
 ### Phase 2: Filtering & Caching (Week 2)
+
 - Implement filtering with multiple syntaxes
 - Add sorting and field selection
 - Create HTTP caching helpers
 - Integration tests
 
 ### Phase 3: Authentication & Authorization (Week 3)
+
 - Implement OAuth 2.0 and Azure AD
 - Add RBAC and ABAC
 - Create API key authentication
 - Security tests
 
 ### Phase 4: Rate Limiting & Validation (Week 4)
+
 - Implement rate limiting strategies
 - Add request/response validation
 - Create input sanitization
 - Performance tests
 
 ### Phase 5: Error Handling & Observability (Week 5)
+
 - Implement RFC 7807 Problem Details
 - Add distributed tracing
 - Create metrics collection
 - End-to-end tests
 
 ### Phase 6: Production Readiness (Week 6)
+
 - Performance optimization
 - Security audit
 - Government cloud testing

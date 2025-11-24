@@ -21,6 +21,7 @@ This guide helps you quickly resolve the most common validation errors you'll en
 ### STORAGE_001: Invalid Storage Account Name
 
 **Error Message:**
+
 ```
 Storage account name 'MyStorageAccount' is invalid.
 Names must be lowercase alphanumeric, 3-24 characters.
@@ -29,26 +30,27 @@ Names must be lowercase alphanumeric, 3-24 characters.
 **Cause:** Storage account names have strict requirements enforced by Azure.
 
 **Resolution:**
+
 ```typescript
 // ❌ Invalid
 const storage = new StorageAccount(this, 'storage', {
-  name: 'MyStorageAccount'  // Contains uppercase
+  name: 'MyStorageAccount', // Contains uppercase
 });
 
 // ❌ Invalid
 const storage = new StorageAccount(this, 'storage', {
-  name: 'my-storage-account'  // Contains hyphens
+  name: 'my-storage-account', // Contains hyphens
 });
 
 // ✅ Valid
 const storage = new StorageAccount(this, 'storage', {
-  name: 'mystorageaccount'  // Lowercase, no special chars
+  name: 'mystorageaccount', // Lowercase, no special chars
 });
 
 // ✅ Valid (let Atakora generate name)
 const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
-  location: 'eastus'
+  location: 'eastus',
   // No name - Atakora generates valid name with hash
 });
 ```
@@ -58,6 +60,7 @@ const storage = new StorageAccount(this, 'storage', {
 ### WEBAPP_001: Invalid Web App Name
 
 **Error Message:**
+
 ```
 Web app name 'my_webapp' contains invalid characters.
 Names must be alphanumeric or hyphens only.
@@ -66,21 +69,23 @@ Names must be alphanumeric or hyphens only.
 **Cause:** Web app names cannot contain underscores.
 
 **Resolution:**
+
 ```typescript
 // ❌ Invalid
 const webApp = new WebApp(this, 'webapp', {
-  name: 'my_webapp'  // Underscores not allowed
+  name: 'my_webapp', // Underscores not allowed
 });
 
 // ✅ Valid
 const webApp = new WebApp(this, 'webapp', {
-  name: 'my-webapp'  // Hyphens allowed
+  name: 'my-webapp', // Hyphens allowed
 });
 ```
 
 ### NAME_001: Duplicate Resource Name
 
 **Error Message:**
+
 ```
 Duplicate resource name: Microsoft.Storage/storageAccounts 'mystorage'
 already defined at src/stacks/storage.ts:15
@@ -89,31 +94,32 @@ already defined at src/stacks/storage.ts:15
 **Cause:** Two resources of the same type cannot have the same name in the same scope.
 
 **Resolution:**
+
 ```typescript
 // ❌ Invalid
 const storage1 = new StorageAccount(this, 'storage', {
   name: 'mystorage',
   resourceGroup: rg,
-  location: 'eastus'
+  location: 'eastus',
 });
 
 const storage2 = new StorageAccount(this, 'storage-backup', {
-  name: 'mystorage',  // Same name as storage1
+  name: 'mystorage', // Same name as storage1
   resourceGroup: rg,
-  location: 'westus'
+  location: 'westus',
 });
 
 // ✅ Valid
 const storage1 = new StorageAccount(this, 'storage', {
   name: 'mystorage',
   resourceGroup: rg,
-  location: 'eastus'
+  location: 'eastus',
 });
 
 const storage2 = new StorageAccount(this, 'storage-backup', {
-  name: 'mystoragebackup',  // Unique name
+  name: 'mystoragebackup', // Unique name
   resourceGroup: rg,
-  location: 'westus'
+  location: 'westus',
 });
 ```
 
@@ -122,6 +128,7 @@ const storage2 = new StorageAccount(this, 'storage-backup', {
 ### PROP_001: Missing Required Property
 
 **Error Message:**
+
 ```
 WebApp requires 'serverFarmId' property
 ```
@@ -129,11 +136,12 @@ WebApp requires 'serverFarmId' property
 **Cause:** Required property not provided.
 
 **Resolution:**
+
 ```typescript
 // ❌ Invalid
 const webApp = new WebApp(this, 'webapp', {
   resourceGroup: rg,
-  location: 'eastus'
+  location: 'eastus',
   // Missing serverFarmId
 });
 
@@ -141,19 +149,20 @@ const webApp = new WebApp(this, 'webapp', {
 const plan = new AppServicePlan(this, 'plan', {
   resourceGroup: rg,
   location: 'eastus',
-  sku: { name: 'B1', tier: 'Basic' }
+  sku: { name: 'B1', tier: 'Basic' },
 });
 
 const webApp = new WebApp(this, 'webapp', {
   resourceGroup: rg,
   location: 'eastus',
-  serverFarmId: plan.id  // Required property provided
+  serverFarmId: plan.id, // Required property provided
 });
 ```
 
 ### PROP_002: Invalid Property Value
 
 **Error Message:**
+
 ```
 Invalid SKU name 'Invalid_SKU'.
 Valid options: Standard_LRS, Standard_GRS, Standard_RAGRS, Premium_LRS
@@ -162,14 +171,15 @@ Valid options: Standard_LRS, Standard_GRS, Standard_RAGRS, Premium_LRS
 **Cause:** Property value not in allowed set.
 
 **Resolution:**
+
 ```typescript
 // ❌ Invalid
 const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   sku: {
-    name: 'Invalid_SKU'  // Not a valid SKU
-  }
+    name: 'Invalid_SKU', // Not a valid SKU
+  },
 });
 
 // ✅ Valid
@@ -177,14 +187,15 @@ const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   sku: {
-    name: 'Standard_LRS'  // Valid SKU
-  }
+    name: 'Standard_LRS', // Valid SKU
+  },
 });
 ```
 
 ### PROP_003: Incompatible Properties
 
 **Error Message:**
+
 ```
 FileStorage kind requires Premium_LRS SKU
 ```
@@ -192,6 +203,7 @@ FileStorage kind requires Premium_LRS SKU
 **Cause:** Property combination not allowed by Azure.
 
 **Resolution:**
+
 ```typescript
 // ❌ Invalid
 const storage = new StorageAccount(this, 'storage', {
@@ -199,8 +211,8 @@ const storage = new StorageAccount(this, 'storage', {
   location: 'eastus',
   kind: 'FileStorage',
   sku: {
-    name: 'Standard_LRS'  // FileStorage requires Premium_LRS
-  }
+    name: 'Standard_LRS', // FileStorage requires Premium_LRS
+  },
 });
 
 // ✅ Valid
@@ -209,8 +221,8 @@ const storage = new StorageAccount(this, 'storage', {
   location: 'eastus',
   kind: 'FileStorage',
   sku: {
-    name: 'Premium_LRS'  // Correct SKU for FileStorage
-  }
+    name: 'Premium_LRS', // Correct SKU for FileStorage
+  },
 });
 ```
 
@@ -219,6 +231,7 @@ const storage = new StorageAccount(this, 'storage', {
 ### DEP_001: Circular Dependency
 
 **Error Message:**
+
 ```
 Circular dependency detected: ResourceA → ResourceB → ResourceA
 ```
@@ -226,6 +239,7 @@ Circular dependency detected: ResourceA → ResourceB → ResourceA
 **Cause:** Resources depend on each other in a cycle.
 
 **Resolution:**
+
 ```typescript
 // ❌ Invalid (circular dependency)
 const webApp = new WebApp(this, 'webapp', {
@@ -233,22 +247,22 @@ const webApp = new WebApp(this, 'webapp', {
   location: 'eastus',
   serverFarmId: plan.id,
   tags: {
-    storageAccount: storage.name  // webApp depends on storage
-  }
+    storageAccount: storage.name, // webApp depends on storage
+  },
 });
 
 const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   tags: {
-    webApp: webApp.name  // storage depends on webApp - CIRCULAR!
-  }
+    webApp: webApp.name, // storage depends on webApp - CIRCULAR!
+  },
 });
 
 // ✅ Valid (one-way dependency)
 const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
-  location: 'eastus'
+  location: 'eastus',
   // No dependency on webApp
 });
 
@@ -257,14 +271,15 @@ const webApp = new WebApp(this, 'webapp', {
   location: 'eastus',
   serverFarmId: plan.id,
   tags: {
-    storageAccount: storage.name  // One-way: webApp → storage
-  }
+    storageAccount: storage.name, // One-way: webApp → storage
+  },
 });
 ```
 
 ### DEP_002: Missing Dependency
 
 **Error Message:**
+
 ```
 Resource 'webapp' references undefined resource 'plan-xyz'
 ```
@@ -272,31 +287,33 @@ Resource 'webapp' references undefined resource 'plan-xyz'
 **Cause:** Resource references another resource that doesn't exist.
 
 **Resolution:**
+
 ```typescript
 // ❌ Invalid
 const webApp = new WebApp(this, 'webapp', {
   resourceGroup: rg,
   location: 'eastus',
-  serverFarmId: '/subscriptions/.../plans/non-existent'  // Doesn't exist
+  serverFarmId: '/subscriptions/.../plans/non-existent', // Doesn't exist
 });
 
 // ✅ Valid
 const plan = new AppServicePlan(this, 'plan', {
   resourceGroup: rg,
   location: 'eastus',
-  sku: { name: 'B1', tier: 'Basic' }
+  sku: { name: 'B1', tier: 'Basic' },
 });
 
 const webApp = new WebApp(this, 'webapp', {
   resourceGroup: rg,
   location: 'eastus',
-  serverFarmId: plan.id  // References created resource
+  serverFarmId: plan.id, // References created resource
 });
 ```
 
 ### DEP_003: Cross-Stack Dependency
 
 **Error Message:**
+
 ```
 Cannot reference resource from different stack without explicit dependency
 ```
@@ -304,6 +321,7 @@ Cannot reference resource from different stack without explicit dependency
 **Cause:** Referencing resource from another stack without proper dependency management.
 
 **Resolution:**
+
 ```typescript
 // ❌ Invalid
 export class Stack1 extends Stack {
@@ -313,7 +331,7 @@ export class Stack1 extends Stack {
     super('stack1');
     this.storage = new StorageAccount(this, 'storage', {
       resourceGroup: rg,
-      location: 'eastus'
+      location: 'eastus',
     });
   }
 }
@@ -336,7 +354,7 @@ export class Stack1 extends Stack {
     super('stack1');
     const storage = new StorageAccount(this, 'storage', {
       resourceGroup: rg,
-      location: 'eastus'
+      location: 'eastus',
     });
     this.storageName = storage.name;
   }
@@ -358,6 +376,7 @@ export class Stack2 extends Stack {
 ### SEC_001: HTTPS Not Enforced
 
 **Error Message:**
+
 ```
 Storage account must support HTTPS-only traffic for security
 ```
@@ -365,14 +384,15 @@ Storage account must support HTTPS-only traffic for security
 **Cause:** Resource allows unencrypted HTTP connections.
 
 **Resolution:**
+
 ```typescript
 // ❌ Invalid
 const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   properties: {
-    supportsHttpsTrafficOnly: false  // Insecure
-  }
+    supportsHttpsTrafficOnly: false, // Insecure
+  },
 });
 
 // ✅ Valid
@@ -380,14 +400,15 @@ const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   properties: {
-    supportsHttpsTrafficOnly: true  // Secure (also the default)
-  }
+    supportsHttpsTrafficOnly: true, // Secure (also the default)
+  },
 });
 ```
 
 ### SEC_002: Weak TLS Version
 
 **Error Message:**
+
 ```
 TLS version TLS1_0 is deprecated. Use TLS1_2 or TLS1_3
 ```
@@ -395,14 +416,15 @@ TLS version TLS1_0 is deprecated. Use TLS1_2 or TLS1_3
 **Cause:** Using outdated TLS protocol version.
 
 **Resolution:**
+
 ```typescript
 // ❌ Invalid
 const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   properties: {
-    minimumTlsVersion: 'TLS1_0'  // Weak/deprecated
-  }
+    minimumTlsVersion: 'TLS1_0', // Weak/deprecated
+  },
 });
 
 // ✅ Valid
@@ -410,14 +432,15 @@ const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   properties: {
-    minimumTlsVersion: 'TLS1_2'  // Secure
-  }
+    minimumTlsVersion: 'TLS1_2', // Secure
+  },
 });
 ```
 
 ### SEC_003: Public Access Enabled
 
 **Error Message:**
+
 ```
 Storage account blob public access should be disabled in production
 ```
@@ -425,14 +448,15 @@ Storage account blob public access should be disabled in production
 **Cause:** Allowing anonymous public access to storage blobs.
 
 **Resolution:**
+
 ```typescript
 // ❌ Not recommended for production
 const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   properties: {
-    allowBlobPublicAccess: true  // Public access enabled
-  }
+    allowBlobPublicAccess: true, // Public access enabled
+  },
 });
 
 // ✅ Secure for production
@@ -440,8 +464,8 @@ const storage = new StorageAccount(this, 'storage', {
   resourceGroup: rg,
   location: 'eastus',
   properties: {
-    allowBlobPublicAccess: false  // Public access disabled
-  }
+    allowBlobPublicAccess: false, // Public access disabled
+  },
 });
 ```
 
@@ -450,6 +474,7 @@ const storage = new StorageAccount(this, 'storage', {
 ### TYPE_001: Type Mismatch
 
 **Error Message:**
+
 ```
 Type 'number' is not assignable to type 'string'
 ```
@@ -457,25 +482,27 @@ Type 'number' is not assignable to type 'string'
 **Cause:** TypeScript type mismatch.
 
 **Resolution:**
+
 ```typescript
 // ❌ Invalid
 const webApp = new WebApp(this, 'webapp', {
   resourceGroup: rg,
-  location: 123,  // Should be string
-  serverFarmId: plan.id
+  location: 123, // Should be string
+  serverFarmId: plan.id,
 });
 
 // ✅ Valid
 const webApp = new WebApp(this, 'webapp', {
   resourceGroup: rg,
-  location: 'eastus',  // String value
-  serverFarmId: plan.id
+  location: 'eastus', // String value
+  serverFarmId: plan.id,
 });
 ```
 
 ### TYPE_002: Missing Generic Type
 
 **Error Message:**
+
 ```
 Generic type 'Map<K, V>' requires 2 type argument(s)
 ```
@@ -483,6 +510,7 @@ Generic type 'Map<K, V>' requires 2 type argument(s)
 **Cause:** Generic type used without type parameters.
 
 **Resolution:**
+
 ```typescript
 // ❌ Invalid
 const resources: Map = new Map();
@@ -496,6 +524,7 @@ const resources: Map<string, Resource> = new Map();
 ### LIMIT_001: Resource Limit Exceeded
 
 **Error Message:**
+
 ```
 Resource limit exceeded: storageAccounts (251/250 per subscription)
 ```
@@ -503,6 +532,7 @@ Resource limit exceeded: storageAccounts (251/250 per subscription)
 **Cause:** Exceeding Azure subscription limits.
 
 **Resolution:**
+
 - Split resources across multiple subscriptions
 - Delete unused resources
 - Request limit increase from Azure support
@@ -527,6 +557,7 @@ export class StorageStack2 extends Stack {
 ### LIMIT_002: Name Length Exceeded
 
 **Error Message:**
+
 ```
 Resource name 'very-long-name-that-exceeds-limit' exceeds maximum length of 24 characters
 ```
@@ -534,19 +565,20 @@ Resource name 'very-long-name-that-exceeds-limit' exceeds maximum length of 24 c
 **Cause:** Resource name too long.
 
 **Resolution:**
+
 ```typescript
 // ❌ Invalid
 const storage = new StorageAccount(this, 'storage', {
-  name: 'mystorageaccountwithaverylongname',  // > 24 chars
+  name: 'mystorageaccountwithaverylongname', // > 24 chars
   resourceGroup: rg,
-  location: 'eastus'
+  location: 'eastus',
 });
 
 // ✅ Valid
 const storage = new StorageAccount(this, 'storage', {
-  name: 'mystorageacct',  // <= 24 chars
+  name: 'mystorageacct', // <= 24 chars
   resourceGroup: rg,
-  location: 'eastus'
+  location: 'eastus',
 });
 ```
 
@@ -555,6 +587,7 @@ const storage = new StorageAccount(this, 'storage', {
 ### TPL_001: Invalid Template Reference
 
 **Error Message:**
+
 ```
 Template function 'resourceId' references undefined resource type
 ```
@@ -562,6 +595,7 @@ Template function 'resourceId' references undefined resource type
 **Cause:** ARM template function used incorrectly.
 
 **Resolution:**
+
 ```typescript
 // Usually auto-generated correctly by Atakora
 // If manually creating references, ensure correct syntax:
@@ -573,6 +607,7 @@ const reference = `[resourceId('Microsoft.Web/serverfarms', '${plan.name}')]`;
 ### TPL_002: Parameter Not Defined
 
 **Error Message:**
+
 ```
 Template parameter 'environmentName' is referenced but not defined
 ```
@@ -580,6 +615,7 @@ Template parameter 'environmentName' is referenced but not defined
 **Cause:** Template uses undefined parameter.
 
 **Resolution:**
+
 ```typescript
 // Define parameters before using
 export class MyStack extends Stack {
@@ -588,13 +624,13 @@ export class MyStack extends Stack {
 
     this.addParameter('environmentName', {
       type: 'string',
-      defaultValue: environment
+      defaultValue: environment,
     });
 
     // Now can reference parameter
     const rg = new ResourceGroup(this, 'rg', {
       name: `rg-[parameters('environmentName')]`,
-      location: 'eastus'
+      location: 'eastus',
     });
   }
 }
@@ -627,7 +663,7 @@ The error shows exactly where the problem is:
 ```typescript
 // src/stacks/storage-stack.ts:15:7
 const storage = new StorageAccount(this, 'storage', {
-  name: 'MyStorageAccount'  // <-- Line 15, column 7
+  name: 'MyStorageAccount', // <-- Line 15, column 7
 });
 ```
 
@@ -637,10 +673,10 @@ Most errors include a suggestion:
 
 ```typescript
 // Before (from error message)
-name: 'MyStorageAccount'
+name: 'MyStorageAccount';
 
 // After (from suggestion)
-name: 'mystorageaccount'
+name: 'mystorageaccount';
 ```
 
 ### 4. Re-run Validation
@@ -701,7 +737,7 @@ it('creates valid storage account', () => {
   new StorageAccount(stack, 'storage', {
     resourceGroup: rg,
     location: 'eastus',
-    name: 'teststorage'
+    name: 'teststorage',
   });
 
   expect(() => stack.synthesize()).not.toThrow();
@@ -728,7 +764,7 @@ If you can't resolve a validation error:
 
 ## Related Documentation
 
-- [Troubleshooting](../../troubleshooting/common-issues.md) - General troubleshooting
+- [Troubleshooting](../../troubleshooting/Common-Issues.md) - General troubleshooting
 - [CLI Reference](../../reference/cli/README.md) - CLI validation options
 - [Core Concepts](../core-concepts/README.md) - Understanding Atakora fundamentals
 

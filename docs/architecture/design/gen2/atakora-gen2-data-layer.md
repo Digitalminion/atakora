@@ -11,6 +11,7 @@ The Universal Data Layer extends Atakora Gen 2 with a unified schema definition 
 ## Vision
 
 Define your entire data model once, then choose the best access pattern for each model:
+
 - **CRUD models** (`c.model()`) - Generate REST endpoints automatically
 - **GraphQL models** (`g.model()`) - Full GraphQL with resolvers, mutations, subscriptions
 
@@ -27,22 +28,21 @@ export const data = defineData({
     AddressType: a.enum(['Home', 'Work', 'Other']),
 
     // CRUD models - Simple REST APIs
-    Organization: c.model({
-      displayName: a.string().required(),
-      created: a.datetime(),
-      updated: a.datetime(),
-    }).authorization(allow => [
-      allow.owner(),
-      allow.groups(['admins']),
-    ]),
+    Organization: c
+      .model({
+        displayName: a.string().required(),
+        created: a.datetime(),
+        updated: a.datetime(),
+      })
+      .authorization((allow) => [allow.owner(), allow.groups(['admins'])]),
 
-    IDP: c.model({
-      name: a.string().required(),
-      type: a.string().required(),
-      config: a.json(),
-    }).authorization(allow => [
-      allow.groups(['admins']),
-    ]),
+    IDP: c
+      .model({
+        name: a.string().required(),
+        type: a.string().required(),
+        config: a.json(),
+      })
+      .authorization((allow) => [allow.groups(['admins'])]),
 
     Address: c.model({
       type: a.ref('AddressType').required(),
@@ -55,39 +55,40 @@ export const data = defineData({
     }),
 
     // GraphQL models - Complex queries and relationships
-    Entity: g.model({
-      organization: a.belongsTo('Organization'),
-      displayName: a.string().required(),
-      idp: a.belongsTo('IDP'),
-      addresses: a.hasMany('Address'),
-      created: a.datetime(),
-      updated: a.datetime(),
-    }).authorization(allow => [
-      allow.owner(),
-      allow.groups(['admins']),
-    ]),
+    Entity: g
+      .model({
+        organization: a.belongsTo('Organization'),
+        displayName: a.string().required(),
+        idp: a.belongsTo('IDP'),
+        addresses: a.hasMany('Address'),
+        created: a.datetime(),
+        updated: a.datetime(),
+      })
+      .authorization((allow) => [allow.owner(), allow.groups(['admins'])]),
 
-    Person: g.model({
-      entity: a.belongsTo('Entity').required(),
-      firstName: a.string().required(),
-      lastName: a.string().required(),
-      email: a.email().required(),
-      phones: a.hasMany('Phone'),
-      addresses: a.hasMany('Address'),
-    }).authorization(allow => [
-      allow.owner(),
-    ]),
+    Person: g
+      .model({
+        entity: a.belongsTo('Entity').required(),
+        firstName: a.string().required(),
+        lastName: a.string().required(),
+        email: a.email().required(),
+        phones: a.hasMany('Phone'),
+        addresses: a.hasMany('Address'),
+      })
+      .authorization((allow) => [allow.owner()]),
   }),
 
   // Custom mutations with Azure Function handlers
   mutations: {
-    initiatePasswordReset: a.mutation()
+    initiatePasswordReset: a
+      .mutation()
       .arguments({ email: a.string().required() })
       .returns(a.json())
       .handler(a.handler.function(initPasswordReset))
-      .authorization(allow => [allow.guest()]),
+      .authorization((allow) => [allow.guest()]),
 
-    confirmPasswordReset: a.mutation()
+    confirmPasswordReset: a
+      .mutation()
       .arguments({
         email: a.string().required(),
         code: a.string().required(),
@@ -95,7 +96,7 @@ export const data = defineData({
       })
       .returns(a.json())
       .handler(a.handler.function(confirmPasswordReset))
-      .authorization(allow => [allow.guest()]),
+      .authorization((allow) => [allow.guest()]),
   },
 });
 ```
@@ -109,7 +110,7 @@ import { data } from './data/schema/resource';
 import { processUploadFunction } from './functions/process-upload/resource';
 
 const backend = defineBackend({
-  data,  // Universal data layer
+  data, // Universal data layer
   processUploadFunction,
 });
 
@@ -117,6 +118,7 @@ export { backend };
 ```
 
 **That's it.** The data layer automatically:
+
 1. Creates Cosmos DB containers for all models
 2. Generates REST CRUD endpoints for `c.model()` types
 3. Creates GraphQL schema and resolvers for `g.model()` types
@@ -138,17 +140,17 @@ a.schema({
 ### Primitive Types
 
 ```typescript
-a.string()              // String field
-a.integer()             // Integer number
-a.float()               // Floating point number
-a.boolean()             // Boolean
-a.datetime()            // ISO 8601 datetime
-a.date()                // ISO 8601 date
-a.time()                // ISO 8601 time
-a.email()               // Email with validation
-a.url()                 // URL with validation
-a.json()                // JSON object
-a.id()                  // Auto-generated ID
+a.string(); // String field
+a.integer(); // Integer number
+a.float(); // Floating point number
+a.boolean(); // Boolean
+a.datetime(); // ISO 8601 datetime
+a.date(); // ISO 8601 date
+a.time(); // ISO 8601 time
+a.email(); // Email with validation
+a.url(); // URL with validation
+a.json(); // JSON object
+a.id(); // Auto-generated ID
 ```
 
 ### Type Modifiers
@@ -163,6 +165,7 @@ a.id()                  // Auto-generated ID
 ```
 
 > **TODO**: Expand field validation to include comprehensive client-side validation metadata (see discussion on enhanced `outputs.json` validation). This should include:
+>
 > - Regex patterns with error messages
 > - Min/max constraints with custom messages
 > - Format validators (email, phone, URL with validation patterns)
@@ -174,6 +177,7 @@ a.id()                  // Auto-generated ID
 > - Cross-field validation rules
 >
 > This metadata should be included in the generated `outputs.json` introspection to enable:
+>
 > - Auto-generated forms with proper validation
 > - Client-side pre-validation before API calls
 > - Smart UI components that understand field constraints
@@ -184,12 +188,12 @@ a.id()                  // Auto-generated ID
 ### Complex Types
 
 ```typescript
-a.enum(['value1', 'value2'])           // Enum type
-a.ref('TypeName')                      // Reference to another type
-a.array(a.string())                    // Array of strings
-a.belongsTo('ModelName')               // Foreign key relationship
-a.hasOne('ModelName')                  // One-to-one relationship
-a.hasMany('ModelName')                 // One-to-many relationship
+a.enum(['value1', 'value2']); // Enum type
+a.ref('TypeName'); // Reference to another type
+a.array(a.string()); // Array of strings
+a.belongsTo('ModelName'); // Foreign key relationship
+a.hasOne('ModelName'); // One-to-one relationship
+a.hasMany('ModelName'); // One-to-many relationship
 ```
 
 ### Relationships
@@ -349,10 +353,7 @@ query GetEntity {
 
 # List with filter
 query ListEntities {
-  listEntities(
-    filter: { displayName: { contains: "Acme" } }
-    limit: 10
-  ) {
+  listEntities(filter: { displayName: { contains: "Acme" } }, limit: 10) {
     items {
       id
       displayName
@@ -394,13 +395,10 @@ Person: g.model({
   firstName: a.string().required(),
   lastName: a.string().required(),
   email: a.email().required(),
-  ssn: a.string().authorization(allow => [
-    allow.groups(['admins']),  // Only admins can see SSN
+  ssn: a.string().authorization((allow) => [
+    allow.groups(['admins']), // Only admins can see SSN
   ]),
-}).authorization(allow => [
-  allow.owner(),
-  allow.groups(['admins']),
-])
+}).authorization((allow) => [allow.owner(), allow.groups(['admins'])]);
 ```
 
 ### Operation-Level Authorization
@@ -409,11 +407,11 @@ Person: g.model({
 Person: g.model({
   firstName: a.string().required(),
   lastName: a.string().required(),
-}).authorization(allow => [
-  allow.owner().to(['read', 'update']),        // Owner can read/update
+}).authorization((allow) => [
+  allow.owner().to(['read', 'update']), // Owner can read/update
   allow.groups(['admins']).to(['create', 'read', 'update', 'delete']),
-  allow.authenticated().to(['read']),           // Anyone can read
-])
+  allow.authenticated().to(['read']), // Anyone can read
+]);
 ```
 
 ## Custom Mutations with Azure Functions
@@ -732,7 +730,9 @@ import { defineFunction } from '@atakora/component';
 
 export const organizationApi = defineCrudApi({
   name: 'organization',
-  schema: { /* ... */ },
+  schema: {
+    /* ... */
+  },
 });
 
 export const resetPasswordFn = defineFunction({
@@ -750,12 +750,15 @@ import { a, c, g } from '@atakora/data';
 
 export const data = defineData({
   schema: a.schema({
-    Organization: c.model({ /* ... */ }),
-    Person: g.model({ /* ... */ }),
+    Organization: c.model({
+      /* ... */
+    }),
+    Person: g.model({
+      /* ... */
+    }),
   }),
   mutations: {
-    resetPassword: a.mutation()
-      .handler(a.handler.function(resetPasswordFn)),
+    resetPassword: a.mutation().handler(a.handler.function(resetPasswordFn)),
   },
 });
 ```
@@ -773,30 +776,35 @@ export const data = defineData({
 ## Implementation Timeline
 
 ### Week 1-2: Schema Builder
+
 - [ ] Implement field type builders (`a.string()`, `a.integer()`, etc.)
 - [ ] Add relationship builders (`a.belongsTo()`, `a.hasMany()`)
 - [ ] Create model builders (`c.model()`, `g.model()`)
 - [ ] Add authorization builders
 
 ### Week 3-4: CRUD Generation
+
 - [ ] Generate REST endpoints from `c.model()`
 - [ ] Implement query parameters (filter, sort, pagination)
 - [ ] Add Cosmos DB persistence layer
 - [ ] Implement authorization middleware
 
 ### Week 5-6: GraphQL Generation
+
 - [ ] Generate GraphQL schema from `g.model()`
 - [ ] Create resolvers for queries and mutations
 - [ ] Implement relationship resolvers
 - [ ] Add subscription support
 
 ### Week 7-8: Custom Mutations
+
 - [ ] Implement `a.mutation()` builder
 - [ ] Wire mutations to Azure Functions
 - [ ] Add argument validation
 - [ ] Implement authorization for mutations
 
 ### Week 9-10: Integration & Testing
+
 - [ ] Integrate with `defineBackend()`
 - [ ] End-to-end testing
 - [ ] Performance optimization
@@ -813,6 +821,7 @@ export const data = defineData({
 ---
 
 **Next Steps:**
+
 1. Review and approve this data layer design
 2. Begin Week 1-2 implementation (schema builder)
 3. Create example schemas for testing

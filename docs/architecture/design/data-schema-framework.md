@@ -240,17 +240,17 @@ The runtime layer handles request processing:
 
 ### Azure Service Mapping
 
-| Framework Component | Azure Service | Purpose |
-|-------------------|---------------|----------|
-| Data Storage | Cosmos DB | Document storage with global distribution |
-| API Gateway | API Management | GraphQL/REST routing, caching, policies |
-| Compute | Azure Functions | Serverless resolver execution |
-| Authentication | Entra ID | Identity and access tokens |
-| Authorization | RBAC + Functions | Role assignments and custom rules |
-| Real-time | Service Bus + SignalR | Event streaming and WebSocket connections |
-| Search | Cognitive Search | Full-text and vector search |
-| Caching | Redis Cache | Query result caching |
-| Monitoring | Application Insights | Logging, metrics, distributed tracing |
+| Framework Component | Azure Service         | Purpose                                   |
+| ------------------- | --------------------- | ----------------------------------------- |
+| Data Storage        | Cosmos DB             | Document storage with global distribution |
+| API Gateway         | API Management        | GraphQL/REST routing, caching, policies   |
+| Compute             | Azure Functions       | Serverless resolver execution             |
+| Authentication      | Entra ID              | Identity and access tokens                |
+| Authorization       | RBAC + Functions      | Role assignments and custom rules         |
+| Real-time           | Service Bus + SignalR | Event streaming and WebSocket connections |
+| Search              | Cognitive Search      | Full-text and vector search               |
+| Caching             | Redis Cache           | Query result caching                      |
+| Monitoring          | Application Insights  | Logging, metrics, distributed tracing     |
 
 ## Schema Definition API
 
@@ -303,10 +303,9 @@ const BlogSchema = defineSchema('Blog', {
 
   authorization: {
     create: allow.authenticated(),
-    read: allow.if((ctx, blog) =>
-      blog.isPublic ||
-      blog.ownerId === ctx.user.id ||
-      blog.contributors?.includes(ctx.user.id)
+    read: allow.if(
+      (ctx, blog) =>
+        blog.isPublic || blog.ownerId === ctx.user.id || blog.contributors?.includes(ctx.user.id)
     ),
     update: allow.owner('ownerId').or(allow.relationship('contributors')),
     delete: allow.owner('ownerId'),
@@ -383,9 +382,11 @@ const authRules = {
   // Custom logic with full context
   archive: allow.custom(async (ctx, record) => {
     const user = await User.get(ctx.user.id);
-    return user.permissions.includes('archive') &&
-           record.status === 'published' &&
-           record.createdAt < daysAgo(30);
+    return (
+      user.permissions.includes('archive') &&
+      record.status === 'published' &&
+      record.createdAt < daysAgo(30)
+    );
   }),
 
   // Field-level authorization
@@ -550,12 +551,8 @@ const containerConfig = {
   indexingPolicy: {
     automatic: true,
     indexingMode: 'consistent',
-    includedPaths: [
-      { path: '/*' },
-    ],
-    excludedPaths: [
-      { path: '/_etag/?' },
-    ],
+    includedPaths: [{ path: '/*' }],
+    excludedPaths: [{ path: '/_etag/?' }],
     compositeIndexes: [
       // From defined indexes
       [
@@ -842,22 +839,10 @@ const apiManagementConfig = {
   ],
 
   policies: {
-    inbound: [
-      'validate-jwt',
-      'cors',
-      'rate-limit-by-key',
-      'cache-lookup',
-    ],
-    backend: [
-      'forward-request',
-    ],
-    outbound: [
-      'cache-store',
-      'set-header name="X-Powered-By" value="Atakora"',
-    ],
-    onError: [
-      'json-error-response',
-    ],
+    inbound: ['validate-jwt', 'cors', 'rate-limit-by-key', 'cache-lookup'],
+    backend: ['forward-request'],
+    outbound: ['cache-store', 'set-header name="X-Powered-By" value="Atakora"'],
+    onError: ['json-error-response'],
   },
 
   operations: generateOperations(schemas),
@@ -962,8 +947,7 @@ export const createEntity: AzureFunction = async (
   const created = await cosmosClient
     .database(DATABASE_NAME)
     .container(schema.container)
-    .items
-    .create(document);
+    .items.create(document);
 
   // Run after hooks
   await runHooks('afterCreate', created.resource, context);
@@ -1058,12 +1042,14 @@ const dataRoleDefinitions = {
 **Decision**: Use Zod as the primary schema validation library.
 
 **Alternatives Considered**:
+
 - **Joi**: More mature but lacks TypeScript-first design
 - **Yup**: Popular but inferior type inference
 - **io-ts**: Powerful but complex API
 - **Custom validator**: Full control but significant development effort
 
 **Why Zod**:
+
 1. **Superior Type Inference**: Automatically derives TypeScript types from schemas
 2. **Composable API**: Schemas can be composed and extended naturally
 3. **Transform Pipeline**: Built-in support for data transformation
@@ -1076,6 +1062,7 @@ const dataRoleDefinitions = {
 **Decision**: Support both GraphQL and REST with GraphQL as primary.
 
 **Rationale**:
+
 1. **GraphQL Primary**:
    - Natural fit for relational data
    - Client-specified queries reduce over-fetching
@@ -1089,6 +1076,7 @@ const dataRoleDefinitions = {
    - File uploads more straightforward
 
 **Implementation Strategy**:
+
 ```typescript
 // Single schema generates both
 const schema = defineSchema('Product', {...});
@@ -1108,6 +1096,7 @@ const resolver = createResolver(schema); // Used by both
 **Decision**: Hybrid approach with build-time generation and runtime validation.
 
 **Build-Time Generation**:
+
 - TypeScript types and interfaces
 - GraphQL SDL and basic resolvers
 - OpenAPI specifications
@@ -1115,6 +1104,7 @@ const resolver = createResolver(schema); // Used by both
 - Azure resource definitions
 
 **Runtime Handling**:
+
 - Authorization evaluation
 - Data validation
 - Query building
@@ -1122,6 +1112,7 @@ const resolver = createResolver(schema); // Used by both
 - Custom business logic
 
 **Benefits**:
+
 - Type safety without runtime overhead
 - Flexibility for dynamic behavior
 - Optimal performance
@@ -1132,12 +1123,14 @@ const resolver = createResolver(schema); // Used by both
 **Decision**: Store schemas in TypeScript files with synthesis at build time.
 
 **Storage Options Evaluated**:
+
 1. **TypeScript files** (chosen): Version controlled, type-safe, IDE support
 2. **JSON files**: Portable but no type safety
 3. **Database**: Dynamic but complex deployment
 4. **Configuration service**: Centralized but added dependency
 
 **Schema Evolution Strategy**:
+
 ```typescript
 // Versioned schemas for backward compatibility
 const UserSchemaV1 = defineSchema('User', {
@@ -1173,6 +1166,7 @@ const UserSchemaV2 = defineSchema('User', {
 **Goals**: Establish foundation with basic CRUD operations
 
 **Deliverables**:
+
 1. Schema definition API with Zod integration
 2. Type generation from schemas
 3. Basic CRUD operations for Cosmos DB
@@ -1181,6 +1175,7 @@ const UserSchemaV2 = defineSchema('User', {
 6. Unit tests for core functionality
 
 **Milestones**:
+
 - Week 1: Schema API and type generation
 - Week 2: Cosmos DB integration and CRUD
 - Week 3: Azure Functions setup
@@ -1191,6 +1186,7 @@ const UserSchemaV2 = defineSchema('User', {
 **Goals**: Add relationship support and sophisticated authorization
 
 **Deliverables**:
+
 1. Relationship definitions (1:1, 1:N, N:M)
 2. Automatic foreign key management
 3. Relationship resolution in queries
@@ -1199,6 +1195,7 @@ const UserSchemaV2 = defineSchema('User', {
 6. Owner-based access control
 
 **Milestones**:
+
 - Week 5: Relationship schema API
 - Week 6: Query builder with joins
 - Week 7: Entra ID integration
@@ -1209,6 +1206,7 @@ const UserSchemaV2 = defineSchema('User', {
 **Goals**: Complete API layer with real-time capabilities
 
 **Deliverables**:
+
 1. GraphQL schema generation
 2. GraphQL resolvers with DataLoader
 3. REST API generation with OpenAPI
@@ -1217,6 +1215,7 @@ const UserSchemaV2 = defineSchema('User', {
 6. API Management configuration
 
 **Milestones**:
+
 - Week 9: GraphQL generation and resolvers
 - Week 10: REST API generation
 - Week 11: Service Bus and SignalR
@@ -1227,6 +1226,7 @@ const UserSchemaV2 = defineSchema('User', {
 **Goals**: Optimize for production workloads
 
 **Deliverables**:
+
 1. Redis Cache integration
 2. Query optimization with indexes
 3. Batch operations support
@@ -1235,6 +1235,7 @@ const UserSchemaV2 = defineSchema('User', {
 6. Performance testing suite
 
 **Milestones**:
+
 - Week 13: Caching layer
 - Week 14: Query optimization
 - Week 15: Monitoring and alerting
@@ -1253,7 +1254,11 @@ import { defineSchema, z, allow, hasMany, belongsTo, manyToMany } from '@atakora
 const BlogSchemas = {
   User: defineSchema('User', {
     fields: z.object({
-      id: z.string().uuid().primaryKey().default(() => crypto.randomUUID()),
+      id: z
+        .string()
+        .uuid()
+        .primaryKey()
+        .default(() => crypto.randomUUID()),
       email: z.string().email().unique(),
       name: z.string().min(2).max(100),
       bio: z.string().max(500).optional(),
@@ -1281,7 +1286,11 @@ const BlogSchemas = {
 
   Post: defineSchema('Post', {
     fields: z.object({
-      id: z.string().uuid().primaryKey().default(() => crypto.randomUUID()),
+      id: z
+        .string()
+        .uuid()
+        .primaryKey()
+        .default(() => crypto.randomUUID()),
       title: z.string().min(1).max(200),
       slug: z.string().unique(),
       content: z.string().min(10),
@@ -1290,10 +1299,12 @@ const BlogSchemas = {
       authorId: z.string().uuid(),
       publishedAt: z.date().optional(),
       tags: z.array(z.string()).default([]),
-      metadata: z.object({
-        readTime: z.number().optional(),
-        views: z.number().default(0),
-      }).optional(),
+      metadata: z
+        .object({
+          readTime: z.number().optional(),
+          views: z.number().default(0),
+        })
+        .optional(),
       createdAt: z.date().default(() => new Date()),
       updatedAt: z.date().onUpdate(),
     }),
@@ -1307,10 +1318,11 @@ const BlogSchemas = {
 
     authorization: {
       create: allow.authenticated(),
-      read: allow.if((ctx, post) =>
-        post.status === 'published' ||
-        post.authorId === ctx.user?.id ||
-        ctx.user?.role === 'admin'
+      read: allow.if(
+        (ctx, post) =>
+          post.status === 'published' ||
+          post.authorId === ctx.user?.id ||
+          ctx.user?.role === 'admin'
       ),
       update: allow.owner('authorId').or(allow.role('admin')),
       delete: allow.owner('authorId').or(allow.role('admin')),
@@ -1337,7 +1349,11 @@ const BlogSchemas = {
 
   Comment: defineSchema('Comment', {
     fields: z.object({
-      id: z.string().uuid().primaryKey().default(() => crypto.randomUUID()),
+      id: z
+        .string()
+        .uuid()
+        .primaryKey()
+        .default(() => crypto.randomUUID()),
       content: z.string().min(1).max(1000),
       userId: z.string().uuid(),
       postId: z.string().uuid(),
@@ -1364,7 +1380,11 @@ const BlogSchemas = {
 
   Category: defineSchema('Category', {
     fields: z.object({
-      id: z.string().uuid().primaryKey().default(() => crypto.randomUUID()),
+      id: z
+        .string()
+        .uuid()
+        .primaryKey()
+        .default(() => crypto.randomUUID()),
       name: z.string().unique(),
       slug: z.string().unique(),
       description: z.string().optional(),

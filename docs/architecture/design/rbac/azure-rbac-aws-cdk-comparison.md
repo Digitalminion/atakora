@@ -23,6 +23,7 @@ AWS uses a policy-based access control system:
 ```
 
 **Key Characteristics**:
+
 - **Policy-based**: JSON documents define permissions
 - **Identity-based policies**: Attached to users, groups, or roles
 - **Resource-based policies**: Attached to resources (S3, Lambda, etc.)
@@ -46,6 +47,7 @@ Azure uses role-based access control with role assignments:
 ```
 
 **Key Characteristics**:
+
 - **Role-based**: Pre-defined or custom roles with permission sets
 - **Assignment-based**: Links principal + role + scope
 - **Hierarchical scope**: Management group → Subscription → Resource group → Resource
@@ -75,6 +77,7 @@ bucket.grantReadWrite(lambda);      // Combines read and write
 ```
 
 **AWS CDK Characteristics**:
+
 - **Resource-centric**: Grant methods on the resource being accessed
 - **Automatic policy management**: CDK decides where to attach policies
 - **Action-based methods**: Methods map to specific IAM actions
@@ -101,6 +104,7 @@ storage.grantQueueProcess(functionApp);    // Assigns Storage Queue Data Message
 ```
 
 **Atakora Characteristics**:
+
 - **Resource-centric**: Maintains AWS CDK's resource-centric approach
 - **Role-based assignments**: Maps methods to Azure built-in roles
 - **Service-specific methods**: Methods reflect Azure service capabilities
@@ -110,41 +114,41 @@ storage.grantQueueProcess(functionApp);    // Assigns Storage Queue Data Message
 
 ### 1. Permission Granularity
 
-| AWS CDK | Atakora Azure |
-|---------|---------------|
+| AWS CDK                                     | Atakora Azure                                         |
+| ------------------------------------------- | ----------------------------------------------------- |
 | Can grant individual actions (s3:GetObject) | Must use pre-defined roles (Storage Blob Data Reader) |
-| Custom permission combinations easy | Limited to built-in or custom role definitions |
-| Fine-grained control | Coarser-grained but simpler |
+| Custom permission combinations easy         | Limited to built-in or custom role definitions        |
+| Fine-grained control                        | Coarser-grained but simpler                           |
 
 **Design Decision**: We embrace Azure's role-based model rather than trying to simulate AWS's fine-grained permissions. This provides a more Azure-native experience.
 
 ### 2. Policy Location
 
-| AWS CDK | Atakora Azure |
-|---------|---------------|
+| AWS CDK                                          | Atakora Azure                                   |
+| ------------------------------------------------ | ----------------------------------------------- |
 | Policies can be identity-based or resource-based | All permissions are role assignments at a scope |
-| CDK automatically chooses best location | Always creates assignments at resource scope |
-| Some resources support both types | Consistent model across all resources |
+| CDK automatically chooses best location          | Always creates assignments at resource scope    |
+| Some resources support both types                | Consistent model across all resources           |
 
 **Design Decision**: We always create role assignments at the resource scope for clarity and consistency, avoiding the complexity of deciding where to place permissions.
 
 ### 3. Identity Management
 
-| AWS CDK | Atakora Azure |
-|---------|---------------|
-| IAM roles must be explicitly created | Managed identities auto-enabled when needed |
-| Separate step to create execution role | Transparent identity provisioning |
-| AssumeRole permissions handled separately | No additional trust relationships needed |
+| AWS CDK                                   | Atakora Azure                               |
+| ----------------------------------------- | ------------------------------------------- |
+| IAM roles must be explicitly created      | Managed identities auto-enabled when needed |
+| Separate step to create execution role    | Transparent identity provisioning           |
+| AssumeRole permissions handled separately | No additional trust relationships needed    |
 
 **Design Decision**: We automatically enable system-assigned managed identities when grant methods are used, reducing boilerplate while maintaining transparency through logging.
 
 ### 4. Cross-Service Permissions
 
-| AWS CDK | Atakora Azure |
-|---------|---------------|
-| Each service has specific IAM actions | Roles often span multiple operations |
+| AWS CDK                                      | Atakora Azure                                 |
+| -------------------------------------------- | --------------------------------------------- |
+| Each service has specific IAM actions        | Roles often span multiple operations          |
 | Can grant s3:GetObject without s3:ListBucket | Reader role includes multiple read operations |
-| Very specific permission boundaries | Broader permission sets |
+| Very specific permission boundaries          | Broader permission sets                       |
 
 **Design Decision**: We map grant methods to semantically appropriate Azure roles, accepting that roles may grant slightly broader permissions than the method name implies.
 
@@ -152,39 +156,40 @@ storage.grantQueueProcess(functionApp);    // Assigns Storage Queue Data Message
 
 ### Storage/Blob Services
 
-| AWS S3 | Azure Storage | Rationale |
-|--------|---------------|-----------|
-| `grantRead()` | `grantBlobRead()` | Azure has multiple storage services (blob, table, queue, file) |
-| `grantWrite()` | `grantBlobWrite()` | Explicit about which storage service |
-| `grantPut()` | `grantBlobWrite()` | Azure role includes put/write operations |
-| `grantDelete()` | `grantBlobWrite()` | Contributor role includes delete |
-| `grantReadWrite()` | `grantBlobWrite()` | Contributor role includes read |
-| N/A | `grantTableRead()` | Azure-specific table storage |
-| N/A | `grantQueueProcess()` | Azure-specific queue operations |
+| AWS S3             | Azure Storage         | Rationale                                                      |
+| ------------------ | --------------------- | -------------------------------------------------------------- |
+| `grantRead()`      | `grantBlobRead()`     | Azure has multiple storage services (blob, table, queue, file) |
+| `grantWrite()`     | `grantBlobWrite()`    | Explicit about which storage service                           |
+| `grantPut()`       | `grantBlobWrite()`    | Azure role includes put/write operations                       |
+| `grantDelete()`    | `grantBlobWrite()`    | Contributor role includes delete                               |
+| `grantReadWrite()` | `grantBlobWrite()`    | Contributor role includes read                                 |
+| N/A                | `grantTableRead()`    | Azure-specific table storage                                   |
+| N/A                | `grantQueueProcess()` | Azure-specific queue operations                                |
 
 ### Database Services
 
-| AWS DynamoDB | Azure Cosmos DB | Rationale |
-|--------------|-----------------|-----------|
-| `grantReadData()` | `grantDataRead()` | Similar semantic meaning |
-| `grantWriteData()` | `grantDataWrite()` | Maps to Cosmos DB Data Contributor |
-| `grantFullAccess()` | `grantDataContributor()` | More explicit about role level |
-| N/A | `grantAccountReader()` | Azure-specific metadata access |
+| AWS DynamoDB        | Azure Cosmos DB          | Rationale                          |
+| ------------------- | ------------------------ | ---------------------------------- |
+| `grantReadData()`   | `grantDataRead()`        | Similar semantic meaning           |
+| `grantWriteData()`  | `grantDataWrite()`       | Maps to Cosmos DB Data Contributor |
+| `grantFullAccess()` | `grantDataContributor()` | More explicit about role level     |
+| N/A                 | `grantAccountReader()`   | Azure-specific metadata access     |
 
 ### Secrets Management
 
-| AWS Secrets Manager | Azure Key Vault | Rationale |
-|--------------------|-----------------|-----------|
-| `grantRead()` | `grantSecretsRead()` | Key Vault has secrets, keys, certificates |
-| `grantWrite()` | `grantSecretsFullAccess()` | No separate write role in Key Vault |
-| N/A | `grantCryptoUse()` | Azure-specific cryptographic operations |
-| N/A | `grantCertificatesRead()` | Azure-specific certificate management |
+| AWS Secrets Manager | Azure Key Vault            | Rationale                                 |
+| ------------------- | -------------------------- | ----------------------------------------- |
+| `grantRead()`       | `grantSecretsRead()`       | Key Vault has secrets, keys, certificates |
+| `grantWrite()`      | `grantSecretsFullAccess()` | No separate write role in Key Vault       |
+| N/A                 | `grantCryptoUse()`         | Azure-specific cryptographic operations   |
+| N/A                 | `grantCertificatesRead()`  | Azure-specific certificate management     |
 
 ## Implementation Differences
 
 ### 1. Role Resolution
 
 **AWS CDK**:
+
 ```typescript
 // Actions are defined inline
 grant(grantee: IGrantable, ...actions: string[]) {
@@ -197,6 +202,7 @@ grant(grantee: IGrantable, ...actions: string[]) {
 ```
 
 **Atakora**:
+
 ```typescript
 // Roles are pre-registered with GUIDs
 grant(grantable: IGrantable, roleDefinitionId: string) {
@@ -212,6 +218,7 @@ grant(grantable: IGrantable, roleDefinitionId: string) {
 ### 2. Cross-Stack Support
 
 **AWS CDK**:
+
 ```typescript
 // CDK handles cross-stack through CloudFormation exports
 bucket.grantRead(lambdaFromOtherStack);
@@ -219,6 +226,7 @@ bucket.grantRead(lambdaFromOtherStack);
 ```
 
 **Atakora**:
+
 ```typescript
 // We use token resolution for cross-stack references
 storage.grantBlobRead(functionFromOtherStack);
@@ -228,12 +236,14 @@ storage.grantBlobRead(functionFromOtherStack);
 ### 3. Deployment Behavior
 
 **AWS CDK**:
+
 - Creates or updates IAM policies
 - Attaches policies to roles
 - May create new policy versions
 - CloudFormation manages state
 
 **Atakora**:
+
 - Creates role assignment resources
 - Uses deterministic GUIDs for idempotency
 - ARM template manages assignments
@@ -263,23 +273,23 @@ storage.grantBlobRead(functionFromOtherStack);
 
 ```typescript
 // CDK validates at synthesis time
-bucket.grantRead(undefined);  // TypeScript compilation error
+bucket.grantRead(undefined); // TypeScript compilation error
 
 // Runtime validation minimal
-bucket.grantRead(lambdaWithoutRole);  // May fail at deployment
+bucket.grantRead(lambdaWithoutRole); // May fail at deployment
 ```
 
 ### Atakora
 
 ```typescript
 // Compile-time type safety
-storage.grantBlobRead(undefined);  // TypeScript compilation error
+storage.grantBlobRead(undefined); // TypeScript compilation error
 
 // Runtime validation
-storage.grantBlobRead(appWithoutIdentity);  // Auto-enables identity
+storage.grantBlobRead(appWithoutIdentity); // Auto-enables identity
 
 // Explicit errors for invalid scenarios
-resourceWithoutIdentity.principalId;  // Throws with helpful message
+resourceWithoutIdentity.principalId; // Throws with helpful message
 ```
 
 ## Usage Pattern Comparison
@@ -316,9 +326,7 @@ bucket.grant(lambda, 's3:GetObjectVersion', 's3:GetObjectVersionAcl');
 // Atakora - requires custom role definition
 const customRole = new CustomRoleDefinition(stack, 'CustomRole', {
   roleName: 'BlobVersionReader',
-  dataActions: [
-    'Microsoft.Storage/storageAccounts/blobServices/containers/blobs/versions/read'
-  ]
+  dataActions: ['Microsoft.Storage/storageAccounts/blobServices/containers/blobs/versions/read'],
 });
 storage.grant(functionApp, customRole.roleId);
 ```

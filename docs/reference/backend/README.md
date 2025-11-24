@@ -7,6 +7,7 @@ Comprehensive reference for Atakora's schema-centric backend framework.
 Atakora Backend provides a schema-first approach to building Azure backends where you define your data contracts once, and all infrastructure is auto-generated with sensible defaults.
 
 **Key Innovation**: Instead of manually configuring infrastructure, you define data models, and Atakora generates:
+
 - REST APIs with full CRUD operations
 - Event processing pipelines with queues
 - Custom Azure Functions with HTTP triggers
@@ -56,6 +57,7 @@ export const backend = defineBackend({
 ```
 
 This minimal definition automatically provisions:
+
 - ✅ Azure Function App (Consumption plan)
 - ✅ Cosmos DB (Serverless mode)
 - ✅ Storage Account (for functions)
@@ -175,15 +177,17 @@ From a simple schema definition, Atakora generates:
 ### From `c.model` (CRUD Model)
 
 **Schema:**
+
 ```typescript
 User: c.model({
   id: a.id(),
   email: a.string().required().email(),
   name: a.string().required(),
-})
+});
 ```
 
 **Generates:**
+
 - ✅ 5 REST endpoints (POST, GET, PUT, DELETE, LIST)
 - ✅ Cosmos DB container with partition key
 - ✅ 4 TypeScript types (User, CreateUserInput, UpdateUserInput, UserFilter)
@@ -196,14 +200,16 @@ User: c.model({
 ### From `e.model` (Event Model)
 
 **Schema:**
+
 ```typescript
 DataUploaded: e.model({
   datasetId: a.string().required(),
   fileUrl: a.string().url().required(),
-})
+});
 ```
 
 **Generates:**
+
 - ✅ 1 REST endpoint (POST /api/events/data-uploaded)
 - ✅ Azure Storage Queue or Service Bus Topic
 - ✅ Validation function (validates schema, publishes to queue)
@@ -216,6 +222,7 @@ DataUploaded: e.model({
 ### From `f.model` (Function Model)
 
 **Schema:**
+
 ```typescript
 GenerateReport: f.model({
   input: {
@@ -225,10 +232,11 @@ GenerateReport: f.model({
   output: {
     reportUrl: a.string().url().required(),
   },
-})
+});
 ```
 
 **Generates:**
+
 - ✅ 1 REST endpoint (POST /api/functions/generate-report)
 - ✅ Azure Function with HTTP trigger
 - ✅ Input validation (rejects invalid requests)
@@ -326,11 +334,10 @@ Configure behavior based on environment:
 ```typescript
 const isProd = process.env.NODE_ENV === 'production';
 
-Database: storage.cosmosDb()
+Database: storage
+  .cosmosDb()
   .mode(isProd ? 'Autoscale' : 'Serverless')
-  .when(isProd, db =>
-    db.multiRegion(['eastus', 'westus'])
-  )
+  .when(isProd, (db) => db.multiRegion(['eastus', 'westus']));
 ```
 
 ### 3. Leverage Schema Validation
@@ -338,10 +345,7 @@ Database: storage.cosmosDb()
 Let the schema catch errors early:
 
 ```typescript
-email: a.string()
-  .required()
-  .email()
-  .maxLength(255)
+email: a.string().required().email().maxLength(255);
 ```
 
 ### 4. Use Authorization in Schema
@@ -392,12 +396,14 @@ backend.storage.database.attach(
 ### Costs
 
 **Development** (minimal backend, low traffic):
+
 - Function App: $0 (free tier)
 - Cosmos DB: $0.25/GB + $0.08/1M RU
 - Storage: $0.02/GB
 - **Total**: ~$10-50/month
 
 **Production** (custom infrastructure, moderate traffic):
+
 - Function App Premium: $160/month (EP1)
 - Cosmos DB Autoscale: $50-500/month
 - Storage GRS: $0.04/GB

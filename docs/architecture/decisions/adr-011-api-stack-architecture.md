@@ -14,6 +14,7 @@ The current implementation shows an `ApiStackBase` class example with policy agg
 6. Enable future extensibility for new API types
 
 Current challenges include:
+
 - GraphQL APIs have schema-based definitions while REST APIs use OpenAPI or operation-based definitions
 - Some API types (GraphQL synthetic mode) don't require backend URLs while others do
 - Policy management needs to be both declarative (props) and programmatic (fluent API)
@@ -49,6 +50,7 @@ abstract class ApiStackBase extends Construct {
 ```
 
 **Responsibilities of the base class:**
+
 - Policy document management and aggregation
 - Common policy patterns (CORS, rate limiting, JWT validation, etc.)
 - Fluent API for programmatic policy addition
@@ -95,31 +97,33 @@ class SoapApiStack extends ApiStackBase {
 
 The architecture clearly delineates responsibilities:
 
-| Responsibility | Owner | Rationale |
-|---|---|---|
-| API Creation | Specialized Stack | Each API type has unique creation requirements |
-| Policy Aggregation | Base Stack | Common pattern across all API types |
-| Policy Generation | PolicyDocument | Single responsibility for XML generation |
-| Resolver Management | Specialized Stack | Resolvers differ significantly per API type |
-| Service Configuration | Base Stack Props | Common configuration like CORS, rate limiting |
-| Versioning | External (ApiVersionSet) | Separate concern, composed with stacks |
-| Products | External (Product) | Separate concern, associated post-creation |
-| Subscriptions | External (Subscription) | Separate concern, managed independently |
+| Responsibility        | Owner                    | Rationale                                      |
+| --------------------- | ------------------------ | ---------------------------------------------- |
+| API Creation          | Specialized Stack        | Each API type has unique creation requirements |
+| Policy Aggregation    | Base Stack               | Common pattern across all API types            |
+| Policy Generation     | PolicyDocument           | Single responsibility for XML generation       |
+| Resolver Management   | Specialized Stack        | Resolvers differ significantly per API type    |
+| Service Configuration | Base Stack Props         | Common configuration like CORS, rate limiting  |
+| Versioning            | External (ApiVersionSet) | Separate concern, composed with stacks         |
+| Products              | External (Product)       | Separate concern, associated post-creation     |
+| Subscriptions         | External (Subscription)  | Separate concern, managed independently        |
 
 ### 4. Schema Definition Approach
 
 We embrace the natural differences between API types:
 
 **GraphQL**: Schema-first approach
+
 ```typescript
 interface GraphQLApiStackProps {
-  schema: GraphQLSchema | string;  // SDL or schema object
-  resolvers?: GraphQLResolver[];   // Optional for synthetic mode
-  serviceUrl?: string;              // Optional for synthetic mode
+  schema: GraphQLSchema | string; // SDL or schema object
+  resolvers?: GraphQLResolver[]; // Optional for synthetic mode
+  serviceUrl?: string; // Optional for synthetic mode
 }
 ```
 
 **REST**: Dual approach supporting both OpenAPI and programmatic
+
 ```typescript
 interface RestApiStackProps {
   // Option 1: OpenAPI import
@@ -128,7 +132,7 @@ interface RestApiStackProps {
   // Option 2: Programmatic operations
   operations?: RestOperation[];
 
-  serviceUrl: string;  // Always required for REST
+  serviceUrl: string; // Always required for REST
 }
 ```
 
@@ -139,7 +143,7 @@ Resolvers are passed as configuration during stack creation, with optional progr
 ```typescript
 // Initial resolvers via props
 const stack = new GraphQLApiStack(scope, 'API', {
-  resolvers: [resolver1, resolver2]
+  resolvers: [resolver1, resolver2],
 });
 
 // Programmatic addition (for dynamic scenarios)
@@ -147,6 +151,7 @@ stack.addResolver(resolver3);
 ```
 
 **Design decisions:**
+
 - Resolvers are configuration, not child constructs (they don't have their own ARM resources)
 - Ordering is preserved based on array order and addition sequence
 - Dependencies between resolvers are handled by the GraphQL runtime, not our constructs
@@ -181,6 +186,7 @@ class ApiStackBase {
 ```
 
 **Conflict resolution:**
+
 - Policies are applied in order: Stack defaults → Props-based → Programmatic
 - No automatic deduplication (explicit is better than implicit)
 - Validation happens at synthesis time
@@ -189,13 +195,13 @@ class ApiStackBase {
 
 Different API types have different backend requirements:
 
-| API Type | Service URL | Rationale |
-|---|---|---|
-| REST | Required | REST APIs always proxy to a backend |
-| GraphQL (Pass-through) | Required | Proxies GraphQL to backend service |
-| GraphQL (Synthetic) | Optional | API Management executes resolvers |
-| WebSocket | Required | WebSocket connections need backend |
-| SOAP | Required | SOAP services need backend endpoint |
+| API Type               | Service URL | Rationale                           |
+| ---------------------- | ----------- | ----------------------------------- |
+| REST                   | Required    | REST APIs always proxy to a backend |
+| GraphQL (Pass-through) | Required    | Proxies GraphQL to backend service  |
+| GraphQL (Synthetic)    | Optional    | API Management executes resolvers   |
+| WebSocket              | Required    | WebSocket connections need backend  |
+| SOAP                   | Required    | SOAP services need backend endpoint |
 
 ### 8. Stack Composition Patterns
 
@@ -207,21 +213,22 @@ const apimService = new ApiManagementService(scope, 'APIM', props);
 
 const userApi = new RestApiStack(scope, 'UserAPI', {
   apiManagementService: apimService,
-  path: 'users'
+  path: 'users',
 });
 
 const productApi = new GraphQLApiStack(scope, 'ProductAPI', {
   apiManagementService: apimService,
-  path: 'graphql/products'
+  path: 'graphql/products',
 });
 
 // Cross-stack references via interfaces
 const subscription = new Subscription(scope, 'Sub', {
-  apis: [userApi.api, productApi.api]
+  apis: [userApi.api, productApi.api],
 });
 ```
 
 **Design principles:**
+
 - Stacks share the parent API Management service
 - No direct stack-to-stack dependencies
 - Cross-references use interface types (IServiceApi)
@@ -240,6 +247,7 @@ class ApiStack extends Construct {
 ```
 
 **Rejected because:**
+
 - Would require complex conditional logic throughout
 - Poor TypeScript type discrimination
 - Difficult to maintain as new API types are added
@@ -256,6 +264,7 @@ class ApiStack extends Construct {
 ```
 
 **Rejected because:**
+
 - Adds unnecessary indirection
 - Makes the API less discoverable
 - Inheritance is appropriate here (genuine IS-A relationship)
@@ -270,6 +279,7 @@ const resolver = new GraphQLResolver(stack, 'Resolver', props);
 ```
 
 **Rejected because:**
+
 - Resolvers don't map to ARM resources
 - Would complicate the synthesis process
 - Resolvers are configuration, not infrastructure
@@ -315,26 +325,31 @@ The architecture will be considered successful when:
 ## Implementation Roadmap
 
 ### Phase 1: Foundation (Week 1)
+
 - Implement PolicyDocument with XML generation
 - Create ApiStackBase with policy aggregation
 - Implement common policy builders (CORS, rate limit, JWT)
 
 ### Phase 2: REST Stack (Week 2)
+
 - Implement RestApiStack with OpenAPI support
 - Add operation-based API definition
 - Create REST-specific policy patterns
 
 ### Phase 3: GraphQL Stack (Week 3)
+
 - Implement GraphQLApiStack with schema support
 - Add resolver management
 - Implement synthetic vs pass-through modes
 
 ### Phase 4: Validation & Testing (Week 4)
+
 - Add comprehensive unit tests
 - Create integration tests with API Management
 - Validate Government cloud compatibility
 
 ### Future Phases
+
 - WebSocket stack implementation
 - SOAP stack implementation
 - API federation patterns

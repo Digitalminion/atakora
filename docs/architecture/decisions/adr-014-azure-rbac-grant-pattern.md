@@ -5,6 +5,7 @@
 AWS CDK provides an elegant pattern for granting permissions through resource-specific `grant*()` methods that automatically handle IAM policy creation. Azure uses a fundamentally different Role-Based Access Control (RBAC) model based on role assignments linking principals to roles at specific scopes.
 
 We need to design a developer-friendly grant pattern for Atakora that:
+
 1. Provides AWS CDK-like developer experience
 2. Works naturally with Azure's RBAC model
 3. Maintains type safety and immutability
@@ -14,6 +15,7 @@ We need to design a developer-friendly grant pattern for Atakora that:
 ### Azure RBAC Model Fundamentals
 
 Azure RBAC consists of three core components:
+
 - **Security Principal**: Who gets access (User, Group, Service Principal, Managed Identity)
 - **Role Definition**: What permissions are granted (Reader, Contributor, or custom roles)
 - **Scope**: Where access applies (Management Group, Subscription, Resource Group, or Resource)
@@ -23,6 +25,7 @@ Role assignments combine these three elements to grant effective permissions.
 ### AWS CDK Pattern Analysis
 
 AWS CDK's grant pattern succeeds because it:
+
 - Abstracts complexity behind simple method calls
 - Automatically determines identity-based vs resource-based policies
 - Provides resource-specific grant methods with semantic meaning
@@ -73,7 +76,7 @@ export enum PrincipalType {
   ServicePrincipal = 'ServicePrincipal',
   ManagedIdentity = 'ServicePrincipal', // Managed identities use ServicePrincipal type
   ForeignGroup = 'ForeignGroup',
-  Device = 'Device'
+  Device = 'Device',
 }
 ```
 
@@ -93,10 +96,7 @@ export abstract class GrantableResource extends Resource implements IGrantable {
     }
 
     // Return ARM reference expression for system-assigned identity
-    return new ArmReference(
-      this.resourceId,
-      'identity.principalId'
-    );
+    return new ArmReference(this.resourceId, 'identity.principalId');
   }
 
   public readonly principalType = PrincipalType.ManagedIdentity;
@@ -114,7 +114,7 @@ export abstract class GrantableResource extends Resource implements IGrantable {
       roleDefinitionId,
       principalId: grantable.principalId,
       principalType: grantable.principalType,
-      tenantId: grantable.tenantId
+      tenantId: grantable.tenantId,
     });
   }
 
@@ -264,9 +264,9 @@ export class RoleAssignment extends Resource {
         ...(this.props.description && { description: this.props.description }),
         ...(this.props.condition && {
           condition: this.props.condition,
-          conditionVersion: this.props.conditionVersion || '2.0'
-        })
-      }
+          conditionVersion: this.props.conditionVersion || '2.0',
+        }),
+      },
     };
   }
 
@@ -298,24 +298,50 @@ export class WellKnownRoleIds {
   public static readonly OWNER = this.roleId('8e3af657-a8ff-443c-a75c-2fe8c4bcb635');
 
   // Storage roles
-  public static readonly STORAGE_BLOB_DATA_READER = this.roleId('2a2b9908-6ea1-4ae2-8e65-a410df84e7d1');
-  public static readonly STORAGE_BLOB_DATA_CONTRIBUTOR = this.roleId('ba92f5b4-2d11-453d-a403-e96b0029c9fe');
-  public static readonly STORAGE_BLOB_DATA_OWNER = this.roleId('b7e6dc6d-f1e8-4753-8033-0f276bb0955b');
-  public static readonly STORAGE_QUEUE_DATA_READER = this.roleId('19e7f393-937e-4f77-808e-94535e297925');
-  public static readonly STORAGE_QUEUE_DATA_CONTRIBUTOR = this.roleId('974c5e8b-45b9-4653-ba55-5f855dd0fb88');
-  public static readonly STORAGE_TABLE_DATA_READER = this.roleId('76199698-9eea-4c19-bc75-cec21354c6b6');
-  public static readonly STORAGE_TABLE_DATA_CONTRIBUTOR = this.roleId('0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3');
+  public static readonly STORAGE_BLOB_DATA_READER = this.roleId(
+    '2a2b9908-6ea1-4ae2-8e65-a410df84e7d1'
+  );
+  public static readonly STORAGE_BLOB_DATA_CONTRIBUTOR = this.roleId(
+    'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+  );
+  public static readonly STORAGE_BLOB_DATA_OWNER = this.roleId(
+    'b7e6dc6d-f1e8-4753-8033-0f276bb0955b'
+  );
+  public static readonly STORAGE_QUEUE_DATA_READER = this.roleId(
+    '19e7f393-937e-4f77-808e-94535e297925'
+  );
+  public static readonly STORAGE_QUEUE_DATA_CONTRIBUTOR = this.roleId(
+    '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
+  );
+  public static readonly STORAGE_TABLE_DATA_READER = this.roleId(
+    '76199698-9eea-4c19-bc75-cec21354c6b6'
+  );
+  public static readonly STORAGE_TABLE_DATA_CONTRIBUTOR = this.roleId(
+    '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'
+  );
 
   // Cosmos DB roles
-  public static readonly COSMOS_DB_ACCOUNT_READER = this.roleId('fbdf93bf-df7d-467e-a4d2-9458aa1360c8');
+  public static readonly COSMOS_DB_ACCOUNT_READER = this.roleId(
+    'fbdf93bf-df7d-467e-a4d2-9458aa1360c8'
+  );
   public static readonly COSMOS_DB_OPERATOR = this.roleId('230815da-be43-4aae-9cb4-875f7bd000aa');
-  public static readonly COSMOS_DB_DATA_CONTRIBUTOR = this.roleId('00000000-0000-0000-0000-000000000002'); // Built-in data plane role
+  public static readonly COSMOS_DB_DATA_CONTRIBUTOR = this.roleId(
+    '00000000-0000-0000-0000-000000000002'
+  ); // Built-in data plane role
 
   // Key Vault roles
-  public static readonly KEY_VAULT_SECRETS_USER = this.roleId('4633458b-17de-408a-b874-0445c86b69e6');
-  public static readonly KEY_VAULT_SECRETS_OFFICER = this.roleId('b86a8fe4-44ce-4948-aee5-eccb2c155cd7');
-  public static readonly KEY_VAULT_CRYPTO_USER = this.roleId('12338af0-0e69-4776-bea7-57ae8d297424');
-  public static readonly KEY_VAULT_CERTIFICATES_OFFICER = this.roleId('a4417e6f-fecd-4de8-b567-7b0420556985');
+  public static readonly KEY_VAULT_SECRETS_USER = this.roleId(
+    '4633458b-17de-408a-b874-0445c86b69e6'
+  );
+  public static readonly KEY_VAULT_SECRETS_OFFICER = this.roleId(
+    'b86a8fe4-44ce-4948-aee5-eccb2c155cd7'
+  );
+  public static readonly KEY_VAULT_CRYPTO_USER = this.roleId(
+    '12338af0-0e69-4776-bea7-57ae8d297424'
+  );
+  public static readonly KEY_VAULT_CERTIFICATES_OFFICER = this.roleId(
+    'a4417e6f-fecd-4de8-b567-7b0420556985'
+  );
 
   // App Service / Functions
   public static readonly WEBSITE_CONTRIBUTOR = this.roleId('de139f84-1756-47ae-9be6-808fbbe84772');
@@ -344,7 +370,7 @@ export abstract class IdentityEnabledResource extends GrantableResource {
     if (!this.identity || this.identity.type === ManagedIdentityType.NONE) {
       // Auto-enable system-assigned identity
       this.identity = {
-        type: ManagedIdentityType.SYSTEM_ASSIGNED
+        type: ManagedIdentityType.SYSTEM_ASSIGNED,
       };
 
       // Log for transparency
@@ -393,11 +419,13 @@ export class CrossStackRoleAssignment extends RoleAssignment {
 **Approach**: Require developers to create RoleAssignment constructs manually.
 
 **Pros**:
+
 - Explicit and transparent
 - Full control over all parameters
 - No hidden behavior
 
 **Cons**:
+
 - Verbose and repetitive
 - Requires knowledge of role GUIDs
 - Poor developer experience
@@ -408,10 +436,12 @@ export class CrossStackRoleAssignment extends RoleAssignment {
 **Approach**: Single `grant(principal, roleName)` method on all resources.
 
 **Pros**:
+
 - Simple API surface
 - Flexible for any role
 
 **Cons**:
+
 - No IntelliSense for available roles
 - String-based role names prone to typos
 - Lacks semantic meaning
@@ -422,10 +452,12 @@ export class CrossStackRoleAssignment extends RoleAssignment {
 **Approach**: Create a policy engine similar to AWS IAM policies.
 
 **Pros**:
+
 - Familiar to AWS users
 - Very flexible
 
 **Cons**:
+
 - Doesn't map to Azure's RBAC model
 - Would require custom implementation
 - Adds unnecessary abstraction layer

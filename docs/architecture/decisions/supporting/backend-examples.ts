@@ -15,7 +15,7 @@ import type {
   ValidationResult,
   BackendConfig,
   IBackend,
-  ComponentOutputs
+  ComponentOutputs,
 } from './backend-interfaces';
 
 // ============================================================================
@@ -34,10 +34,10 @@ export function createEcommerceBackend() {
       email: { type: 'string', required: true, format: 'email' },
       name: { type: 'string', required: true },
       role: { type: 'string', validation: { enum: ['customer', 'admin'] } },
-      createdAt: 'timestamp'
+      createdAt: 'timestamp',
     },
     partitionKey: '/id',
-    enableOptimisticConcurrency: true
+    enableOptimisticConcurrency: true,
   });
 
   const productApi = CrudApi.define('ProductApi', {
@@ -48,9 +48,9 @@ export function createEcommerceBackend() {
       description: 'string',
       price: { type: 'number', required: true, min: 0 },
       category: { type: 'string', required: true },
-      inventory: { type: 'number', default: 0 }
+      inventory: { type: 'number', default: 0 },
     },
-    partitionKey: '/category'
+    partitionKey: '/category',
   });
 
   const orderApi = CrudApi.define('OrderApi', {
@@ -63,15 +63,15 @@ export function createEcommerceBackend() {
         items: {
           productId: 'string',
           quantity: 'number',
-          price: 'number'
-        }
+          price: 'number',
+        },
       },
       total: { type: 'number', required: true },
       status: { type: 'string', enum: ['pending', 'processing', 'shipped', 'delivered'] },
-      createdAt: 'timestamp'
+      createdAt: 'timestamp',
     },
     partitionKey: '/userId',
-    enableSoftDelete: true
+    enableSoftDelete: true,
   });
 
   const storefront = StaticSite.define('Storefront', {
@@ -79,8 +79,8 @@ export function createEcommerceBackend() {
     buildCommand: 'npm run build',
     outputDirectory: './frontend/dist',
     environmentVariables: {
-      VITE_API_ENDPOINT: '${backend.apiGateway.endpoint}'
-    }
+      VITE_API_ENDPOINT: '${backend.apiGateway.endpoint}',
+    },
   });
 
   // Create backend with shared resources
@@ -95,17 +95,17 @@ export function createEcommerceBackend() {
     monitoring: {
       enabled: true,
       retentionDays: 90,
-      samplingPercentage: 10
+      samplingPercentage: 10,
     },
     networking: {
       mode: 'isolated',
-      privateEndpoints: true
+      privateEndpoints: true,
     },
     tags: {
       Application: 'ECommerce',
       Environment: 'Production',
-      CostCenter: 'Sales'
-    }
+      CostCenter: 'Sales',
+    },
   });
 
   return backend;
@@ -127,12 +127,12 @@ export function createMicroservicesBackend() {
       { path: '/login', method: 'POST' },
       { path: '/logout', method: 'POST' },
       { path: '/refresh', method: 'POST' },
-      { path: '/validate', method: 'GET' }
+      { path: '/validate', method: 'GET' },
     ],
     environment: {
       JWT_SECRET: '@Microsoft.KeyVault(SecretUri=${keyVault.secretUri})',
-      TOKEN_EXPIRY: '3600'
-    }
+      TOKEN_EXPIRY: '3600',
+    },
   });
 
   const notificationService = Microservice.define('NotificationService', {
@@ -140,12 +140,12 @@ export function createMicroservicesBackend() {
     sourceDirectory: './services/notifications',
     triggers: [
       { type: 'serviceBus', queue: 'notifications' },
-      { type: 'http', path: '/send' }
+      { type: 'http', path: '/send' },
     ],
     dependencies: {
       sendgrid: true,
-      twilio: true
-    }
+      twilio: true,
+    },
   });
 
   const analyticsService = Microservice.define('AnalyticsService', {
@@ -153,12 +153,12 @@ export function createMicroservicesBackend() {
     sourceDirectory: './services/analytics',
     triggers: [
       { type: 'eventHub', hub: 'events' },
-      { type: 'timer', schedule: '0 */5 * * * *' }
+      { type: 'timer', schedule: '0 */5 * * * *' },
     ],
     outputs: [
       { type: 'cosmosDb', container: 'analytics' },
-      { type: 'blob', container: 'reports' }
-    ]
+      { type: 'blob', container: 'reports' },
+    ],
   });
 
   // Event bus for inter-service communication
@@ -166,10 +166,10 @@ export function createMicroservicesBackend() {
     type: 'serviceBus',
     topics: [
       { name: 'user-events', subscriptions: ['auth', 'notifications'] },
-      { name: 'order-events', subscriptions: ['analytics', 'notifications'] }
+      { name: 'order-events', subscriptions: ['analytics', 'notifications'] },
     ],
     enableDeadLettering: true,
-    maxDeliveryCount: 5
+    maxDeliveryCount: 5,
   });
 
   // Create backend with event-driven architecture
@@ -183,14 +183,10 @@ export function createMicroservicesBackend() {
     // Advanced configuration
     monitoring: {
       enabled: true,
-      applicationInsightsName: 'ai-microservices-prod'
+      applicationInsightsName: 'ai-microservices-prod',
     },
     networking: 'isolated',
-    providers: [
-      new ServiceBusProvider(),
-      new EventHubProvider(),
-      new KeyVaultProvider()
-    ]
+    providers: [new ServiceBusProvider(), new EventHubProvider(), new KeyVaultProvider()],
   });
 
   return backend;
@@ -209,12 +205,12 @@ export function createDataPipelineBackend() {
     sources: [
       { type: 'blob', container: 'raw-data', pattern: '*.csv' },
       { type: 'eventHub', name: 'telemetry', consumerGroup: 'processing' },
-      { type: 'api', endpoint: '/ingest', rateLimit: 1000 }
+      { type: 'api', endpoint: '/ingest', rateLimit: 1000 },
     ],
     validation: {
       schema: './schemas/input-schema.json',
-      errorHandling: 'deadletter'
-    }
+      errorHandling: 'deadletter',
+    },
   });
 
   // Stream processing
@@ -225,12 +221,12 @@ export function createDataPipelineBackend() {
     transformations: [
       { type: 'filter', condition: 'value > 0' },
       { type: 'aggregate', window: '5m', function: 'avg' },
-      { type: 'enrich', lookup: 'reference-data' }
+      { type: 'enrich', lookup: 'reference-data' },
     ],
     output: [
       { type: 'cosmosDb', container: 'processed' },
-      { type: 'eventHub', name: 'enriched' }
-    ]
+      { type: 'eventHub', name: 'enriched' },
+    ],
   });
 
   // Batch processing
@@ -242,9 +238,9 @@ export function createDataPipelineBackend() {
     notebooks: [
       './notebooks/clean-data.ipynb',
       './notebooks/transform.ipynb',
-      './notebooks/aggregate.ipynb'
+      './notebooks/aggregate.ipynb',
     ],
-    output: { type: 'synapse', table: 'fact_daily' }
+    output: { type: 'synapse', table: 'fact_daily' },
   });
 
   // ML pipeline
@@ -255,14 +251,14 @@ export function createDataPipelineBackend() {
       algorithm: 'random-forest',
       hyperparameters: {
         n_estimators: 100,
-        max_depth: 10
-      }
+        max_depth: 10,
+      },
     },
     inference: {
       endpoint: '/predict',
       batchScoring: true,
-      modelVersion: 'latest'
-    }
+      modelVersion: 'latest',
+    },
   });
 
   // Create data pipeline backend
@@ -277,12 +273,12 @@ export function createDataPipelineBackend() {
     monitoring: {
       enabled: true,
       retentionDays: 30,
-      customMetrics: ['throughput', 'latency', 'error_rate']
+      customMetrics: ['throughput', 'latency', 'error_rate'],
     },
     limits: {
       maxFunctionApps: 10,
-      maxCosmosAccounts: 2
-    }
+      maxCosmosAccounts: 2,
+    },
   });
 
   return backend;
@@ -307,9 +303,9 @@ export function createSaaSBackend() {
       limits: {
         users: 'number',
         storage: 'number',
-        apiCalls: 'number'
-      }
-    }
+        apiCalls: 'number',
+      },
+    },
   });
 
   // Per-tenant APIs
@@ -319,30 +315,24 @@ export function createSaaSBackend() {
     operations: ['create', 'read', 'update', 'delete', 'list'],
     authorization: {
       type: 'rbac',
-      roles: ['owner', 'admin', 'user', 'viewer']
+      roles: ['owner', 'admin', 'user', 'viewer'],
     },
     rateLimit: {
       free: { requests: 100, window: '1h' },
       standard: { requests: 1000, window: '1h' },
-      premium: { requests: 10000, window: '1h' }
-    }
+      premium: { requests: 10000, window: '1h' },
+    },
   });
 
   // Admin portal
   const adminPortal = AdminPortal.define('AdminPortal', {
     authentication: 'azure-ad',
-    features: [
-      'tenant-management',
-      'user-management',
-      'billing',
-      'analytics',
-      'support'
-    ],
+    features: ['tenant-management', 'user-management', 'billing', 'analytics', 'support'],
     customization: {
       branding: true,
       domains: true,
-      sso: true
-    }
+      sso: true,
+    },
   });
 
   // Billing and metering
@@ -351,12 +341,12 @@ export function createSaaSBackend() {
     plans: [
       { id: 'free', price: 0 },
       { id: 'standard', price: 99 },
-      { id: 'premium', price: 499 }
+      { id: 'premium', price: 499 },
     ],
     metering: {
       metrics: ['api_calls', 'storage_gb', 'users'],
-      reportingInterval: 'hourly'
-    }
+      reportingInterval: 'hourly',
+    },
   });
 
   // Create SaaS backend
@@ -369,16 +359,16 @@ export function createSaaSBackend() {
     // SaaS-specific configuration
     monitoring: {
       enabled: true,
-      perTenantMetrics: true
+      perTenantMetrics: true,
     },
     networking: {
       mode: 'hybrid',
-      tenantIsolation: true
+      tenantIsolation: true,
     },
     compliance: {
       standards: ['SOC2', 'ISO27001'],
-      dataResidency: 'regional'
-    }
+      dataResidency: 'regional',
+    },
   });
 
   return backend;
@@ -396,64 +386,64 @@ export function progressiveEnhancementExample() {
   const basicBackend = defineBackend({
     userApi: CrudApi.define('UserApi', {
       entityName: 'User',
-      schema: { id: 'string', name: 'string' }
-    })
+      schema: { id: 'string', name: 'string' },
+    }),
   });
 
   // Step 2: Add monitoring
   const withMonitoring = defineBackend({
     userApi: CrudApi.define('UserApi', {
       entityName: 'User',
-      schema: { id: 'string', name: 'string' }
+      schema: { id: 'string', name: 'string' },
     }),
 
     monitoring: {
       enabled: true,
-      retentionDays: 30
-    }
+      retentionDays: 30,
+    },
   });
 
   // Step 3: Add more components
   const withMoreComponents = defineBackend({
     userApi: CrudApi.define('UserApi', {
       entityName: 'User',
-      schema: { id: 'string', name: 'string' }
+      schema: { id: 'string', name: 'string' },
     }),
 
     productApi: CrudApi.define('ProductApi', {
       entityName: 'Product',
-      schema: { id: 'string', name: 'string', price: 'number' }
+      schema: { id: 'string', name: 'string', price: 'number' },
     }),
 
     website: StaticSite.define('Website', {
-      sourceDirectory: './web'
+      sourceDirectory: './web',
     }),
 
-    monitoring: true
+    monitoring: true,
   });
 
   // Step 4: Add networking isolation
   const production = defineBackend({
     userApi: CrudApi.define('UserApi', {
       entityName: 'User',
-      schema: { id: 'string', name: 'string' }
+      schema: { id: 'string', name: 'string' },
     }),
 
     productApi: CrudApi.define('ProductApi', {
       entityName: 'Product',
-      schema: { id: 'string', name: 'string', price: 'number' }
+      schema: { id: 'string', name: 'string', price: 'number' },
     }),
 
     website: StaticSite.define('Website', {
-      sourceDirectory: './web'
+      sourceDirectory: './web',
     }),
 
     monitoring: {
       enabled: true,
-      retentionDays: 90
+      retentionDays: 90,
     },
 
-    networking: 'isolated'
+    networking: 'isolated',
   });
 
   return { basicBackend, withMonitoring, withMoreComponents, production };
@@ -487,7 +477,7 @@ class CrudApi implements IBackendComponent<CrudApiConfig> {
       componentId: id,
       componentType: 'CrudApi',
       config,
-      factory: CrudApi.createInstance
+      factory: CrudApi.createInstance,
     };
   }
 
@@ -497,7 +487,12 @@ class CrudApi implements IBackendComponent<CrudApiConfig> {
     config: CrudApiConfig,
     resources: ResourceMap
   ): CrudApi {
-    const instance = new CrudApi({ componentId: id, componentType: 'CrudApi', config, factory: CrudApi.createInstance });
+    const instance = new CrudApi({
+      componentId: id,
+      componentType: 'CrudApi',
+      config,
+      factory: CrudApi.createInstance,
+    });
     instance.initialize(resources, scope);
     return instance;
   }
@@ -513,15 +508,19 @@ class CrudApi implements IBackendComponent<CrudApiConfig> {
         requirementKey: 'shared-database',
         config: {
           enableServerless: true,
-          databases: [{
-            name: dbName,
-            containers: [{
-              name: containerName,
-              partitionKey: partitionKey ?? '/id'
-            }]
-          }]
+          databases: [
+            {
+              name: dbName,
+              containers: [
+                {
+                  name: containerName,
+                  partitionKey: partitionKey ?? '/id',
+                },
+              ],
+            },
+          ],
         },
-        priority: 10
+        priority: 10,
       },
       {
         resourceType: 'functions',
@@ -531,11 +530,11 @@ class CrudApi implements IBackendComponent<CrudApiConfig> {
           version: '20',
           environmentVariables: {
             [`${entityName.toUpperCase()}_DB`]: dbName,
-            [`${entityName.toUpperCase()}_CONTAINER`]: containerName
-          }
+            [`${entityName.toUpperCase()}_CONTAINER`]: containerName,
+          },
         },
-        priority: 10
-      }
+        priority: 10,
+      },
     ];
   }
 
@@ -561,8 +560,8 @@ class CrudApi implements IBackendComponent<CrudApiConfig> {
       valid: hasCosmosDb && hasFunctionApp,
       errors: [
         !hasCosmosDb && 'Missing Cosmos DB resource',
-        !hasFunctionApp && 'Missing Function App resource'
-      ].filter(Boolean) as string[]
+        !hasFunctionApp && 'Missing Function App resource',
+      ].filter(Boolean) as string[],
     };
   }
 
@@ -570,7 +569,7 @@ class CrudApi implements IBackendComponent<CrudApiConfig> {
     return {
       endpoint: `https://${this.functionApp.name}.azurewebsites.net/api/${this.config.entityName}`,
       database: this.cosmosDb.name,
-      functionApp: this.functionApp.name
+      functionApp: this.functionApp.name,
     };
   }
 
@@ -603,25 +602,29 @@ interface CrudApiConfig {
  */
 export function builderPatternExample() {
   const backend = defineBackend()
-    .addComponent(CrudApi.define('UserApi', {
-      entityName: 'User',
-      schema: { id: 'string', name: 'string' }
-    }))
-    .addComponent(CrudApi.define('ProductApi', {
-      entityName: 'Product',
-      schema: { id: 'string', name: 'string', price: 'number' }
-    }))
+    .addComponent(
+      CrudApi.define('UserApi', {
+        entityName: 'User',
+        schema: { id: 'string', name: 'string' },
+      })
+    )
+    .addComponent(
+      CrudApi.define('ProductApi', {
+        entityName: 'Product',
+        schema: { id: 'string', name: 'string', price: 'number' },
+      })
+    )
     .withMonitoring({
       enabled: true,
-      retentionDays: 90
+      retentionDays: 90,
     })
     .withNetworking({
       mode: 'isolated',
-      privateEndpoints: true
+      privateEndpoints: true,
     })
     .withTags({
       Environment: 'Production',
-      Team: 'Platform'
+      Team: 'Platform',
     })
     .build();
 
@@ -639,7 +642,10 @@ export function testingExample() {
   // Mock resource map for testing
   const mockResources: ResourceMap = new Map([
     ['cosmos:shared-database', { name: 'mock-cosmos', endpoint: 'https://mock.cosmos.azure.com' }],
-    ['functions:api-functions', { name: 'mock-functions', endpoint: 'https://mock.azurewebsites.net' }]
+    [
+      'functions:api-functions',
+      { name: 'mock-functions', endpoint: 'https://mock.azurewebsites.net' },
+    ],
   ]);
 
   // Test component in isolation
@@ -648,7 +654,7 @@ export function testingExample() {
     componentType = 'CrudApi';
     config: CrudApiConfig = {
       entityName: 'User',
-      schema: { id: 'string', name: 'string' }
+      schema: { id: 'string', name: 'string' },
     };
 
     getRequirements() {
@@ -701,7 +707,7 @@ export function testingExample() {
 
     validate() {
       return { valid: true };
-    }
+    },
   };
 
   return { userApi, testBackend };

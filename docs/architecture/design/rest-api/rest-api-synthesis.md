@@ -87,19 +87,21 @@ RestApiStack.toArmTemplate()
 Central orchestrator for REST API synthesis.
 
 **Responsibilities**:
+
 - Coordinate synthesis of API, operations, backends, and policies
 - Manage resource dependencies and naming
 - Generate OpenAPI specifications during synthesis
 - Integrate with validation pipeline
 
 **Key Methods**:
+
 ```typescript
 export class RestApiSynthesizer {
-  synthesize(): ArmResource[]
-  private synthesizeApi(): ArmResource
-  private synthesizeOperation(operation: IRestOperation): ArmResource[]
-  private synthesizeBackends(): ArmResource[]
-  private generateOpenApiArtifact(): void
+  synthesize(): ArmResource[];
+  private synthesizeApi(): ArmResource;
+  private synthesizeOperation(operation: IRestOperation): ArmResource[];
+  private synthesizeBackends(): ArmResource[];
+  private generateOpenApiArtifact(): void;
 }
 ```
 
@@ -108,20 +110,22 @@ export class RestApiSynthesizer {
 Handles individual operation synthesis.
 
 **Responsibilities**:
+
 - Convert IRestOperation to ARM operation resource
 - Synthesize parameters (path, query, header)
 - Convert request/response bodies
 - Generate operation policies
 
 **Key Methods**:
+
 ```typescript
 export class OperationSynthesizer {
-  synthesize(): ArmResource[]
-  private createOperationResource(): ArmResource
-  private synthesizePathParameters(): TemplateParameter[]
-  private synthesizeRequest(): OperationRequest
-  private synthesizeResponses(): OperationResponse[]
-  private createPolicyResource(operationName: string): ArmResource
+  synthesize(): ArmResource[];
+  private createOperationResource(): ArmResource;
+  private synthesizePathParameters(): TemplateParameter[];
+  private synthesizeRequest(): OperationRequest;
+  private synthesizeResponses(): OperationResponse[];
+  private createPolicyResource(operationName: string): ArmResource;
 }
 ```
 
@@ -130,19 +134,24 @@ export class OperationSynthesizer {
 Synthesizes backend service resources.
 
 **Supported Backends**:
+
 - Azure Functions
 - App Service
 - Container Apps
 - HTTP Endpoints
 
 **Key Methods**:
+
 ```typescript
 export class BackendSynthesizer {
-  synthesize(): ArmResource[]
-  private synthesizeBackend(backendId: string, config: BackendConfiguration): ArmResource
-  private synthesizeAzureFunctionBackend(backendId: string, config: AzureFunctionBackend): ArmResource
-  private synthesizeAppServiceBackend(backendId: string, config: AppServiceBackend): ArmResource
-  private synthesizeHttpBackend(backendId: string, config: HttpEndpointBackend): ArmResource
+  synthesize(): ArmResource[];
+  private synthesizeBackend(backendId: string, config: BackendConfiguration): ArmResource;
+  private synthesizeAzureFunctionBackend(
+    backendId: string,
+    config: AzureFunctionBackend
+  ): ArmResource;
+  private synthesizeAppServiceBackend(backendId: string, config: AppServiceBackend): ArmResource;
+  private synthesizeHttpBackend(backendId: string, config: HttpEndpointBackend): ArmResource;
 }
 ```
 
@@ -151,17 +160,19 @@ export class BackendSynthesizer {
 Generates OpenAPI specs during synthesis.
 
 **Responsibilities**:
+
 - Export operations to OpenAPI 3.0/3.1 format
 - Write specs to assembly directory
 - Support both JSON and YAML formats
 - Integrate with validation pipeline
 
 **Key Methods**:
+
 ```typescript
 export class OpenApiArtifactGenerator {
-  generate(): string
-  generateToAssembly(outputDir: string): string[]
-  copyToProjectDocs(sourcePath: string, docsDir: string): void
+  generate(): string;
+  generateToAssembly(outputDir: string): string[];
+  copyToProjectDocs(sourcePath: string, docsDir: string): void;
 }
 ```
 
@@ -171,24 +182,25 @@ export class OpenApiArtifactGenerator {
 
 Complete field-by-field mapping documentation:
 
-| IRestOperation Field | ARM Field | Transformation |
-|---------------------|-----------|----------------|
-| `method` | `properties.method` | Direct copy (GET, POST, etc.) |
-| `path` | `properties.urlTemplate` | Direct copy (must use {param} syntax) |
-| `operationId` | ARM resource name component | Sanitize for ARM naming rules |
-| `summary` | `properties.displayName` | Direct copy, fallback to operationId |
-| `description` | `properties.description` | Direct copy |
-| `pathParameters` | `properties.templateParameters` | JSON Schema to ARM parameters |
-| `queryParameters` | `properties.request.queryParameters` | JSON Schema to ARM parameters |
-| `headerParameters` | `properties.request.headers` | JSON Schema to ARM parameters |
-| `requestBody` | `properties.request.representations` | Content-type mapping |
-| `responses` | `properties.responses` | Status code and content-type mapping |
-| `backend` | Separate backend resource | Backend synthesizer |
-| `policies` | Separate policy resource | Policy synthesizer |
+| IRestOperation Field | ARM Field                            | Transformation                        |
+| -------------------- | ------------------------------------ | ------------------------------------- |
+| `method`             | `properties.method`                  | Direct copy (GET, POST, etc.)         |
+| `path`               | `properties.urlTemplate`             | Direct copy (must use {param} syntax) |
+| `operationId`        | ARM resource name component          | Sanitize for ARM naming rules         |
+| `summary`            | `properties.displayName`             | Direct copy, fallback to operationId  |
+| `description`        | `properties.description`             | Direct copy                           |
+| `pathParameters`     | `properties.templateParameters`      | JSON Schema to ARM parameters         |
+| `queryParameters`    | `properties.request.queryParameters` | JSON Schema to ARM parameters         |
+| `headerParameters`   | `properties.request.headers`         | JSON Schema to ARM parameters         |
+| `requestBody`        | `properties.request.representations` | Content-type mapping                  |
+| `responses`          | `properties.responses`               | Status code and content-type mapping  |
+| `backend`            | Separate backend resource            | Backend synthesizer                   |
+| `policies`           | Separate policy resource             | Policy synthesizer                    |
 
 ### Backend Configuration Mapping
 
 #### Azure Function Backend
+
 ```typescript
 // Input
 backend: {
@@ -203,6 +215,7 @@ backend: {
 ```
 
 #### App Service Backend
+
 ```typescript
 // Input
 backend: {
@@ -216,6 +229,7 @@ backend: {
 ```
 
 #### HTTP Endpoint Backend
+
 ```typescript
 // Input
 backend: {
@@ -233,15 +247,15 @@ backend: {
 
 ### Type Conversion Rules
 
-| JSON Schema Type | ARM Type | Notes |
-|-----------------|----------|-------|
-| `string` | `string` | Direct mapping |
-| `number` | `number` | Direct mapping |
-| `integer` | `integer` | Preserve integer distinction |
-| `boolean` | `boolean` | Direct mapping |
-| `array` | `array` | Direct mapping |
-| `object` | `object` | For complex parameters |
-| `null` | Not supported | Use `nullable: true` instead |
+| JSON Schema Type | ARM Type      | Notes                        |
+| ---------------- | ------------- | ---------------------------- |
+| `string`         | `string`      | Direct mapping               |
+| `number`         | `number`      | Direct mapping               |
+| `integer`        | `integer`     | Preserve integer distinction |
+| `boolean`        | `boolean`     | Direct mapping               |
+| `array`          | `array`       | Direct mapping               |
+| `object`         | `object`      | For complex parameters       |
+| `null`           | Not supported | Use `nullable: true` instead |
 
 ## OpenAPI Generation Strategy
 
@@ -250,6 +264,7 @@ backend: {
 **Decision**: Generate during synthesis phase (not pre or post).
 
 **Rationale**:
+
 - Full construct tree available
 - Consistent with ARM generation
 - Single command workflow
@@ -260,6 +275,7 @@ backend: {
 **Decision**: Dual output (assembly + optional docs).
 
 #### 1. Assembly Directory (Primary)
+
 ```
 .atakora/arm.out/
 └── <package-name>/
@@ -272,6 +288,7 @@ backend: {
 **Purpose**: Deployment artifact, version controlled with ARM templates
 
 #### 2. Project Documentation Directory (Optional)
+
 ```
 docs/api/
 ├── user-api.json          ← Stable API spec
@@ -303,6 +320,7 @@ docs/api/
 Smart caching with invalidation to avoid regenerating unchanged specs.
 
 **Cache Invalidation Triggers**:
+
 - Operations added, modified, or removed
 - Backend configurations changed
 - Policy definitions changed
@@ -347,12 +365,14 @@ atakora api import petstore.yaml --name PetStore
 ## Performance Considerations
 
 ### Synthesis Speed Targets
+
 - **Single operation**: < 100ms
 - **10 operations**: < 500ms
 - **100 operations**: < 5s
 - **OpenAPI import (1000 ops)**: < 10s
 
 ### Optimization Strategies
+
 - Backend deduplication (O(1) lookup via Map)
 - Lazy backend synthesis (only synthesize if referenced)
 - Parallel OpenAPI generation for multiple APIs
@@ -371,7 +391,7 @@ throw new SynthesisError(
   {
     suggestion: 'Ensure the backend is registered with the API stack',
     path: `operations.${operation.operationId}.backend`,
-    fix: `stack.addBackend('${operation.backend.id}', backendConfig)`
+    fix: `stack.addBackend('${operation.backend.id}', backendConfig)`,
   }
 );
 ```
@@ -414,6 +434,7 @@ if (validationErrors.length > 0) {
 **Phase 3**: Core synthesis components implemented (2025-10-10)
 
 **Completed**:
+
 - Type definitions (`types.ts`)
 - Operation synthesizer (`operation-synthesizer.ts`)
 - Backend synthesizer (`backend-synthesizer.ts`)
@@ -421,6 +442,7 @@ if (validationErrors.length > 0) {
 - Module exports (`index.ts`)
 
 **Pending**:
+
 - RestApiStack construct integration
 - PolicySynthesizer implementation
 - OpenAPI integration with type generator
@@ -430,12 +452,14 @@ if (validationErrors.length > 0) {
 ## Testing Strategy
 
 ### Unit Tests
+
 - Synthesizer component tests
 - ARM resource validation
 - Type conversion validation
 - Error handling validation
 
 ### Integration Tests
+
 - End-to-end synthesis
 - ARM template deployment validation
 - OpenAPI spec validation

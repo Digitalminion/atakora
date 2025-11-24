@@ -117,12 +117,12 @@ export const enforceNamingConvention: ValidationRule = {
         message: `Resource name '${resource.name}' doesn't match naming convention`,
         suggestion: `Use pattern: <type>-<env>-<app>-<number> (e.g., webapp-prod-api-001)`,
         documentation: 'https://wiki.company.com/naming-conventions',
-        code: 'NAMING_001'
+        code: 'NAMING_001',
       };
     }
 
     return { isValid: true };
-  }
+  },
 };
 ```
 
@@ -140,22 +140,16 @@ export const enforceRequiredTags: ValidationRule = {
   description: 'Ensures all resources have required tags',
 
   validate: (resource: Resource) => {
-    const requiredTags = [
-      'environment',
-      'owner',
-      'costCenter',
-      'project',
-      'managedBy'
-    ];
+    const requiredTags = ['environment', 'owner', 'costCenter', 'project', 'managedBy'];
 
-    const missingTags = requiredTags.filter(tag => !resource.tags?.[tag]);
+    const missingTags = requiredTags.filter((tag) => !resource.tags?.[tag]);
 
     if (missingTags.length > 0) {
       return {
         isValid: false,
         message: `Missing required tags: ${missingTags.join(', ')}`,
-        suggestion: `Add tags: {\n${missingTags.map(t => `  ${t}: "value"`).join(',\n')}\n}`,
-        code: 'TAGS_001'
+        suggestion: `Add tags: {\n${missingTags.map((t) => `  ${t}: "value"`).join(',\n')}\n}`,
+        code: 'TAGS_001',
       };
     }
 
@@ -166,13 +160,13 @@ export const enforceRequiredTags: ValidationRule = {
           isValid: false,
           message: `Tag '${key}' has empty value`,
           suggestion: `Provide a meaningful value for tag '${key}'`,
-          code: 'TAGS_002'
+          code: 'TAGS_002',
         };
       }
     }
 
     return { isValid: true };
-  }
+  },
 };
 ```
 
@@ -190,13 +184,7 @@ export const enforceApprovedRegions: ValidationRule = {
   description: 'Ensures resources are deployed to approved regions',
 
   validate: (resource: Resource) => {
-    const approvedRegions = [
-      'eastus',
-      'eastus2',
-      'westus',
-      'westus2',
-      'centralus'
-    ];
+    const approvedRegions = ['eastus', 'eastus2', 'westus', 'westus2', 'centralus'];
 
     const resourceLocation = resource.location?.toLowerCase();
 
@@ -206,12 +194,12 @@ export const enforceApprovedRegions: ValidationRule = {
         message: `Region '${resource.location}' is not approved for deployment`,
         suggestion: `Use one of: ${approvedRegions.join(', ')}`,
         documentation: 'https://wiki.company.com/approved-regions',
-        code: 'REGION_001'
+        code: 'REGION_001',
       };
     }
 
     return { isValid: true };
-  }
+  },
 };
 ```
 
@@ -236,7 +224,7 @@ export const typeSpecificValidator: ValidationRule = {
         return {
           isValid: false,
           message: 'Storage accounts must enforce HTTPS-only traffic',
-          code: 'STORAGE_SEC_001'
+          code: 'STORAGE_SEC_001',
         };
       }
 
@@ -246,25 +234,28 @@ export const typeSpecificValidator: ValidationRule = {
           message: 'Production storage accounts should use geo-redundant SKUs',
           suggestion: 'Use Standard_GRS or Standard_RAGRS for production',
           severity: 'warning',
-          code: 'STORAGE_PROD_001'
+          code: 'STORAGE_PROD_001',
         };
       }
     }
 
     // Web App specific validation
     if (resource instanceof WebApp) {
-      if (resource.tags?.environment === 'production' && !resource.properties.siteConfig?.alwaysOn) {
+      if (
+        resource.tags?.environment === 'production' &&
+        !resource.properties.siteConfig?.alwaysOn
+      ) {
         return {
           isValid: false,
           message: 'Production web apps must have AlwaysOn enabled',
           suggestion: 'Set properties.siteConfig.alwaysOn = true',
-          code: 'WEBAPP_PROD_001'
+          code: 'WEBAPP_PROD_001',
         };
       }
     }
 
     return { isValid: true };
-  }
+  },
 };
 ```
 
@@ -287,12 +278,15 @@ export const environmentSpecificValidator: ValidationRule = {
     if (environment === 'production') {
       // Require backup configuration
       if (resource instanceof SqlDatabase) {
-        if (!resource.properties.backupRetentionDays || resource.properties.backupRetentionDays < 35) {
+        if (
+          !resource.properties.backupRetentionDays ||
+          resource.properties.backupRetentionDays < 35
+        ) {
           return {
             isValid: false,
             message: 'Production databases require 35+ days backup retention',
             suggestion: 'Set properties.backupRetentionDays = 35',
-            code: 'DB_PROD_001'
+            code: 'DB_PROD_001',
           };
         }
       }
@@ -300,7 +294,7 @@ export const environmentSpecificValidator: ValidationRule = {
       // Require monitoring
       if (resource instanceof WebApp) {
         const hasAppInsights = resource.properties.siteConfig?.appSettings?.some(
-          s => s.name === 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          (s) => s.name === 'APPINSIGHTS_INSTRUMENTATIONKEY'
         );
 
         if (!hasAppInsights) {
@@ -308,7 +302,7 @@ export const environmentSpecificValidator: ValidationRule = {
             isValid: false,
             message: 'Production web apps require Application Insights',
             suggestion: 'Configure Application Insights monitoring',
-            code: 'WEBAPP_PROD_002'
+            code: 'WEBAPP_PROD_002',
           };
         }
       }
@@ -324,14 +318,14 @@ export const environmentSpecificValidator: ValidationRule = {
             message: 'Development environments should not use Premium SKUs',
             suggestion: 'Use Basic or Standard tier for development',
             severity: 'warning',
-            code: 'COST_DEV_001'
+            code: 'COST_DEV_001',
           };
         }
       }
     }
 
     return { isValid: true };
-  }
+  },
 };
 ```
 
@@ -352,8 +346,8 @@ export const businessLogicValidator: ValidationRule = {
 
     // Rule: Every web app must have associated storage
     if (resource instanceof WebApp) {
-      const hasStorageConfig = resource.properties.siteConfig?.appSettings?.some(
-        s => s.name.includes('STORAGE')
+      const hasStorageConfig = resource.properties.siteConfig?.appSettings?.some((s) =>
+        s.name.includes('STORAGE')
       );
 
       if (!hasStorageConfig) {
@@ -361,7 +355,7 @@ export const businessLogicValidator: ValidationRule = {
           isValid: false,
           message: 'Web apps must be configured with storage',
           suggestion: 'Add STORAGE_CONNECTION_STRING to app settings',
-          code: 'WEBAPP_CONFIG_001'
+          code: 'WEBAPP_CONFIG_001',
         };
       }
     }
@@ -369,8 +363,7 @@ export const businessLogicValidator: ValidationRule = {
     // Rule: Production apps must have staging slot
     if (resource instanceof WebApp && resource.tags?.environment === 'production') {
       const slots = stack.resources.filter(
-        r => r.type === 'Microsoft.Web/sites/slots' &&
-             r.properties?.parentSiteId === resource.id
+        (r) => r.type === 'Microsoft.Web/sites/slots' && r.properties?.parentSiteId === resource.id
       );
 
       if (slots.length === 0) {
@@ -379,13 +372,13 @@ export const businessLogicValidator: ValidationRule = {
           message: 'Production web apps require a staging deployment slot',
           suggestion: 'Create a staging slot for blue-green deployments',
           severity: 'warning',
-          code: 'WEBAPP_PROD_003'
+          code: 'WEBAPP_PROD_003',
         };
       }
     }
 
     return { isValid: true };
-  }
+  },
 };
 ```
 
@@ -410,7 +403,7 @@ export const costOptimizationValidator: ValidationRule = {
           isValid: false,
           message: 'GZRS storage is expensive for non-production environments',
           suggestion: 'Consider using Standard_LRS or Standard_GRS for dev/staging',
-          code: 'COST_001'
+          code: 'COST_001',
         };
       }
     }
@@ -420,19 +413,21 @@ export const costOptimizationValidator: ValidationRule = {
       const tier = resource.sku.tier;
       const environment = resource.tags?.environment;
 
-      if ((tier === 'Premium' || tier === 'PremiumV2' || tier === 'PremiumV3') &&
-          environment !== 'production') {
+      if (
+        (tier === 'Premium' || tier === 'PremiumV2' || tier === 'PremiumV3') &&
+        environment !== 'production'
+      ) {
         return {
           isValid: false,
           message: `${tier} tier is expensive for ${environment} environment`,
           suggestion: 'Consider using Basic or Standard tier for non-production',
-          code: 'COST_002'
+          code: 'COST_002',
         };
       }
     }
 
     return { isValid: true };
-  }
+  },
 };
 ```
 
@@ -451,7 +446,7 @@ describe('enforceNamingConvention', () => {
     const stack = new Stack('test');
     const rg = new ResourceGroup(stack, 'rg', {
       location: 'eastus',
-      name: 'rg-prod-api-001'
+      name: 'rg-prod-api-001',
     });
 
     const result = enforceNamingConvention.validate(rg, { stack, resource: rg });
@@ -463,7 +458,7 @@ describe('enforceNamingConvention', () => {
     const stack = new Stack('test');
     const rg = new ResourceGroup(stack, 'rg', {
       location: 'eastus',
-      name: 'rg-api-001'  // Missing environment
+      name: 'rg-api-001', // Missing environment
     });
 
     const result = enforceNamingConvention.validate(rg, { stack, resource: rg });
@@ -476,7 +471,7 @@ describe('enforceNamingConvention', () => {
     const stack = new Stack('test');
     const rg = new ResourceGroup(stack, 'rg', {
       location: 'eastus',
-      name: 'RG-prod-api-001'  // Uppercase
+      name: 'RG-prod-api-001', // Uppercase
     });
 
     const result = enforceNamingConvention.validate(rg, { stack, resource: rg });
@@ -488,7 +483,7 @@ describe('enforceNamingConvention', () => {
     const stack = new Stack('test');
     const rg = new ResourceGroup(stack, 'rg', {
       location: 'eastus',
-      name: 'myresourcegroup'
+      name: 'myresourcegroup',
     });
 
     const result = enforceNamingConvention.validate(rg, { stack, resource: rg });
@@ -523,15 +518,15 @@ describe('Validator integration', () => {
         owner: 'platform-team',
         costCenter: 'engineering',
         project: 'webapp',
-        managedBy: 'atakora'
-      }
+        managedBy: 'atakora',
+      },
     });
 
     const plan = new AppServicePlan(stack, 'plan', {
       resourceGroup: rg,
       location: 'eastus',
       sku: { name: 'B1', tier: 'Basic' },
-      tags: rg.tags  // Same tags
+      tags: rg.tags, // Same tags
     });
 
     // Should not throw
@@ -546,9 +541,9 @@ describe('Validator integration', () => {
     const rg = new ResourceGroup(stack, 'rg', {
       location: 'eastus',
       tags: {
-        environment: 'dev'
+        environment: 'dev',
         // Missing other required tags
-      }
+      },
     });
 
     // Should throw validation error
@@ -638,7 +633,7 @@ if (environment === 'production') {
 // ❌ Vague
 return {
   isValid: false,
-  message: 'Invalid configuration'
+  message: 'Invalid configuration',
 };
 
 // ✅ Clear
@@ -646,7 +641,7 @@ return {
   isValid: false,
   message: `Storage account name '${resource.name}' exceeds 24 character limit`,
   suggestion: 'Shorten the name or let Atakora generate it automatically',
-  code: 'STORAGE_NAME_001'
+  code: 'STORAGE_NAME_001',
 };
 ```
 
@@ -657,7 +652,7 @@ return {
   isValid: false,
   message: 'Missing required tags: owner, costCenter',
   suggestion: 'Add tags:\n  owner: "team-name"\n  costCenter: "dept-code"',
-  documentation: 'https://wiki.company.com/tagging-policy'
+  documentation: 'https://wiki.company.com/tagging-policy',
 };
 ```
 
@@ -668,13 +663,13 @@ export const ERROR_CODES = {
   NAMING_CONVENTION: 'NAMING_001',
   MISSING_TAGS: 'TAGS_001',
   INVALID_REGION: 'REGION_001',
-  SECURITY_VIOLATION: 'SEC_001'
+  SECURITY_VIOLATION: 'SEC_001',
 };
 
 return {
   isValid: false,
   message: 'Naming convention violation',
-  code: ERROR_CODES.NAMING_CONVENTION
+  code: ERROR_CODES.NAMING_CONVENTION,
 };
 ```
 
@@ -682,13 +677,13 @@ return {
 
 ```typescript
 // Error: Must fix before deployment
-severity: 'error'
+severity: 'error';
 
 // Warning: Should fix but not blocking
-severity: 'warning'
+severity: 'warning';
 
 // Info: Helpful suggestion
-severity: 'info'
+severity: 'info';
 ```
 
 ### 5. Make Validators Testable
@@ -705,7 +700,7 @@ export function validateName(name: string): ValidationResult {
 export const namingValidator: ValidationRule = {
   name: 'naming-validator',
   severity: 'error',
-  validate: (resource) => validateName(resource.name)
+  validate: (resource) => validateName(resource.name),
 };
 ```
 
@@ -733,7 +728,7 @@ export const companyStandardsValidator: ValidationRule = {
 
     // 2. Required tags
     const requiredTags = ['environment', 'owner', 'costCenter', 'project'];
-    const missingTags = requiredTags.filter(t => !resource.tags?.[t]);
+    const missingTags = requiredTags.filter((t) => !resource.tags?.[t]);
     if (missingTags.length > 0) {
       errors.push(`Missing required tags: ${missingTags.join(', ')}`);
     }
@@ -754,7 +749,7 @@ export const companyStandardsValidator: ValidationRule = {
       // Production must have monitoring
       if (resource instanceof WebApp) {
         const hasMonitoring = resource.properties.siteConfig?.appSettings?.some(
-          s => s.name === 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          (s) => s.name === 'APPINSIGHTS_INSTRUMENTATIONKEY'
         );
         if (!hasMonitoring) {
           errors.push('Production apps must have Application Insights');
@@ -768,12 +763,12 @@ export const companyStandardsValidator: ValidationRule = {
         isValid: false,
         message: errors.join('; '),
         documentation: 'https://wiki.acmecorp.com/infrastructure-standards',
-        code: 'ACME_STANDARDS_001'
+        code: 'ACME_STANDARDS_001',
       };
     }
 
     return { isValid: true };
-  }
+  },
 };
 ```
 

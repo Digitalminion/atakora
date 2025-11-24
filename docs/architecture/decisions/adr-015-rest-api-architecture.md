@@ -5,12 +5,14 @@
 Building on the API Stack Architecture defined in ADR-010, we need a comprehensive REST API implementation that provides the same level of type safety, developer experience, and Azure integration as our GraphQL architecture (ADR-011, ADR-012). REST APIs remain the most widely adopted API pattern and require first-class support in Atakora.
 
 Azure API Management supports REST APIs through:
+
 1. **Operation-based definitions**: Programmatic API definition with routes, methods, and parameters
 2. **OpenAPI import**: Import existing OpenAPI 3.0/3.1 specifications
 3. **Policy-based transformation**: Request/response manipulation through XML policies
 4. **Backend integration**: Proxy to Azure Functions, App Services, or external endpoints
 
 Current requirements:
+
 - Type-safe REST operation definitions with full TypeScript inference
 - OpenAPI 3.0/3.1 import and export capabilities
 - Compile-time validation of API definitions against OpenAPI schema
@@ -62,15 +64,7 @@ export interface IRestOperation<TParams = any, TQuery = any, TBody = any, TRespo
 }
 
 // HTTP methods supported by Azure API Management
-export type HttpMethod =
-  | 'GET'
-  | 'POST'
-  | 'PUT'
-  | 'DELETE'
-  | 'PATCH'
-  | 'HEAD'
-  | 'OPTIONS'
-  | 'TRACE';
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS' | 'TRACE';
 
 // Path parameter definition with type inference
 export interface PathParameterDefinition<T = any> {
@@ -287,9 +281,7 @@ export class RestOperationBuilder<TParams = {}, TQuery = {}, TBody = unknown, TR
   }
 
   // Response definition with type inference
-  responses<T>(
-    definition: ResponseDefinition<T>
-  ): RestOperationBuilder<TParams, TQuery, TBody, T> {
+  responses<T>(definition: ResponseDefinition<T>): RestOperationBuilder<TParams, TQuery, TBody, T> {
     this.operation.responses = definition;
     return this as any;
   }
@@ -350,8 +342,8 @@ const getUserOperation = get('/users/{userId}')
     schema: {
       type: 'string',
       format: 'uuid',
-      description: 'User unique identifier'
-    }
+      description: 'User unique identifier',
+    },
   })
   .queryParams<{ includeDeleted?: boolean }>({
     schema: {
@@ -360,33 +352,33 @@ const getUserOperation = get('/users/{userId}')
         includeDeleted: {
           type: 'boolean',
           default: false,
-          description: 'Include deleted users in response'
-        }
-      }
-    }
+          description: 'Include deleted users in response',
+        },
+      },
+    },
   })
   .responses<User>({
     200: {
       description: 'User found',
       content: {
         'application/json': {
-          schema: UserSchema
-        }
-      }
+          schema: UserSchema,
+        },
+      },
     },
     404: {
       description: 'User not found',
       content: {
         'application/json': {
-          schema: ErrorResponseSchema
-        }
-      }
-    }
+          schema: ErrorResponseSchema,
+        },
+      },
+    },
   })
   .backend({
     type: 'azureFunction',
     functionApp: userFunctionApp,
-    functionName: 'GetUser'
+    functionName: 'GetUser',
   })
   .build();
 ```
@@ -477,9 +469,7 @@ export class OpenApiImporter {
 
   // Import OpenAPI spec and convert to REST operations
   async import(): Promise<RestOperationCollection> {
-    const spec = typeof this.spec === 'string'
-      ? await this.loadSpec(this.spec)
-      : this.spec;
+    const spec = typeof this.spec === 'string' ? await this.loadSpec(this.spec) : this.spec;
 
     // Validate OpenAPI spec
     this.validate(spec);
@@ -495,7 +485,7 @@ export class OpenApiImporter {
       info: spec.info,
       servers: spec.servers,
       components: spec.components,
-      security: spec.security
+      security: spec.security,
     };
   }
 
@@ -530,7 +520,16 @@ export class OpenApiImporter {
     spec: OpenApiDefinition
   ): IRestOperation[] {
     const operations: IRestOperation[] = [];
-    const methods: HttpMethod[] = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS', 'TRACE'];
+    const methods: HttpMethod[] = [
+      'GET',
+      'POST',
+      'PUT',
+      'DELETE',
+      'PATCH',
+      'HEAD',
+      'OPTIONS',
+      'TRACE',
+    ];
 
     for (const method of methods) {
       const operation = pathItem[method.toLowerCase() as keyof OpenApiPathItem];
@@ -550,10 +549,7 @@ export class OpenApiImporter {
     spec: OpenApiDefinition
   ): IRestOperation {
     // Merge path-level and operation-level parameters
-    const parameters = [
-      ...(pathItem.parameters || []),
-      ...(operation.parameters || [])
-    ];
+    const parameters = [...(pathItem.parameters || []), ...(operation.parameters || [])];
 
     // Convert to our REST operation format
     return {
@@ -570,7 +566,7 @@ export class OpenApiImporter {
       responses: this.convertResponses(operation.responses, spec),
       security: operation.security,
       deprecated: operation.deprecated,
-      servers: operation.servers || pathItem.servers || spec.servers
+      servers: operation.servers || pathItem.servers || spec.servers,
     };
   }
 
@@ -579,7 +575,7 @@ export class OpenApiImporter {
     spec: OpenApiDefinition
   ): PathParameterDefinition | undefined {
     const pathParams = parameters
-      .map(p => this.resolveReference(p, spec))
+      .map((p) => this.resolveReference(p, spec))
       .filter((p): p is ParameterObject => p.in === 'path');
 
     if (pathParams.length === 0) return undefined;
@@ -597,8 +593,8 @@ export class OpenApiImporter {
       schema: {
         type: 'object',
         properties,
-        required
-      }
+        required,
+      },
     };
   }
 
@@ -607,7 +603,7 @@ export class OpenApiImporter {
     spec: OpenApiDefinition
   ): QueryParameterDefinition | undefined {
     const queryParams = parameters
-      .map(p => this.resolveReference(p, spec))
+      .map((p) => this.resolveReference(p, spec))
       .filter((p): p is ParameterObject => p.in === 'query');
 
     if (queryParams.length === 0) return undefined;
@@ -624,16 +620,13 @@ export class OpenApiImporter {
       schema: {
         type: 'object',
         properties,
-        required
+        required,
       },
-      required: required.length > 0
+      required: required.length > 0,
     };
   }
 
-  private resolveReference<T>(
-    item: T | ReferenceObject,
-    spec: OpenApiDefinition
-  ): T {
+  private resolveReference<T>(item: T | ReferenceObject, spec: OpenApiDefinition): T {
     if ('$ref' in item) {
       // Resolve $ref
       const refPath = item.$ref.split('/').slice(1); // Remove leading '#'
@@ -664,13 +657,15 @@ export class OpenApiImporter {
       maxLength: schema.maxLength,
       pattern: schema.pattern,
       items: schema.items ? this.convertParameterSchema(schema.items) : undefined,
-      properties: schema.properties ?
-        Object.fromEntries(
-          Object.entries(schema.properties).map(([key, val]) =>
-            [key, this.convertParameterSchema(val)]
+      properties: schema.properties
+        ? Object.fromEntries(
+            Object.entries(schema.properties).map(([key, val]) => [
+              key,
+              this.convertParameterSchema(val),
+            ])
           )
-        ) : undefined,
-      nullable: schema.nullable
+        : undefined,
+      nullable: schema.nullable,
     };
   }
 
@@ -687,14 +682,14 @@ export class OpenApiImporter {
       content[mediaType] = {
         schema: mediaTypeObject.schema,
         examples: mediaTypeObject.examples,
-        encoding: mediaTypeObject.encoding
+        encoding: mediaTypeObject.encoding,
       };
     }
 
     return {
       description: resolved.description,
       required: resolved.required,
-      content
+      content,
     };
   }
 
@@ -712,7 +707,7 @@ export class OpenApiImporter {
         for (const [mediaType, mediaTypeObject] of Object.entries(resolved.content)) {
           content[mediaType] = {
             schema: mediaTypeObject.schema,
-            examples: mediaTypeObject.examples
+            examples: mediaTypeObject.examples,
           };
         }
       }
@@ -721,7 +716,7 @@ export class OpenApiImporter {
         description: resolved.description,
         content: Object.keys(content).length > 0 ? content : undefined,
         headers: resolved.headers,
-        links: resolved.links
+        links: resolved.links,
       };
     }
 
@@ -743,7 +738,7 @@ export class OpenApiExporter {
       schemas: {},
       responses: {},
       parameters: {},
-      securitySchemes: {}
+      securitySchemes: {},
     };
 
     // Group operations by path
@@ -757,7 +752,7 @@ export class OpenApiExporter {
       openapi: version,
       info: this.info,
       paths,
-      components: Object.keys(components.schemas!).length > 0 ? components : undefined
+      components: Object.keys(components.schemas!).length > 0 ? components : undefined,
     };
   }
 
@@ -800,7 +795,7 @@ export class OpenApiExporter {
       requestBody: this.buildRequestBody(operation, components),
       responses: this.buildResponses(operation, components),
       security: operation.security,
-      deprecated: operation.deprecated
+      deprecated: operation.deprecated,
     };
   }
 
@@ -812,36 +807,42 @@ export class OpenApiExporter {
 
     // Path parameters
     if (operation.pathParameters) {
-      for (const [name, schema] of Object.entries(operation.pathParameters.schema.properties || {})) {
+      for (const [name, schema] of Object.entries(
+        operation.pathParameters.schema.properties || {}
+      )) {
         parameters.push({
           name,
           in: 'path',
           required: true,
-          schema: this.convertToOpenApiSchema(schema)
+          schema: this.convertToOpenApiSchema(schema),
         });
       }
     }
 
     // Query parameters
     if (operation.queryParameters) {
-      for (const [name, schema] of Object.entries(operation.queryParameters.schema.properties || {})) {
+      for (const [name, schema] of Object.entries(
+        operation.queryParameters.schema.properties || {}
+      )) {
         parameters.push({
           name,
           in: 'query',
           required: operation.queryParameters.schema.required?.includes(name) || false,
-          schema: this.convertToOpenApiSchema(schema)
+          schema: this.convertToOpenApiSchema(schema),
         });
       }
     }
 
     // Header parameters
     if (operation.headerParameters) {
-      for (const [name, schema] of Object.entries(operation.headerParameters.schema.properties || {})) {
+      for (const [name, schema] of Object.entries(
+        operation.headerParameters.schema.properties || {}
+      )) {
         parameters.push({
           name,
           in: 'header',
           required: false,
-          schema: this.convertToOpenApiSchema(schema)
+          schema: this.convertToOpenApiSchema(schema),
         });
       }
     }
@@ -861,7 +862,7 @@ export class OpenApiExporter {
       if (mediaTypeSchema) {
         content[mediaType] = {
           schema: this.convertToOpenApiSchema(mediaTypeSchema.schema),
-          examples: mediaTypeSchema.examples
+          examples: mediaTypeSchema.examples,
         };
       }
     }
@@ -869,7 +870,7 @@ export class OpenApiExporter {
     return {
       description: operation.requestBody.description,
       required: operation.requestBody.required,
-      content
+      content,
     };
   }
 
@@ -889,7 +890,7 @@ export class OpenApiExporter {
           if (mediaTypeSchema) {
             content[mediaType] = {
               schema: this.convertToOpenApiSchema(mediaTypeSchema.schema),
-              examples: mediaTypeSchema.examples
+              examples: mediaTypeSchema.examples,
             };
           }
         }
@@ -898,7 +899,7 @@ export class OpenApiExporter {
       responses[statusCode] = {
         description: response.description,
         content: Object.keys(content).length > 0 ? content : undefined,
-        headers: response.headers
+        headers: response.headers,
       };
     }
 
@@ -928,17 +929,19 @@ export class OpenApiExporter {
       minProperties: schema.minProperties,
       required: schema.required,
       enum: schema.enum,
-      properties: schema.properties ?
-        Object.fromEntries(
-          Object.entries(schema.properties).map(([key, val]) =>
-            [key, this.convertToOpenApiSchema(val)]
+      properties: schema.properties
+        ? Object.fromEntries(
+            Object.entries(schema.properties).map(([key, val]) => [
+              key,
+              this.convertToOpenApiSchema(val),
+            ])
           )
-        ) : undefined,
+        : undefined,
       additionalProperties: schema.additionalProperties,
       items: schema.items ? this.convertToOpenApiSchema(schema.items) : undefined,
-      oneOf: schema.oneOf?.map(s => this.convertToOpenApiSchema(s)),
-      anyOf: schema.anyOf?.map(s => this.convertToOpenApiSchema(s)),
-      allOf: schema.allOf?.map(s => this.convertToOpenApiSchema(s)),
+      oneOf: schema.oneOf?.map((s) => this.convertToOpenApiSchema(s)),
+      anyOf: schema.anyOf?.map((s) => this.convertToOpenApiSchema(s)),
+      allOf: schema.allOf?.map((s) => this.convertToOpenApiSchema(s)),
       not: schema.not ? this.convertToOpenApiSchema(schema.not) : undefined,
       nullable: schema.nullable,
       discriminator: schema.discriminator,
@@ -948,7 +951,7 @@ export class OpenApiExporter {
       externalDocs: schema.externalDocs,
       example: schema.example,
       deprecated: schema.deprecated,
-      $ref: schema.$ref
+      $ref: schema.$ref,
     };
   }
 }
@@ -1090,7 +1093,7 @@ export class BackendManager {
       credentials: this.createManagedIdentityCredentials(config.functionApp),
       timeout: config.timeout || 30,
       circuitBreaker: config.circuitBreaker,
-      healthCheck: config.healthCheck
+      healthCheck: config.healthCheck,
     });
   }
 
@@ -1106,7 +1109,7 @@ export class BackendManager {
       credentials: this.createManagedIdentityCredentials(config.appService),
       timeout: config.timeout || 30,
       circuitBreaker: config.circuitBreaker,
-      healthCheck: config.healthCheck
+      healthCheck: config.healthCheck,
     });
   }
 
@@ -1118,7 +1121,7 @@ export class BackendManager {
       url: `https://${containerUrl}`,
       protocol: 'http',
       timeout: config.timeout || 30,
-      circuitBreaker: config.circuitBreaker
+      circuitBreaker: config.circuitBreaker,
     });
   }
 
@@ -1130,7 +1133,7 @@ export class BackendManager {
       timeout: config.timeout || 30,
       preserveHostHeader: config.preserveHostHeader,
       circuitBreaker: config.circuitBreaker,
-      healthCheck: config.healthCheck
+      healthCheck: config.healthCheck,
     });
   }
 
@@ -1183,7 +1186,7 @@ export class RestApiStack extends ApiStackBase {
       path: props.path,
       protocols: props.protocols || ['https'],
       apiType: 'http', // REST API type
-      serviceUrl: props.serviceUrl
+      serviceUrl: props.serviceUrl,
     });
 
     // Register all operations
@@ -1196,7 +1199,8 @@ export class RestApiStack extends ApiStackBase {
 
   // Add operation programmatically
   public addOperation(operation: IRestOperation): this {
-    const operationId = operation.operationId ||
+    const operationId =
+      operation.operationId ||
       `${operation.method.toLowerCase()}_${operation.path.replace(/[^a-zA-Z0-9]/g, '_')}`;
 
     this.operations.set(operationId, operation);
@@ -1231,7 +1235,7 @@ export class RestApiStack extends ApiStackBase {
       Array.from(this.operations.values()),
       info || {
         title: this.api?.displayName || 'API',
-        version: '1.0.0'
+        version: '1.0.0',
       }
     );
 
@@ -1248,7 +1252,7 @@ export class RestApiStack extends ApiStackBase {
       description: operation.description,
       templateParameters: this.extractTemplateParameters(operation),
       request: this.buildOperationRequest(operation),
-      responses: this.buildOperationResponses(operation)
+      responses: this.buildOperationResponses(operation),
     });
 
     // Create backend if configured
@@ -1259,8 +1263,8 @@ export class RestApiStack extends ApiStackBase {
       this.addOperationPolicy(apiOperation, {
         inbound: [
           setBackendService(backend),
-          ...(operation.backend.retryPolicy ? [retry(operation.backend.retryPolicy)] : [])
-        ]
+          ...(operation.backend.retryPolicy ? [retry(operation.backend.retryPolicy)] : []),
+        ],
       });
     }
 
@@ -1285,7 +1289,7 @@ export class RestApiStack extends ApiStackBase {
         name: paramName,
         type: paramSchema?.type || 'string',
         required: true,
-        description: paramSchema?.description
+        description: paramSchema?.description,
       });
     }
 
@@ -1301,8 +1305,9 @@ export class RestApiStack extends ApiStackBase {
       description: operation.requestBody?.description,
       queryParameters: this.buildQueryParameters(operation.queryParameters),
       headers: this.buildHeaderParameters(operation.headerParameters),
-      representations: operation.requestBody ?
-        this.buildRepresentations(operation.requestBody.content) : undefined
+      representations: operation.requestBody
+        ? this.buildRepresentations(operation.requestBody.content)
+        : undefined,
     };
   }
 
@@ -1315,14 +1320,14 @@ export class RestApiStack extends ApiStackBase {
       responses.push({
         statusCode: statusCode === 'default' ? 0 : parseInt(statusCode),
         description: response.description,
-        representations: response.content ?
-          this.buildRepresentations(response.content) : undefined,
-        headers: response.headers ?
-          Object.entries(response.headers).map(([name, header]) => ({
-            name,
-            type: header.schema?.type || 'string',
-            description: header.description
-          })) : undefined
+        representations: response.content ? this.buildRepresentations(response.content) : undefined,
+        headers: response.headers
+          ? Object.entries(response.headers).map(([name, header]) => ({
+              name,
+              type: header.schema?.type || 'string',
+              description: header.description,
+            }))
+          : undefined,
       });
     }
 
@@ -1340,7 +1345,7 @@ export class RestApiStack extends ApiStackBase {
       required: definition.schema.required?.includes(name) || false,
       description: schema.description,
       defaultValue: schema.default,
-      values: schema.enum
+      values: schema.enum,
     }));
   }
 
@@ -1353,21 +1358,20 @@ export class RestApiStack extends ApiStackBase {
       name,
       type: schema.type,
       required: false,
-      description: schema.description
+      description: schema.description,
     }));
   }
 
-  private buildRepresentations(
-    content: ContentTypeDefinition
-  ): RepresentationContract[] {
+  private buildRepresentations(content: ContentTypeDefinition): RepresentationContract[] {
     return Object.entries(content)
       .filter(([, mediaType]) => mediaType !== undefined)
       .map(([contentType, mediaType]) => ({
         contentType,
-        sample: mediaType!.examples ?
-          JSON.stringify(Object.values(mediaType!.examples)[0]?.value) : undefined,
+        sample: mediaType!.examples
+          ? JSON.stringify(Object.values(mediaType!.examples)[0]?.value)
+          : undefined,
         schemaId: this.registerSchema(mediaType!.schema),
-        typeName: mediaType!.schema.title
+        typeName: mediaType!.schema.title,
       }));
   }
 
@@ -1379,10 +1383,7 @@ export class RestApiStack extends ApiStackBase {
     return schema.title;
   }
 
-  private addOperationPolicy(
-    operation: IApiOperation,
-    policies: OperationPolicies
-  ): void {
+  private addOperationPolicy(operation: IApiOperation, policies: OperationPolicies): void {
     const policyDoc = new PolicyDocument();
 
     if (policies.inbound) {
@@ -1446,6 +1447,7 @@ const api = rest()
 ```
 
 **Rejected because:**
+
 - Diverges from OpenAPI standard
 - Harder to integrate with existing tools
 - Less portable
@@ -1456,6 +1458,7 @@ const api = rest()
 Skip OpenAPI support entirely and rely only on programmatic definitions:
 
 **Rejected because:**
+
 - OpenAPI is industry standard
 - Many teams have existing OpenAPI specs
 - Loses interoperability with OpenAPI ecosystem
@@ -1475,6 +1478,7 @@ class UserController {
 ```
 
 **Rejected because:**
+
 - Requires experimental decorators
 - Class-based pattern doesn't align with serverless
 - Harder to synthesize to ARM
@@ -1519,36 +1523,42 @@ class UserController {
 ## Implementation Roadmap
 
 ### Phase 1: Core Interfaces (Week 1)
+
 - Define IRestOperation and related interfaces
 - Create RestOperationBuilder with type inference
 - Implement basic JsonSchema support
 - Add unit tests for type system
 
 ### Phase 2: OpenAPI Integration (Week 2)
+
 - Implement OpenApiImporter with validation
 - Create OpenApiExporter
 - Add $ref resolution
 - Support OpenAPI 3.0 and 3.1
 
 ### Phase 3: Backend Integration (Week 3)
+
 - Implement BackendManager
 - Add Azure Function backend support
 - Create App Service backend support
 - Implement health checks and circuit breakers
 
 ### Phase 4: RestApiStack (Week 4)
+
 - Extend ApiStackBase for REST
 - Implement operation registration
 - Add policy integration
 - Create synthesis logic
 
 ### Phase 5: Type Generation (Week 5)
+
 - Build TypeScript generator from OpenAPI
 - Add schema validation
 - Implement type inference helpers
 - Create CLI for codegen
 
 ### Phase 6: Testing & Documentation (Week 6)
+
 - Comprehensive integration tests
 - Government cloud testing
 - Complete documentation
