@@ -51,7 +51,6 @@ export type {
   CassandraTableResource,
   GremlinDatabaseResource,
   GremlinGraphResource,
-
 } from '../../../generated/types/Microsoft.DocumentDB';
 
 /**
@@ -64,7 +63,12 @@ export interface CosmosConsistencyPolicy {
   /**
    * Default consistency level.
    */
-  readonly defaultConsistencyLevel: 'Eventual' | 'Session' | 'BoundedStaleness' | 'Strong' | 'ConsistentPrefix';
+  readonly defaultConsistencyLevel:
+    | 'Eventual'
+    | 'Session'
+    | 'BoundedStaleness'
+    | 'Strong'
+    | 'ConsistentPrefix';
 
   /**
    * Maximum staleness prefix (for BoundedStaleness).
@@ -207,10 +211,12 @@ export interface CosmosIndexingPolicy {
   /**
    * Composite indexes.
    */
-  readonly compositeIndexes?: Array<Array<{
-    readonly path?: string;
-    readonly order?: 'ascending' | 'descending';
-  }>>;
+  readonly compositeIndexes?: Array<
+    Array<{
+      readonly path?: string;
+      readonly order?: 'ascending' | 'descending';
+    }>
+  >;
 
   /**
    * Spatial indexes.

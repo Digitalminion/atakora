@@ -8,10 +8,4 @@
  */
 
 // Export all enums
-export {
-  SignalRSku,
-  ServiceMode,
-  FeatureFlag,
-  AclAction,
-  PublicNetworkAccess,
-} from './enums';
+export { SignalRSku, ServiceMode, FeatureFlag, AclAction, PublicNetworkAccess } from './enums';

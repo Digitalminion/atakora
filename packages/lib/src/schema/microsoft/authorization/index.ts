@@ -8,8 +8,4 @@
  */
 
 // Export all enums
-export {
-  RoleAssignmentScope,
-  PolicyEnforcementMode,
-  PolicyIdentityType,
-} from './enums';
+export { RoleAssignmentScope, PolicyEnforcementMode, PolicyIdentityType } from './enums';

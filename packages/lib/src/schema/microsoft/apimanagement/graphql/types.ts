@@ -16,7 +16,7 @@ export const GraphQLFieldTypeSchema: z.ZodType<any> = z.object({
   kind: enums.GraphQLTypeKindEnum,
   name: z.string().optional(),
   ofType: z.lazy(() => GraphQLFieldTypeSchema).optional(),
-  nullable: z.boolean().optional()
+  nullable: z.boolean().optional(),
 });
 
 /**
@@ -24,7 +24,7 @@ export const GraphQLFieldTypeSchema: z.ZodType<any> = z.object({
  */
 export const GraphQLDirectiveUsageSchema = z.object({
   name: z.string(),
-  args: z.record(z.any()).optional()
+  args: z.record(z.any()).optional(),
 });
 
 /**
@@ -35,7 +35,7 @@ export const GraphQLArgumentSchema = z.object({
   description: z.string().optional(),
   defaultValue: z.any().optional(),
   deprecated: z.union([z.boolean(), z.string()]).optional(),
-  directives: z.array(GraphQLDirectiveUsageSchema).optional()
+  directives: z.array(GraphQLDirectiveUsageSchema).optional(),
 });
 
 /**
@@ -46,28 +46,30 @@ export const AuthorizationRuleSchema = z.object({
   config: z.union([
     z.object({
       roles: z.array(z.string()),
-      requireAll: z.boolean().optional()
+      requireAll: z.boolean().optional(),
     }),
     z.object({
       claims: z.record(z.any()),
-      match: z.enum(['exact', 'contains', 'regex']).optional()
+      match: z.enum(['exact', 'contains', 'regex']).optional(),
     }),
     z.object({
-      attributes: z.array(z.object({
-        subject: z.string(),
-        operator: z.enum(['eq', 'ne', 'in', 'nin', 'gt', 'lt']),
-        value: z.any()
-      })),
-      combinator: z.enum(['AND', 'OR']).optional()
+      attributes: z.array(
+        z.object({
+          subject: z.string(),
+          operator: z.enum(['eq', 'ne', 'in', 'nin', 'gt', 'lt']),
+          value: z.any(),
+        })
+      ),
+      combinator: z.enum(['AND', 'OR']).optional(),
     }),
     z.object({
       policyId: z.string(),
-      parameters: z.record(z.any()).optional()
+      parameters: z.record(z.any()).optional(),
     }),
     z.object({
-      handler: z.any() // Function type
-    })
-  ])
+      handler: z.any(), // Function type
+    }),
+  ]),
 });
 
 /**
@@ -77,7 +79,7 @@ export const FieldAuthorizationSchema = z.object({
   strategy: enums.AuthorizationStrategyEnum,
   rules: z.array(AuthorizationRuleSchema),
   errorMessage: z.string().optional(),
-  errorCode: z.string().optional()
+  errorCode: z.string().optional(),
 });
 
 /**
@@ -88,7 +90,7 @@ export const FieldCachingStrategySchema = z.object({
   scope: enums.CacheScopeEnum,
   key: z.function().optional(),
   tags: z.array(z.string()).optional(),
-  vary: z.array(z.string()).optional()
+  vary: z.array(z.string()).optional(),
 });
 
 /**
@@ -101,14 +103,16 @@ export const GraphQLFieldSchema = z.object({
   deprecated: z.union([z.boolean(), z.string()]).optional(),
   args: z.record(GraphQLArgumentSchema).optional(),
   resolve: z.function().optional(),
-  subscribe: z.object({
-    subscribe: z.function(),
-    resolve: z.function().optional()
-  }).optional(),
+  subscribe: z
+    .object({
+      subscribe: z.function(),
+      resolve: z.function().optional(),
+    })
+    .optional(),
   authorization: FieldAuthorizationSchema.optional(),
   caching: FieldCachingStrategySchema.optional(),
   complexity: z.function().optional(),
-  directives: z.array(GraphQLDirectiveUsageSchema).optional()
+  directives: z.array(GraphQLDirectiveUsageSchema).optional(),
 });
 
 /**
@@ -119,7 +123,7 @@ export const GraphQLObjectTypeSchema = z.object({
   description: z.string().optional(),
   fields: z.record(GraphQLFieldSchema),
   interfaces: z.array(z.string()).optional(),
-  directives: z.array(GraphQLDirectiveUsageSchema).optional()
+  directives: z.array(GraphQLDirectiveUsageSchema).optional(),
 });
 
 /**
@@ -129,7 +133,7 @@ export const GraphQLInputFieldSchema = z.object({
   type: GraphQLFieldTypeSchema,
   description: z.string().optional(),
   defaultValue: z.any().optional(),
-  directives: z.array(GraphQLDirectiveUsageSchema).optional()
+  directives: z.array(GraphQLDirectiveUsageSchema).optional(),
 });
 
 /**
@@ -139,7 +143,7 @@ export const GraphQLInputObjectTypeSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   fields: z.record(GraphQLInputFieldSchema),
-  directives: z.array(GraphQLDirectiveUsageSchema).optional()
+  directives: z.array(GraphQLDirectiveUsageSchema).optional(),
 });
 
 /**
@@ -149,7 +153,7 @@ export const GraphQLEnumValueSchema = z.object({
   value: z.any().optional(),
   description: z.string().optional(),
   deprecated: z.union([z.boolean(), z.string()]).optional(),
-  directives: z.array(GraphQLDirectiveUsageSchema).optional()
+  directives: z.array(GraphQLDirectiveUsageSchema).optional(),
 });
 
 /**
@@ -159,7 +163,7 @@ export const GraphQLEnumTypeSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   values: z.record(GraphQLEnumValueSchema),
-  directives: z.array(GraphQLDirectiveUsageSchema).optional()
+  directives: z.array(GraphQLDirectiveUsageSchema).optional(),
 });
 
 /**
@@ -171,7 +175,7 @@ export const GraphQLInterfaceTypeSchema = z.object({
   fields: z.record(GraphQLFieldSchema),
   interfaces: z.array(z.string()).optional(),
   directives: z.array(GraphQLDirectiveUsageSchema).optional(),
-  resolveType: z.function().optional()
+  resolveType: z.function().optional(),
 });
 
 /**
@@ -182,7 +186,7 @@ export const GraphQLUnionTypeSchema = z.object({
   description: z.string().optional(),
   types: z.array(z.string()),
   directives: z.array(GraphQLDirectiveUsageSchema).optional(),
-  resolveType: z.function().optional()
+  resolveType: z.function().optional(),
 });
 
 /**
@@ -195,7 +199,7 @@ export const GraphQLScalarTypeSchema = z.object({
   serialize: z.function().optional(),
   parseValue: z.function().optional(),
   parseLiteral: z.function().optional(),
-  directives: z.array(GraphQLDirectiveUsageSchema).optional()
+  directives: z.array(GraphQLDirectiveUsageSchema).optional(),
 });
 
 /**
@@ -206,7 +210,7 @@ export const GraphQLDirectiveSchema = z.object({
   description: z.string().optional(),
   locations: z.array(enums.DirectiveLocationEnum),
   args: z.record(GraphQLInputFieldSchema).optional(),
-  isRepeatable: z.boolean().optional()
+  isRepeatable: z.boolean().optional(),
 });
 
 /**
@@ -216,18 +220,20 @@ export const GraphQLSchemaSchema = z.object({
   query: GraphQLObjectTypeSchema.optional(),
   mutation: GraphQLObjectTypeSchema.optional(),
   subscription: GraphQLObjectTypeSchema.optional(),
-  types: z.array(
-    z.union([
-      GraphQLObjectTypeSchema,
-      GraphQLInputObjectTypeSchema,
-      GraphQLEnumTypeSchema,
-      GraphQLInterfaceTypeSchema,
-      GraphQLUnionTypeSchema,
-      GraphQLScalarTypeSchema
-    ])
-  ).optional(),
+  types: z
+    .array(
+      z.union([
+        GraphQLObjectTypeSchema,
+        GraphQLInputObjectTypeSchema,
+        GraphQLEnumTypeSchema,
+        GraphQLInterfaceTypeSchema,
+        GraphQLUnionTypeSchema,
+        GraphQLScalarTypeSchema,
+      ])
+    )
+    .optional(),
   directives: z.array(GraphQLDirectiveSchema).optional(),
-  description: z.string().optional()
+  description: z.string().optional(),
 });
 
 /**
@@ -236,12 +242,14 @@ export const GraphQLSchemaSchema = z.object({
 export const BackendCredentialsSchema = z.object({
   type: enums.BackendCredentialTypeEnum,
   apiKey: z.string().optional(),
-  oauth2: z.object({
-    clientId: z.string(),
-    clientSecret: z.string(),
-    tokenUrl: z.string(),
-    scope: z.string().optional()
-  }).optional()
+  oauth2: z
+    .object({
+      clientId: z.string(),
+      clientSecret: z.string(),
+      tokenUrl: z.string(),
+      scope: z.string().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -251,7 +259,7 @@ export const GraphQLBackendConfigSchema = z.object({
   type: enums.GraphQLBackendTypeEnum,
   url: z.string().url().optional(),
   credentials: BackendCredentialsSchema.optional(),
-  headers: z.record(z.string()).optional()
+  headers: z.record(z.string()).optional(),
 });
 
 /**
@@ -262,7 +270,7 @@ export const IntrospectionConfigSchema = z.object({
   allowedEnvironments: z.array(z.string()).optional(),
   allowedRoles: z.array(z.string()).optional(),
   hiddenTypes: z.array(z.string()).optional(),
-  hiddenFields: z.record(z.array(z.string())).optional()
+  hiddenFields: z.record(z.array(z.string())).optional(),
 });
 
 /**
@@ -273,7 +281,7 @@ export const PlaygroundSettingsSchema = z.object({
   'editor.cursorShape': enums.PlaygroundCursorShapeEnum.optional(),
   'editor.reuseHeaders': z.boolean().optional(),
   'editor.fontSize': z.number().positive().optional(),
-  'request.credentials': enums.RequestCredentialsEnum.optional()
+  'request.credentials': enums.RequestCredentialsEnum.optional(),
 });
 
 /**
@@ -282,7 +290,7 @@ export const PlaygroundSettingsSchema = z.object({
 export const PlaygroundConfigSchema = z.object({
   enabled: z.boolean(),
   path: z.string().optional(),
-  settings: PlaygroundSettingsSchema.optional()
+  settings: PlaygroundSettingsSchema.optional(),
 });
 
 /**
@@ -292,7 +300,7 @@ export const SubscriptionConnectionOptionsSchema = z.object({
   keepAlive: z.number().positive().optional(),
   connectionTimeout: z.number().positive().optional(),
   maxConnections: z.number().positive().optional(),
-  authentication: z.boolean().optional()
+  authentication: z.boolean().optional(),
 });
 
 /**
@@ -302,7 +310,7 @@ export const SubscriptionConfigSchema = z.object({
   enabled: z.boolean(),
   transport: enums.SubscriptionTransportEnum,
   path: z.string().optional(),
-  connectionOptions: SubscriptionConnectionOptionsSchema.optional()
+  connectionOptions: SubscriptionConnectionOptionsSchema.optional(),
 });
 
 /**
@@ -315,7 +323,7 @@ export const ComplexityConfigSchema = z.object({
   objectCost: z.number().positive().optional(),
   listFactor: z.number().positive().optional(),
   introspectionCost: z.number().positive().optional(),
-  depthLimit: z.number().positive().optional()
+  depthLimit: z.number().positive().optional(),
 });
 
 /**
@@ -325,7 +333,7 @@ export const ValidationRuleSchema = z.object({
   name: z.string(),
   enabled: z.boolean(),
   severity: enums.ValidationSeverityEnum.optional(),
-  options: z.record(z.any()).optional()
+  options: z.record(z.any()).optional(),
 });
 
 /**
@@ -336,7 +344,7 @@ export const ValidationConfigSchema = z.object({
   maxDepth: z.number().positive().optional(),
   maxAliases: z.number().positive().optional(),
   maxDirectives: z.number().positive().optional(),
-  rules: z.array(ValidationRuleSchema).optional()
+  rules: z.array(ValidationRuleSchema).optional(),
 });
 
 /**
@@ -349,7 +357,7 @@ export const CorsConfigSchema = z.object({
   allowedHeaders: z.array(z.string()).optional(),
   exposedHeaders: z.array(z.string()).optional(),
   credentials: z.boolean().optional(),
-  maxAge: z.number().positive().optional()
+  maxAge: z.number().positive().optional(),
 });
 
 /**
@@ -363,32 +371,32 @@ export const AuthenticationProviderSchema = z.object({
       tenantId: z.string(),
       clientId: z.string(),
       audience: z.string().optional(),
-      issuer: z.string().optional()
+      issuer: z.string().optional(),
     }),
     z.object({
       authorizationUrl: z.string().url(),
       tokenUrl: z.string().url(),
       clientId: z.string(),
       clientSecret: z.string().optional(),
-      scope: z.string().optional()
+      scope: z.string().optional(),
     }),
     z.object({
       secret: z.string().optional(),
       publicKey: z.string().optional(),
       algorithm: z.string().optional(),
       issuer: z.string().optional(),
-      audience: z.string().optional()
+      audience: z.string().optional(),
     }),
     z.object({
       header: z.string().optional(),
       query: z.string().optional(),
-      cookie: z.string().optional()
+      cookie: z.string().optional(),
     }),
     z.object({
       handler: z.string(),
-      options: z.record(z.any()).optional()
-    })
-  ])
+      options: z.record(z.any()).optional(),
+    }),
+  ]),
 });
 
 /**
@@ -398,7 +406,7 @@ export const AuthenticationConfigSchema = z.object({
   required: z.boolean(),
   providers: z.array(AuthenticationProviderSchema),
   defaultProvider: z.string().optional(),
-  anonymousAllowed: z.boolean().optional()
+  anonymousAllowed: z.boolean().optional(),
 });
 
 /**
@@ -410,7 +418,7 @@ export const RedisConfigSchema = z.object({
   password: z.string().optional(),
   database: z.number().nonnegative().optional(),
   tls: z.boolean().optional(),
-  keyPrefix: z.string().optional()
+  keyPrefix: z.string().optional(),
 });
 
 /**
@@ -419,7 +427,7 @@ export const RedisConfigSchema = z.object({
 export const InMemoryCacheConfigSchema = z.object({
   maxSize: z.number().positive().optional(),
   maxItems: z.number().positive().optional(),
-  ttl: z.number().positive().optional()
+  ttl: z.number().positive().optional(),
 });
 
 /**
@@ -429,7 +437,7 @@ export const GlobalCachingConfigSchema = z.object({
   enabled: z.boolean(),
   defaultTtl: z.number().positive().optional(),
   redis: RedisConfigSchema.optional(),
-  inMemory: InMemoryCacheConfigSchema.optional()
+  inMemory: InMemoryCacheConfigSchema.optional(),
 });
 
 /**
@@ -442,7 +450,7 @@ export const RateLimitingConfigSchema = z.object({
   window: z.number().positive(),
   keyGenerator: enums.RateLimitingKeyGeneratorEnum.optional(),
   customKeyGenerator: z.string().optional(),
-  redis: RedisConfigSchema.optional()
+  redis: RedisConfigSchema.optional(),
 });
 
 /**
@@ -454,7 +462,7 @@ export const LoggingConfigSchema = z.object({
   includeVariables: z.boolean().optional(),
   includeResults: z.boolean().optional(),
   sanitize: z.array(z.string()).optional(),
-  destination: enums.LogDestinationEnum.optional()
+  destination: enums.LogDestinationEnum.optional(),
 });
 
 /**
@@ -463,7 +471,7 @@ export const LoggingConfigSchema = z.object({
 export const TracingSamplerSchema = z.object({
   type: enums.TracingSamplerTypeEnum,
   probability: z.number().min(0).max(1).optional(),
-  rate: z.number().positive().optional()
+  rate: z.number().positive().optional(),
 });
 
 /**
@@ -472,7 +480,7 @@ export const TracingSamplerSchema = z.object({
 export const TracingExporterSchema = z.object({
   type: enums.TracingExporterTypeEnum,
   endpoint: z.string().url().optional(),
-  headers: z.record(z.string()).optional()
+  headers: z.record(z.string()).optional(),
 });
 
 /**
@@ -483,7 +491,7 @@ export const TracingConfigSchema = z.object({
   sampler: TracingSamplerSchema.optional(),
   exporter: TracingExporterSchema.optional(),
   includeVariables: z.boolean().optional(),
-  includeResults: z.boolean().optional()
+  includeResults: z.boolean().optional(),
 });
 
 /**
@@ -493,7 +501,7 @@ export const CustomMetricSchema = z.object({
   name: z.string(),
   type: enums.CustomMetricTypeEnum,
   description: z.string().optional(),
-  tags: z.array(z.string()).optional()
+  tags: z.array(z.string()).optional(),
 });
 
 /**
@@ -505,7 +513,7 @@ export const MetricsConfigSchema = z.object({
   includeFieldMetrics: z.boolean().optional(),
   includeErrorMetrics: z.boolean().optional(),
   customMetrics: z.array(CustomMetricSchema).optional(),
-  destination: enums.MetricsDestinationEnum.optional()
+  destination: enums.MetricsDestinationEnum.optional(),
 });
 
 /**
@@ -529,7 +537,7 @@ export const GraphQLApiConfigSchema = z.object({
   rateLimiting: RateLimitingConfigSchema.optional(),
   logging: LoggingConfigSchema.optional(),
   tracing: TracingConfigSchema.optional(),
-  metrics: MetricsConfigSchema.optional()
+  metrics: MetricsConfigSchema.optional(),
 });
 
 /**

@@ -10,11 +10,7 @@
  * @packageDocumentation
  */
 
-import {
-  SqlServerVersion,
-  PublicNetworkAccess,
-  DatabaseSkuTier,
-} from './enums';
+import { SqlServerVersion, PublicNetworkAccess, DatabaseSkuTier } from './enums';
 
 // ============================================================================
 // SQL Server Types

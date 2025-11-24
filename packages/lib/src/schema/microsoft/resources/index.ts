@@ -8,7 +8,4 @@
  */
 
 // Export all enums
-export {
-  LockLevel,
-  LockScope,
-} from './enums';
+export { LockLevel, LockScope } from './enums';

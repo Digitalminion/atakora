@@ -10,12 +10,7 @@
  * @packageDocumentation
  */
 
-import type {
-  RedisCacheSku,
-  SkuFamily,
-  TlsVersion,
-  PublicNetworkAccess,
-} from './enums';
+import type { RedisCacheSku, SkuFamily, TlsVersion, PublicNetworkAccess } from './enums';
 
 /**
  * SKU configuration for Redis Cache.
@@ -724,7 +719,16 @@ export interface ScheduleEntry {
    *
    * @example 'Sunday'
    */
-  readonly dayOfWeek: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday' | 'Everyday' | 'Weekend';
+  readonly dayOfWeek:
+    | 'Monday'
+    | 'Tuesday'
+    | 'Wednesday'
+    | 'Thursday'
+    | 'Friday'
+    | 'Saturday'
+    | 'Sunday'
+    | 'Everyday'
+    | 'Weekend';
 
   /**
    * Start hour (UTC).

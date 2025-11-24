@@ -26,11 +26,7 @@ export enum GraphQLResolverType {
 /**
  * GraphQL API type enum
  */
-export const GraphQLApiTypeEnum = z.enum([
-  'graphql',
-  'graphql-passthrough',
-  'graphql-synthetic'
-]);
+export const GraphQLApiTypeEnum = z.enum(['graphql', 'graphql-passthrough', 'graphql-synthetic']);
 
 export type GraphQLApiType = z.infer<typeof GraphQLApiTypeEnum>;
 
@@ -42,7 +38,7 @@ export const GraphQLBackendTypeEnum = z.enum([
   'passthrough',
   'azureFunction',
   'appService',
-  'custom'
+  'custom',
 ]);
 
 export type GraphQLBackendType = z.infer<typeof GraphQLBackendTypeEnum>;
@@ -55,7 +51,7 @@ export const SubscriptionTransportEnum = z.enum([
   'sse',
   'signalr',
   'eventgrid',
-  'servicebus'
+  'servicebus',
 ]);
 
 export type SubscriptionTransport = z.infer<typeof SubscriptionTransportEnum>;
@@ -71,7 +67,7 @@ export const GraphQLTypeKindEnum = z.enum([
   'ENUM',
   'INPUT_OBJECT',
   'LIST',
-  'NON_NULL'
+  'NON_NULL',
 ]);
 
 export type GraphQLTypeKind = z.infer<typeof GraphQLTypeKindEnum>;
@@ -97,7 +93,7 @@ export const GraphQLScalarTypeEnum = z.enum([
   'PostalCode',
   'BigInt',
   'Long',
-  'Byte'
+  'Byte',
 ]);
 
 export type GraphQLScalarType = z.infer<typeof GraphQLScalarTypeEnum>;
@@ -105,11 +101,7 @@ export type GraphQLScalarType = z.infer<typeof GraphQLScalarTypeEnum>;
 /**
  * GraphQL operation type enum
  */
-export const GraphQLOperationTypeEnum = z.enum([
-  'query',
-  'mutation',
-  'subscription'
-]);
+export const GraphQLOperationTypeEnum = z.enum(['query', 'mutation', 'subscription']);
 
 export type GraphQLOperationType = z.infer<typeof GraphQLOperationTypeEnum>;
 
@@ -137,7 +129,7 @@ export const DirectiveLocationEnum = z.enum([
   'ENUM',
   'ENUM_VALUE',
   'INPUT_OBJECT',
-  'INPUT_FIELD_DEFINITION'
+  'INPUT_FIELD_DEFINITION',
 ]);
 
 export type DirectiveLocation = z.infer<typeof DirectiveLocationEnum>;
@@ -145,34 +137,21 @@ export type DirectiveLocation = z.infer<typeof DirectiveLocationEnum>;
 /**
  * Authorization strategy enum
  */
-export const AuthorizationStrategyEnum = z.enum([
-  'any',
-  'all',
-  'custom'
-]);
+export const AuthorizationStrategyEnum = z.enum(['any', 'all', 'custom']);
 
 export type AuthorizationStrategy = z.infer<typeof AuthorizationStrategyEnum>;
 
 /**
  * Authorization type enum
  */
-export const AuthorizationTypeEnum = z.enum([
-  'role',
-  'claim',
-  'attribute',
-  'policy',
-  'custom'
-]);
+export const AuthorizationTypeEnum = z.enum(['role', 'claim', 'attribute', 'policy', 'custom']);
 
 export type AuthorizationType = z.infer<typeof AuthorizationTypeEnum>;
 
 /**
  * Cache scope enum
  */
-export const CacheScopeEnum = z.enum([
-  'private',
-  'public'
-]);
+export const CacheScopeEnum = z.enum(['private', 'public']);
 
 export type CacheScope = z.infer<typeof CacheScopeEnum>;
 
@@ -184,7 +163,7 @@ export const AuthenticationProviderTypeEnum = z.enum([
   'oauth2',
   'jwt',
   'apikey',
-  'custom'
+  'custom',
 ]);
 
 export type AuthenticationProviderType = z.infer<typeof AuthenticationProviderTypeEnum>;
@@ -192,12 +171,7 @@ export type AuthenticationProviderType = z.infer<typeof AuthenticationProviderTy
 /**
  * Log level enum
  */
-export const LogLevelEnum = z.enum([
-  'debug',
-  'info',
-  'warn',
-  'error'
-]);
+export const LogLevelEnum = z.enum(['debug', 'info', 'warn', 'error']);
 
 export type LogLevel = z.infer<typeof LogLevelEnum>;
 
@@ -209,7 +183,7 @@ export const LogDestinationEnum = z.enum([
   'applicationInsights',
   'logAnalytics',
   'eventHub',
-  'storageAccount'
+  'storageAccount',
 ]);
 
 export type LogDestination = z.infer<typeof LogDestinationEnum>;
@@ -217,24 +191,14 @@ export type LogDestination = z.infer<typeof LogDestinationEnum>;
 /**
  * Tracing sampler type enum
  */
-export const TracingSamplerTypeEnum = z.enum([
-  'always',
-  'never',
-  'probability',
-  'rateLimiting'
-]);
+export const TracingSamplerTypeEnum = z.enum(['always', 'never', 'probability', 'rateLimiting']);
 
 export type TracingSamplerType = z.infer<typeof TracingSamplerTypeEnum>;
 
 /**
  * Tracing exporter type enum
  */
-export const TracingExporterTypeEnum = z.enum([
-  'applicationInsights',
-  'zipkin',
-  'jaeger',
-  'otlp'
-]);
+export const TracingExporterTypeEnum = z.enum(['applicationInsights', 'zipkin', 'jaeger', 'otlp']);
 
 export type TracingExporterType = z.infer<typeof TracingExporterTypeEnum>;
 
@@ -245,7 +209,7 @@ export const MetricsDestinationEnum = z.enum([
   'applicationInsights',
   'prometheus',
   'statsd',
-  'cloudWatch'
+  'cloudWatch',
 ]);
 
 export type MetricsDestination = z.infer<typeof MetricsDestinationEnum>;
@@ -253,88 +217,56 @@ export type MetricsDestination = z.infer<typeof MetricsDestinationEnum>;
 /**
  * Custom metric type enum
  */
-export const CustomMetricTypeEnum = z.enum([
-  'counter',
-  'gauge',
-  'histogram'
-]);
+export const CustomMetricTypeEnum = z.enum(['counter', 'gauge', 'histogram']);
 
 export type CustomMetricType = z.infer<typeof CustomMetricTypeEnum>;
 
 /**
  * Rate limiting strategy enum
  */
-export const RateLimitingStrategyEnum = z.enum([
-  'fixedWindow',
-  'slidingWindow',
-  'tokenBucket'
-]);
+export const RateLimitingStrategyEnum = z.enum(['fixedWindow', 'slidingWindow', 'tokenBucket']);
 
 export type RateLimitingStrategy = z.infer<typeof RateLimitingStrategyEnum>;
 
 /**
  * Rate limiting key generator enum
  */
-export const RateLimitingKeyGeneratorEnum = z.enum([
-  'ip',
-  'user',
-  'apiKey',
-  'custom'
-]);
+export const RateLimitingKeyGeneratorEnum = z.enum(['ip', 'user', 'apiKey', 'custom']);
 
 export type RateLimitingKeyGenerator = z.infer<typeof RateLimitingKeyGeneratorEnum>;
 
 /**
  * Playground theme enum
  */
-export const PlaygroundThemeEnum = z.enum([
-  'dark',
-  'light'
-]);
+export const PlaygroundThemeEnum = z.enum(['dark', 'light']);
 
 export type PlaygroundTheme = z.infer<typeof PlaygroundThemeEnum>;
 
 /**
  * Playground cursor shape enum
  */
-export const PlaygroundCursorShapeEnum = z.enum([
-  'line',
-  'block',
-  'underline'
-]);
+export const PlaygroundCursorShapeEnum = z.enum(['line', 'block', 'underline']);
 
 export type PlaygroundCursorShape = z.infer<typeof PlaygroundCursorShapeEnum>;
 
 /**
  * Request credentials enum
  */
-export const RequestCredentialsEnum = z.enum([
-  'omit',
-  'include',
-  'same-origin'
-]);
+export const RequestCredentialsEnum = z.enum(['omit', 'include', 'same-origin']);
 
 export type RequestCredentials = z.infer<typeof RequestCredentialsEnum>;
 
 /**
  * Validation severity enum
  */
-export const ValidationSeverityEnum = z.enum([
-  'error',
-  'warning'
-]);
+export const ValidationSeverityEnum = z.enum(['error', 'warning']);
 
 export type ValidationSeverity = z.infer<typeof ValidationSeverityEnum>;
 
 /**
  * Backend credential type enum
  */
-export const BackendCredentialTypeEnum = z.enum([
-  'none',
-  'apiKey',
-  'oauth2',
-  'managedIdentity'
-]);
+export const BackendCredentialTypeEnum = z.enum(['none', 'apiKey', 'oauth2', 'managedIdentity']);
 
 export type BackendCredentialType = z.infer<typeof BackendCredentialTypeEnum>;
 
@@ -345,7 +277,7 @@ export const AzureEnvironmentEnum = z.enum([
   'AzureCloud',
   'AzureUSGovernment',
   'AzureChinaCloud',
-  'AzureGermanCloud'
+  'AzureGermanCloud',
 ]);
 
 export type AzureEnvironment = z.infer<typeof AzureEnvironmentEnum>;
@@ -358,7 +290,7 @@ export const ConsistencyLevelEnum = z.enum([
   'BoundedStaleness',
   'Session',
   'ConsistentPrefix',
-  'Eventual'
+  'Eventual',
 ]);
 
 export type ConsistencyLevel = z.infer<typeof ConsistencyLevelEnum>;
@@ -366,19 +298,13 @@ export type ConsistencyLevel = z.infer<typeof ConsistencyLevelEnum>;
 /**
  * Service Bus receive mode enum
  */
-export const ServiceBusReceiveModeEnum = z.enum([
-  'peekLock',
-  'receiveAndDelete'
-]);
+export const ServiceBusReceiveModeEnum = z.enum(['peekLock', 'receiveAndDelete']);
 
 export type ServiceBusReceiveMode = z.infer<typeof ServiceBusReceiveModeEnum>;
 
 /**
  * Service Bus sub-queue type enum
  */
-export const ServiceBusSubQueueTypeEnum = z.enum([
-  'deadLetter',
-  'transferDeadLetter'
-]);
+export const ServiceBusSubQueueTypeEnum = z.enum(['deadLetter', 'transferDeadLetter']);
 
 export type ServiceBusSubQueueType = z.infer<typeof ServiceBusSubQueueTypeEnum>;

@@ -8,12 +8,7 @@
  */
 
 // Export all enums
-export {
-  RedisCacheSku,
-  SkuFamily,
-  TlsVersion,
-  PublicNetworkAccess,
-} from './enums';
+export { RedisCacheSku, SkuFamily, TlsVersion, PublicNetworkAccess } from './enums';
 
 // Export all types
 export type {

@@ -35,10 +35,6 @@ export enum LoggerType {
 /**
  * Logger type enum (Zod schema)
  */
-export const LoggerTypeEnum = z.enum([
-  'azureEventHub',
-  'applicationInsights',
-  'azureMonitor'
-]);
+export const LoggerTypeEnum = z.enum(['azureEventHub', 'applicationInsights', 'azureMonitor']);
 
 export type LoggerTypeZod = z.infer<typeof LoggerTypeEnum>;

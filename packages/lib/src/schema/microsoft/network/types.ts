@@ -380,7 +380,12 @@ export interface Route {
      * @remarks
      * Values: 'VirtualNetworkGateway' | 'VnetLocal' | 'Internet' | 'VirtualAppliance' | 'None'
      */
-    readonly nextHopType: 'VirtualNetworkGateway' | 'VnetLocal' | 'Internet' | 'VirtualAppliance' | 'None';
+    readonly nextHopType:
+      | 'VirtualNetworkGateway'
+      | 'VnetLocal'
+      | 'Internet'
+      | 'VirtualAppliance'
+      | 'None';
 
     /**
      * Next hop IP address.

@@ -16,7 +16,7 @@ export const LoggerCredentialsApplicationInsightsSchema = z.object({
   /**
    * Application Insights instrumentation key
    */
-  instrumentationKey: z.string()
+  instrumentationKey: z.string(),
 });
 
 /**
@@ -31,7 +31,7 @@ export const LoggerCredentialsEventHubSchema = z.object({
   /**
    * Event Hub name
    */
-  name: z.string()
+  name: z.string(),
 });
 
 /**
@@ -41,7 +41,7 @@ export const LoggerCredentialsAzureMonitorSchema = z.object({
   /**
    * Azure Monitor workspace ID
    */
-  workspaceId: z.string()
+  workspaceId: z.string(),
 });
 
 /**
@@ -50,7 +50,7 @@ export const LoggerCredentialsAzureMonitorSchema = z.object({
 export const LoggerCredentialsSchema = z.union([
   LoggerCredentialsApplicationInsightsSchema,
   LoggerCredentialsEventHubSchema,
-  LoggerCredentialsAzureMonitorSchema
+  LoggerCredentialsAzureMonitorSchema,
 ]);
 
 /**
@@ -112,7 +112,7 @@ export const LoggerPropertiesSchema = z.object({
    * For Event Hub, this is the Event Hub namespace resource ID.
    * For Azure Monitor, this is the Log Analytics workspace resource ID.
    */
-  resourceId: z.string().optional()
+  resourceId: z.string().optional(),
 });
 
 /**
@@ -161,13 +161,15 @@ export const LoggerResourceSchema = z.object({
   /**
    * Logger properties
    */
-  properties: LoggerPropertiesSchema
+  properties: LoggerPropertiesSchema,
 });
 
 /**
  * Type exports for logger schemas
  */
-export type LoggerCredentialsApplicationInsights = z.infer<typeof LoggerCredentialsApplicationInsightsSchema>;
+export type LoggerCredentialsApplicationInsights = z.infer<
+  typeof LoggerCredentialsApplicationInsightsSchema
+>;
 export type LoggerCredentialsEventHub = z.infer<typeof LoggerCredentialsEventHubSchema>;
 export type LoggerCredentialsAzureMonitor = z.infer<typeof LoggerCredentialsAzureMonitorSchema>;
 export type LoggerCredentials = z.infer<typeof LoggerCredentialsSchema>;
