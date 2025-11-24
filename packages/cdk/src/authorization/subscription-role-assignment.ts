@@ -6,7 +6,10 @@
 
 import { Construct, SubscriptionStack } from '@atakora/lib';
 import { SubscriptionRoleAssignmentArm } from './subscription-role-assignment-arm';
-import { SubscriptionRoleAssignmentProps, RoleAssignmentScope } from './subscription-role-assignment-types';
+import {
+  SubscriptionRoleAssignmentProps,
+  RoleAssignmentScope,
+} from './subscription-role-assignment-types';
 
 /**
  * L2 construct for subscription-level role assignments.

@@ -15,13 +15,14 @@ export import MetricAlertOperator = schema.insights.MetricAlertOperator;
  * Time aggregation type for metrics.
  */
 export const TimeAggregation = schema.insights.TimeAggregation;
-export type TimeAggregation = typeof TimeAggregation[keyof typeof TimeAggregation];
+export type TimeAggregation = (typeof TimeAggregation)[keyof typeof TimeAggregation];
 
 /**
  * Alert sensitivity for dynamic thresholds.
  */
 export const DynamicThresholdSensitivity = schema.insights.DynamicThresholdSensitivity;
-export type DynamicThresholdSensitivity = typeof DynamicThresholdSensitivity[keyof typeof DynamicThresholdSensitivity];
+export type DynamicThresholdSensitivity =
+  (typeof DynamicThresholdSensitivity)[keyof typeof DynamicThresholdSensitivity];
 
 /**
  * Metric dimension for filtering.
