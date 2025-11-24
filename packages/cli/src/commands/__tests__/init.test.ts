@@ -621,11 +621,7 @@ describe('atakora init', () => {
       );
 
       const existingReadme = '# Existing Project\n\nThis is my existing project.';
-      fs.writeFileSync(
-        path.join(workspace.workspaceDir, 'README.md'),
-        existingReadme,
-        'utf-8'
-      );
+      fs.writeFileSync(path.join(workspace.workspaceDir, 'README.md'), existingReadme, 'utf-8');
 
       // Note: Uncomment when init command is implemented
       // await initCommand({
@@ -661,11 +657,7 @@ describe('atakora init', () => {
       );
 
       const existingGitignore = 'node_modules/\ndist/\n.env\n';
-      fs.writeFileSync(
-        path.join(workspace.workspaceDir, '.gitignore'),
-        existingGitignore,
-        'utf-8'
-      );
+      fs.writeFileSync(path.join(workspace.workspaceDir, '.gitignore'), existingGitignore, 'utf-8');
 
       // Note: Uncomment when init command is implemented
       // await initCommand({

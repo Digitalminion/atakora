@@ -9,10 +9,7 @@
  */
 
 import type { z } from 'zod';
-import type {
-  SchemaDefinition,
-  InferSchemaType,
-} from './schema-types';
+import type { SchemaDefinition, InferSchemaType } from './schema-types';
 import { validateAuthorizationRules } from './authorization';
 import { validateRelationship } from './relationships';
 
@@ -87,9 +84,7 @@ export function defineSchema<TFields extends z.ZodRawShape>(
   // Validate the schema
   const validation = validateSchema(schema);
   if (!validation.valid) {
-    throw new Error(
-      `Invalid schema definition for '${name}':\n${validation.errors.join('\n')}`
-    );
+    throw new Error(`Invalid schema definition for '${name}':\n${validation.errors.join('\n')}`);
   }
 
   return schema;
@@ -101,9 +96,10 @@ export function defineSchema<TFields extends z.ZodRawShape>(
  * @param schema - Schema to validate
  * @returns Validation result
  */
-export function validateSchema(
-  schema: SchemaDefinition<any>
-): { valid: boolean; errors: string[] } {
+export function validateSchema(schema: SchemaDefinition<any>): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   // Validate name
@@ -296,10 +292,7 @@ export function extractFieldMetadata(schema: SchemaDefinition<any>): Map<string,
  * @param relationshipName - Relationship name
  * @returns True if relationship exists
  */
-export function hasRelationship(
-  schema: SchemaDefinition<any>,
-  relationshipName: string
-): boolean {
+export function hasRelationship(schema: SchemaDefinition<any>, relationshipName: string): boolean {
   return !!schema.relationships?.[relationshipName];
 }
 
@@ -310,10 +303,7 @@ export function hasRelationship(
  * @param relationshipName - Relationship name
  * @returns Relationship definition or undefined
  */
-export function getRelationship(
-  schema: SchemaDefinition<any>,
-  relationshipName: string
-): any {
+export function getRelationship(schema: SchemaDefinition<any>, relationshipName: string): any {
   return schema.relationships?.[relationshipName];
 }
 

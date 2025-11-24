@@ -275,7 +275,7 @@ export async function evaluateAuthorizationRule(
         return context.user.roles.includes(config.role);
       }
       if (config.roles) {
-        return config.roles.some(role => context.user!.roles!.includes(role));
+        return config.roles.some((role) => context.user!.roles!.includes(role));
       }
       return false;
 
@@ -287,7 +287,7 @@ export async function evaluateAuthorizationRule(
         return context.user.groups.includes(config.group);
       }
       if (config.groups) {
-        return config.groups.some(group => context.user!.groups!.includes(group));
+        return config.groups.some((group) => context.user!.groups!.includes(group));
       }
       return false;
 
@@ -295,17 +295,17 @@ export async function evaluateAuthorizationRule(
       // Handle AND logic
       if (config.and) {
         const results = await Promise.all(
-          config.and.map(r => evaluateAuthorizationRule(r, context, record))
+          config.and.map((r) => evaluateAuthorizationRule(r, context, record))
         );
-        return results.every(r => r);
+        return results.every((r) => r);
       }
 
       // Handle OR logic
       if (config.or) {
         const results = await Promise.all(
-          config.or.map(r => evaluateAuthorizationRule(r, context, record))
+          config.or.map((r) => evaluateAuthorizationRule(r, context, record))
         );
-        return results.some(r => r);
+        return results.some((r) => r);
       }
 
       // Handle NOT logic
@@ -348,9 +348,7 @@ export function toFunctionAuthConfig(rule: AuthorizationRule): any {
  * @param rules - Authorization rules object
  * @returns Validation result
  */
-export function validateAuthorizationRules(
-  rules: any
-): { valid: boolean; errors: string[] } {
+export function validateAuthorizationRules(rules: any): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
   const validOperations = ['create', 'read', 'update', 'delete', 'list', 'fields'];

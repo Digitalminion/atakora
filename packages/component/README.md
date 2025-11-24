@@ -45,13 +45,13 @@ import { ResourceGroupStack } from '@atakora/cdk';
 
 const stack = new ResourceGroupStack(app, 'MyStack', {
   resourceGroupName: 'rg-myapp-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 // Simple: Just storage + CDN
 const site = new StaticSiteWithCdn(stack, 'MySite', {
   indexDocument: 'index.html',
-  enableSpaMode: true  // Redirect all 404s to index.html for client-side routing
+  enableSpaMode: true, // Redirect all 404s to index.html for client-side routing
 });
 
 console.log(site.cdnEndpoint); // https://xyz.azureedge.net
@@ -65,7 +65,7 @@ const prodSite = new StaticSiteWithCdn(stack, 'ProdSite', {
   httpsRedirect: true,
   enableCompression: true,
   cacheMaxAge: 86400, // 24 hours
-  corsAllowedOrigins: ['https://api.myapp.com']
+  corsAllowedOrigins: ['https://api.myapp.com'],
 });
 
 console.log(prodSite.customDomainEndpoint); // https://www.myapp.com
@@ -91,7 +91,7 @@ import { ResourceGroupStack } from '@atakora/cdk';
 
 const stack = new ResourceGroupStack(app, 'MyStack', {
   resourceGroupName: 'rg-myapp-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 const api = new CrudApi(stack, 'UserApi', {
@@ -100,9 +100,9 @@ const api = new CrudApi(stack, 'UserApi', {
     id: 'string',
     name: 'string',
     email: 'string',
-    createdAt: 'timestamp'
+    createdAt: 'timestamp',
   },
-  partitionKey: '/id'
+  partitionKey: '/id',
 });
 
 // Access generated resources
@@ -118,6 +118,7 @@ The Backend Pattern enables multiple components to share infrastructure resource
 ### Quick Example
 
 **Traditional Approach:**
+
 ```typescript
 // Each component creates its own resources
 // 3 APIs = 3 Cosmos DBs + 3 Function Apps + 3 Storage Accounts
@@ -128,6 +129,7 @@ const orderApi = new CrudApi(stack, 'OrderApi', { ... });
 ```
 
 **Backend Pattern:**
+
 ```typescript
 import { defineBackend } from '@atakora/component/backend';
 
@@ -167,6 +169,7 @@ Complete documentation is available in the main Atakora docs:
 - [Troubleshooting](../../docs/guides/patterns/backend/troubleshooting.md) - Common issues and solutions
 
 **Quick Links:**
+
 - [All Patterns](../../docs/guides/patterns/README.md) - Browse all infrastructure patterns
 
 ## Coming Soon
@@ -197,7 +200,7 @@ import { ResourceGroupStack } from '@atakora/cdk';
 
 const stack = new ResourceGroupStack(app, 'MyStack', {
   resourceGroupName: 'rg-myapp-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 const userApi = new CrudApi(stack, 'UserApi', {
@@ -205,9 +208,9 @@ const userApi = new CrudApi(stack, 'UserApi', {
   schema: {
     id: 'string',
     name: 'string',
-    email: 'string'
+    email: 'string',
   },
-  partitionKey: '/id'
+  partitionKey: '/id',
 });
 
 console.log('API Endpoint:', userApi.apiEndpoint);
@@ -220,27 +223,30 @@ import { defineBackend } from '@atakora/component/backend';
 import { CrudApi } from '@atakora/component/crud';
 import { ResourceGroupStack } from '@atakora/cdk';
 
-const backend = defineBackend({
-  userApi: CrudApi.define('UserApi', {
-    entityName: 'User',
-    schema: { id: 'string', name: 'string', email: 'string' },
-    partitionKey: '/id'
-  }),
+const backend = defineBackend(
+  {
+    userApi: CrudApi.define('UserApi', {
+      entityName: 'User',
+      schema: { id: 'string', name: 'string', email: 'string' },
+      partitionKey: '/id',
+    }),
 
-  productApi: CrudApi.define('ProductApi', {
-    entityName: 'Product',
-    schema: { id: 'string', name: 'string', price: 'number' },
-    partitionKey: '/id'
-  })
-}, {
-  environment: 'production',
-  location: 'eastus',
-  monitoring: true
-});
+    productApi: CrudApi.define('ProductApi', {
+      entityName: 'Product',
+      schema: { id: 'string', name: 'string', price: 'number' },
+      partitionKey: '/id',
+    }),
+  },
+  {
+    environment: 'production',
+    location: 'eastus',
+    monitoring: true,
+  }
+);
 
 const stack = new ResourceGroupStack(app, 'MyStack', {
   resourceGroupName: 'rg-myapp-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 backend.addToStack(stack);
@@ -249,19 +255,129 @@ console.log('User API:', backend.components.userApi.apiEndpoint);
 console.log('Product API:', backend.components.productApi.apiEndpoint);
 ```
 
+## Infrastructure Customization
+
+### Attachment Points
+
+Customize backend infrastructure progressively using attachment points:
+
+```typescript
+import { storage, compute } from '@atakora/component/builders';
+
+const backend = defineBackend({
+  schema,
+  authentication,
+  settings: { name: 'my-app' }
+});
+
+// Customize database configuration
+backend.storage.database.attach(
+  storage.cosmosDb()
+    .name('custom-db')
+    .mode('Serverless')
+    .backup({ type: 'Continuous', retention: 30 })
+);
+
+// Customize function app
+backend.compute.functionApp.attach(
+  compute.functionApp()
+    .plan('Premium')
+    .sku('EP2')
+    .alwaysOn(true)
+);
+```
+
+**Available Attachment Points:**
+- `backend.storage.*` - Database, blob storage, storage account
+- `backend.compute.*` - Function apps, compute resources
+- `backend.network.*` - VNets, firewalls, DDoS protection (when networking enabled)
+- `backend.monitoring.*` - App Insights, Log Analytics, alerts (when monitoring enabled)
+- `backend.performance.*` - CDN, cache, rate limiting (when performance enabled)
+- `backend.schema.{ModelName}.*` - Per-model customizations (queue, function, container)
+
+[Learn more in the Attachment Points Guide](./docs/guides/attachment-points.md)
+
+## Deployment
+
+### Synthesis Pipeline
+
+Convert your backend definition into deployable ARM templates:
+
+```bash
+# Generate ARM templates
+atakora synth
+
+# Validate before deploying
+atakora synth --dry-run
+
+# Deploy to Azure
+az deployment group create \
+  --resource-group rg-myapp-prod \
+  --template-file ./synth/template.json \
+  --parameters ./synth/parameters.production.json
+```
+
+**What Gets Generated:**
+- ARM templates for all backend infrastructure
+- Function source code with TypeScript handlers
+- Environment-specific parameter files
+- Deployment metadata and documentation
+
+[Learn more in the Synthesis Guide](./docs/guides/synthesis.md)
+
+### Government Cloud Support
+
+Deploy to Azure Government Cloud with region-specific configuration:
+
+```typescript
+const backend = defineBackend({
+  schema,
+  authentication,
+  settings: {
+    name: 'my-app',
+    region: 'usgovvirginia',  // Government Cloud region
+    tags: {
+      'compliance': 'FedRAMP High',
+      'data-classification': 'CUI'
+    }
+  }
+});
+```
+
 ## Examples
 
-See the `/examples` directory for complete working examples of each component.
+See the `/examples` directory for complete working examples:
+
+- [Custom Storage Attachment](./examples/attachment-points/custom-storage.ts)
+- [Custom Function Configuration](./examples/attachment-points/custom-functions.ts)
+- [Multi-Environment Synthesis](./examples/synthesis/multi-environment.ts)
+- [Government Cloud Deployment](./examples/synthesis/gov-cloud.ts)
+- [Testing Custom Backends](./examples/testing/backend-tests.ts)
 
 ## Full Documentation
 
-For complete documentation, see the main Atakora documentation:
+### Getting Started
 
-- **Getting Started**: [Backend Pattern Overview](../../docs/guides/patterns/backend/overview.md)
-- **API Reference**: [Complete API Documentation](../../docs/guides/patterns/backend/api-reference.md)
-- **Examples**: [Basic](../../docs/guides/patterns/backend/examples/basic-examples.md) | [Advanced](../../docs/guides/patterns/backend/examples/advanced-examples.md)
-- **Guides**: [Migration](../../docs/guides/patterns/backend/migration-guide.md) | [Best Practices](../../docs/guides/patterns/backend/best-practices.md) | [Troubleshooting](../../docs/guides/patterns/backend/troubleshooting.md)
-- **All Patterns**: [Infrastructure Patterns](../../docs/guides/patterns/README.md)
+- [Your First Schema](./docs/getting-started/your-first-schema.md) - Create your first data model
+- [Authentication Setup](./docs/getting-started/authentication-setup.md) - Configure JWT, Entra ID, or API Keys
+
+### Guides
+
+- [Attachment Points](./docs/guides/attachment-points.md) - Customize infrastructure progressively
+- [Synthesis](./docs/guides/synthesis.md) - Convert backends to ARM templates
+- [Testing](./docs/guides/testing.md) - Test backends and infrastructure
+- [CRUD Models](./docs/guides/crud-models.md) - Database-backed REST APIs
+- [Authorization Patterns](./docs/guides/authorization-patterns.md) - Secure your data
+
+### Reference
+
+- [Field Types](./docs/reference/field-types.md) - All 11 field types with validation
+- [Backend API](./docs/backend-api-reference.md) - Complete backend API reference
+
+### Troubleshooting
+
+- [Schema Errors](./docs/troubleshooting/schema-errors.md) - Field and validation errors
+- [Authentication Errors](./docs/troubleshooting/auth-errors.md) - Token and provider errors
 
 ## Development
 

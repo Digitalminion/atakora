@@ -161,7 +161,13 @@ export class FunctionBuilder {
       const cached = await this.cache.get(cacheKey);
       if (cached) {
         cacheHit = true;
-        this.recordTelemetry(descriptor, true, startTime, cached.metadata.size, PackagingStrategy.STORAGE);
+        this.recordTelemetry(
+          descriptor,
+          true,
+          startTime,
+          cached.metadata.size,
+          PackagingStrategy.STORAGE
+        );
         return cached;
       }
 
@@ -219,7 +225,7 @@ export class FunctionBuilder {
   }> {
     const cacheStats = await this.cache.getStats();
     const builds = this.telemetry.length;
-    const cacheHits = this.telemetry.filter(t => t.cacheHit).length;
+    const cacheHits = this.telemetry.filter((t) => t.cacheHit).length;
     const cacheHitRate = builds > 0 ? cacheHits / builds : 0;
 
     return {
@@ -249,9 +255,7 @@ export class FunctionBuilder {
     }
 
     if (errors.length > 0) {
-      throw new BuildError(
-        `Function handler validation failed:\n${errors.join('\n')}`
-      );
+      throw new BuildError(`Function handler validation failed:\n${errors.join('\n')}`);
     }
   }
 
@@ -276,10 +280,10 @@ export class FunctionBuilder {
       while (queue.length > 0 && inProgress.length < this.config.concurrency) {
         const fn = queue.shift()!;
         const promise = this.buildOne(fn)
-          .then(artifact => {
+          .then((artifact) => {
             artifacts.set(fn.id, artifact);
           })
-          .catch(error => {
+          .catch((error) => {
             throw new BuildError(
               `Failed to build function ${fn.name}`,
               fn.id,

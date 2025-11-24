@@ -81,14 +81,11 @@ export class FunctionBundler {
         );
       }
 
-      const bundle = result.outputFiles.find(f => f.path.endsWith('.js'));
-      const sourceMap = result.outputFiles.find(f => f.path.endsWith('.js.map'));
+      const bundle = result.outputFiles.find((f) => f.path.endsWith('.js'));
+      const sourceMap = result.outputFiles.find((f) => f.path.endsWith('.js.map'));
 
       if (!bundle) {
-        throw new BuildError(
-          'esbuild did not produce a bundle output',
-          functionId
-        );
+        throw new BuildError('esbuild did not produce a bundle output', functionId);
       }
 
       // Extract dependencies from metafile
@@ -172,15 +169,10 @@ export class FunctionBundler {
     }
 
     // Check for .node files or common native module patterns
-    const nativePatterns = [
-      /\.node$/,
-      /node-gyp/,
-      /prebuild/,
-      /binding\.gyp/,
-    ];
+    const nativePatterns = [/\.node$/, /node-gyp/, /prebuild/, /binding\.gyp/];
 
     for (const input of Object.keys(metafile.inputs)) {
-      if (nativePatterns.some(pattern => pattern.test(input))) {
+      if (nativePatterns.some((pattern) => pattern.test(input))) {
         return true;
       }
     }
@@ -197,10 +189,7 @@ export class FunctionBundler {
    * @internal
    */
   private computeHash(contents: Uint8Array): string {
-    return crypto
-      .createHash('sha256')
-      .update(contents)
-      .digest('hex');
+    return crypto.createHash('sha256').update(contents).digest('hex');
   }
 
   /**

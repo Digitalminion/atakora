@@ -1,7 +1,4 @@
-import {
-  FunctionConfiguration,
-  EnvironmentResolutionError,
-} from './types';
+import { FunctionConfiguration, EnvironmentResolutionError } from './types';
 
 /**
  * Resource reference interface for cross-resource dependencies

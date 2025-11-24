@@ -64,7 +64,6 @@ async function logAuditEvent(context: Context, event: EventGridEvent) {
       resource: auditRecord.resource,
       timestamp: auditRecord.timestamp,
     });
-
   } catch (error) {
     // Audit logging must never fail - log error but continue
     context.log.error('Failed to log audit event:', {
@@ -76,10 +75,7 @@ async function logAuditEvent(context: Context, event: EventGridEvent) {
 
 function extractActor(event: EventGridEvent): string {
   // Extract user/service that triggered the event
-  return event.data?.userId ||
-         event.data?.principalId ||
-         event.data?.actor ||
-         'system';
+  return event.data?.userId || event.data?.principalId || event.data?.actor || 'system';
 }
 
 function extractAction(event: EventGridEvent): string {
@@ -99,25 +95,15 @@ function extractResult(event: EventGridEvent): string {
 }
 
 function isSecurityEvent(eventType: string): boolean {
-  const securityEvents = [
-    'Authentication.',
-    'Authorization.',
-    'Security.',
-    'Access.',
-  ];
+  const securityEvents = ['Authentication.', 'Authorization.', 'Security.', 'Access.'];
 
-  return securityEvents.some(prefix => eventType.startsWith(prefix));
+  return securityEvents.some((prefix) => eventType.startsWith(prefix));
 }
 
 function isComplianceEvent(eventType: string): boolean {
-  const complianceEvents = [
-    'DataAccess.',
-    'DataModification.',
-    'DataDeletion.',
-    'PersonalData.',
-  ];
+  const complianceEvents = ['DataAccess.', 'DataModification.', 'DataDeletion.', 'PersonalData.'];
 
-  return complianceEvents.some(prefix => eventType.startsWith(prefix));
+  return complianceEvents.some((prefix) => eventType.startsWith(prefix));
 }
 
 async function logToSecurityCenter(record: any): Promise<void> {

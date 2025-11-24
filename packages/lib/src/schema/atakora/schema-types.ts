@@ -135,9 +135,7 @@ export interface AuthorizationRules {
 /**
  * Authorization rule function or config.
  */
-export type AuthorizationRule =
-  | AuthorizationRuleFunction
-  | AuthorizationRuleConfig;
+export type AuthorizationRule = AuthorizationRuleFunction | AuthorizationRuleConfig;
 
 /**
  * Authorization rule function.
@@ -564,35 +562,33 @@ export type InferSchemaType<TSchema extends SchemaDefinition<any>> =
 /**
  * Infer relationship type.
  */
-type InferRelationshipType<TRel> =
-  TRel extends HasOneRelationship
-    ? any | undefined
-    : TRel extends HasManyRelationship
+type InferRelationshipType<TRel> = TRel extends HasOneRelationship
+  ? any | undefined
+  : TRel extends HasManyRelationship
     ? any[]
     : TRel extends BelongsToRelationship
-    ? any | undefined
-    : TRel extends ManyToManyRelationship
-    ? any[]
-    : TRel extends PolymorphicRelationship
-    ? any | undefined
-    : never;
+      ? any | undefined
+      : TRel extends ManyToManyRelationship
+        ? any[]
+        : TRel extends PolymorphicRelationship
+          ? any | undefined
+          : never;
 
 /**
  * Infer computed field type.
  */
-type InferComputedFieldType<TComputed> =
-  TComputed extends ComputedFieldDefinition
-    ? TComputed['type'] extends 'string'
-      ? string
-      : TComputed['type'] extends 'number'
+type InferComputedFieldType<TComputed> = TComputed extends ComputedFieldDefinition
+  ? TComputed['type'] extends 'string'
+    ? string
+    : TComputed['type'] extends 'number'
       ? number
       : TComputed['type'] extends 'boolean'
-      ? boolean
-      : TComputed['type'] extends 'date'
-      ? Date
-      : TComputed['type'] extends 'array'
-      ? any[]
-      : TComputed['type'] extends 'object'
-      ? Record<string, any>
-      : any
-    : never;
+        ? boolean
+        : TComputed['type'] extends 'date'
+          ? Date
+          : TComputed['type'] extends 'array'
+            ? any[]
+            : TComputed['type'] extends 'object'
+              ? Record<string, any>
+              : any
+  : never;

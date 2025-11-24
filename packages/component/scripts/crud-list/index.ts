@@ -16,12 +16,12 @@ import { DefaultAzureCredential } from '@azure/identity';
 
 // Initialize Cosmos DB client with managed identity
 const credential = new DefaultAzureCredential({
-  managedIdentityClientId: process.env.AZURE_CLIENT_ID
+  managedIdentityClientId: process.env.AZURE_CLIENT_ID,
 });
 
 const cosmosClient = new CosmosClient({
   endpoint: process.env.COSMOS_ENDPOINT!,
-  aadCredentials: credential
+  aadCredentials: credential,
 });
 
 const database = cosmosClient.database('ATAKORA_DATABASE_NAME');
@@ -43,12 +43,12 @@ app.http('list-ATAKORA_ENTITY_NAME_PLURAL_LOWER', {
       // Query all items with pagination
       const querySpec = {
         query: 'SELECT * FROM c ORDER BY c.createdAt DESC',
-        parameters: []
+        parameters: [],
       };
 
       const queryOptions = {
         maxItemCount: Math.min(limit, 1000),
-        continuationToken: continuationToken || undefined
+        continuationToken: continuationToken || undefined,
       };
 
       const { resources, continuationToken: nextToken } = await container.items
@@ -60,8 +60,8 @@ app.http('list-ATAKORA_ENTITY_NAME_PLURAL_LOWER', {
         jsonBody: {
           items: resources,
           continuationToken: nextToken || null,
-          hasMore: !!nextToken
-        }
+          hasMore: !!nextToken,
+        },
       };
     } catch (error: any) {
       context.error('Error listing ATAKORA_ENTITY_NAME_PLURAL:', error);
@@ -70,9 +70,9 @@ app.http('list-ATAKORA_ENTITY_NAME_PLURAL_LOWER', {
         status: 500,
         jsonBody: {
           error: 'Internal server error',
-          message: error.message
-        }
+          message: error.message,
+        },
       };
     }
-  }
+  },
 });

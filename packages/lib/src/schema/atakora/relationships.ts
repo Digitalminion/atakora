@@ -316,9 +316,7 @@ export const RelationshipTypeGuards = {
  * getInverseRelationType('belongsTo') // returns 'hasMany'
  * ```
  */
-export function getInverseRelationType(
-  relType: string
-): string | undefined {
+export function getInverseRelationType(relType: string): string | undefined {
   const inverseMap: Record<string, string> = {
     hasOne: 'belongsTo',
     hasMany: 'belongsTo',
@@ -336,10 +334,7 @@ export function getInverseRelationType(
  * @param rel - Relationship definition
  * @returns Validation result
  */
-export function validateRelationship(
-  name: string,
-  rel: any
-): { valid: boolean; errors: string[] } {
+export function validateRelationship(name: string, rel: any): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
   if (!rel.type) {

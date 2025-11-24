@@ -5,15 +5,26 @@
  */
 
 import type { SchemaDefinitionInput, SchemaObject, ProcessedModel } from './types';
-import {
-  validateSchemaDefinition,
-  processModels,
-  extractModelNames,
-} from './utils';
+import { validateSchemaDefinition, processModels, extractModelNames } from './utils';
+import type { Migration, SemanticVersion, VersionedSchema } from './versioning/types';
+import { isValidVersion, VersionedSchemaManager } from './versioning/schema-version';
+import { MigrationRegistry } from './versioning/migrations';
 
 // ============================================================================
 // Schema Definition Function
 // ============================================================================
+
+/**
+ * Schema definition options
+ */
+export interface SchemaDefinitionOptions {
+  /** Schema version (semantic version) */
+  version?: SemanticVersion;
+  /** Available migrations */
+  migrations?: Migration[];
+  /** Schema description */
+  description?: string;
+}
 
 /**
  * Define application schema
@@ -30,6 +41,7 @@ import {
  * - Validation logic
  *
  * @param definition - Schema definition with models
+ * @param options - Optional schema configuration (version, migrations)
  * @returns Schema object with metadata and type information
  *
  * @example
@@ -66,9 +78,35 @@ import {
  * // Type-safe access
  * type User = typeof schema.models.User;
  * ```
+ *
+ * @example With versioning
+ * ```typescript
+ * export const schema = defineSchema({
+ *   schema: a.schema({
+ *     User: c.model({
+ *       id: a.id(),
+ *       fullName: a.string().required(),
+ *       email: a.string().required(),
+ *     }),
+ *   }),
+ * }, {
+ *   version: '2.0.0',
+ *   migrations: [
+ *     {
+ *       from: '1.0.0',
+ *       to: '2.0.0',
+ *       changes: [
+ *         { type: 'renameField', model: 'User', from: 'name', to: 'fullName' },
+ *       ],
+ *       transform: (data) => ({ ...data, fullName: data.name }),
+ *     },
+ *   ],
+ * });
+ * ```
  */
 export function defineSchema<T extends SchemaDefinitionInput>(
-  definition: T
+  definition: T,
+  options?: SchemaDefinitionOptions
 ): SchemaObject<T> {
   // Validate schema structure
   validateSchemaDefinition(definition);
@@ -79,17 +117,39 @@ export function defineSchema<T extends SchemaDefinitionInput>(
   // Extract model names by category
   const modelNames = extractModelNames(models);
 
+  // Determine version
+  const version = options?.version || '1.0.0';
+  if (!isValidVersion(version)) {
+    throw new Error(`Invalid semantic version: ${version}`);
+  }
+
+  // Setup migration registry if migrations provided
+  let migrationRegistry: MigrationRegistry | undefined;
+  if (options?.migrations) {
+    migrationRegistry = new MigrationRegistry();
+    for (const migration of options.migrations) {
+      migrationRegistry.register(migration);
+    }
+  }
+
   // Create schema object
   const schemaObject: SchemaObject<T> = {
     schema: definition.schema,
     models,
     _metadata: {
-      version: '1.0.0',
+      version,
       createdAt: new Date().toISOString(),
       models: modelNames,
+      description: options?.description,
     },
     _raw: definition,
   };
+
+  // Store migration registry separately if needed (not part of SchemaObject interface)
+  if (migrationRegistry) {
+    // Migration registry can be accessed via a separate API if needed
+    (schemaObject as any)._migrations = migrationRegistry;
+  }
 
   return schemaObject;
 }

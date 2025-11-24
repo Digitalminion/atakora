@@ -123,9 +123,7 @@ export class FunctionBundler {
   /**
    * Default external packages (provided by Azure Functions runtime)
    */
-  private static readonly DEFAULT_EXTERNAL = [
-    '@azure/functions',
-  ];
+  private static readonly DEFAULT_EXTERNAL = ['@azure/functions'];
 
   /**
    * Bundle a single function handler
@@ -151,10 +149,7 @@ export class FunctionBundler {
       format: 'cjs',
       minify: options.minify !== false, // Default true
       sourcemap: options.sourcemap || false,
-      external: [
-        ...(options.external || []),
-        ...FunctionBundler.DEFAULT_EXTERNAL,
-      ],
+      external: [...(options.external || []), ...FunctionBundler.DEFAULT_EXTERNAL],
       write: false, // Return output instead of writing to disk
       logLevel: 'warning',
       treeShaking: true,
@@ -167,9 +162,7 @@ export class FunctionBundler {
 
     // Check for errors
     if (result.errors.length > 0) {
-      throw new Error(
-        `esbuild failed:\n${result.errors.map((e) => e.text).join('\n')}`
-      );
+      throw new Error(`esbuild failed:\n${result.errors.map((e) => e.text).join('\n')}`);
     }
 
     // Extract bundled code
@@ -217,11 +210,11 @@ export class FunctionBundler {
    */
   public static escapeForJson(code: string): string {
     return code
-      .replace(/\\/g, '\\\\')      // Escape backslashes
-      .replace(/"/g, '\\"')         // Escape quotes
-      .replace(/\n/g, '\\n')        // Escape newlines
-      .replace(/\r/g, '\\r')        // Escape carriage returns
-      .replace(/\t/g, '\\t');       // Escape tabs
+      .replace(/\\/g, '\\\\') // Escape backslashes
+      .replace(/"/g, '\\"') // Escape quotes
+      .replace(/\n/g, '\\n') // Escape newlines
+      .replace(/\r/g, '\\r') // Escape carriage returns
+      .replace(/\t/g, '\\t'); // Escape tabs
   }
 
   /**

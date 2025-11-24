@@ -1,7 +1,12 @@
 import type { Construct } from '@atakora/cdk';
 import { StorageAccounts } from '@atakora/cdk/storage';
 import type { StorageAccountsProps, StorageAccountSkuName, AccessTier } from '@atakora/cdk/storage';
-import { BaseProvider, type IResourceRequirement, type ProviderContext, type ValidationResult } from './base-provider';
+import {
+  BaseProvider,
+  type IResourceRequirement,
+  type ProviderContext,
+  type ValidationResult,
+} from './base-provider';
 
 /**
  * Storage container requirement specification.
@@ -108,11 +113,15 @@ export class StorageProvider extends BaseProvider<StorageConfig, StorageAccounts
     const containers1 = config1.containers ?? [];
     const containers2 = config2.containers ?? [];
 
-    const names1 = containers1.map(c => this.prefixContainerName(c.name, c.componentId ?? 'shared'));
-    const names2 = containers2.map(c => this.prefixContainerName(c.name, c.componentId ?? 'shared'));
+    const names1 = containers1.map((c) =>
+      this.prefixContainerName(c.name, c.componentId ?? 'shared')
+    );
+    const names2 = containers2.map((c) =>
+      this.prefixContainerName(c.name, c.componentId ?? 'shared')
+    );
 
     // Check for duplicates
-    const duplicates = names1.filter(name => names2.includes(name));
+    const duplicates = names1.filter((name) => names2.includes(name));
     if (duplicates.length > 0) {
       return false; // Naming conflict
     }
@@ -127,7 +136,7 @@ export class StorageProvider extends BaseProvider<StorageConfig, StorageAccounts
    * @returns Merged Storage configuration
    */
   protected merge(requirements: ReadonlyArray<IResourceRequirement>): StorageConfig {
-    const configs = requirements.map(r => r.config as StorageConfig);
+    const configs = requirements.map((r) => r.config as StorageConfig);
 
     // Start with first config as base
     const mergedConfig: any = {
@@ -138,20 +147,26 @@ export class StorageProvider extends BaseProvider<StorageConfig, StorageAccounts
     };
 
     // Use highest SKU
-    const skus = configs.map(c => c.sku).filter((sku): sku is StorageAccountSkuName => sku !== undefined);
+    const skus = configs
+      .map((c) => c.sku)
+      .filter((sku): sku is StorageAccountSkuName => sku !== undefined);
     if (skus.length > 0) {
       mergedConfig.sku = this.selectHighestSku(skus);
     }
 
     // Use most cost-effective access tier (Cool is cheaper for infrequent access)
-    const tiers = configs.map(c => c.accessTier).filter((tier): tier is AccessTier => tier !== undefined);
+    const tiers = configs
+      .map((c) => c.accessTier)
+      .filter((tier): tier is AccessTier => tier !== undefined);
     if (tiers.length > 0) {
       // If any requires Hot, use Hot (more expensive but faster access)
-      mergedConfig.accessTier = tiers.includes('Hot' as AccessTier) ? 'Hot' as AccessTier : 'Cool' as AccessTier;
+      mergedConfig.accessTier = tiers.includes('Hot' as AccessTier)
+        ? ('Hot' as AccessTier)
+        : ('Cool' as AccessTier);
     }
 
     // Use most restrictive public access setting
-    if (configs.some(c => c.enableBlobPublicAccess === false)) {
+    if (configs.some((c) => c.enableBlobPublicAccess === false)) {
       mergedConfig.enableBlobPublicAccess = false;
     }
 
@@ -174,7 +189,10 @@ export class StorageProvider extends BaseProvider<StorageConfig, StorageAccounts
       if (!config.containers) continue;
 
       for (const container of config.containers) {
-        const prefixedName = this.prefixContainerName(container.name, container.componentId ?? 'shared');
+        const prefixedName = this.prefixContainerName(
+          container.name,
+          container.componentId ?? 'shared'
+        );
 
         // Check for duplicates
         if (containerMap.has(prefixedName)) {
@@ -250,12 +268,12 @@ export class StorageProvider extends BaseProvider<StorageConfig, StorageAccounts
    */
   private selectHighestSku(skus: StorageAccountSkuName[]): StorageAccountSkuName {
     const skuPriority: Record<string, number> = {
-      'Standard_LRS': 1,
-      'Standard_GRS': 2,
-      'Standard_RAGRS': 3,
-      'Standard_ZRS': 4,
-      'Premium_LRS': 5,
-      'Premium_ZRS': 6,
+      Standard_LRS: 1,
+      Standard_GRS: 2,
+      Standard_RAGRS: 3,
+      Standard_ZRS: 4,
+      Premium_LRS: 5,
+      Premium_ZRS: 6,
     };
 
     return skus.reduce((highest, current) => {
@@ -373,7 +391,9 @@ export class StorageProvider extends BaseProvider<StorageConfig, StorageAccounts
         }
 
         if (!/^[a-z0-9-]+$/.test(container.name)) {
-          errors.push(`Container name '${container.name}' must contain only lowercase letters, numbers, and hyphens`);
+          errors.push(
+            `Container name '${container.name}' must contain only lowercase letters, numbers, and hyphens`
+          );
         }
 
         if (container.name.startsWith('-') || container.name.endsWith('-')) {
@@ -409,8 +429,6 @@ export class StorageProvider extends BaseProvider<StorageConfig, StorageAccounts
   public getComponentContainers(config: StorageConfig, componentId: string): string[] {
     if (!config.containers) return [];
 
-    return config.containers
-      .filter(c => c.componentId === componentId)
-      .map(c => c.name);
+    return config.containers.filter((c) => c.componentId === componentId).map((c) => c.name);
   }
 }

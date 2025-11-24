@@ -42,11 +42,9 @@ Creates a backend instance with shared resources and type-safe component access.
 function defineBackend<T extends ComponentMap>(
   components: T,
   config?: BackendConfig
-): TypedBackend<T>
+): TypedBackend<T>;
 
-function defineBackend(
-  config: BackendConfig
-): BackendBuilder
+function defineBackend(config: BackendConfig): BackendBuilder;
 ```
 
 #### Overload 1: With Components
@@ -54,6 +52,7 @@ function defineBackend(
 Creates a typed backend with immediate component definitions.
 
 **Parameters:**
+
 - `components: T` - Object mapping component IDs to component definitions
 - `config?: BackendConfig` - Optional backend configuration
 
@@ -65,31 +64,34 @@ Creates a typed backend with immediate component definitions.
 import { defineBackend } from '@atakora/component/backend';
 import { CrudApi } from '@atakora/component/crud';
 
-const backend = defineBackend({
-  userApi: CrudApi.define('UserApi', {
-    entityName: 'User',
-    schema: { id: 'string', name: 'string' }
-  }),
-  productApi: CrudApi.define('ProductApi', {
-    entityName: 'Product',
-    schema: { id: 'string', name: 'string' }
-  })
-}, {
-  environment: 'prod',
-  location: 'eastus',
-  monitoring: true
-});
+const backend = defineBackend(
+  {
+    userApi: CrudApi.define('UserApi', {
+      entityName: 'User',
+      schema: { id: 'string', name: 'string' },
+    }),
+    productApi: CrudApi.define('ProductApi', {
+      entityName: 'Product',
+      schema: { id: 'string', name: 'string' },
+    }),
+  },
+  {
+    environment: 'prod',
+    location: 'eastus',
+    monitoring: true,
+  }
+);
 
 // Add to stack
 const stack = new ResourceGroupStack(app, 'MyStack', {
   resourceGroupName: 'rg-myapp-prod',
-  location: 'eastus'
+  location: 'eastus',
 });
 
 backend.addToStack(stack);
 
 // Type-safe component access
-backend.components.userApi;    // Type: IBackendComponent<CrudApiProps>
+backend.components.userApi; // Type: IBackendComponent<CrudApiProps>
 backend.components.productApi; // Type: IBackendComponent<CrudApiProps>
 ```
 
@@ -98,6 +100,7 @@ backend.components.productApi; // Type: IBackendComponent<CrudApiProps>
 Creates a backend builder for fluent API usage.
 
 **Parameters:**
+
 - `config: BackendConfig` - Backend configuration
 
 **Returns:** `BackendBuilder` - Builder for progressive backend construction
@@ -130,6 +133,7 @@ addComponent<T>(component: IComponentDefinition<T>): BackendBuilder
 ```
 
 **Parameters:**
+
 - `component: IComponentDefinition<T>` - Component definition to add
 
 **Returns:** `BackendBuilder` - Builder for method chaining
@@ -152,6 +156,7 @@ withMonitoring(config: MonitoringConfig): BackendBuilder
 ```
 
 **Parameters:**
+
 - `config: MonitoringConfig` - Monitoring configuration
 
 **Returns:** `BackendBuilder` - Builder for method chaining
@@ -163,7 +168,7 @@ builder.withMonitoring({
   enabled: true,
   retentionDays: 90,
   samplingPercentage: 100,
-  workspaceName: 'my-workspace'
+  workspaceName: 'my-workspace',
 });
 ```
 
@@ -176,6 +181,7 @@ withNetworking(config: NetworkingConfig): BackendBuilder
 ```
 
 **Parameters:**
+
 - `config: NetworkingConfig` - Networking configuration
 
 **Returns:** `BackendBuilder` - Builder for method chaining
@@ -187,7 +193,7 @@ builder.withNetworking({
   mode: 'isolated',
   vnetName: 'my-vnet',
   subnetName: 'backend-subnet',
-  privateEndpoints: true
+  privateEndpoints: true,
 });
 ```
 
@@ -200,6 +206,7 @@ withNaming(convention: NamingConvention): BackendBuilder
 ```
 
 **Parameters:**
+
 - `convention: NamingConvention` - Naming convention implementation
 
 **Returns:** `BackendBuilder` - Builder for method chaining
@@ -208,10 +215,8 @@ withNaming(convention: NamingConvention): BackendBuilder
 
 ```typescript
 builder.withNaming({
-  formatResourceName: (type, backendId, suffix) =>
-    `${type}-${backendId}-${suffix}`.toLowerCase(),
-  formatResourceGroupName: (backendId, env) =>
-    `rg-${backendId}-${env}`.toLowerCase()
+  formatResourceName: (type, backendId, suffix) => `${type}-${backendId}-${suffix}`.toLowerCase(),
+  formatResourceGroupName: (backendId, env) => `rg-${backendId}-${env}`.toLowerCase(),
 });
 ```
 
@@ -224,6 +229,7 @@ withTags(tags: Record<string, string>): BackendBuilder
 ```
 
 **Parameters:**
+
 - `tags: Record<string, string>` - Tags to apply to all resources
 
 **Returns:** `BackendBuilder` - Builder for method chaining
@@ -235,7 +241,7 @@ builder.withTags({
   project: 'myapp',
   team: 'backend',
   environment: 'production',
-  costCenter: 'engineering'
+  costCenter: 'engineering',
 });
 ```
 
@@ -248,6 +254,7 @@ withProvider(provider: IResourceProvider): BackendBuilder
 ```
 
 **Parameters:**
+
 - `provider: IResourceProvider` - Resource provider implementation
 
 **Returns:** `BackendBuilder` - Builder for method chaining
@@ -293,6 +300,7 @@ static define(
 ```
 
 **Parameters:**
+
 - `id: string` - Unique component identifier
 - `config: CrudApiProps` - Component configuration
 
@@ -308,11 +316,11 @@ const userApi = CrudApi.define('UserApi', {
     name: 'string',
     email: 'string',
     createdAt: 'timestamp',
-    updatedAt: 'timestamp'
+    updatedAt: 'timestamp',
   },
   partitionKey: '/id',
   ttl: 86400, // 24 hours
-  throughput: 400
+  throughput: 400,
 });
 ```
 
@@ -321,17 +329,17 @@ const userApi = CrudApi.define('UserApi', {
 ```typescript
 interface CrudApiProps {
   // Required
-  entityName: string;         // Entity name (e.g., 'User', 'Product')
-  schema: SchemaDefinition;   // Entity schema
-  partitionKey: string;       // Partition key path (e.g., '/id')
+  entityName: string; // Entity name (e.g., 'User', 'Product')
+  schema: SchemaDefinition; // Entity schema
+  partitionKey: string; // Partition key path (e.g., '/id')
 
   // Optional
-  ttl?: number;               // Time-to-live in seconds
-  throughput?: number;        // Provisioned throughput (RU/s)
-  uniqueKeys?: string[];      // Unique key paths
+  ttl?: number; // Time-to-live in seconds
+  throughput?: number; // Provisioned throughput (RU/s)
+  uniqueKeys?: string[]; // Unique key paths
   enableSoftDelete?: boolean; // Soft delete support
-  enableAudit?: boolean;      // Audit trail support
-  cors?: CorsConfig;          // CORS configuration
+  enableAudit?: boolean; // Audit trail support
+  cors?: CorsConfig; // CORS configuration
 }
 ```
 
@@ -351,6 +359,7 @@ static define(
 ```
 
 **Parameters:**
+
 - `id: string` - Unique component identifier
 - `config: FunctionsAppProps` - Component configuration
 
@@ -367,17 +376,17 @@ const processorApp = FunctionsApp.define('ProcessorApp', {
     'process-webhook': {
       trigger: 'http',
       methods: ['POST'],
-      authLevel: 'function'
+      authLevel: 'function',
     },
     'scheduled-task': {
       trigger: 'timer',
-      schedule: '0 */5 * * * *' // Every 5 minutes
-    }
+      schedule: '0 */5 * * * *', // Every 5 minutes
+    },
   },
   environmentVariables: {
     STORAGE_CONNECTION: '${storage.connectionString}',
-    LOG_LEVEL: 'info'
-  }
+    LOG_LEVEL: 'info',
+  },
 });
 ```
 
@@ -386,11 +395,11 @@ const processorApp = FunctionsApp.define('ProcessorApp', {
 ```typescript
 interface FunctionsAppProps {
   // Required
-  runtime: FunctionRuntime;  // 'node' | 'dotnet' | 'python' | 'java'
+  runtime: FunctionRuntime; // 'node' | 'dotnet' | 'python' | 'java'
 
   // Optional
-  version?: string;          // Runtime version (e.g., '20' for Node 20)
-  sku?: FunctionAppSku;      // 'Y1' | 'EP1' | 'EP2' | 'EP3'
+  version?: string; // Runtime version (e.g., '20' for Node 20)
+  sku?: FunctionAppSku; // 'Y1' | 'EP1' | 'EP2' | 'EP3'
   functions?: Record<string, FunctionDefinition>;
   environmentVariables?: Record<string, string>;
   cors?: CorsSettings;
@@ -501,7 +510,7 @@ type ComponentFactory<TConfig> = (
   id: string,
   config: TConfig,
   resources: ResourceMap
-) => IBackendComponent<TConfig>
+) => IBackendComponent<TConfig>;
 ```
 
 ---
@@ -540,19 +549,23 @@ const requirement: IResourceRequirement = {
   config: {
     enableServerless: true,
     consistency: 'Session',
-    databases: [{
-      name: 'users-db',
-      containers: [{
-        name: 'users',
-        partitionKey: '/id'
-      }]
-    }]
+    databases: [
+      {
+        name: 'users-db',
+        containers: [
+          {
+            name: 'users',
+            partitionKey: '/id',
+          },
+        ],
+      },
+    ],
   },
   metadata: {
     source: 'UserApi',
     version: '1.0.0',
-    description: 'Cosmos DB for user data'
-  }
+    description: 'Cosmos DB for user data',
+  },
 };
 ```
 
@@ -597,19 +610,19 @@ const config: BackendConfig = {
   monitoring: {
     enabled: true,
     retentionDays: 90,
-    samplingPercentage: 100
+    samplingPercentage: 100,
   },
   networking: 'isolated',
   tags: {
     project: 'myapp',
     team: 'backend',
-    costCenter: 'engineering'
+    costCenter: 'engineering',
   },
   limits: {
     maxCosmosAccounts: 1,
     maxFunctionApps: 1,
-    maxStorageAccounts: 2
-  }
+    maxStorageAccounts: 2,
+  },
 };
 ```
 
@@ -645,7 +658,7 @@ const monitoring: MonitoringConfig = {
   retentionDays: 90,
   samplingPercentage: 100,
   workspaceName: 'myapp-workspace',
-  applicationInsightsName: 'myapp-insights'
+  applicationInsightsName: 'myapp-insights',
 };
 ```
 
@@ -684,7 +697,7 @@ const networking: NetworkingConfig = {
   vnetName: 'myapp-vnet',
   subnetName: 'backend-subnet',
   privateEndpoints: true,
-  serviceTags: ['AzureCloud', 'Storage', 'Sql']
+  serviceTags: ['AzureCloud', 'Storage', 'Sql'],
 };
 ```
 
@@ -748,18 +761,23 @@ const cosmosConfig: CosmosConfig = {
   enableServerless: true,
   consistency: 'Session',
   publicNetworkAccess: 'Disabled',
-  databases: [{
-    name: 'myapp-db',
-    containers: [{
-      name: 'users',
-      partitionKey: '/id',
-      ttl: 86400
-    }, {
-      name: 'products',
-      partitionKey: '/category',
-      uniqueKeys: ['/sku']
-    }]
-  }]
+  databases: [
+    {
+      name: 'myapp-db',
+      containers: [
+        {
+          name: 'users',
+          partitionKey: '/id',
+          ttl: 86400,
+        },
+        {
+          name: 'products',
+          partitionKey: '/category',
+          uniqueKeys: ['/sku'],
+        },
+      ],
+    },
+  ],
 };
 ```
 
@@ -806,12 +824,12 @@ const functionAppConfig: FunctionAppConfig = {
     COSMOS_ENDPOINT: '${cosmos.documentEndpoint}',
     COSMOS_KEY: '${cosmos.primaryKey}',
     STORAGE_CONNECTION: '${storage.connectionString}',
-    LOG_LEVEL: 'info'
+    LOG_LEVEL: 'info',
   },
   cors: {
     allowedOrigins: ['https://myapp.com'],
-    supportCredentials: true
-  }
+    supportCredentials: true,
+  },
 };
 ```
 
@@ -855,10 +873,10 @@ const storageConfig: StorageConfig = {
   enableHttpsOnly: true,
   containers: [
     { name: 'uploads', publicAccess: 'None' },
-    { name: 'downloads', publicAccess: 'Blob' }
+    { name: 'downloads', publicAccess: 'Blob' },
   ],
   queues: ['processing-queue', 'notification-queue'],
-  tables: ['audit-log', 'session-store']
+  tables: ['audit-log', 'session-store'],
 };
 ```
 
@@ -871,10 +889,11 @@ const storageConfig: StorageConfig = {
 Check if a construct is managed by a backend.
 
 ```typescript
-function isBackendManaged(scope: Construct): boolean
+function isBackendManaged(scope: Construct): boolean;
 ```
 
 **Parameters:**
+
 - `scope: Construct` - CDK construct scope
 
 **Returns:** `boolean` - True if scope is backend-managed
@@ -907,10 +926,11 @@ class MyComponent extends Construct {
 Get the backend ID from a backend-managed scope.
 
 ```typescript
-function getBackendId(scope: Construct): string | undefined
+function getBackendId(scope: Construct): string | undefined;
 ```
 
 **Parameters:**
+
 - `scope: Construct` - CDK construct scope
 
 **Returns:** `string | undefined` - Backend ID or undefined if not backend-managed
@@ -937,9 +957,7 @@ Type-safe backend with inferred component types.
 ```typescript
 interface TypedBackend<T extends ComponentMap> extends Omit<IBackend, 'components'> {
   readonly components: {
-    [K in keyof T]: T[K] extends IComponentDefinition<infer C>
-      ? IBackendComponent<C>
-      : never;
+    [K in keyof T]: T[K] extends IComponentDefinition<infer C> ? IBackendComponent<C> : never;
   };
 }
 ```
@@ -955,7 +973,7 @@ Map of component IDs to definitions.
 ```typescript
 type ComponentMap = {
   [K: string]: IComponentDefinition;
-}
+};
 ```
 
 ---
@@ -965,12 +983,13 @@ type ComponentMap = {
 Map of resource keys to resource instances.
 
 ```typescript
-type ResourceMap = ReadonlyMap<string, unknown>
+type ResourceMap = ReadonlyMap<string, unknown>;
 ```
 
 Resource keys follow the format: `{resourceType}:{requirementKey}`
 
 Examples:
+
 - `cosmos:UserApi-cosmos`
 - `functions:UserApi-functions`
 - `storage:shared-storage`

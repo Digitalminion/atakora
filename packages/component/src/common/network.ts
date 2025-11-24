@@ -50,7 +50,7 @@ export class IPAddress {
     const parts = this.address.split('.');
     if (parts.length !== 4) return false;
 
-    return parts.every(part => {
+    return parts.every((part) => {
       const num = parseInt(part, 10);
       return !isNaN(num) && num >= 0 && num <= 255 && part === num.toString();
     });
@@ -96,7 +96,7 @@ export class CIDR {
     const parts = this.network.split('.');
     if (parts.length !== 4) return false;
 
-    return parts.every(part => {
+    return parts.every((part) => {
       const num = parseInt(part, 10);
       return !isNaN(num) && num >= 0 && num <= 255 && part === num.toString();
     });

@@ -19,14 +19,11 @@ export default defineConfig({
       '__tests__/**/*.spec.ts',
       'test/**/*.test.ts',
       'test/**/*.spec.ts',
+      'src/**/*.spec.ts', // Inline tests
     ],
 
     // Exclude patterns
-    exclude: [
-      'node_modules/**',
-      'dist/**',
-      '**/*.d.ts',
-    ],
+    exclude: ['node_modules/**', 'dist/**', '**/*.d.ts'],
 
     // Coverage configuration
     coverage: {
@@ -49,14 +46,20 @@ export default defineConfig({
         '**/types.ts',
         '**/index.ts', // Re-export files
         'src/crud/functions/*.ts', // Template functions
+        '**/*example*.ts', // Example files (not production code)
+        '**/*-example.ts', // Example files (not production code)
+        '**/example-*.ts', // Example files (not production code)
+        '**/*.old.ts', // Deprecated files
+        '**/messaging/**/*.ts', // Future feature, not yet implemented
       ],
 
       // Coverage thresholds
+      // Phase 1 targets: 90% for critical runtime code
       thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 75,
-        statements: 80,
+        lines: 85,
+        functions: 85,
+        branches: 80,
+        statements: 85,
       },
 
       // Per-file thresholds
@@ -69,14 +72,14 @@ export default defineConfig({
       clean: true,
     },
 
-    // Test timeout
-    testTimeout: 10000, // 10 seconds
+    // Test timeout (increased for integration tests with emulators)
+    testTimeout: 30000, // 30 seconds
 
-    // Hook timeout
-    hookTimeout: 10000,
+    // Hook timeout (setup/teardown may need time for emulators)
+    hookTimeout: 30000,
 
     // Teardown timeout
-    teardownTimeout: 10000,
+    teardownTimeout: 30000,
 
     // Setup files
     setupFiles: [],

@@ -149,7 +149,7 @@ export function unionStrategy<T>(
     value: result,
     warnings: warnings.length > 0 ? warnings : undefined,
     strategyUsed: 'union',
-    contributingSources: context.sources as string[]
+    contributingSources: context.sources as string[],
   };
 }
 
@@ -178,7 +178,7 @@ export function intersectionStrategy<T>(
     return {
       value: [],
       strategyUsed: 'intersection',
-      contributingSources: []
+      contributingSources: [],
     };
   }
 
@@ -186,7 +186,7 @@ export function intersectionStrategy<T>(
     return {
       value: [...values[0]],
       strategyUsed: 'intersection',
-      contributingSources: [context.sources[0]]
+      contributingSources: [context.sources[0]],
     };
   }
 
@@ -203,7 +203,7 @@ export function intersectionStrategy<T>(
     // Check if this item exists in all other arrays
     for (let i = 1; i < values.length; i++) {
       const array = values[i];
-      const found = array.some(other => JSON.stringify(other) === key);
+      const found = array.some((other) => JSON.stringify(other) === key);
       if (!found) {
         presentInAll = false;
         warnings.push(
@@ -228,7 +228,7 @@ export function intersectionStrategy<T>(
     value: result,
     warnings: warnings.length > 0 ? warnings : undefined,
     strategyUsed: 'intersection',
-    contributingSources: context.sources as string[]
+    contributingSources: context.sources as string[],
   };
 }
 
@@ -279,7 +279,7 @@ export function maximumStrategy(
     value: maxValue,
     warnings: warnings.length > 0 ? warnings : undefined,
     strategyUsed: 'maximum',
-    contributingSources: [context.sources[maxIndex]]
+    contributingSources: [context.sources[maxIndex]],
   };
 }
 
@@ -321,7 +321,7 @@ export function priorityStrategy<T>(
     return {
       value: values[0],
       strategyUsed: 'priority',
-      contributingSources: [context.sources[0]]
+      contributingSources: [context.sources[0]],
     };
   }
 
@@ -341,24 +341,24 @@ export function priorityStrategy<T>(
   // Check for conflicts (different values with same priority)
   const samePriorityIndices = context.priorities
     .map((p, i) => ({ priority: p, index: i }))
-    .filter(x => x.priority === maxPriority)
-    .map(x => x.index);
+    .filter((x) => x.priority === maxPriority)
+    .map((x) => x.index);
 
   if (samePriorityIndices.length > 1) {
-    const conflictValues = samePriorityIndices.map(i => ({
+    const conflictValues = samePriorityIndices.map((i) => ({
       value: values[i],
-      source: context.sources[i]
+      source: context.sources[i],
     }));
 
     const allSame = conflictValues.every(
-      cv => JSON.stringify(cv.value) === JSON.stringify(conflictValues[0].value)
+      (cv) => JSON.stringify(cv.value) === JSON.stringify(conflictValues[0].value)
     );
 
     if (!allSame) {
       warnings.push(
         `Conflict at ${context.path}: Multiple sources with priority ${maxPriority} have different values. ` +
-        `Using value from ${context.sources[maxIndex]}. ` +
-        `Conflicting sources: ${samePriorityIndices.map(i => context.sources[i]).join(', ')}`
+          `Using value from ${context.sources[maxIndex]}. ` +
+          `Conflicting sources: ${samePriorityIndices.map((i) => context.sources[i]).join(', ')}`
       );
     }
   }
@@ -366,13 +366,17 @@ export function priorityStrategy<T>(
   // Warn about overridden values
   const overriddenIndices = context.priorities
     .map((p, i) => ({ priority: p, index: i }))
-    .filter(x => x.priority < maxPriority && JSON.stringify(values[x.index]) !== JSON.stringify(values[maxIndex]))
-    .map(x => x.index);
+    .filter(
+      (x) =>
+        x.priority < maxPriority &&
+        JSON.stringify(values[x.index]) !== JSON.stringify(values[maxIndex])
+    )
+    .map((x) => x.index);
 
   if (overriddenIndices.length > 0) {
     warnings.push(
       `Value from ${context.sources[maxIndex]} (priority ${maxPriority}) overriding ` +
-      `${overriddenIndices.length} lower priority value(s) at ${context.path}`
+        `${overriddenIndices.length} lower priority value(s) at ${context.path}`
     );
   }
 
@@ -380,7 +384,7 @@ export function priorityStrategy<T>(
     value: values[maxIndex],
     warnings: warnings.length > 0 ? warnings : undefined,
     strategyUsed: 'priority',
-    contributingSources: [context.sources[maxIndex]]
+    contributingSources: [context.sources[maxIndex]],
   };
 }
 
@@ -426,7 +430,7 @@ export function minimumStrategy(
     value: minValue,
     warnings: warnings.length > 0 ? warnings : undefined,
     strategyUsed: 'maximum', // Note: reusing maximum type for consistency
-    contributingSources: [context.sources[minIndex]]
+    contributingSources: [context.sources[minIndex]],
   };
 }
 
@@ -452,7 +456,7 @@ export function objectMergeStrategy<T extends Record<string, unknown>>(
     return {
       value: { ...values[0] },
       strategyUsed: 'custom',
-      contributingSources: [context.sources[0]]
+      contributingSources: [context.sources[0]],
     };
   }
 
@@ -472,8 +476,12 @@ export function objectMergeStrategy<T extends Record<string, unknown>>(
   for (const key of allKeys) {
     const propertyPath = `${context.path}.${key}`;
     const propertyValues = values
-      .map((obj, i) => ({ value: obj[key], source: context.sources[i], priority: context.priorities[i] }))
-      .filter(x => x.value !== undefined);
+      .map((obj, i) => ({
+        value: obj[key],
+        source: context.sources[i],
+        priority: context.priorities[i],
+      }))
+      .filter((x) => x.value !== undefined);
 
     if (propertyValues.length === 0) {
       continue;
@@ -490,14 +498,14 @@ export function objectMergeStrategy<T extends Record<string, unknown>>(
 
     const propertyContext: MergeContext = {
       path: propertyPath,
-      sources: propertyValues.map(pv => pv.source),
-      priorities: propertyValues.map(pv => pv.priority),
-      metadata: context.metadata
+      sources: propertyValues.map((pv) => pv.source),
+      priorities: propertyValues.map((pv) => pv.priority),
+      metadata: context.metadata,
     };
 
     try {
       const mergeResult = strategy(
-        propertyValues.map(pv => pv.value),
+        propertyValues.map((pv) => pv.value),
         propertyContext
       );
 
@@ -519,7 +527,7 @@ export function objectMergeStrategy<T extends Record<string, unknown>>(
     value: result as T,
     warnings: allWarnings.length > 0 ? allWarnings : undefined,
     strategyUsed: 'custom',
-    contributingSources: Array.from(allContributingSources)
+    contributingSources: Array.from(allContributingSources),
   };
 }
 

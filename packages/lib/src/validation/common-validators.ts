@@ -51,9 +51,7 @@ export function validateRequired(
   ruleName: string
 ): ValidationResult | null {
   if (value === undefined || value === null || value === '') {
-    return ValidationResultBuilder.error(ruleName)
-      .withMessage(`${fieldName} is required`)
-      .build();
+    return ValidationResultBuilder.error(ruleName).withMessage(`${fieldName} is required`).build();
   }
   return null;
 }
@@ -127,10 +125,7 @@ export function validateAzureResourceName(
 /**
  * Validate globally unique resource name (add warning)
  */
-export function warnGloballyUnique(
-  ruleName: string,
-  resourceType: string
-): ValidationResult {
+export function warnGloballyUnique(ruleName: string, resourceType: string): ValidationResult {
   return ValidationResultBuilder.warning(ruleName)
     .withMessage(`${resourceType} names must be globally unique across Azure`)
     .withSuggestion('Consider adding a hash suffix for uniqueness')

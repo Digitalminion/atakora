@@ -64,15 +64,8 @@ export * from './bindings';
 // Build pipeline components
 export { FunctionBundler } from './bundler';
 export { BuildCache } from './cache';
-export {
-  FunctionBuilder,
-  FunctionDescriptor,
-  BuilderConfig,
-} from './builder';
-export {
-  StoragePackager,
-  StoragePackagerOptions,
-} from './packaging/storage-packager';
+export { FunctionBuilder, FunctionDescriptor, BuilderConfig } from './builder';
+export { StoragePackager, StoragePackagerOptions } from './packaging/storage-packager';
 
 // ARM inline deployment components
 export {

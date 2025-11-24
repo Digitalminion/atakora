@@ -17,12 +17,12 @@ import { DefaultAzureCredential } from '@azure/identity';
 
 // Initialize Cosmos DB client with managed identity
 const credential = new DefaultAzureCredential({
-  managedIdentityClientId: process.env.AZURE_CLIENT_ID
+  managedIdentityClientId: process.env.AZURE_CLIENT_ID,
 });
 
 const cosmosClient = new CosmosClient({
   endpoint: process.env.COSMOS_ENDPOINT!,
-  aadCredentials: credential
+  aadCredentials: credential,
 });
 
 const database = cosmosClient.database('ATAKORA_DATABASE_NAME');
@@ -101,8 +101,8 @@ app.http('update-ATAKORA_ENTITY_NAME_LOWER', {
         return {
           status: 400,
           jsonBody: {
-            error: 'ID is required'
-          }
+            error: 'ID is required',
+          },
         };
       }
 
@@ -113,8 +113,8 @@ app.http('update-ATAKORA_ENTITY_NAME_LOWER', {
           status: 400,
           jsonBody: {
             error: 'Validation failed',
-            details: errors
-          }
+            details: errors,
+          },
         };
       }
 
@@ -125,8 +125,8 @@ app.http('update-ATAKORA_ENTITY_NAME_LOWER', {
         return {
           status: 404,
           jsonBody: {
-            error: 'ATAKORA_ENTITY_NAME not found'
-          }
+            error: 'ATAKORA_ENTITY_NAME not found',
+          },
         };
       }
 
@@ -137,7 +137,7 @@ app.http('update-ATAKORA_ENTITY_NAME_LOWER', {
         id: existing.id,
         ATAKORA_PARTITION_KEY: existing.ATAKORA_PARTITION_KEY,
         createdAt: existing.createdAt,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       // Replace item in Cosmos DB
@@ -145,7 +145,7 @@ app.http('update-ATAKORA_ENTITY_NAME_LOWER', {
 
       return {
         status: 200,
-        jsonBody: resource
+        jsonBody: resource,
       };
     } catch (error: any) {
       context.error('Error updating ATAKORA_ENTITY_NAME:', error);
@@ -154,8 +154,8 @@ app.http('update-ATAKORA_ENTITY_NAME_LOWER', {
         return {
           status: 404,
           jsonBody: {
-            error: 'ATAKORA_ENTITY_NAME not found'
-          }
+            error: 'ATAKORA_ENTITY_NAME not found',
+          },
         };
       }
 
@@ -163,9 +163,9 @@ app.http('update-ATAKORA_ENTITY_NAME_LOWER', {
         status: 500,
         jsonBody: {
           error: 'Internal server error',
-          message: error.message
-        }
+          message: error.message,
+        },
       };
     }
-  }
+  },
 });

@@ -24,6 +24,7 @@
   "dependencies": {},
   "devDependencies": {
     "@atakora/cdk": "*",
+    "@atakora/component": "*",
     "@atakora/lib": "*",
     "@azure/arm-resources": "^5.0.0",
     "@azure/arm-subscriptions": "^5.0.0",

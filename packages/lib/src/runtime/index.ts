@@ -12,10 +12,7 @@
 // QUERY BUILDER
 // ============================================================================
 
-export {
-  QueryBuilder,
-  createQueryBuilder,
-} from './query-builder';
+export { QueryBuilder, createQueryBuilder } from './query-builder';
 
 export type {
   FilterOperator,
@@ -34,10 +31,7 @@ export type {
 // MUTATION BUILDER
 // ============================================================================
 
-export {
-  MutationBuilder,
-  createMutationBuilder,
-} from './mutation-builder';
+export { MutationBuilder, createMutationBuilder } from './mutation-builder';
 
 export type {
   MutationType,
@@ -51,10 +45,7 @@ export type {
 // RELATIONSHIP LOADER
 // ============================================================================
 
-export {
-  RelationshipLoader,
-  createRelationshipLoader,
-} from './relationship-loader';
+export { RelationshipLoader, createRelationshipLoader } from './relationship-loader';
 
 export type {
   DataLoaderFn,

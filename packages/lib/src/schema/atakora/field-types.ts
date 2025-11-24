@@ -341,20 +341,17 @@ export const Fields = {
   /**
    * Enum field.
    */
-  enum: <T extends [string, ...string[]]>(values: T) =>
-    field(z.enum(values)),
+  enum: <T extends [string, ...string[]]>(values: T) => field(z.enum(values)),
 
   /**
    * Array field.
    */
-  array: <T extends z.ZodTypeAny>(itemSchema: T) =>
-    field(z.array(itemSchema)),
+  array: <T extends z.ZodTypeAny>(itemSchema: T) => field(z.array(itemSchema)),
 
   /**
    * Object field.
    */
-  object: <T extends z.ZodRawShape>(shape: T) =>
-    field(z.object(shape)),
+  object: <T extends z.ZodRawShape>(shape: T) => field(z.object(shape)),
 
   /**
    * JSON field (stored as string, parsed as object).
@@ -364,30 +361,17 @@ export const Fields = {
   /**
    * Primary key ID field (auto-generated UUID).
    */
-  id: () =>
-    field(z.string().uuid())
-      .primaryKey()
-      .autoUuid()
-      .readonly()
-      .build(),
+  id: () => field(z.string().uuid()).primaryKey().autoUuid().readonly().build(),
 
   /**
    * Created timestamp field (auto-generated).
    */
-  createdAt: () =>
-    field(z.date())
-      .createdAt()
-      .readonly()
-      .build(),
+  createdAt: () => field(z.date()).createdAt().readonly().build(),
 
   /**
    * Updated timestamp field (auto-updated).
    */
-  updatedAt: () =>
-    field(z.date())
-      .updatedAt()
-      .readonly()
-      .build(),
+  updatedAt: () => field(z.date()).updatedAt().readonly().build(),
 
   /**
    * Slug field (URL-friendly string).
@@ -411,16 +395,12 @@ export const Fields = {
   /**
    * Password field (hashed).
    */
-  password: () =>
-    field(z.string().min(8))
-      .hidden()
-      .build(),
+  password: () => field(z.string().min(8)).hidden().build(),
 
   /**
    * Phone number field.
    */
-  phone: () =>
-    field(z.string().regex(/^\+?[1-9]\d{1,14}$/)),
+  phone: () => field(z.string().regex(/^\+?[1-9]\d{1,14}$/)),
 
   /**
    * Currency amount field (in cents).
@@ -435,14 +415,12 @@ export const Fields = {
   /**
    * IP address field.
    */
-  ip: () =>
-    field(z.string().ip()),
+  ip: () => field(z.string().ip()),
 
   /**
    * Country code field (ISO 3166-1 alpha-2).
    */
-  countryCode: () =>
-    field(z.string().length(2).toUpperCase()),
+  countryCode: () => field(z.string().length(2).toUpperCase()),
 
   /**
    * Latitude coordinate.
@@ -468,8 +446,7 @@ export const Fields = {
   /**
    * Color field (hex color code).
    */
-  color: () =>
-    field(z.string().regex(/^#[0-9A-Fa-f]{6}$/)),
+  color: () => field(z.string().regex(/^#[0-9A-Fa-f]{6}$/)),
 
   /**
    * File reference field.
@@ -500,16 +477,12 @@ export const Fields = {
   /**
    * Tags field (array of strings).
    */
-  tags: () =>
-    field(z.array(z.string()))
-      .build(),
+  tags: () => field(z.array(z.string())).build(),
 
   /**
    * Metadata field (arbitrary JSON object).
    */
-  metadata: () =>
-    field(z.record(z.any()))
-      .build(),
+  metadata: () => field(z.record(z.any())).build(),
 };
 
 /**

@@ -1,4 +1,9 @@
-import { DeviceCodeCredential, InteractiveBrowserCredential, TokenCredential, TokenCachePersistenceOptions } from '@azure/identity';
+import {
+  DeviceCodeCredential,
+  InteractiveBrowserCredential,
+  TokenCredential,
+  TokenCachePersistenceOptions,
+} from '@azure/identity';
 import { SubscriptionClient } from '@azure/arm-subscriptions';
 import * as path from 'path';
 import * as os from 'os';

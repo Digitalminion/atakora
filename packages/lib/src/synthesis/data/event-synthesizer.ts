@@ -215,8 +215,7 @@ function buildTopicConfig(schema: SchemaDefinition<any>): TopicConfig {
     entityName: schema.name,
     eventTypes,
     requiresDuplicateDetection: metadata?.events?.requiresDuplicateDetection ?? false,
-    duplicateDetectionHistoryTimeWindow:
-      metadata?.events?.duplicateDetectionWindow ?? 'PT10M',
+    duplicateDetectionHistoryTimeWindow: metadata?.events?.duplicateDetectionWindow ?? 'PT10M',
     enablePartitioning: metadata?.events?.enablePartitioning ?? true,
     defaultMessageTimeToLive: metadata?.events?.messageTtl ?? 'P14D',
     maxSizeInMegabytes: metadata?.events?.maxSizeInMegabytes ?? 1024,
@@ -245,12 +244,7 @@ function buildRelationshipSubscriptions(
       const targetSchema = schemaMap.get(rel.target);
       if (!targetSchema) continue;
 
-      const subscription = buildHasManySubscription(
-        schema,
-        targetSchema,
-        relName,
-        rel.foreignKey
-      );
+      const subscription = buildHasManySubscription(schema, targetSchema, relName, rel.foreignKey);
       subscriptions.push(subscription);
     }
 
@@ -273,12 +267,7 @@ function buildRelationshipSubscriptions(
       const targetSchema = schemaMap.get(rel.target);
       if (!targetSchema) continue;
 
-      const subscription = buildManyToManySubscription(
-        schema,
-        targetSchema,
-        relName,
-        rel.through
-      );
+      const subscription = buildManyToManySubscription(schema, targetSchema, relName, rel.through);
       subscriptions.push(subscription);
     }
   }
@@ -296,9 +285,7 @@ function buildHasManySubscription(
   foreignKey: string
 ): SubscriptionConfig {
   const topicName = toKebabCase(`${targetSchema.name}-events`);
-  const subscriptionName = toKebabCase(
-    `${sourceSchema.name}-${relationshipName}-subscription`
-  );
+  const subscriptionName = toKebabCase(`${sourceSchema.name}-${relationshipName}-subscription`);
 
   // Build SQL filter: foreignKey matches source entity id
   const sqlExpression = `user.${foreignKey} = @sourceEntityId`;
@@ -330,9 +317,7 @@ function buildBelongsToSubscription(
   foreignKey: string
 ): SubscriptionConfig {
   const topicName = toKebabCase(`${targetSchema.name}-events`);
-  const subscriptionName = toKebabCase(
-    `${sourceSchema.name}-${relationshipName}-subscription`
-  );
+  const subscriptionName = toKebabCase(`${sourceSchema.name}-${relationshipName}-subscription`);
 
   // Build SQL filter: target entity id matches foreign key in source
   const sqlExpression = `user.id = @foreignKeyValue`;
@@ -364,9 +349,7 @@ function buildManyToManySubscription(
   throughTable: string
 ): SubscriptionConfig {
   const topicName = toKebabCase(`${throughTable}-events`);
-  const subscriptionName = toKebabCase(
-    `${sourceSchema.name}-${relationshipName}-subscription`
-  );
+  const subscriptionName = toKebabCase(`${sourceSchema.name}-${relationshipName}-subscription`);
 
   // Build SQL filter for junction table events
   const sqlExpression = `user.sourceId = @sourceEntityId OR user.targetId = @sourceEntityId`;
@@ -400,9 +383,10 @@ function toKebabCase(str: string): string {
 /**
  * Validate event synthesis result.
  */
-export function validateEventSynthesis(
-  result: EventSynthesisResult
-): { valid: boolean; errors: string[] } {
+export function validateEventSynthesis(result: EventSynthesisResult): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   // Validate topics

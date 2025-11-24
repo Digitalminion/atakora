@@ -1,7 +1,7 @@
 {
   "project": "colorai",
-  "organization": "digital-products",
-  "displayName": "ColorAI Backend",
+  "organization": "digital-minion",
+  "displayName": "Test Backend",
   "environment": "nonprod",
   "geography": "eastus2",
   "instance": 6,
@@ -38,7 +38,7 @@
     "enableApplicationInsights": true,
     "enableDiagnosticLogs": true,
     "alerting": {
-      "email": "team-colorai@company.com",
+      "email": "team@digitalminion.com",
       "severity": "warning"
     }
   },

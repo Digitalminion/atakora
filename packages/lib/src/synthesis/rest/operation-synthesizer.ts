@@ -50,10 +50,7 @@ export class OperationSynthesizer {
    * @param apiResourceId - ARM resource ID of the parent API
    * @returns Array of ARM resources (operation + optional policy)
    */
-  public synthesize(
-    apiManagementServiceName: string,
-    apiResourceId: string
-  ): ArmResource[] {
+  public synthesize(apiManagementServiceName: string, apiResourceId: string): ArmResource[] {
     const resources: ArmResource[] = [];
 
     // Generate operation ID if not provided
@@ -243,11 +240,7 @@ export class OperationSynthesizer {
     const required = schema.required || [];
 
     for (const [name, paramSchema] of Object.entries(schema.properties)) {
-      const armParam = this.convertParameterSchemaToArm(
-        name,
-        paramSchema,
-        required.includes(name)
-      );
+      const armParam = this.convertParameterSchemaToArm(name, paramSchema, required.includes(name));
       parameters.push(armParam);
     }
 
@@ -268,11 +261,7 @@ export class OperationSynthesizer {
     const required = schema.required || [];
 
     for (const [name, paramSchema] of Object.entries(schema.properties)) {
-      const armParam = this.convertParameterSchemaToArm(
-        name,
-        paramSchema,
-        required.includes(name)
-      );
+      const armParam = this.convertParameterSchemaToArm(name, paramSchema, required.includes(name));
       parameters.push(armParam);
     }
 
@@ -391,9 +380,7 @@ export class OperationSynthesizer {
   /**
    * Synthesize response headers
    */
-  private synthesizeResponseHeaders(
-    headers: Record<string, any>
-  ): ArmHeaderParameter[] {
+  private synthesizeResponseHeaders(headers: Record<string, any>): ArmHeaderParameter[] {
     const armHeaders: ArmHeaderParameter[] = [];
 
     for (const [name, headerDef] of Object.entries(headers)) {
@@ -505,9 +492,7 @@ export class OperationSynthesizer {
   private validateOperation(): void {
     // Validate path parameter consistency
     const pathParamsInUrl = this.extractPathParamsFromUrl(this.operation.path);
-    const definedParams = Object.keys(
-      this.operation.pathParameters?.schema.properties || {}
-    );
+    const definedParams = Object.keys(this.operation.pathParameters?.schema.properties || {});
 
     for (const param of pathParamsInUrl) {
       if (!definedParams.includes(param)) {

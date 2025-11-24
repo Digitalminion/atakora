@@ -64,11 +64,16 @@ export class NumberFieldBuilder extends BaseFieldBuilder<number, NumberFieldConf
    */
   min(value: number): this {
     this.config.min = value;
-    this.config.validations.push({
-      type: 'min',
+
+    const rule = {
+      type: 'min' as const,
       value,
       message: `Must be at least ${value}`,
-    });
+    };
+
+    this.definition.validations.push(rule);
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -88,11 +93,16 @@ export class NumberFieldBuilder extends BaseFieldBuilder<number, NumberFieldConf
    */
   max(value: number): this {
     this.config.max = value;
-    this.config.validations.push({
-      type: 'max',
+
+    const rule = {
+      type: 'max' as const,
       value,
       message: `Must be at most ${value}`,
-    });
+    };
+
+    this.definition.validations.push(rule);
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -110,10 +120,15 @@ export class NumberFieldBuilder extends BaseFieldBuilder<number, NumberFieldConf
    */
   integer(): this {
     this.config.isInteger = true;
-    this.config.validations.push({
-      type: 'integer',
+
+    const rule = {
+      type: 'integer' as const,
       message: 'Must be an integer (whole number)',
-    });
+    };
+
+    this.definition.validations.push(rule);
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -131,10 +146,15 @@ export class NumberFieldBuilder extends BaseFieldBuilder<number, NumberFieldConf
    */
   positive(): this {
     this.config.isPositive = true;
-    this.config.validations.push({
-      type: 'positive',
+
+    const rule = {
+      type: 'positive' as const,
       message: 'Must be a positive number',
-    });
+    };
+
+    this.definition.validations.push(rule);
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -151,10 +171,15 @@ export class NumberFieldBuilder extends BaseFieldBuilder<number, NumberFieldConf
    */
   negative(): this {
     this.config.isNegative = true;
-    this.config.validations.push({
-      type: 'negative',
+
+    const rule = {
+      type: 'negative' as const,
       message: 'Must be a negative number',
-    });
+    };
+
+    this.definition.validations.push(rule);
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -186,5 +211,27 @@ export class NumberFieldBuilder extends BaseFieldBuilder<number, NumberFieldConf
    */
   nonPositive(): this {
     return this.max(0);
+  }
+
+  /**
+   * Build final configuration (override to add property aliases)
+   *
+   * @internal
+   */
+  _build(): NumberFieldConfig {
+    const config = super._build();
+
+    // Add property aliases for backward compatibility
+    if (this.config.isInteger !== undefined) {
+      (config as any).integer = this.config.isInteger;
+    }
+    if (this.config.isPositive !== undefined) {
+      (config as any).positive = this.config.isPositive;
+    }
+    if (this.config.isNegative !== undefined) {
+      (config as any).negative = this.config.isNegative;
+    }
+
+    return config;
   }
 }

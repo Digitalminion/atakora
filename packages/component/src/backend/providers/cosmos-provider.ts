@@ -6,7 +6,12 @@ import type {
   PublicNetworkAccess,
   CosmosDbKind,
 } from '@atakora/cdk/documentdb';
-import { BaseProvider, type IResourceRequirement, type ProviderContext, type ValidationResult } from './base-provider';
+import {
+  BaseProvider,
+  type IResourceRequirement,
+  type ProviderContext,
+  type ValidationResult,
+} from './base-provider';
 
 /**
  * Database requirement specification.
@@ -134,9 +139,11 @@ export class CosmosProvider extends BaseProvider<CosmosConfig, DatabaseAccounts>
     }
 
     // Multi-region settings should be compatible
-    if (config1.enableMultiRegion !== undefined &&
-        config2.enableMultiRegion !== undefined &&
-        config1.enableMultiRegion !== config2.enableMultiRegion) {
+    if (
+      config1.enableMultiRegion !== undefined &&
+      config2.enableMultiRegion !== undefined &&
+      config1.enableMultiRegion !== config2.enableMultiRegion
+    ) {
       return false;
     }
 
@@ -154,7 +161,7 @@ export class CosmosProvider extends BaseProvider<CosmosConfig, DatabaseAccounts>
    * @returns Merged Cosmos configuration
    */
   protected merge(requirements: ReadonlyArray<IResourceRequirement>): CosmosConfig {
-    const configs = requirements.map(r => r.config as CosmosConfig);
+    const configs = requirements.map((r) => r.config as CosmosConfig);
 
     // Start with first config as base
     const mergedConfig: any = {
@@ -171,7 +178,7 @@ export class CosmosProvider extends BaseProvider<CosmosConfig, DatabaseAccounts>
     const allCapabilities = new Set<string>();
     for (const config of configs) {
       if (config.capabilities) {
-        config.capabilities.forEach(cap => allCapabilities.add(cap));
+        config.capabilities.forEach((cap) => allCapabilities.add(cap));
       }
     }
     if (allCapabilities.size > 0) {
@@ -182,7 +189,7 @@ export class CosmosProvider extends BaseProvider<CosmosConfig, DatabaseAccounts>
     const allLocations = new Set<string>();
     for (const config of configs) {
       if (config.additionalLocations) {
-        config.additionalLocations.forEach(loc => allLocations.add(loc));
+        config.additionalLocations.forEach((loc) => allLocations.add(loc));
       }
     }
     if (allLocations.size > 0) {
@@ -193,25 +200,25 @@ export class CosmosProvider extends BaseProvider<CosmosConfig, DatabaseAccounts>
     mergedConfig.databases = this.mergeDatabases(configs);
 
     // If any config enables multi-region, enable it
-    if (configs.some(c => c.enableMultiRegion)) {
+    if (configs.some((c) => c.enableMultiRegion)) {
       mergedConfig.enableMultiRegion = true;
     }
 
     // If any config requires free tier, enable it (note: Azure allows only 1 per subscription)
-    if (configs.some(c => c.enableFreeTier)) {
+    if (configs.some((c) => c.enableFreeTier)) {
       mergedConfig.enableFreeTier = true;
     }
 
     // Use most restrictive public network access
     const accessLevels = configs
-      .map(c => c.publicNetworkAccess)
+      .map((c) => c.publicNetworkAccess)
       .filter((access): access is PublicNetworkAccess => access !== undefined);
 
     if (accessLevels.length > 0) {
       // 'Disabled' is most restrictive, then 'SecuredByPerimeter', then 'Enabled'
-      if (accessLevels.some(a => a === 'Disabled')) {
+      if (accessLevels.some((a) => a === 'Disabled')) {
         mergedConfig.publicNetworkAccess = 'Disabled';
-      } else if (accessLevels.some(a => a === 'SecuredByPerimeter')) {
+      } else if (accessLevels.some((a) => a === 'SecuredByPerimeter')) {
         mergedConfig.publicNetworkAccess = 'SecuredByPerimeter';
       } else {
         mergedConfig.publicNetworkAccess = 'Enabled';
@@ -309,9 +316,10 @@ export class CosmosProvider extends BaseProvider<CosmosConfig, DatabaseAccounts>
         ]);
 
         // Use minimum TTL if both specified
-        const ttl = existing.ttl !== undefined && container.ttl !== undefined
-          ? Math.min(existing.ttl, container.ttl)
-          : existing.ttl ?? container.ttl;
+        const ttl =
+          existing.ttl !== undefined && container.ttl !== undefined
+            ? Math.min(existing.ttl, container.ttl)
+            : (existing.ttl ?? container.ttl);
 
         containerMap.set(container.name, {
           name: container.name,
@@ -459,11 +467,15 @@ export class CosmosProvider extends BaseProvider<CosmosConfig, DatabaseAccounts>
             }
 
             if (!container.partitionKey || container.partitionKey.length === 0) {
-              errors.push(`Container '${container.name}' in database '${db.name}' must specify a partition key`);
+              errors.push(
+                `Container '${container.name}' in database '${db.name}' must specify a partition key`
+              );
             }
 
             if (container.partitionKey && !container.partitionKey.startsWith('/')) {
-              errors.push(`Partition key '${container.partitionKey}' for container '${container.name}' must start with '/'`);
+              errors.push(
+                `Partition key '${container.partitionKey}' for container '${container.name}' must start with '/'`
+              );
             }
           }
         }
@@ -496,8 +508,11 @@ export class CosmosProvider extends BaseProvider<CosmosConfig, DatabaseAccounts>
    * @param databaseName - Name of the database
    * @returns Array of container requirements, or undefined if database not found
    */
-  public getContainers(config: CosmosConfig, databaseName: string): ReadonlyArray<ContainerRequirement> | undefined {
-    const database = config.databases?.find(db => db.name === databaseName);
+  public getContainers(
+    config: CosmosConfig,
+    databaseName: string
+  ): ReadonlyArray<ContainerRequirement> | undefined {
+    const database = config.databases?.find((db) => db.name === databaseName);
     return database?.containers;
   }
 }

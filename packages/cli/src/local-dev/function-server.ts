@@ -95,11 +95,13 @@ export class FunctionDevServer {
    *
    * @param options - Server configuration
    */
-  constructor(options: {
-    readonly functionsPath?: string;
-    readonly port?: number;
-    readonly host?: string;
-  } = {}) {
+  constructor(
+    options: {
+      readonly functionsPath?: string;
+      readonly port?: number;
+      readonly host?: string;
+    } = {}
+  ) {
     this.functionsPath = options.functionsPath ?? './functions';
     this.port = options.port ?? 7071;
     this.host = options.host ?? 'localhost';
@@ -134,7 +136,9 @@ export class FunctionDevServer {
               const route = func.trigger.route || name;
               const methods = func.trigger.methods || ['GET', 'POST'];
               console.log(`  ${chalk.cyan('•')} ${chalk.bold(name)}`);
-              console.log(`    ${chalk.dim('Route:')} http://${this.host}:${this.port}/api/${route}`);
+              console.log(
+                `    ${chalk.dim('Route:')} http://${this.host}:${this.port}/api/${route}`
+              );
               console.log(`    ${chalk.dim('Methods:')} ${methods.join(', ')}\n`);
             }
           }
@@ -202,8 +206,8 @@ export class FunctionDevServer {
       const handlerPath = fs.existsSync(handlerTsPath)
         ? handlerTsPath
         : fs.existsSync(handlerJsPath)
-        ? handlerJsPath
-        : null;
+          ? handlerJsPath
+          : null;
 
       if (!handlerPath) {
         continue;
@@ -215,8 +219,8 @@ export class FunctionDevServer {
       const resourcePath = fs.existsSync(resourceTsPath)
         ? resourceTsPath
         : fs.existsSync(resourceJsPath)
-        ? resourceJsPath
-        : null;
+          ? resourceJsPath
+          : null;
 
       // Load trigger configuration from resource file
       let trigger: TriggerConfig = { type: 'http' }; // Default

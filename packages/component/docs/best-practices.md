@@ -22,6 +22,7 @@ Proven patterns and recommendations for building production-ready backends with 
 ### Use Component Definitions for All Managed Components
 
 **Do:**
+
 ```typescript
 const backend = defineBackend({
   userApi: CrudApi.define('UserApi', { ... }),
@@ -30,6 +31,7 @@ const backend = defineBackend({
 ```
 
 **Don't:**
+
 ```typescript
 // Mixing backend pattern with traditional instantiation
 const backend = defineBackend({
@@ -39,6 +41,7 @@ const productApi = new CrudApi(stack, 'ProductApi', { ... }); // Don't mix!
 ```
 
 **Why:**
+
 - Consistent resource management
 - Clear intent and ownership
 - Easier to reason about resource sharing
@@ -49,6 +52,7 @@ const productApi = new CrudApi(stack, 'ProductApi', { ... }); // Don't mix!
 ### Group Related Components in Same Backend
 
 **Do:**
+
 ```typescript
 // Backend for core API services
 const apiBackend = defineBackend({
@@ -65,6 +69,7 @@ const processingBackend = defineBackend({
 ```
 
 **Don't:**
+
 ```typescript
 // Everything in one massive backend
 const backend = defineBackend({
@@ -80,6 +85,7 @@ const backend = defineBackend({
 ```
 
 **Why:**
+
 - Easier to understand and maintain
 - Clearer boundaries and responsibilities
 - Independent deployment and scaling
@@ -90,6 +96,7 @@ const backend = defineBackend({
 ### Use Separate Backends for Different Security Boundaries
 
 **Do:**
+
 ```typescript
 // Public-facing APIs
 const publicBackend = defineBackend({
@@ -113,6 +120,7 @@ const privateBackend = defineBackend({
 ```
 
 **Why:**
+
 - Clear security boundaries
 - Easier compliance audits
 - Reduced blast radius of security incidents
@@ -125,6 +133,7 @@ const privateBackend = defineBackend({
 ### Use Meaningful Component IDs
 
 **Do:**
+
 ```typescript
 const backend = defineBackend({
   userManagementApi: CrudApi.define('UserManagementApi', { ... }),
@@ -134,6 +143,7 @@ const backend = defineBackend({
 ```
 
 **Don't:**
+
 ```typescript
 const backend = defineBackend({
   api1: CrudApi.define('Api1', { ... }),
@@ -143,6 +153,7 @@ const backend = defineBackend({
 ```
 
 **Why:**
+
 - Self-documenting code
 - Easier debugging and monitoring
 - Clear purpose in logs and metrics
@@ -153,6 +164,7 @@ const backend = defineBackend({
 ### Align Partition Keys with Access Patterns
 
 **Do:**
+
 ```typescript
 // Multi-tenant: Partition by tenant
 const backend = defineBackend({
@@ -163,8 +175,8 @@ const backend = defineBackend({
       tenantId: 'string',
       // ...
     },
-    partitionKey: '/tenantId' // All tenant queries are efficient
-  })
+    partitionKey: '/tenantId', // All tenant queries are efficient
+  }),
 });
 
 // User-centric: Partition by user
@@ -176,12 +188,13 @@ const backend = defineBackend({
       userId: 'string',
       // ...
     },
-    partitionKey: '/userId' // Get all user's orders efficiently
-  })
+    partitionKey: '/userId', // Get all user's orders efficiently
+  }),
 });
 ```
 
 **Why:**
+
 - Optimal query performance
 - Lower RU consumption
 - Better scalability
@@ -192,38 +205,47 @@ const backend = defineBackend({
 ### Configure TTL for Transient Data
 
 **Do:**
+
 ```typescript
 const backend = defineBackend({
   sessionApi: CrudApi.define('SessionApi', {
     entityName: 'Session',
-    schema: { /* ... */ },
+    schema: {
+      /* ... */
+    },
     partitionKey: '/userId',
-    ttl: 86400 // Auto-delete after 24 hours
+    ttl: 86400, // Auto-delete after 24 hours
   }),
 
   auditLogApi: CrudApi.define('AuditLogApi', {
     entityName: 'AuditLog',
-    schema: { /* ... */ },
+    schema: {
+      /* ... */
+    },
     partitionKey: '/userId',
-    ttl: 7776000 // Keep audit logs for 90 days
-  })
+    ttl: 7776000, // Keep audit logs for 90 days
+  }),
 });
 ```
 
 **Don't:**
+
 ```typescript
 // No TTL = data grows forever = costs grow forever
 const backend = defineBackend({
   sessionApi: CrudApi.define('SessionApi', {
     entityName: 'Session',
-    schema: { /* ... */ },
-    partitionKey: '/userId'
+    schema: {
+      /* ... */
+    },
+    partitionKey: '/userId',
     // Missing TTL - sessions never deleted!
-  })
+  }),
 });
 ```
 
 **Why:**
+
 - Automatic data cleanup
 - Reduced storage costs
 - Compliance with data retention policies
@@ -236,24 +258,29 @@ const backend = defineBackend({
 ### Use Serverless Cosmos DB for Variable Workloads
 
 **Do:**
+
 ```typescript
 const backend = defineBackend({
   api: CrudApi.define('Api', {
     entityName: 'Entity',
-    schema: { /* ... */ },
+    schema: {
+      /* ... */
+    },
     partitionKey: '/id',
-    enableServerless: true // Pay per request
-  })
+    enableServerless: true, // Pay per request
+  }),
 });
 ```
 
 **When to Use Serverless:**
+
 - Development/testing environments
 - Bursty workloads
 - Low or unpredictable traffic
 - Cost optimization is priority
 
 **When to Use Provisioned:**
+
 - Consistent high throughput
 - Predictable workload
 - Need guaranteed performance
@@ -264,35 +291,40 @@ const backend = defineBackend({
 ### Set Appropriate Throughput Levels
 
 **Do:**
+
 ```typescript
 // Environment-specific throughput
 const throughput = {
   dev: 400,
   staging: 1000,
-  production: 4000
+  production: 4000,
 }[environment];
 
 const backend = defineBackend({
   api: CrudApi.define('Api', {
     entityName: 'Entity',
-    schema: { /* ... */ },
+    schema: {
+      /* ... */
+    },
     partitionKey: '/id',
-    throughput // Appropriate for environment
-  })
+    throughput, // Appropriate for environment
+  }),
 });
 ```
 
 **Don't:**
+
 ```typescript
 // Over-provisioning in all environments
 const backend = defineBackend({
   api: CrudApi.define('Api', {
-    throughput: 10000 // Wasteful in dev!
-  })
+    throughput: 10000, // Wasteful in dev!
+  }),
 });
 ```
 
 **Why:**
+
 - Optimize costs per environment
 - Right-size resources
 - Scale up/down as needed
@@ -302,21 +334,25 @@ const backend = defineBackend({
 ### Enable Caching for Read-Heavy Workloads
 
 **Do:**
+
 ```typescript
 const backend = defineBackend({
   productApi: CrudApi.define('ProductApi', {
     entityName: 'Product',
-    schema: { /* ... */ },
+    schema: {
+      /* ... */
+    },
     partitionKey: '/category',
     cache: {
       enabled: true,
-      ttl: 300 // 5 minutes
-    }
-  })
+      ttl: 300, // 5 minutes
+    },
+  }),
 });
 ```
 
 **When to Cache:**
+
 - Read-heavy workloads (>80% reads)
 - Data changes infrequently
 - Many repeated queries
@@ -329,6 +365,7 @@ const backend = defineBackend({
 ### Always Enable HTTPS Only
 
 **Do:**
+
 ```typescript
 const backend = defineBackend({
   api: CrudApi.define('Api', { ... })
@@ -338,6 +375,7 @@ const backend = defineBackend({
 ```
 
 **Why:**
+
 - Encrypt data in transit
 - Prevent MITM attacks
 - Industry standard
@@ -348,6 +386,7 @@ const backend = defineBackend({
 ### Use Managed Identity Over Connection Strings
 
 **Do:**
+
 ```typescript
 // Managed Identity (no secrets to manage)
 const backend = defineBackend({
@@ -358,14 +397,16 @@ const backend = defineBackend({
 ```
 
 **Don't:**
+
 ```typescript
 // Connection strings (secrets to manage)
 environmentVariables: {
-  COSMOS_CONNECTION_STRING: 'AccountEndpoint=https://...;AccountKey=...' // Avoid
+  COSMOS_CONNECTION_STRING: 'AccountEndpoint=https://...;AccountKey=...'; // Avoid
 }
 ```
 
 **Why:**
+
 - No secrets to rotate
 - Automatic credential management
 - Better security posture
@@ -376,6 +417,7 @@ environmentVariables: {
 ### Implement Network Isolation for Sensitive Data
 
 **Do:**
+
 ```typescript
 const backend = defineBackend({
   sensitiveDataApi: CrudApi.define('SensitiveDataApi', { ... })
@@ -393,6 +435,7 @@ const backend = defineBackend({
 ```
 
 **When to Isolate:**
+
 - PII/PHI/PCI data
 - Financial data
 - Intellectual property
@@ -403,26 +446,32 @@ const backend = defineBackend({
 ### Apply Least Privilege Principle
 
 **Do:**
+
 ```typescript
 // Components only get permissions they need
 const backend = defineBackend({
   readOnlyApi: CrudApi.define('ReadOnlyApi', {
     entityName: 'Data',
     operations: ['read', 'list'], // No write permissions
-    schema: { /* ... */ },
-    partitionKey: '/id'
+    schema: {
+      /* ... */
+    },
+    partitionKey: '/id',
   }),
 
   adminApi: CrudApi.define('AdminApi', {
     entityName: 'Data',
     operations: ['create', 'read', 'update', 'delete', 'list'], // Full permissions
-    schema: { /* ... */ },
-    partitionKey: '/id'
-  })
+    schema: {
+      /* ... */
+    },
+    partitionKey: '/id',
+  }),
 });
 ```
 
 **Why:**
+
 - Reduced attack surface
 - Limit damage from compromised components
 - Clear access control
@@ -435,43 +484,51 @@ const backend = defineBackend({
 ### Start with Serverless, Migrate to Provisioned if Needed
 
 **Approach:**
+
 ```typescript
 // Phase 1: Development - Serverless
-const devBackend = defineBackend({
-  api: CrudApi.define('Api', {
-    enableServerless: true
-  })
-}, {
-  environment: 'dev'
-});
+const devBackend = defineBackend(
+  {
+    api: CrudApi.define('Api', {
+      enableServerless: true,
+    }),
+  },
+  {
+    environment: 'dev',
+  }
+);
 
 // Phase 2: Production - Monitor costs
 // If serverless becomes expensive, switch to provisioned
 
 // Phase 3: Scale - Provisioned throughput
-const prodBackend = defineBackend({
-  api: CrudApi.define('Api', {
-    enableServerless: false,
-    throughput: 4000 // Based on actual usage metrics
-  })
-}, {
-  environment: 'production'
-});
+const prodBackend = defineBackend(
+  {
+    api: CrudApi.define('Api', {
+      enableServerless: false,
+      throughput: 4000, // Based on actual usage metrics
+    }),
+  },
+  {
+    environment: 'production',
+  }
+);
 ```
 
 **Decision Matrix:**
 
 | Monthly RU Usage | Serverless Cost | Provisioned Cost | Recommendation |
-|------------------|-----------------|-------------------|----------------|
-| < 1M RUs | ~$5 | ~$24 | Serverless |
-| 1-10M RUs | ~$25-250 | ~$24-240 | Similar |
-| > 10M RUs | > $250 | ~$240 | Provisioned |
+| ---------------- | --------------- | ---------------- | -------------- |
+| < 1M RUs         | ~$5             | ~$24             | Serverless     |
+| 1-10M RUs        | ~$25-250        | ~$24-240         | Similar        |
+| > 10M RUs        | > $250          | ~$240            | Provisioned    |
 
 ---
 
 ### Use Resource Limits to Prevent Cost Overruns
 
 **Do:**
+
 ```typescript
 const backend = defineBackend({ ... }, {
   limits: {
@@ -488,6 +545,7 @@ const backend = defineBackend({ ... }, {
 ```
 
 **Why:**
+
 - Prevent accidental over-provisioning
 - Enforce cost controls
 - Early warning of resource sprawl
@@ -498,6 +556,7 @@ const backend = defineBackend({ ... }, {
 ### Leverage Reserved Capacity for Production
 
 **Do:**
+
 ```bash
 # For stable production workloads
 # Purchase 1-year or 3-year reserved capacity
@@ -511,6 +570,7 @@ az cosmosdb sql reserved-capacity create \
 ```
 
 **When to Use:**
+
 - Stable, predictable production workloads
 - Multi-year commitment to Azure
 - Cost optimization is priority
@@ -522,11 +582,13 @@ az cosmosdb sql reserved-capacity create \
 ### Use Consistent Naming Pattern
 
 **Recommended Pattern:**
+
 ```
 {resource-type}-{app-name}-{environment}-{purpose}
 ```
 
 **Implementation:**
+
 ```typescript
 const backend = defineBackend({ ... }, {
   environment: 'prod',
@@ -550,6 +612,7 @@ const backend = defineBackend({ ... }, {
 ```
 
 **Examples:**
+
 ```
 cosmos-myapp-prod-shared
 func-myapp-staging-api
@@ -562,18 +625,21 @@ kv-myapp-prod-secrets
 ### Include Environment in All Resource Names
 
 **Do:**
+
 ```typescript
-cosmos-myapp-dev-shared
-cosmos-myapp-staging-shared
-cosmos-myapp-prod-shared
+cosmos - myapp - dev - shared;
+cosmos - myapp - staging - shared;
+cosmos - myapp - prod - shared;
 ```
 
 **Don't:**
+
 ```typescript
-cosmos-myapp-shared  // Which environment?
+cosmos - myapp - shared; // Which environment?
 ```
 
 **Why:**
+
 - Immediately identify environment
 - Prevent accidental production changes
 - Clearer in Azure Portal
@@ -586,6 +652,7 @@ cosmos-myapp-shared  // Which environment?
 ### Always Enable Monitoring in Production
 
 **Do:**
+
 ```typescript
 const backend = defineBackend({ ... }, {
   monitoring: {
@@ -602,6 +669,7 @@ const backend = defineBackend({ ... }, {
 ```
 
 **Don't:**
+
 ```typescript
 // No monitoring = flying blind
 const backend = defineBackend({ ... }, {
@@ -610,6 +678,7 @@ const backend = defineBackend({ ... }, {
 ```
 
 **Why:**
+
 - Detect issues before users do
 - Debug production problems
 - Capacity planning
@@ -620,6 +689,7 @@ const backend = defineBackend({ ... }, {
 ### Use Structured Logging
 
 **Do:**
+
 ```typescript
 // In your Function App code
 context.log({
@@ -628,17 +698,19 @@ context.log({
   operation: 'createUser',
   userId: user.id,
   duration: elapsed,
-  success: true
+  success: true,
 });
 ```
 
 **Don't:**
+
 ```typescript
 // Unstructured logging
 context.log('User created');
 ```
 
 **Why:**
+
 - Queryable logs
 - Better debugging
 - Metrics aggregation
@@ -649,6 +721,7 @@ context.log('User created');
 ### Set Up Health Checks
 
 **Do:**
+
 ```typescript
 const backend = defineBackend({
   api: CrudApi.define('Api', {
@@ -657,13 +730,14 @@ const backend = defineBackend({
       path: '/health',
       interval: 30, // seconds
       timeout: 10,
-      unhealthyThreshold: 3
-    }
-  })
+      unhealthyThreshold: 3,
+    },
+  }),
 });
 ```
 
 **Health Check Should Test:**
+
 - Function App responding
 - Cosmos DB connectivity
 - Storage Account accessibility
@@ -676,6 +750,7 @@ const backend = defineBackend({
 ### Test Infrastructure Code
 
 **Do:**
+
 ```typescript
 // tests/backend.test.ts
 import { defineBackend } from '@atakora/component/backend';
@@ -717,6 +792,7 @@ describe('Backend Configuration', () => {
 ### Use Different Configurations per Environment
 
 **Do:**
+
 ```typescript
 // config/dev.ts
 export const devConfig = {
@@ -742,6 +818,7 @@ const backend = defineBackend({ ... }, config);
 ### Validate Before Deploy
 
 **Do:**
+
 ```typescript
 // Pre-deployment validation script
 const backend = defineBackend({ ... });
@@ -776,6 +853,7 @@ backend.addToStack(stack);
 ### Use CI/CD for All Deployments
 
 **Do:**
+
 ```yaml
 # .github/workflows/deploy.yml
 name: Deploy Backend
@@ -814,6 +892,7 @@ jobs:
 ### Deploy to Non-Production First
 
 **Do:**
+
 ```bash
 # Always follow this order
 npm run deploy:dev      # Deploy to dev, test
@@ -828,6 +907,7 @@ npm run deploy:prod     # Deploy to production
 ### Use Git Tags for Releases
 
 **Do:**
+
 ```bash
 # Tag production deployments
 git tag -a v1.2.0 -m "Release 1.2.0"
@@ -845,6 +925,7 @@ npm run deploy:prod
 ### Regular Review of Resources
 
 **Monthly Checklist:**
+
 - [ ] Review Cosmos DB throughput usage
 - [ ] Check storage account sizes
 - [ ] Analyze Application Insights metrics
@@ -857,6 +938,7 @@ npm run deploy:prod
 ### Implement Automated Scaling
 
 **Do:**
+
 ```typescript
 const backend = defineBackend({ ... }, {
   autoScale: {
@@ -873,6 +955,7 @@ const backend = defineBackend({ ... }, {
 ### Document Your Architecture
 
 **Do:**
+
 ```typescript
 /**
  * Production Backend
@@ -905,6 +988,7 @@ const backend = defineBackend({ ... });
 ## Summary Checklist
 
 **Before Going to Production:**
+
 - [ ] Monitoring enabled with appropriate retention
 - [ ] HTTPS enforced on all endpoints
 - [ ] Network isolation for sensitive data

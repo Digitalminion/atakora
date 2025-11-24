@@ -447,7 +447,7 @@ export class MutationBuilder<TSchema extends SchemaDefinition<any>> {
         }>;
         return {
           success: false,
-          errors: zodErrors.map(err => ({
+          errors: zodErrors.map((err) => ({
             field: err.path.join('.'),
             message: err.message,
             code: err.code,

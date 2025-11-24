@@ -17,6 +17,9 @@ export interface BaseFieldConfig {
   validations: ValidationRule[];
   default?: any;
   required?: boolean;
+  isReadOnly?: boolean;
+  isComputed?: boolean;
+  computeFn?: () => any;
 }
 
 /**
@@ -101,6 +104,15 @@ export interface BinaryFieldConfig extends BaseFieldConfig {
 }
 
 /**
+ * Reference field configuration
+ */
+export interface RefFieldConfig extends BaseFieldConfig {
+  type: 'ref';
+  modelName: string;
+  onDelete?: 'cascade' | 'set_null' | 'restrict';
+}
+
+/**
  * Union of all field configurations
  */
 export type FieldConfig =
@@ -113,7 +125,8 @@ export type FieldConfig =
   | ArrayFieldConfig
   | ObjectFieldConfig
   | JsonFieldConfig
-  | BinaryFieldConfig;
+  | BinaryFieldConfig
+  | RefFieldConfig;
 
 // ============================================================================
 // Validation Rules
@@ -227,16 +240,37 @@ export interface SchemaMetadata {
     events: string[];
     functions: string[];
   };
+  description?: string;
 }
 
 /**
  * Processed schema object
+ *
+ * @remarks
+ * The SchemaObject provides access to schema models through:
+ * - `schema` property: Original schema definition
+ * - `models` property: Processed model metadata
+ * - Direct model access: backend.schema.User, backend.schema.DataUploaded, etc.
  */
-export interface SchemaObject<T extends SchemaDefinitionInput = any> {
+export interface SchemaObject<T extends { schema: Record<string, any> } = SchemaDefinitionInput> {
   schema: T['schema'];
   models: Record<string, ProcessedModel>;
   _metadata: SchemaMetadata;
   _raw: T;
+
+  /**
+   * Dynamic model accessors
+   *
+   * @remarks
+   * Access models directly by name: backend.schema.ModelName
+   * Each model has:
+   * - queue: Attachment point for event queue configuration (event models)
+   * - function: Attachment point for function handler configuration (function models)
+   * - container: Attachment point for container configuration (CRUD models)
+   * - $inferType, $inferCreateInput, $inferUpdateInput: Type helpers (CRUD models)
+   * - $inferInput, $inferOutput: Type helpers (function models)
+   */
+  [modelName: string]: any;
 }
 
 // ============================================================================

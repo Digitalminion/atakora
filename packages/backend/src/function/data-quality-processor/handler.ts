@@ -23,20 +23,20 @@ export default async function handler(context: Context, messages: QueueMessage[]
 
   // Process messages in parallel for efficiency
   const results = await Promise.allSettled(
-    messages.map(message => processDataQuality(context, message))
+    messages.map((message) => processDataQuality(context, message))
   );
 
   // Log results
-  const successful = results.filter(r => r.status === 'fulfilled').length;
-  const failed = results.filter(r => r.status === 'rejected').length;
+  const successful = results.filter((r) => r.status === 'fulfilled').length;
+  const failed = results.filter((r) => r.status === 'rejected').length;
 
   context.log(`Processed: ${successful} successful, ${failed} failed`);
 
   // Failed messages will be automatically retried
   if (failed > 0) {
     const errors = results
-      .filter(r => r.status === 'rejected')
-      .map(r => (r as PromiseRejectedResult).reason);
+      .filter((r) => r.status === 'rejected')
+      .map((r) => (r as PromiseRejectedResult).reason);
 
     context.log.error('Some messages failed:', errors);
   }
@@ -60,20 +60,15 @@ async function processDataQuality(context: Context, message: QueueMessage) {
     }
 
     // Load data from blob storage
-    const blobClient = BlobServiceClient.fromConnectionString(
-      process.env.STORAGE_CONNECTION!
-    );
+    const blobClient = BlobServiceClient.fromConnectionString(process.env.STORAGE_CONNECTION!);
     // Mock data loading - in reality would stream and parse the file
     const data = await loadDataFromBlob(blobClient, dataset.blobName);
 
     // Run quality checks
     const qualityResults = {
-      duplicates: options.checkDuplicates !== false ?
-        await checkDuplicates(data) : null,
-      missing: options.checkMissing !== false ?
-        await checkMissingValues(data) : null,
-      outliers: options.checkOutliers !== false ?
-        await checkOutliers(data) : null,
+      duplicates: options.checkDuplicates !== false ? await checkDuplicates(data) : null,
+      missing: options.checkMissing !== false ? await checkMissingValues(data) : null,
+      outliers: options.checkOutliers !== false ? await checkOutliers(data) : null,
     };
 
     // Calculate overall quality score
@@ -102,7 +97,6 @@ async function processDataQuality(context: Context, message: QueueMessage) {
       qualityScore,
       recommendations,
     };
-
   } catch (error) {
     context.log.error(`Failed to analyze dataset ${datasetId}:`, error);
     throw error; // Re-throw to trigger retry

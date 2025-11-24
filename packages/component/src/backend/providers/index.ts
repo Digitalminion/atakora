@@ -34,8 +34,4 @@ export {
 } from './functions-provider';
 
 // Export Storage provider
-export {
-  StorageProvider,
-  type ContainerConfig,
-  type StorageConfig,
-} from './storage-provider';
+export { StorageProvider, type ContainerConfig, type StorageConfig } from './storage-provider';

@@ -69,6 +69,30 @@ try {
   }
 
   console.log('✅ Package metadata copied to dist');
+
+  // Build unbundled synthesis modules for dynamic loading
+  // These are required by loader scripts during synth command
+  console.log('📋 Building synthesis modules for dynamic loading...');
+
+  const synthesisDir = resolve(__dirname, 'dist/synthesis');
+  if (!existsSync(synthesisDir)) {
+    mkdirSync(synthesisDir, { recursive: true });
+  }
+
+  await esbuild.build({
+    entryPoints: ['src/synthesis/backend-synthesis-strategy.ts'],
+    bundle: true, // Bundle is required to use external
+    platform: 'node',
+    target: 'node18',
+    format: 'cjs',
+    outfile: 'dist/synthesis/backend-synthesis-strategy.js',
+    sourcemap: true,
+    external: ['@atakora/*', '@azure/*'], // Keep atakora and Azure packages external
+    keepNames: true,
+    logLevel: 'info',
+  });
+
+  console.log('✅ Synthesis modules built successfully');
 } catch (error) {
   console.error('❌ Bundle failed:', error);
   process.exit(1);

@@ -1,7 +1,7 @@
 {
   "name": "@atakora/component",
-  "version": "0.0.2",
-  "description": "Production-ready infrastructure patterns and components built on Atakora CDK. Includes CRUD APIs, web apps, microservices, and more.",
+  "version": "2.0.0-alpha.1",
+  "description": "Schema-centric backend framework for Azure. Define your data models once, get production-ready infrastructure automatically.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "publishConfig": {
@@ -13,46 +13,116 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js"
     },
-    "./crud": {
-      "types": "./dist/crud/index.d.ts",
-      "import": "./dist/crud/index.js",
-      "require": "./dist/crud/index.js"
+    "./common": {
+      "types": "./dist/common/index.d.ts",
+      "import": "./dist/common/index.js",
+      "require": "./dist/common/index.js"
+    },
+    "./schema": {
+      "types": "./dist/schema/index.d.ts",
+      "import": "./dist/schema/index.js",
+      "require": "./dist/schema/index.js"
+    },
+    "./validation": {
+      "types": "./dist/validation/index.d.ts",
+      "import": "./dist/validation/index.js",
+      "require": "./dist/validation/index.js"
+    },
+    "./auth": {
+      "types": "./dist/auth/index.d.ts",
+      "import": "./dist/auth/index.js",
+      "require": "./dist/auth/index.js"
+    },
+    "./backend": {
+      "types": "./dist/backend/index.d.ts",
+      "import": "./dist/backend/index.js",
+      "require": "./dist/backend/index.js"
     },
     "./functions": {
       "types": "./dist/functions/index.d.ts",
       "import": "./dist/functions/index.js",
       "require": "./dist/functions/index.js"
     },
-    "./data": {
-      "types": "./dist/data/index.d.ts",
-      "import": "./dist/data/index.js",
-      "require": "./dist/data/index.js"
+    "./compute": {
+      "types": "./dist/backend/attachments/compute.d.ts",
+      "import": "./dist/backend/attachments/compute.js",
+      "require": "./dist/backend/attachments/compute.js"
     },
-    "./data/crud": {
-      "types": "./dist/data/crud/index.d.ts",
-      "import": "./dist/data/crud/index.js",
-      "require": "./dist/data/crud/index.js"
+    "./storage": {
+      "types": "./dist/backend/attachments/storage.d.ts",
+      "import": "./dist/backend/attachments/storage.js",
+      "require": "./dist/backend/attachments/storage.js"
     },
-    "./web": {
-      "types": "./dist/web/index.d.ts",
-      "import": "./dist/web/index.js",
-      "require": "./dist/web/index.js"
+    "./network": {
+      "types": "./dist/backend/attachments/network.d.ts",
+      "import": "./dist/backend/attachments/network.js",
+      "require": "./dist/backend/attachments/network.js"
     },
-    "./common": {
-      "types": "./dist/common/index.d.ts",
-      "import": "./dist/common/index.js",
-      "require": "./dist/common/index.js"
+    "./monitoring": {
+      "types": "./dist/backend/attachments/monitoring.d.ts",
+      "import": "./dist/backend/attachments/monitoring.js",
+      "require": "./dist/backend/attachments/monitoring.js"
+    },
+    "./performance": {
+      "types": "./dist/backend/attachments/performance.d.ts",
+      "import": "./dist/backend/attachments/performance.js",
+      "require": "./dist/backend/attachments/performance.js"
+    },
+    "./events": {
+      "types": "./dist/backend/attachments/events.d.ts",
+      "import": "./dist/backend/attachments/events.js",
+      "require": "./dist/backend/attachments/events.js"
+    },
+    "./synthesis": {
+      "types": "./dist/synthesis/index.d.ts",
+      "import": "./dist/synthesis/index.js",
+      "require": "./dist/synthesis/index.js"
     }
   },
   "typesVersions": {
     "*": {
-      ".": ["./dist/index.d.ts"],
-      "crud": ["./dist/crud/index.d.ts"],
-      "functions": ["./dist/functions/index.d.ts"],
-      "data": ["./dist/data/index.d.ts"],
-      "data/crud": ["./dist/data/crud/index.d.ts"],
-      "web": ["./dist/web/index.d.ts"],
-      "common": ["./dist/common/index.d.ts"]
+      ".": [
+        "./dist/index.d.ts"
+      ],
+      "common": [
+        "./dist/common/index.d.ts"
+      ],
+      "schema": [
+        "./dist/schema/index.d.ts"
+      ],
+      "validation": [
+        "./dist/validation/index.d.ts"
+      ],
+      "auth": [
+        "./dist/auth/index.d.ts"
+      ],
+      "backend": [
+        "./dist/backend/index.d.ts"
+      ],
+      "functions": [
+        "./dist/functions/index.d.ts"
+      ],
+      "compute": [
+        "./dist/backend/attachments/compute.d.ts"
+      ],
+      "storage": [
+        "./dist/backend/attachments/storage.d.ts"
+      ],
+      "network": [
+        "./dist/backend/attachments/network.d.ts"
+      ],
+      "monitoring": [
+        "./dist/backend/attachments/monitoring.d.ts"
+      ],
+      "performance": [
+        "./dist/backend/attachments/performance.d.ts"
+      ],
+      "events": [
+        "./dist/backend/attachments/events.d.ts"
+      ],
+      "synthesis": [
+        "./dist/synthesis/index.d.ts"
+      ]
     }
   },
   "files": [
@@ -66,44 +136,57 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "prebuild": "node scripts/build-templates.js",
-    "build": "tsc && npm run postbuild",
-    "postbuild": "node -e \"const fs=require('fs'),path=require('path');const src='src/crud/functions',dst='dist/crud/functions';fs.mkdirSync(dst,{recursive:true});['crud-create.js','crud-read.js','crud-update.js','crud-delete.js','crud-list.js','crud-create.d.ts','crud-read.d.ts','crud-update.d.ts','crud-delete.d.ts','crud-list.d.ts'].forEach(f=>fs.copyFileSync(path.join(src,f),path.join(dst,f)))\"",
+    "build": "tsc",
     "test": "vitest run",
     "test:watch": "vitest",
-    "clean": "rm -rf ./dist && rm -rf ../../dist/component && rm -rf scripts/*/dist",
-    "templates": "node scripts/build-templates.js"
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:bench": "vitest bench",
+    "emulators:start": "docker-compose -f docker-compose.test.yml up -d",
+    "emulators:stop": "docker-compose -f docker-compose.test.yml down",
+    "emulators:logs": "docker-compose -f docker-compose.test.yml logs -f",
+    "clean": "rm -rf ./dist && rm -rf ../../dist/component"
   },
   "keywords": [
     "atakora",
     "azure",
+    "schema",
+    "backend",
     "infrastructure",
     "cdk",
-    "components",
-    "patterns",
+    "fluent-api",
+    "type-safe",
     "crud",
-    "microservices",
-    "web-apps",
+    "rest-api",
     "infrastructure-as-code",
     "iac",
     "serverless",
-    "api"
+    "typescript"
   ],
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
     "@atakora/cdk": "*",
-    "@atakora/lib": "*"
+    "@atakora/lib": "*",
+    "@azure/cosmos": "^4.6.0",
+    "@azure/monitor-opentelemetry": "^1.9.0",
+    "@azure/storage-blob": "^12.24.0",
+    "@opentelemetry/api": "^1.9.0",
+    "jose": "^5.2.0",
+    "zod": "^3.22.4"
   },
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=9.0.0"
   },
   "devDependencies": {
-    "@azure/cosmos": "^4.6.0",
     "@azure/functions": "^4.8.0",
     "@azure/identity": "^4.5.0",
     "@types/node": "^20.19.21",
-    "esbuild": "^0.25.10"
+    "@vitest/coverage-v8": "^1.2.0",
+    "@vitest/ui": "^1.2.0",
+    "esbuild": "^0.25.10",
+    "vitest": "^1.2.0"
   }
 }

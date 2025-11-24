@@ -30,59 +30,66 @@ export const schema = defineSchema({
      * Auto-generates: POST/GET/PUT/DELETE/LIST /api/users
      * Database: Cosmos DB container 'users'
      */
-    User: c.model({
-      id: a.id(),
-      email: a.string().required().email(),
-      name: a.string().required(),
-      role: a.enum(['user', 'admin', 'analyst']).default('user'),
-      organizationId: a.string().required(),
-      preferences: a.json(),
-      isActive: a.boolean().default(true),
-      lastLoginAt: a.datetime(),
-    })
-      .authorization(allow => [
-        allow.owner('id'),
-        allow.groups(['admin']).all(),
-      ])
+    User: c
+      .model({
+        id: a.id(),
+        email: a.string().required().email(),
+        name: a.string().required(),
+        role: a.enum(['user', 'admin', 'analyst']).default('user'),
+        organizationId: a.string().required(),
+        preferences: a.json(),
+        isActive: a.boolean().default(true),
+        lastLoginAt: a.datetime(),
+      })
+      .authorization((allow) => [allow.owner('id'), allow.groups(['admin']).all()])
       .indexes(['email', 'organizationId', 'role']),
 
     /**
      * Project Model
      * Auto-generates: Full CRUD at /api/projects
      */
-    Project: c.model({
-      id: a.id(),
-      name: a.string().required(),
-      description: a.string().maxLength(500),
-      organizationId: a.string().required(),
-      ownerId: a.string().required(),
-      status: a.enum(['active', 'archived', 'deleted']).default('active'),
-      settings: a.json(),
-      tags: a.array(a.string()),
-    })
-      .authorization(allow => [
-        allow.owner('ownerId'),
-        allow.groups(['admin', 'analyst']).read(),
-      ])
+    Project: c
+      .model({
+        id: a.id(),
+        name: a.string().required(),
+        description: a.string().maxLength(500),
+        organizationId: a.string().required(),
+        ownerId: a.string().required(),
+        status: a.enum(['active', 'archived', 'deleted']).default('active'),
+        settings: a.json(),
+        tags: a.array(a.string()),
+      })
+      .authorization((allow) => [allow.owner('ownerId'), allow.groups(['admin', 'analyst']).read()])
       .indexes(['organizationId', 'ownerId', 'status']),
 
     /**
      * Dataset Model
      * Auto-generates: Full CRUD at /api/datasets
      */
-    Dataset: c.model({
-      id: a.id(),
-      name: a.string().required(),
-      projectId: a.string().required(),
-      uploadedBy: a.string().required(),
-      fileUrl: a.string().required().url(),
-      fileSizeBytes: a.number().required(),
-      rowCount: a.number(),
-      status: a.enum(['uploading', 'validating', 'valid', 'invalid', 'processing', 'completed', 'failed']).default('uploading'),
-      validationErrors: a.array(a.string()),
-      metadata: a.json(),
-    })
-      .authorization(allow => [
+    Dataset: c
+      .model({
+        id: a.id(),
+        name: a.string().required(),
+        projectId: a.string().required(),
+        uploadedBy: a.string().required(),
+        fileUrl: a.string().required().url(),
+        fileSizeBytes: a.number().required(),
+        rowCount: a.number(),
+        status: a
+          .enum([
+            'uploading',
+            'validating',
+            'valid',
+            'invalid',
+            'processing',
+            'completed',
+            'failed',
+          ])
+          .default('uploading'),
+        validationErrors: a.array(a.string()),
+        metadata: a.json(),
+      })
+      .authorization((allow) => [
         allow.owner('uploadedBy'),
         allow.groups(['admin', 'analyst']).all(),
       ])
@@ -92,21 +99,22 @@ export const schema = defineSchema({
      * Feedback Model
      * Auto-generates: Full CRUD at /api/feedback
      */
-    Feedback: c.model({
-      id: a.id(),
-      userId: a.string().required(),
-      datasetId: a.string(),
-      text: a.string().required().maxLength(2000),
-      rating: a.number().min(1).max(5),
-      category: a.enum(['bug', 'feature_request', 'ui_ux', 'data_quality', 'general']).required(),
-      sentiment: a.enum(['positive', 'neutral', 'negative']),
-      priority: a.enum(['low', 'medium', 'high', 'critical']),
-      status: a.enum(['pending', 'reviewed', 'resolved', 'closed']).default('pending'),
-      adminNotes: a.string(),
-      adminUserId: a.string(),
-      tags: a.array(a.string()),
-    })
-      .authorization(allow => [
+    Feedback: c
+      .model({
+        id: a.id(),
+        userId: a.string().required(),
+        datasetId: a.string(),
+        text: a.string().required().maxLength(2000),
+        rating: a.number().min(1).max(5),
+        category: a.enum(['bug', 'feature_request', 'ui_ux', 'data_quality', 'general']).required(),
+        sentiment: a.enum(['positive', 'neutral', 'negative']),
+        priority: a.enum(['low', 'medium', 'high', 'critical']),
+        status: a.enum(['pending', 'reviewed', 'resolved', 'closed']).default('pending'),
+        adminNotes: a.string(),
+        adminUserId: a.string(),
+        tags: a.array(a.string()),
+      })
+      .authorization((allow) => [
         allow.owner('userId').create().read().update(['text', 'rating', 'category']),
         allow.groups(['admin']).all(),
       ])
@@ -230,12 +238,14 @@ export const schema = defineSchema({
       },
       output: {
         isValid: a.boolean().required(),
-        errors: a.array(a.object({
-          row: a.number(),
-          column: a.string(),
-          message: a.string(),
-          severity: a.enum(['error', 'warning']),
-        })),
+        errors: a.array(
+          a.object({
+            row: a.number(),
+            column: a.string(),
+            message: a.string(),
+            severity: a.enum(['error', 'warning']),
+          })
+        ),
         warnings: a.array(a.string()),
         summary: a.object({
           totalRows: a.number(),
@@ -252,10 +262,14 @@ export const schema = defineSchema({
     TransformData: f.model({
       input: {
         datasetId: a.string().required(),
-        transformations: a.array(a.object({
-          type: a.enum(['filter', 'map', 'aggregate', 'join', 'pivot']),
-          config: a.json(),
-        })).required(),
+        transformations: a
+          .array(
+            a.object({
+              type: a.enum(['filter', 'map', 'aggregate', 'join', 'pivot']),
+              config: a.json(),
+            })
+          )
+          .required(),
         outputFormat: a.enum(['csv', 'json', 'parquet']).default('csv'),
       },
       output: {
@@ -289,12 +303,14 @@ export const schema = defineSchema({
         sortBy: a.enum(['relevance', 'date', 'name']).default('relevance'),
       },
       output: {
-        results: a.array(a.object({
-          id: a.string(),
-          name: a.string(),
-          score: a.number(),
-          highlights: a.array(a.string()),
-        })),
+        results: a.array(
+          a.object({
+            id: a.string(),
+            name: a.string(),
+            score: a.number(),
+            highlights: a.array(a.string()),
+          })
+        ),
         total: a.number().required(),
         page: a.number().required(),
         pageSize: a.number().required(),

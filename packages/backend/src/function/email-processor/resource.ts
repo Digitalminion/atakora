@@ -5,46 +5,23 @@
  * Triggered by messages in the 'email' queue.
  */
 
-import { defineFunction } from '@atakora/component/functions';
+import { defineFunctions, configureFunction } from '@atakora/component/functions';
 
-export const emailProcessor = defineFunction({
-  name: 'email-processor',
-
-  // Queue trigger configuration
-  trigger: {
-    type: 'queue',
-    queueName: 'email',
-    connection: 'STORAGE_CONNECTION',  // Storage account connection string
-    batchSize: 10,                     // Process up to 10 emails at once
-  },
-
-  // Handler implementation
-  handler: './handler.ts',
-
-  // Function configuration
-  memory: 256,      // 256MB for email processing
-  timeout: 300,      // 5 minutes timeout
-
-  // Environment variables
-  environment: {
-    STORAGE_CONNECTION: '@storage.connectionString',
-    SENDGRID_API_KEY: '@keyVault.secrets.sendgrid-api-key',  // From Key Vault
-    EMAIL_FROM: 'noreply@colorai.com',
-  },
-
-  // Scaling configuration
-  scale: {
-    minInstances: 0,
-    maxInstances: 5,
-    maxConcurrentExecutions: 3,  // Limit concurrent email batches
-  },
-
-  // Retry policy for transient failures
-  retry: {
-    maxRetryCount: 3,
-    minimumInterval: '00:00:10',  // 10 seconds
-    maximumInterval: '00:01:00',  // 1 minute
-  },
+export const emailProcessor = defineFunctions({
+  EmailProcessor: configureFunction('email-processor')
+    .memory(256)
+    .timeout(300000)
+    .withHandler(async (context, message) => {
+      // Handler implementation from ./handler.ts
+      context.log('Processing email message');
+      // TODO: Implement email sending logic
+      return { success: true };
+    })
+    .env({
+      STORAGE_CONNECTION: '@storage.connectionString',
+      SENDGRID_API_KEY: '@keyVault.secrets.sendgrid-api-key',
+      EMAIL_FROM: 'noreply@colorai.com',
+    }),
 });
 
 /**

@@ -69,14 +69,14 @@ export type {
   StringFieldBuilder,
   NumberFieldBuilder,
   BooleanFieldBuilder,
-  DatetimeFieldBuilder,
+  DateTimeFieldBuilder,
   IdFieldBuilder,
   EnumFieldBuilder,
   ArrayFieldBuilder,
   ObjectFieldBuilder,
   JsonFieldBuilder,
   BinaryFieldBuilder,
-  FieldBuilder,
+  RefFieldBuilder,
 } from './field-types';
 
 // ============================================================================

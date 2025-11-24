@@ -87,10 +87,23 @@ export interface Duration {
  * @internal
  */
 class DurationImpl implements Duration {
-  constructor(
-    readonly value: number,
-    readonly unit: 'ms' | 's' | 'm' | 'h' | 'd'
-  ) {}
+  readonly value!: number;
+  readonly unit!: 'ms' | 's' | 'm' | 'h' | 'd';
+
+  constructor(value: number, unit: 'ms' | 's' | 'm' | 'h' | 'd') {
+    Object.defineProperty(this, 'value', {
+      value,
+      writable: false,
+      enumerable: true,
+      configurable: false,
+    });
+    Object.defineProperty(this, 'unit', {
+      value: unit,
+      writable: false,
+      enumerable: true,
+      configurable: false,
+    });
+  }
 
   toMilliseconds(): number {
     const conversions = {
@@ -98,7 +111,7 @@ class DurationImpl implements Duration {
       s: 1000,
       m: 60000,
       h: 3600000,
-      d: 86400000
+      d: 86400000,
     };
     return this.value * conversions[this.unit];
   }
@@ -160,7 +173,7 @@ class DurationImpl implements Duration {
         s: 'second',
         m: 'minute',
         h: 'hour',
-        d: 'day'
+        d: 'day',
       };
       return `${this.value} ${units[this.unit]}`;
     }
@@ -169,7 +182,7 @@ class DurationImpl implements Duration {
       s: 'seconds',
       m: 'minutes',
       h: 'hours',
-      d: 'days'
+      d: 'days',
     };
     return `${this.value} ${units[this.unit]}`;
   }

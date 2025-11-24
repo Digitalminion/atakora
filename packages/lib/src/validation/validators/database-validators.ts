@@ -1,5 +1,9 @@
 import { BaseValidationRule, ValidationContext } from '../validation-rule';
-import { ValidationResult, ValidationResultBuilder, ValidationSeverity } from '../validation-result';
+import {
+  ValidationResult,
+  ValidationResultBuilder,
+  ValidationSeverity,
+} from '../validation-result';
 import {
   validateLength,
   validatePattern,
@@ -105,7 +109,9 @@ export class CosmosDbConsistencyValidator extends BaseValidationRule {
       if (maxStalenessPrefix === undefined && maxIntervalInSeconds === undefined) {
         return ValidationResultBuilder.error(this.name)
           .withMessage('BoundedStaleness requires maxStalenessPrefix or maxIntervalInSeconds')
-          .withSuggestion('Set maxStalenessPrefix (10-2147483647) or maxIntervalInSeconds (5-86400)')
+          .withSuggestion(
+            'Set maxStalenessPrefix (10-2147483647) or maxIntervalInSeconds (5-86400)'
+          )
           .build();
       }
     }
@@ -269,12 +275,7 @@ export class CosmosDbCapabilitiesValidator extends BaseValidationRule {
     const capabilityNames = capabilities.map((c: any) => c.name);
 
     // Check for incompatible capabilities
-    const apiCapabilities = [
-      'EnableCassandra',
-      'EnableGremlin',
-      'EnableMongo',
-      'EnableTable',
-    ];
+    const apiCapabilities = ['EnableCassandra', 'EnableGremlin', 'EnableMongo', 'EnableTable'];
 
     const enabledApis = apiCapabilities.filter((api) => capabilityNames.includes(api));
 
@@ -337,8 +338,8 @@ export class CosmosDbNetworkAclsValidator extends BaseValidationRule {
     }
 
     // Check for overly permissive IP rules
-    const hasWildcard = ipRules.some((rule: any) =>
-      rule.ipAddressOrRange === '0.0.0.0/0' || rule.ipAddressOrRange === '*'
+    const hasWildcard = ipRules.some(
+      (rule: any) => rule.ipAddressOrRange === '0.0.0.0/0' || rule.ipAddressOrRange === '*'
     );
 
     if (hasWildcard) {

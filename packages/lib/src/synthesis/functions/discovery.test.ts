@@ -30,7 +30,10 @@ describe('FunctionDiscovery', () => {
       // Arrange: Create function directory
       const functionDir = path.join(tempDir, 'api');
       await fs.mkdir(functionDir);
-      await fs.writeFile(path.join(functionDir, 'handler.ts'), 'export async function handler() {}');
+      await fs.writeFile(
+        path.join(functionDir, 'handler.ts'),
+        'export async function handler() {}'
+      );
       await fs.writeFile(
         path.join(functionDir, 'resource.ts'),
         `export default {
@@ -63,7 +66,10 @@ describe('FunctionDiscovery', () => {
       for (const name of functions) {
         const functionDir = path.join(tempDir, name);
         await fs.mkdir(functionDir);
-        await fs.writeFile(path.join(functionDir, 'handler.ts'), 'export async function handler() {}');
+        await fs.writeFile(
+          path.join(functionDir, 'handler.ts'),
+          'export async function handler() {}'
+        );
         await fs.writeFile(
           path.join(functionDir, 'resource.ts'),
           `export default {
@@ -105,7 +111,10 @@ describe('FunctionDiscovery', () => {
       // Arrange: Create directory with only handler.ts
       const functionDir = path.join(tempDir, 'incomplete');
       await fs.mkdir(functionDir);
-      await fs.writeFile(path.join(functionDir, 'handler.ts'), 'export async function handler() {}');
+      await fs.writeFile(
+        path.join(functionDir, 'handler.ts'),
+        'export async function handler() {}'
+      );
 
       // Act
       const result = await discovery.discover();
@@ -119,7 +128,10 @@ describe('FunctionDiscovery', () => {
       // Arrange: Create hidden directory
       const functionDir = path.join(tempDir, '.hidden');
       await fs.mkdir(functionDir);
-      await fs.writeFile(path.join(functionDir, 'handler.ts'), 'export async function handler() {}');
+      await fs.writeFile(
+        path.join(functionDir, 'handler.ts'),
+        'export async function handler() {}'
+      );
       await fs.writeFile(
         path.join(functionDir, 'resource.ts'),
         `export default { type: 'AzureFunction', version: '1.0', config: { trigger: { type: 'http' } } }`
@@ -137,7 +149,10 @@ describe('FunctionDiscovery', () => {
       // Arrange: Create node_modules directory
       const functionDir = path.join(tempDir, 'node_modules');
       await fs.mkdir(functionDir);
-      await fs.writeFile(path.join(functionDir, 'handler.ts'), 'export async function handler() {}');
+      await fs.writeFile(
+        path.join(functionDir, 'handler.ts'),
+        'export async function handler() {}'
+      );
       await fs.writeFile(
         path.join(functionDir, 'resource.ts'),
         `export default { type: 'AzureFunction', version: '1.0', config: { trigger: { type: 'http' } } }`
@@ -168,13 +183,19 @@ describe('FunctionDiscovery', () => {
       await fs.mkdir(function1Dir);
       await fs.mkdir(function2Dir);
 
-      await fs.writeFile(path.join(function1Dir, 'handler.ts'), 'export async function handler() { return 1; }');
+      await fs.writeFile(
+        path.join(function1Dir, 'handler.ts'),
+        'export async function handler() { return 1; }'
+      );
       await fs.writeFile(
         path.join(function1Dir, 'resource.ts'),
         `export default { type: 'AzureFunction', version: '1.0', config: { trigger: { type: 'http' } } }`
       );
 
-      await fs.writeFile(path.join(function2Dir, 'handler.ts'), 'export async function handler() { return 2; }');
+      await fs.writeFile(
+        path.join(function2Dir, 'handler.ts'),
+        'export async function handler() { return 2; }'
+      );
       await fs.writeFile(
         path.join(function2Dir, 'resource.ts'),
         `export default { type: 'AzureFunction', version: '1.0', config: { trigger: { type: 'timer' } } }`

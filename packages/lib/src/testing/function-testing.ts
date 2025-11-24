@@ -250,26 +250,25 @@ export class FunctionTestUtils {
    * });
    * ```
    */
-  static createMockContext(options: {
-    readonly invocationId?: string;
-    readonly functionName?: string;
-    readonly functionDirectory?: string;
-    readonly bindings?: Record<string, unknown>;
-    readonly bindingData?: Record<string, unknown>;
-    readonly logs?: unknown[];
-  } = {}): AzureFunctionContext {
+  static createMockContext(
+    options: {
+      readonly invocationId?: string;
+      readonly functionName?: string;
+      readonly functionDirectory?: string;
+      readonly bindings?: Record<string, unknown>;
+      readonly bindingData?: Record<string, unknown>;
+      readonly logs?: unknown[];
+    } = {}
+  ): AzureFunctionContext {
     const invocationId = options.invocationId ?? this.generateInvocationId();
     const logs: unknown[][] = options.logs ? [options.logs] : [];
 
-    const logger: Logger = Object.assign(
-      (...args: unknown[]) => logs.push(args),
-      {
-        info: (...args: unknown[]) => logs.push(['INFO', ...args]),
-        warn: (...args: unknown[]) => logs.push(['WARN', ...args]),
-        error: (...args: unknown[]) => logs.push(['ERROR', ...args]),
-        verbose: (...args: unknown[]) => logs.push(['VERBOSE', ...args]),
-      }
-    );
+    const logger: Logger = Object.assign((...args: unknown[]) => logs.push(args), {
+      info: (...args: unknown[]) => logs.push(['INFO', ...args]),
+      warn: (...args: unknown[]) => logs.push(['WARN', ...args]),
+      error: (...args: unknown[]) => logs.push(['ERROR', ...args]),
+      verbose: (...args: unknown[]) => logs.push(['VERBOSE', ...args]),
+    });
 
     return {
       invocationId,
@@ -310,15 +309,17 @@ export class FunctionTestUtils {
    * });
    * ```
    */
-  static createMockHttpRequest(options: {
-    readonly method?: string;
-    readonly url?: string;
-    readonly headers?: Record<string, string>;
-    readonly query?: Record<string, string>;
-    readonly params?: Record<string, string>;
-    readonly body?: unknown;
-    readonly rawBody?: Buffer;
-  } = {}): HttpRequest {
+  static createMockHttpRequest(
+    options: {
+      readonly method?: string;
+      readonly url?: string;
+      readonly headers?: Record<string, string>;
+      readonly query?: Record<string, string>;
+      readonly params?: Record<string, string>;
+      readonly body?: unknown;
+      readonly rawBody?: Buffer;
+    } = {}
+  ): HttpRequest {
     return {
       method: options.method ?? 'GET',
       url: options.url ?? '/',
@@ -343,12 +344,14 @@ export class FunctionTestUtils {
    * });
    * ```
    */
-  static createMockTimer(options: {
-    readonly isPastDue?: boolean;
-    readonly last?: string;
-    readonly next?: string;
-    readonly lastUpdated?: string;
-  } = {}): TimerInfo {
+  static createMockTimer(
+    options: {
+      readonly isPastDue?: boolean;
+      readonly last?: string;
+      readonly next?: string;
+      readonly lastUpdated?: string;
+    } = {}
+  ): TimerInfo {
     const now = new Date();
     const last = options.last ?? new Date(now.getTime() - 60000).toISOString();
     const next = options.next ?? new Date(now.getTime() + 60000).toISOString();
@@ -521,9 +524,7 @@ export class FunctionTestUtils {
    * @returns 32-character hex trace ID
    */
   private static generateTraceId(): string {
-    return Array.from({ length: 32 }, () =>
-      Math.floor(Math.random() * 16).toString(16)
-    ).join('');
+    return Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
   }
 
   /**
@@ -532,9 +533,7 @@ export class FunctionTestUtils {
    * @returns 16-character hex span ID
    */
   private static generateSpanId(): string {
-    return Array.from({ length: 16 }, () =>
-      Math.floor(Math.random() * 16).toString(16)
-    ).join('');
+    return Array.from({ length: 16 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
   }
 }
 
@@ -596,17 +595,12 @@ export async function expectFunctionToThrow(
  * expectResponseStatus(response, 200);
  * ```
  */
-export function expectResponseStatus(
-  response: HttpResponse | void,
-  expectedStatus: number
-): void {
+export function expectResponseStatus(response: HttpResponse | void, expectedStatus: number): void {
   if (!response) {
     throw new Error('Expected response, but got undefined');
   }
   if (response.status !== expectedStatus) {
-    throw new Error(
-      `Expected status ${expectedStatus}, but got ${response.status ?? 'undefined'}`
-    );
+    throw new Error(`Expected status ${expectedStatus}, but got ${response.status ?? 'undefined'}`);
   }
 }
 

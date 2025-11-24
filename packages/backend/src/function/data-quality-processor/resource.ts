@@ -5,45 +5,22 @@
  * Triggered by messages in the 'data-quality' queue.
  */
 
-import { defineFunction } from '@atakora/component/functions';
+import { defineFunctions, configureFunction } from '@atakora/component/functions';
 
-export const dataQualityProcessor = defineFunction({
-  name: 'data-quality-processor',
-
-  // Queue trigger configuration
-  trigger: {
-    type: 'queue',
-    queueName: 'data-quality',
-    connection: 'STORAGE_CONNECTION',  // Storage account connection string
-    batchSize: 16,                     // Process up to 16 messages at once
-  },
-
-  // Handler implementation
-  handler: './handler.ts',
-
-  // Function configuration
-  memory: 1024,     // 1GB for data processing
-  timeout: 600,     // 10 minutes for complex analysis
-
-  // Environment variables
-  environment: {
-    COSMOS_CONNECTION: '@cosmos.connectionString',
-    STORAGE_CONNECTION: '@storage.connectionString',
-  },
-
-  // Scaling configuration
-  scale: {
-    minInstances: 0,
-    maxInstances: 10,
-    maxConcurrentExecutions: 5,  // Limit concurrent executions
-  },
-
-  // Retry policy
-  retry: {
-    maxRetryCount: 3,
-    minimumInterval: '00:00:05',  // 5 seconds
-    maximumInterval: '00:00:30',  // 30 seconds
-  },
+export const dataQualityProcessor = defineFunctions({
+  DataQualityProcessor: configureFunction('data-quality-processor')
+    .memory(1024)
+    .timeout(600000)
+    .withHandler(async (context, message) => {
+      // Handler implementation from ./handler.ts
+      context.log('Processing data quality analysis');
+      // TODO: Implement data quality processing logic
+      return { success: true };
+    })
+    .env({
+      COSMOS_CONNECTION: '@cosmos.connectionString',
+      STORAGE_CONNECTION: '@storage.connectionString',
+    }),
 });
 
 /**

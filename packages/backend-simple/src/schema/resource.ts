@@ -30,19 +30,20 @@ export const schema = defineSchema({
      * - Authentication required
      * - Authorization enforced
      */
-    User: c.model({
-      id: a.id(),                                      // Auto-generated UUID
-      email: a.string().required().email(),            // Validates email format
-      name: a.string().required(),
-      role: a.enum(['user', 'admin']).default('user'),
-      isActive: a.boolean().default(true),
-      // createdAt, updatedAt added automatically
-    })
-      .authorization(allow => [
-        allow.owner('id'),                             // Users can manage themselves
-        allow.groups(['admin']).all(),                 // Admins can manage all users
+    User: c
+      .model({
+        id: a.id(), // Auto-generated UUID
+        email: a.string().required().email(), // Validates email format
+        name: a.string().required(),
+        role: a.enum(['user', 'admin']).default('user'),
+        isActive: a.boolean().default(true),
+        // createdAt, updatedAt added automatically
+      })
+      .authorization((allow) => [
+        allow.owner('id'), // Users can manage themselves
+        allow.groups(['admin']).all(), // Admins can manage all users
       ])
-      .indexes(['email', 'role']),                     // Optimize queries on these fields
+      .indexes(['email', 'role']), // Optimize queries on these fields
 
     /**
      * CRUD Model Example: Project
@@ -52,24 +53,27 @@ export const schema = defineSchema({
      * - Organization-based access
      * - Multi-field indexes
      */
-    Project: c.model({
-      id: a.id(),
-      name: a.string().required(),
-      description: a.string(),
-      ownerId: a.string().required(),                  // Foreign key to User
-      organizationId: a.string().required(),
-      status: a.enum(['planning', 'active', 'completed', 'archived']).default('planning'),
-      settings: a.json().default({}),                  // Arbitrary JSON
-    })
-      .authorization(allow => [
-        allow.owner('ownerId'),                        // Owner has full access
-        allow.custom((user, project) => {
-          return user.organizationId === project.organizationId;
-        }).read(),                                     // Same org can read
+    Project: c
+      .model({
+        id: a.id(),
+        name: a.string().required(),
+        description: a.string(),
+        ownerId: a.string().required(), // Foreign key to User
+        organizationId: a.string().required(),
+        status: a.enum(['planning', 'active', 'completed', 'archived']).default('planning'),
+        settings: a.json().default({}), // Arbitrary JSON
+      })
+      .authorization((allow) => [
+        allow.owner('ownerId'), // Owner has full access
+        allow
+          .custom((user, project) => {
+            return user.organizationId === project.organizationId;
+          })
+          .read(), // Same org can read
         allow.groups(['admin']).all(),
       ])
       .indexes(['ownerId', 'organizationId', 'status'])
-      .partitionKey('organizationId'),                 // Optimize for multi-tenant queries
+      .partitionKey('organizationId'), // Optimize for multi-tenant queries
 
     /**
      * Event Model Example: DataUploaded
@@ -86,8 +90,8 @@ export const schema = defineSchema({
     DataUploaded: e.model({
       datasetId: a.string().required(),
       projectId: a.string().required(),
-      fileUrl: a.string().url().required(),            // Validates URL
-      fileSizeBytes: a.number().required().min(1),     // Must be positive
+      fileUrl: a.string().url().required(), // Validates URL
+      fileSizeBytes: a.number().required().min(1), // Must be positive
       uploadedAt: a.datetime().required(),
       uploadedBy: a.string().required(),
     }),
@@ -115,28 +119,29 @@ export const schema = defineSchema({
      * Default handler: Returns 501 Not Implemented
      * To customize: Create src/function/resource.ts and attach handler
      */
-    GenerateReport: f.model({
-      input: {
-        datasetId: a.string().required(),
-        reportType: a.enum(['summary', 'detailed', 'quality']).required(),
-        format: a.enum(['pdf', 'csv', 'xlsx']).default('pdf'),
-        includeCharts: a.boolean().default(true),
-        dateRange: a.object({
-          start: a.datetime().required(),
-          end: a.datetime().required(),
-        }),
-      },
-      output: {
-        reportId: a.string().required(),
-        reportUrl: a.string().url().required(),
-        status: a.enum(['generating', 'completed', 'failed']).required(),
-        expiresAt: a.datetime().required(),
-        metadata: a.json(),
-      },
-    })
-      .authorization(allow => [
-        allow.authenticated(),                         // Any authenticated user
-        allow.groups(['analyst', 'admin']),           // Analysts and admins
+    GenerateReport: f
+      .model({
+        input: {
+          datasetId: a.string().required(),
+          reportType: a.enum(['summary', 'detailed', 'quality']).required(),
+          format: a.enum(['pdf', 'csv', 'xlsx']).default('pdf'),
+          includeCharts: a.boolean().default(true),
+          dateRange: a.object({
+            start: a.datetime().required(),
+            end: a.datetime().required(),
+          }),
+        },
+        output: {
+          reportId: a.string().required(),
+          reportUrl: a.string().url().required(),
+          status: a.enum(['generating', 'completed', 'failed']).required(),
+          expiresAt: a.datetime().required(),
+          metadata: a.json(),
+        },
+      })
+      .authorization((allow) => [
+        allow.authenticated(), // Any authenticated user
+        allow.groups(['analyst', 'admin']), // Analysts and admins
       ]),
 
     /**
@@ -161,13 +166,15 @@ export const schema = defineSchema({
       },
       output: {
         results: a.array(a.json()).required(),
-        pagination: a.object({
-          page: a.number().required(),
-          pageSize: a.number().required(),
-          total: a.number().required(),
-          totalPages: a.number().required(),
-        }).required(),
-        executionTime: a.number().required(),          // Milliseconds
+        pagination: a
+          .object({
+            page: a.number().required(),
+            pageSize: a.number().required(),
+            total: a.number().required(),
+            totalPages: a.number().required(),
+          })
+          .required(),
+        executionTime: a.number().required(), // Milliseconds
       },
     }),
   }),

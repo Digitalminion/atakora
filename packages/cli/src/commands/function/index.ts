@@ -26,11 +26,9 @@ import { createFunctionLogsCommand } from './logs';
  * @returns Commander command instance
  */
 export function createFunctionCommand(): Command {
-  const functionCmd = new Command('function')
-    .description('Manage Azure Functions')
-    .addHelpText(
-      'after',
-      `
+  const functionCmd = new Command('function').description('Manage Azure Functions').addHelpText(
+    'after',
+    `
 Examples:
   $ atakora function create --name api --trigger http
   $ atakora function list
@@ -38,7 +36,7 @@ Examples:
   $ atakora function deploy
   $ atakora function logs api --follow
     `
-    );
+  );
 
   // Add subcommands
   functionCmd.addCommand(createFunctionCreateCommand());

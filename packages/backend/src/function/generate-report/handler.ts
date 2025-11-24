@@ -22,7 +22,6 @@ const handler: AzureFunction = async (context: Context, req: HttpRequest) => {
         generatedAt: new Date().toISOString(),
       },
     };
-
   } catch (error) {
     context.log.error('Report generation failed:', error);
     return {

@@ -164,7 +164,11 @@ export class MergeError extends BackendError {
    */
   public readonly conflictingConfigs?: ReadonlyArray<unknown>;
 
-  constructor(message: string, conflictingConfigs?: ReadonlyArray<unknown>, context?: Record<string, unknown>) {
+  constructor(
+    message: string,
+    conflictingConfigs?: ReadonlyArray<unknown>,
+    context?: Record<string, unknown>
+  ) {
     super(message, 'MERGE_ERROR', { ...context, conflictingConfigs });
     this.name = 'MergeError';
     this.conflictingConfigs = conflictingConfigs;
@@ -272,11 +276,7 @@ export function createInvalidRequirementError(
   resourceType?: string,
   requirementKey?: string
 ): RequirementError {
-  return new RequirementError(
-    `Invalid requirement: ${reason}`,
-    resourceType,
-    requirementKey
-  );
+  return new RequirementError(`Invalid requirement: ${reason}`, resourceType, requirementKey);
 }
 
 /**
@@ -285,7 +285,7 @@ export function createInvalidRequirementError(
 export function createMissingProviderError(resourceType: string): ProviderError {
   return new ProviderError(
     `No provider found for resource type "${resourceType}". ` +
-    'Register a custom provider or ensure the resource type is supported.',
+      'Register a custom provider or ensure the resource type is supported.',
     undefined,
     { resourceType }
   );
@@ -329,11 +329,7 @@ export function createValidationFailureError(
   errors: ReadonlyArray<string>,
   warnings?: ReadonlyArray<string>
 ): ValidationError {
-  return new ValidationError(
-    `Validation failed with ${errors.length} error(s)`,
-    errors,
-    warnings
-  );
+  return new ValidationError(`Validation failed with ${errors.length} error(s)`, errors, warnings);
 }
 
 /**
@@ -344,11 +340,10 @@ export function createIncompatibleConfigsError(
   reason: string,
   configs?: ReadonlyArray<unknown>
 ): MergeError {
-  return new MergeError(
-    `Cannot merge configurations for "${resourceType}": ${reason}`,
-    configs,
-    { resourceType, reason }
-  );
+  return new MergeError(`Cannot merge configurations for "${resourceType}": ${reason}`, configs, {
+    resourceType,
+    reason,
+  });
 }
 
 /**

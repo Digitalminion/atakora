@@ -1,144 +1,858 @@
 /**
- * Type definitions for Functions App components
+ * Function Customization Types
+ *
+ * @remarks
+ * Type definitions for function configuration, handlers, and execution context.
+ * Provides type-safe function handler implementation with database, storage,
+ * and user context access.
  *
  * @packageDocumentation
  */
 
-import type { FunctionApp } from '@atakora/cdk/functions';
-import type { ServerFarms } from '@atakora/cdk/web';
-import type { StorageAccounts } from '@atakora/cdk/storage';
+import type { Duration } from '../common/duration';
+import type { Threshold } from '../common/threshold';
+
+// ============================================================================
+// Function Configuration
+// ============================================================================
 
 /**
- * Function runtime environment
+ * Configuration for a custom function handler
+ *
+ * @public
  */
-export enum FunctionRuntime {
-  NODE = 'node',
-  PYTHON = 'python',
-  DOTNET = 'dotnet',
-  JAVA = 'java',
-  POWERSHELL = 'powershell',
+export interface FunctionConfig {
+  /**
+   * The function name (must match function model name)
+   */
+  readonly name: string;
+
+  /**
+   * Memory allocation in megabytes
+   * @defaultValue 256
+   */
+  readonly memory: number;
+
+  /**
+   * Execution timeout in milliseconds
+   * @defaultValue 30000 (30 seconds)
+   */
+  readonly timeout: number;
+
+  /**
+   * Custom handler implementation
+   * @optional
+   */
+  readonly handler?: FunctionHandler;
+
+  /**
+   * Output bindings (storage, queue, etc.)
+   * @optional
+   */
+  readonly bindings?: BindingConfig;
+
+  /**
+   * Environment variables
+   * @optional
+   */
+  readonly environment?: EnvironmentConfig;
+
+  /**
+   * Monitoring and alerting configuration
+   * @optional
+   */
+  readonly monitoring?: MonitoringConfig;
+}
+
+// ============================================================================
+// Function Handler
+// ============================================================================
+
+/**
+ * Function handler implementation
+ *
+ * @typeParam TInput - The input type (inferred from function model)
+ * @typeParam TOutput - The output type (inferred from function model)
+ *
+ * @param context - Execution context with database, storage, and utilities
+ * @param input - Input data matching the function model input schema
+ * @returns Promise resolving to output matching the function model output schema
+ *
+ * @example
+ * ```typescript
+ * const handler: FunctionHandler<GenerateReportInput, GenerateReportOutput> = async (context, input) => {
+ *   const dataset = await context.database.datasets.get(input.datasetId);
+ *   const reportUrl = await generateReport(dataset);
+ *   return { reportUrl, status: 'completed' };
+ * };
+ * ```
+ *
+ * @public
+ */
+export type FunctionHandler<TInput = any, TOutput = any> = (
+  context: FunctionContext,
+  input: TInput
+) => Promise<TOutput>;
+
+// ============================================================================
+// Function Context
+// ============================================================================
+
+/**
+ * Execution context provided to function handlers
+ *
+ * @remarks
+ * Provides access to database operations, storage operations, user context,
+ * and utility functions during function execution.
+ *
+ * @public
+ */
+export interface FunctionContext {
+  /**
+   * Database client for CRUD operations
+   *
+   * @remarks
+   * Auto-generated database client based on schema models.
+   * Provides typed methods for all CRUD operations.
+   *
+   * @example
+   * ```typescript
+   * const user = await context.database.users.get(userId);
+   * await context.database.reports.create({ ... });
+   * ```
+   */
+  readonly database: DatabaseClient;
+
+  /**
+   * Storage client for blob operations
+   *
+   * @remarks
+   * Provides access to blob storage containers defined in backend configuration.
+   *
+   * @example
+   * ```typescript
+   * const url = await context.storage.blobs.upload('reports/report.pdf', data);
+   * const content = await context.storage.blobs.download(url);
+   * ```
+   */
+  readonly storage: StorageClient;
+
+  /**
+   * Current user context
+   *
+   * @remarks
+   * Contains authenticated user information from the request.
+   * Populated by authentication middleware.
+   */
+  readonly user: UserContext;
+
+  /**
+   * Utility functions
+   */
+  readonly utils: FunctionUtils;
+
+  /**
+   * Service registry for custom services
+   *
+   * @remarks
+   * Access to injected services like report generators, data validators,
+   * AI search, and other custom business logic services.
+   *
+   * @example
+   * ```typescript
+   * const report = await context.services.reportGenerator.generate(data);
+   * const isValid = await context.services.dataValidator.validate(input);
+   * const results = await context.services.aiSearch.search(query);
+   * ```
+   */
+  readonly services: ServiceRegistry;
+
+  /**
+   * Logging interface
+   *
+   * @remarks
+   * Provides methods for logging at different severity levels.
+   * Integrated with Azure Application Insights.
+   *
+   * @example
+   * ```typescript
+   * context.log('Processing started');
+   * context.log.info('User action completed');
+   * context.log.error('Failed to process', error);
+   * ```
+   */
+  readonly log: Logger;
+
+  /**
+   * Binding data from triggers
+   *
+   * @remarks
+   * Contains trigger-specific metadata. For HTTP triggers, this includes
+   * request metadata. For queue/service bus triggers, this includes message properties.
+   *
+   * @optional
+   * @example
+   * ```typescript
+   * const messageId = context.bindingData.messageId;
+   * const enqueuedTime = context.bindingData.enqueuedTimeUtc;
+   * ```
+   */
+  readonly bindingData?: Record<string, any>;
+
+  /**
+   * Unique execution identifier
+   *
+   * @remarks
+   * Unique ID for this function execution, useful for logging and tracing.
+   */
+  readonly executionId: string;
+
+  /**
+   * Execution start time (milliseconds since epoch)
+   */
+  readonly executionTime: number;
+
+  /**
+   * Azure Functions invocation ID
+   *
+   * @remarks
+   * The Azure Functions runtime invocation ID for correlation.
+   */
+  readonly invocationId: string;
 }
 
 /**
- * App Service Plan tier configuration
+ * Service registry for custom services
+ *
+ * @remarks
+ * Registry of custom services that can be injected into function context.
+ * Services are defined in the backend configuration and made available to all functions.
+ *
+ * @public
  */
-export interface PlanTier {
+export interface ServiceRegistry {
   /**
-   * SKU name
-   * - Y1: Consumption (serverless, pay-per-execution)
-   * - EP1/EP2/EP3: Elastic Premium (pre-warmed instances)
-   * - P1V2/P2V2/P3V2: Premium V2 (dedicated instances)
+   * Report generator service
+   * @optional
    */
-  readonly name: 'Y1' | 'EP1' | 'EP2' | 'EP3' | 'P1V2' | 'P2V2' | 'P3V2';
+  reportGenerator?: any;
 
   /**
-   * Tier name
+   * Data validator service
+   * @optional
    */
-  readonly tier: 'Dynamic' | 'ElasticPremium' | 'PremiumV2';
+  dataValidator?: any;
+
+  /**
+   * Data transformer service
+   * @optional
+   */
+  dataTransformer?: any;
+
+  /**
+   * AI search service
+   * @optional
+   */
+  aiSearch?: any;
+
+  /**
+   * Custom service registry
+   *
+   * @remarks
+   * Allows access to any custom service by name
+   */
+  [serviceName: string]: any;
 }
 
 /**
- * Configuration options for FunctionsApp component
+ * User context from authentication
+ *
+ * @public
  */
-export interface FunctionsAppProps {
+export interface UserContext {
   /**
-   * Name for the functions app (used for naming resources)
-   * @default Derived from construct ID
+   * User identifier
+   */
+  readonly id: string;
+
+  /**
+   * User email address
+   */
+  readonly email: string;
+
+  /**
+   * User roles/groups
+   */
+  readonly roles: string[];
+
+  /**
+   * User display name
+   * @optional
    */
   readonly name?: string;
 
   /**
-   * Function runtime (Node.js, Python, .NET, etc.)
-   * @default FunctionRuntime.NODE
+   * Custom claims from authentication provider
+   * @optional
    */
-  readonly runtime?: FunctionRuntime;
-
-  /**
-   * Runtime version
-   * - Node: '18', '20'
-   * - Python: '3.9', '3.10', '3.11'
-   * - .NET: '6.0', '7.0', '8.0'
-   * @default '18' (for Node.js)
-   */
-  readonly runtimeVersion?: string;
-
-  /**
-   * App Service Plan configuration
-   * @default Consumption plan (Y1/Dynamic)
-   */
-  readonly plan?: PlanTier;
-
-  /**
-   * Use an existing App Service Plan instead of creating new one
-   */
-  readonly existingPlan?: ServerFarms;
-
-  /**
-   * Global environment variables for all functions
-   */
-  readonly environment?: Record<string, string>;
-
-  /**
-   * Azure region for resources
-   * @default Inherited from parent stack
-   */
-  readonly location?: string;
-
-  /**
-   * Enable system-assigned managed identity
-   * @default true
-   */
-  readonly enableManagedIdentity?: boolean;
-
-  /**
-   * Enable Application Insights monitoring
-   * @default true
-   */
-  readonly enableMonitoring?: boolean;
-
-  /**
-   * Enable HTTPS only
-   * @default true
-   */
-  readonly httpsOnly?: boolean;
-
-  /**
-   * Custom tags for resources
-   */
-  readonly tags?: Record<string, string>;
+  readonly claims?: Record<string, any>;
 }
 
 /**
- * Common presets for function app configurations
+ * Utility functions available in function context
+ *
+ * @public
  */
-export const FunctionAppPresets = {
+export interface FunctionUtils {
   /**
-   * Serverless consumption plan (pay-per-execution)
-   * - Best for: Variable workloads, event-driven processing
-   * - Cost: Pay only for executions
-   * - Limitations: 5-minute timeout, cold starts
+   * Generate a unique ID with optional prefix
+   *
+   * @param prefix - Prefix for the ID (e.g., 'rpt' for report IDs)
+   * @returns Unique identifier string
+   *
+   * @example
+   * ```typescript
+   * const reportId = context.utils.generateId('rpt'); // 'rpt_abc123xyz'
+   * ```
    */
-  CONSUMPTION: {
-    plan: { name: 'Y1' as const, tier: 'Dynamic' as const },
-  },
+  generateId(prefix?: string): string;
 
   /**
-   * Elastic Premium plan (pre-warmed instances)
-   * - Best for: APIs requiring low latency, longer execution times
-   * - Features: No cold starts, VNet integration, unlimited execution time
-   * - Cost: Per-second billing for pre-warmed instances
+   * Current timestamp (milliseconds since epoch)
    */
-  PREMIUM_EP1: {
-    plan: { name: 'EP1' as const, tier: 'ElasticPremium' as const },
-  },
+  now(): number;
 
   /**
-   * Dedicated Premium V2 plan
-   * - Best for: Production workloads requiring predictable performance
-   * - Features: Dedicated compute, VNet integration
-   * - Cost: Fixed monthly cost
+   * Format a date to ISO string
    */
-  DEDICATED_P1V2: {
-    plan: { name: 'P1V2' as const, tier: 'PremiumV2' as const },
-  },
-} as const;
+  formatDate(date: Date): string;
+}
+
+/**
+ * Logging interface for function execution
+ *
+ * @remarks
+ * Provides structured logging capabilities integrated with Azure Application Insights.
+ * Supports multiple log levels and structured data.
+ *
+ * @public
+ */
+export interface Logger {
+  /**
+   * Log a message (default info level)
+   *
+   * @param message - The log message
+   * @param data - Optional structured data to log
+   */
+  (message: string, ...data: any[]): void;
+
+  /**
+   * Log an informational message
+   */
+  info(message: string, ...data: any[]): void;
+
+  /**
+   * Log a warning message
+   */
+  warn(message: string, ...data: any[]): void;
+
+  /**
+   * Log an error message
+   */
+  error(message: string, error?: Error, ...data: any[]): void;
+
+  /**
+   * Log a verbose/debug message
+   */
+  verbose(message: string, ...data: any[]): void;
+}
+
+// ============================================================================
+// Database Client
+// ============================================================================
+
+/**
+ * Database client for CRUD operations
+ *
+ * @remarks
+ * Auto-generated based on schema models. Provides typed methods for
+ * all CRUD models defined in the schema.
+ *
+ * @public
+ */
+export interface DatabaseClient {
+  /**
+   * Access model operations by model name
+   *
+   * @example
+   * ```typescript
+   * const user = await context.database.users.get(userId);
+   * const users = await context.database.users.list({ status: 'active' });
+   * await context.database.users.create({ email: 'user@example.com' });
+   * await context.database.users.update(userId, { name: 'New Name' });
+   * await context.database.users.delete(userId);
+   * ```
+   */
+  [modelName: string]: ModelOperations<any>;
+}
+
+/**
+ * CRUD operations for a model
+ *
+ * @typeParam T - The model type
+ * @public
+ */
+export interface ModelOperations<T> {
+  /**
+   * Get a single record by ID
+   */
+  get(id: string): Promise<T | null>;
+
+  /**
+   * List records with optional filtering
+   */
+  list(filter?: Partial<T>): Promise<T[]>;
+
+  /**
+   * Create a new record
+   */
+  create(data: Partial<T>): Promise<T>;
+
+  /**
+   * Update an existing record
+   */
+  update(id: string, data: Partial<T>): Promise<T>;
+
+  /**
+   * Delete a record
+   */
+  delete(id: string): Promise<void>;
+}
+
+// ============================================================================
+// Storage Client
+// ============================================================================
+
+/**
+ * Storage client for blob operations
+ *
+ * @public
+ */
+export interface StorageClient {
+  /**
+   * Blob storage operations
+   */
+  readonly blobs: BlobOperations;
+
+  /**
+   * File share operations (if configured)
+   * @optional
+   */
+  readonly files?: FileOperations;
+}
+
+/**
+ * Blob storage operations
+ *
+ * @public
+ */
+export interface BlobOperations {
+  /**
+   * Upload a blob
+   *
+   * @param path - Blob path within container
+   * @param data - Blob data (Buffer or string)
+   * @param options - Upload options
+   * @returns URL of uploaded blob
+   */
+  upload(path: string, data: Buffer | string, options?: UploadOptions): Promise<string>;
+
+  /**
+   * Download a blob
+   *
+   * @param url - Blob URL or path
+   * @returns Blob data as Buffer
+   */
+  download(url: string): Promise<Buffer>;
+
+  /**
+   * Delete a blob
+   *
+   * @param url - Blob URL or path
+   */
+  delete(url: string): Promise<void>;
+
+  /**
+   * Check if a blob exists
+   *
+   * @param url - Blob URL or path
+   */
+  exists(url: string): Promise<boolean>;
+}
+
+/**
+ * File share operations
+ *
+ * @public
+ */
+export interface FileOperations {
+  /**
+   * Upload a file
+   */
+  upload(path: string, data: Buffer | string): Promise<string>;
+
+  /**
+   * Download a file
+   */
+  download(path: string): Promise<Buffer>;
+
+  /**
+   * Delete a file
+   */
+  delete(path: string): Promise<void>;
+}
+
+/**
+ * Blob upload options
+ *
+ * @public
+ */
+export interface UploadOptions {
+  /**
+   * Content type (MIME type)
+   */
+  contentType?: string;
+
+  /**
+   * Cache control header
+   */
+  cacheControl?: string;
+
+  /**
+   * Custom metadata
+   */
+  metadata?: Record<string, string>;
+}
+
+// ============================================================================
+// Bindings
+// ============================================================================
+
+/**
+ * Output bindings configuration
+ *
+ * @remarks
+ * Define output bindings for storage, queues, event grid, etc.
+ *
+ * @public
+ */
+export interface BindingConfig {
+  /**
+   * Blob storage binding
+   * @optional
+   */
+  storage?: StorageBinding;
+
+  /**
+   * Queue binding
+   * @optional
+   */
+  queue?: QueueBinding;
+
+  /**
+   * Event Grid binding
+   * @optional
+   */
+  event?: EventBinding;
+
+  /**
+   * Service Bus binding
+   * @optional
+   */
+  serviceBus?: ServiceBusBinding;
+}
+
+/**
+ * Storage binding configuration
+ *
+ * @public
+ */
+export interface StorageBinding {
+  /**
+   * Binding type
+   */
+  readonly type: 'blob';
+
+  /**
+   * Container name
+   */
+  readonly container: string;
+
+  /**
+   * Blob path (supports template variables)
+   *
+   * @example
+   * ```typescript
+   * path: 'reports/{reportId}.pdf'
+   * ```
+   */
+  readonly path: string;
+
+  /**
+   * Connection string reference (defaults to primary storage account)
+   * @optional
+   */
+  readonly connection?: string;
+}
+
+/**
+ * Queue binding configuration
+ *
+ * @public
+ */
+export interface QueueBinding {
+  /**
+   * Binding type
+   */
+  readonly type: 'queue';
+
+  /**
+   * Queue name
+   */
+  readonly name: string;
+
+  /**
+   * Message to send (supports template variables)
+   * @optional
+   */
+  readonly message?: Record<string, any>;
+
+  /**
+   * Connection string reference (defaults to primary storage account)
+   * @optional
+   */
+  readonly connection?: string;
+}
+
+/**
+ * Event Grid binding configuration
+ *
+ * @public
+ */
+export interface EventBinding {
+  /**
+   * Binding type
+   */
+  readonly type: 'eventGrid';
+
+  /**
+   * Event Grid topic name
+   */
+  readonly topicName: string;
+
+  /**
+   * Event type
+   * @optional
+   */
+  readonly eventType?: string;
+
+  /**
+   * Event subject
+   * @optional
+   */
+  readonly subject?: string;
+}
+
+/**
+ * Service Bus binding configuration
+ *
+ * @public
+ */
+export interface ServiceBusBinding {
+  /**
+   * Binding type
+   */
+  readonly type: 'serviceBus';
+
+  /**
+   * Queue name (mutually exclusive with topicName)
+   * @optional
+   */
+  readonly queueName?: string;
+
+  /**
+   * Topic name (mutually exclusive with queueName)
+   * @optional
+   */
+  readonly topicName?: string;
+
+  /**
+   * Connection string reference
+   * @optional
+   */
+  readonly connection?: string;
+}
+
+// ============================================================================
+// Environment Configuration
+// ============================================================================
+
+/**
+ * Environment variables configuration
+ *
+ * @remarks
+ * Define required and optional environment variables with default values.
+ *
+ * @example
+ * ```typescript
+ * {
+ *   STORAGE_ACCOUNT: 'required',
+ *   MAX_FILE_SIZE: '100',
+ *   ENABLE_DEBUG: 'false'
+ * }
+ * ```
+ *
+ * @public
+ */
+export interface EnvironmentConfig {
+  /**
+   * Environment variable definitions
+   *
+   * @remarks
+   * - String value: Default value (variable is optional)
+   * - 'required': Variable must be set at runtime
+   */
+  [key: string]: string | 'required';
+}
+
+// ============================================================================
+// Monitoring Configuration
+// ============================================================================
+
+/**
+ * Monitoring and alerting configuration
+ *
+ * @public
+ */
+export interface MonitoringConfig {
+  /**
+   * Enable custom metrics collection
+   * @defaultValue false
+   */
+  readonly metrics?: boolean;
+
+  /**
+   * Enable distributed tracing
+   * @defaultValue false
+   */
+  readonly tracing?: boolean;
+
+  /**
+   * Alert rules
+   * @optional
+   */
+  readonly alerts?: AlertRule[];
+}
+
+/**
+ * Alert rule configuration
+ *
+ * @public
+ */
+export interface AlertRule {
+  /**
+   * Alert metric (executionTime, memoryUsage, failureRate)
+   */
+  readonly metric: 'executionTime' | 'memoryUsage' | 'failureRate' | string;
+
+  /**
+   * Threshold condition
+   */
+  readonly condition: 'greaterThan' | 'lessThan' | 'equals';
+
+  /**
+   * Threshold value
+   */
+  readonly value: number | Duration;
+
+  /**
+   * Alert severity
+   */
+  readonly severity: 'info' | 'warn' | 'error' | 'critical';
+
+  /**
+   * Email notification recipients
+   * @optional
+   */
+  readonly emails?: string[];
+
+  /**
+   * Actions to take when the alert triggers
+   * @optional
+   */
+  readonly actions?: readonly AlertAction[];
+}
+
+/**
+ * Mutable alert rule for building
+ * @internal
+ */
+export interface MutableAlertRule {
+  metric: 'executionTime' | 'memoryUsage' | 'failureRate' | string;
+  condition: 'greaterThan' | 'lessThan' | 'equals';
+  value: number | Duration;
+  severity?: 'info' | 'warn' | 'error' | 'critical';
+  emails?: string[];
+  actions?: AlertAction[];
+}
+
+/**
+ * Action to take when an alert is triggered
+ *
+ * @public
+ */
+export interface AlertAction {
+  /**
+   * The type of action
+   */
+  readonly type: 'email' | 'webhook' | 'sms';
+
+  /**
+   * The target for the action (email address, webhook URL, phone number)
+   */
+  readonly target: string;
+}
+
+// ============================================================================
+// Execution Context (Internal)
+// ============================================================================
+
+/**
+ * Internal execution context
+ *
+ * @remarks
+ * Used internally to create FunctionContext.
+ *
+ * @internal
+ */
+export interface ExecutionContext {
+  /**
+   * Execution ID
+   */
+  readonly executionId: string;
+
+  /**
+   * Execution start time
+   */
+  readonly executionTime: number;
+
+  /**
+   * Invocation ID
+   */
+  readonly invocationId: string;
+
+  /**
+   * Backend configuration
+   */
+  readonly backend?: any;
+}

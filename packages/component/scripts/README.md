@@ -67,7 +67,7 @@ app.http('create-ATAKORA_ENTITY_NAME_LOWER', {
   handler: async (request, context) => {
     // Your function logic here
     // Use ATAKORA_* tokens where dynamic values are needed
-  }
+  },
 });
 ```
 
@@ -126,27 +126,32 @@ const code = generatecreate({
 ## Benefits
 
 ### ✅ Full IDE Support
+
 - IntelliSense and autocomplete
 - Error highlighting
 - Go-to-definition
 - Refactoring tools
 
 ### ✅ Type Safety
+
 - Catch errors at compile time
 - Type checking for Azure Functions SDK
 - No runtime surprises
 
 ### ✅ Debuggable
+
 - Set breakpoints in TypeScript
 - Step through code logic
 - Test functions before templating
 
 ### ✅ Production Ready
+
 - Compiled and minified JavaScript
 - No runtime compilation overhead
 - Pre-validated code structure
 
 ### ✅ Maintainable
+
 - Clear separation of concerns
 - Easy to update function logic
 - Consistent patterns across operations

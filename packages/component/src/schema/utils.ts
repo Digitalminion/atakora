@@ -5,7 +5,7 @@
  */
 
 import type { FieldConfig, ModelConfig, ProcessedModel } from './types';
-import type { FieldBuilder } from './field-types';
+import type { BaseFieldBuilder } from './field-types';
 import type { CrudModelBuilder } from './crud-model';
 import type { EventModelBuilder } from './event-model';
 import type { FunctionModelBuilder } from './function-model';
@@ -35,9 +35,7 @@ export function processFields(fields: any): Record<string, FieldConfig> {
     if (fieldBuilder && typeof fieldBuilder === 'object' && '_build' in fieldBuilder) {
       processed[fieldName] = (fieldBuilder as any)._build();
     } else {
-      throw new Error(
-        `Invalid field builder for "${fieldName}". Use a.string(), a.number(), etc.`
-      );
+      throw new Error(`Invalid field builder for "${fieldName}". Use a.string(), a.number(), etc.`);
     }
   }
 
@@ -52,22 +50,23 @@ function validateFieldName(name: string): void {
     throw new Error('Field name cannot be empty');
   }
 
-  // Must start with letter
-  if (!/^[a-zA-Z]/.test(name)) {
-    throw new Error(`Field name "${name}" must start with a letter`);
-  }
-
-  // Can only contain letters, numbers, underscores
-  if (!/^[a-zA-Z0-9_]+$/.test(name)) {
-    throw new Error(
-      `Field name "${name}" can only contain letters, numbers, and underscores`
-    );
-  }
-
-  // Check reserved words
+  // Check reserved words first (these bypass normal naming rules)
   const reserved = ['constructor', 'prototype', '__proto__', 'toString', 'valueOf'];
   if (reserved.includes(name)) {
     throw new Error(`Field name "${name}" is a reserved word`);
+  }
+
+  // Must start with letter or underscore
+  if (!/^[a-zA-Z_]/.test(name)) {
+    throw new Error(`Field name "${name}" must start with a letter or underscore`);
+  }
+
+  // Can contain letters, numbers, underscores, hyphens, and dots
+  // This allows for flexibility in field naming, especially for Cosmos DB
+  if (!/^[a-zA-Z_][a-zA-Z0-9_\-\.]*$/.test(name)) {
+    throw new Error(
+      `Field name "${name}" can only contain letters, numbers, underscores, hyphens, and dots`
+    );
   }
 }
 
@@ -105,9 +104,7 @@ export function processModels(models: any): Record<string, ProcessedModel> {
  */
 function processModel(name: string, builder: any): ProcessedModel {
   if (!builder || typeof builder !== 'object' || !builder._config) {
-    throw new Error(
-      `Invalid model builder for "${name}". Use c.model(), e.model(), or f.model()`
-    );
+    throw new Error(`Invalid model builder for "${name}". Use c.model(), e.model(), or f.model()`);
   }
 
   const config: ModelConfig = builder._config;
@@ -209,7 +206,7 @@ export function validateSchemaDefinition(definition: any): void {
 
   // Check for duplicate model names (case-insensitive)
   const modelNames = Object.keys(definition.schema);
-  const lowerCaseNames = modelNames.map(n => n.toLowerCase());
+  const lowerCaseNames = modelNames.map((n) => n.toLowerCase());
   const uniqueNames = new Set(lowerCaseNames);
 
   if (uniqueNames.size !== modelNames.length) {
@@ -224,8 +221,8 @@ export function validateSchemaDefinition(definition: any): void {
 /**
  * Check if value is a field builder
  */
-export function isFieldBuilder(value: any): value is FieldBuilder {
-  return value && typeof value === 'object' && '_build' in value;
+export function isFieldBuilder(value: any): value is BaseFieldBuilder<any, any> {
+  return !!value && typeof value === 'object' && '_build' in value && !('_config' in value);
 }
 
 /**
@@ -233,10 +230,7 @@ export function isFieldBuilder(value: any): value is FieldBuilder {
  */
 export function isCrudModel(value: any): value is CrudModelBuilder {
   return (
-    value &&
-    typeof value === 'object' &&
-    '_config' in value &&
-    value._config.type === 'crud'
+    !!value && typeof value === 'object' && '_config' in value && value._config.type === 'crud'
   );
 }
 
@@ -245,10 +239,7 @@ export function isCrudModel(value: any): value is CrudModelBuilder {
  */
 export function isEventModel(value: any): value is EventModelBuilder {
   return (
-    value &&
-    typeof value === 'object' &&
-    '_config' in value &&
-    value._config.type === 'event'
+    !!value && typeof value === 'object' && '_config' in value && value._config.type === 'event'
   );
 }
 
@@ -257,9 +248,6 @@ export function isEventModel(value: any): value is EventModelBuilder {
  */
 export function isFunctionModel(value: any): value is FunctionModelBuilder {
   return (
-    value &&
-    typeof value === 'object' &&
-    '_config' in value &&
-    value._config.type === 'function'
+    !!value && typeof value === 'object' && '_config' in value && value._config.type === 'function'
   );
 }

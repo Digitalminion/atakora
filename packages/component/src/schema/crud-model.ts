@@ -9,6 +9,7 @@ import type { CrudModelConfig, AuthorizationRule } from './types';
 import type { AuthorizationRulesFn } from './authorization';
 import { AuthorizationBuilder } from './authorization';
 import { processFields } from './utils';
+import { registerRefValidation } from './ref-validation';
 
 // ============================================================================
 // CRUD Model Builder
@@ -44,6 +45,7 @@ import { processFields } from './utils';
  */
 export class CrudModelBuilder<T = any> {
   public readonly _config: CrudModelConfig<T>;
+  private modelName?: string;
 
   constructor(fields: T) {
     this._config = {
@@ -55,6 +57,16 @@ export class CrudModelBuilder<T = any> {
       timestamps: false,
       softDelete: false,
     };
+  }
+
+  /**
+   * Set model name (used for ref validation)
+   *
+   * @internal
+   */
+  _setModelName(name: string): this {
+    this.modelName = name;
+    return this;
   }
 
   /**
@@ -72,7 +84,17 @@ export class CrudModelBuilder<T = any> {
    */
   authorization(rules: AuthorizationRulesFn): this {
     const builder = new AuthorizationBuilder();
-    this._config.authorization = rules(builder);
+    const rawRules = rules(builder);
+
+    // Process rules - convert any rule builders to rules
+    this._config.authorization = rawRules.map((rule) => {
+      // If it's a rule builder (has _build method), convert it
+      if (rule && typeof rule === 'object' && '_build' in rule) {
+        return (rule as any)._build();
+      }
+      return rule;
+    });
+
     return this;
   }
 
@@ -137,10 +159,131 @@ export class CrudModelBuilder<T = any> {
   }
 
   /**
+   * Validate model configuration
+   *
+   * @internal
+   * Checks for invalid configurations and throws descriptive errors
+   */
+  private validate(): void {
+    const fields = this._config.fields;
+    const fieldCount = Object.keys(fields).length;
+
+    // Validate against reserved Cosmos DB field names
+    const reservedFields = ['__typename', '_id', '_etag', '_rid', '_self', '_ts', '_attachments'];
+    for (const fieldName of Object.keys(fields)) {
+      if (reservedFields.includes(fieldName)) {
+        throw new Error(
+          `Field name "${fieldName}" is reserved for Cosmos DB system fields. ` +
+            `Reserved names: ${reservedFields.join(', ')}`
+        );
+      }
+    }
+
+    // Check if all fields are computed or readonly (no real data fields)
+    const hasNonComputedFields = Object.values(fields).some(
+      (field) => !field.isComputed && !field.isReadOnly
+    );
+
+    // Validate partition key exists in fields (skip for empty models or computed-only models)
+    if (
+      fieldCount > 0 &&
+      hasNonComputedFields &&
+      this._config.partitionKey &&
+      !fields[this._config.partitionKey]
+    ) {
+      throw new Error(
+        `Partition key field "${this._config.partitionKey}" does not exist in model. ` +
+          `Available fields: ${Object.keys(fields).join(', ')}`
+      );
+    }
+
+    // Validate index fields exist
+    for (const indexField of this._config.indexes) {
+      if (!fields[indexField]) {
+        throw new Error(
+          `Index field "${indexField}" does not exist in model. ` +
+            `Available fields: ${Object.keys(fields).join(', ')}`
+        );
+      }
+    }
+
+    // Validate authorization field references
+    for (const rule of this._config.authorization) {
+      if (rule.type === 'owner' && 'field' in rule) {
+        const ownerField = rule.field;
+        if (ownerField && !fields[ownerField]) {
+          throw new Error(
+            `Authorization owner field "${ownerField}" does not exist in model. ` +
+              `Available fields: ${Object.keys(fields).join(', ')}`
+          );
+        }
+      }
+    }
+
+    // Validate soft delete compatibility with nullable fields
+    if (this._config.softDelete) {
+      // When soft delete is enabled, we'll add a deletedAt field automatically
+      // No specific validation needed here, but we could check for conflicts
+    }
+
+    // Validate timestamps compatibility
+    if (this._config.timestamps) {
+      // Check if user already defined createdAt or updatedAt
+      if (fields['createdAt'] && !fields['createdAt'].isReadOnly) {
+        console.warn(
+          'Model has timestamps enabled and defines a "createdAt" field. ' +
+            'Consider marking it as .readOnly() to prevent manual updates.'
+        );
+      }
+      if (fields['updatedAt'] && !fields['updatedAt'].isReadOnly) {
+        console.warn(
+          'Model has timestamps enabled and defines an "updatedAt" field. ' +
+            'Consider marking it as .readOnly() to prevent manual updates.'
+        );
+      }
+    }
+
+    // Validate field configurations and register ref fields
+    for (const [fieldName, fieldConfig] of Object.entries(fields)) {
+      try {
+        // Field validation happens in the field builder's _build() method
+        // which is already called by processFields
+
+        // Register ref field validations for deferred checking
+        if (fieldConfig.type === 'ref') {
+          const refConfig = fieldConfig as any;
+          if (this.modelName) {
+            registerRefValidation(
+              this.modelName,
+              fieldName,
+              refConfig.modelName,
+              refConfig.onDelete
+            );
+          }
+        }
+      } catch (error: any) {
+        throw new Error(`Field "${fieldName}" validation failed: ${error.message}`);
+      }
+    }
+
+    // Check for reserved field names
+    const reservedFieldNames = ['__typename', '_id', '_etag'];
+    for (const fieldName of Object.keys(fields)) {
+      if (reservedFieldNames.includes(fieldName)) {
+        throw new Error(
+          `Field name "${fieldName}" is reserved and cannot be used. ` +
+            `Reserved names: ${reservedFieldNames.join(', ')}`
+        );
+      }
+    }
+  }
+
+  /**
    * @internal
    * Build final configuration
    */
   _build(): CrudModelConfig<T> {
+    this.validate();
     return { ...this._config };
   }
 }

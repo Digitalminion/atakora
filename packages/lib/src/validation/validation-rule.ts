@@ -85,7 +85,10 @@ export abstract class BaseValidationRule<TResource = any> implements ValidationR
     public readonly resourceTypes?: string[]
   ) {}
 
-  abstract validate(resource: TResource, context?: ValidationContext): ValidationResult | ValidationResult[];
+  abstract validate(
+    resource: TResource,
+    context?: ValidationContext
+  ): ValidationResult | ValidationResult[];
 
   condition?(resource: TResource, context?: ValidationContext): boolean {
     return true;

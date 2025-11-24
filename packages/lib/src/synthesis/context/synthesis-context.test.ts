@@ -105,21 +105,13 @@ describe('SynthesisContext', () => {
 
     it('should throw error if current template not in metadata', () => {
       expect(() => {
-        new SynthesisContext(
-          'NonExistent.json',
-          resourceTemplates,
-          templateMetadata
-        );
+        new SynthesisContext('NonExistent.json', resourceTemplates, templateMetadata);
       }).toThrowError(/not found in template metadata/);
     });
 
     it('should list available templates in error message', () => {
       try {
-        new SynthesisContext(
-          'NonExistent.json',
-          resourceTemplates,
-          templateMetadata
-        );
+        new SynthesisContext('NonExistent.json', resourceTemplates, templateMetadata);
         expect.fail('Should have thrown error');
       } catch (error: any) {
         expect(error.message).toContain('Foundation-storage.json');
@@ -250,10 +242,7 @@ describe('SynthesisContext', () => {
         templateMetadata
       );
 
-      const ref = context.getCrossTemplateReference(
-        'cosmosDb1',
-        'properties.documentEndpoint'
-      );
+      const ref = context.getCrossTemplateReference('cosmosDb1', 'properties.documentEndpoint');
 
       expect(ref).toBe(
         "[reference(resourceId('Microsoft.Resources/deployments', 'foundation-data-deployment')).outputs.cosmosDb1_properties_documentEndpoint.value]"
@@ -356,11 +345,7 @@ describe('SynthesisContext', () => {
     });
 
     it('should return empty array if no resources in template', () => {
-      const context = new SynthesisContext(
-        'main.json',
-        resourceTemplates,
-        templateMetadata
-      );
+      const context = new SynthesisContext('main.json', resourceTemplates, templateMetadata);
 
       const resources = context.getResourcesInCurrentTemplate();
 
@@ -399,11 +384,7 @@ describe('SynthesisContext', () => {
     });
 
     it('should return main template metadata', () => {
-      const context = new SynthesisContext(
-        'main.json',
-        resourceTemplates,
-        templateMetadata
-      );
+      const context = new SynthesisContext('main.json', resourceTemplates, templateMetadata);
 
       const metadata = context.getCurrentTemplateMetadata();
 
@@ -420,15 +401,9 @@ describe('SynthesisContext', () => {
         templateMetadata
       );
 
-      expect(context.getResourceTemplate('storageAccount1')).toBe(
-        'Foundation-storage.json'
-      );
-      expect(context.getResourceTemplate('cosmosDb1')).toBe(
-        'Foundation-data.json'
-      );
-      expect(context.getResourceTemplate('functionApp1')).toBe(
-        'Compute-functions.json'
-      );
+      expect(context.getResourceTemplate('storageAccount1')).toBe('Foundation-storage.json');
+      expect(context.getResourceTemplate('cosmosDb1')).toBe('Foundation-data.json');
+      expect(context.getResourceTemplate('functionApp1')).toBe('Compute-functions.json');
     });
 
     it('should throw error for unknown resource', () => {
@@ -537,10 +512,7 @@ describe('SynthesisContext', () => {
         templateMetadata
       );
 
-      const ref = context.getCrossTemplateReference(
-        'cosmosDb1',
-        'properties.documentEndpoint'
-      );
+      const ref = context.getCrossTemplateReference('cosmosDb1', 'properties.documentEndpoint');
 
       expect(ref).toContain('cosmosDb1_properties_documentEndpoint');
     });
@@ -552,10 +524,7 @@ describe('SynthesisContext', () => {
         templateMetadata
       );
 
-      const ref = context.getCrossTemplateReference(
-        'cosmosDb1',
-        'properties.locations[0].name'
-      );
+      const ref = context.getCrossTemplateReference('cosmosDb1', 'properties.locations[0].name');
 
       // Dots and brackets should be replaced with underscores
       expect(ref).toContain('cosmosDb1_properties_locations_0__name');
@@ -599,11 +568,7 @@ describe('SynthesisContext', () => {
     });
 
     it('should handle main template orchestrating linked templates', () => {
-      const context = new SynthesisContext(
-        'main.json',
-        resourceTemplates,
-        templateMetadata
-      );
+      const context = new SynthesisContext('main.json', resourceTemplates, templateMetadata);
 
       const metadata = context.getCurrentTemplateMetadata();
 
@@ -619,11 +584,7 @@ describe('SynthesisContext', () => {
   describe('edge cases', () => {
     it('should handle empty resource templates', () => {
       const emptyResourceTemplates = new Map<string, string>();
-      const context = new SynthesisContext(
-        'main.json',
-        emptyResourceTemplates,
-        templateMetadata
-      );
+      const context = new SynthesisContext('main.json', emptyResourceTemplates, templateMetadata);
 
       expect(context.getResourcesInCurrentTemplate()).toHaveLength(0);
       expect(context.isInSameTemplate('anyResource')).toBe(false);
@@ -643,11 +604,7 @@ describe('SynthesisContext', () => {
         ],
       ]);
 
-      const context = new SynthesisContext(
-        'minimal.json',
-        new Map(),
-        minimalMetadata
-      );
+      const context = new SynthesisContext('minimal.json', new Map(), minimalMetadata);
 
       const metadata = context.getCurrentTemplateMetadata();
       expect(metadata.fileName).toBe('minimal.json');

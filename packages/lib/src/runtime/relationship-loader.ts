@@ -111,7 +111,7 @@ class BatchLoader<TKey, TValue> {
    * Load multiple values by keys.
    */
   async loadMany(keys: TKey[]): Promise<Array<TValue | TValue[] | undefined>> {
-    return Promise.all(keys.map(key => this.load(key)));
+    return Promise.all(keys.map((key) => this.load(key)));
   }
 
   /**
@@ -126,7 +126,7 @@ class BatchLoader<TKey, TValue> {
     this.batchTimer = null;
 
     try {
-      const keys = batch.map(item => item.key);
+      const keys = batch.map((item) => item.key);
       const results = await this.loaderFn(keys);
 
       // Cache and resolve
@@ -376,7 +376,7 @@ export class RelationshipLoader<TSchema extends SchemaDefinition<any>> {
 
     // Find matching target type
     const targetSchema = relationship.targets.find(
-      target => target.toLowerCase() === typeValue.toLowerCase()
+      (target) => target.toLowerCase() === typeValue.toLowerCase()
     );
 
     if (!targetSchema) {
@@ -440,7 +440,7 @@ export class RelationshipLoader<TSchema extends SchemaDefinition<any>> {
     const result = { ...record };
 
     await Promise.all(
-      relationshipNames.map(async name => {
+      relationshipNames.map(async (name) => {
         result[name] = await this.load(name, record);
       })
     );
@@ -462,7 +462,7 @@ export class RelationshipLoader<TSchema extends SchemaDefinition<any>> {
    * ```
    */
   async loadManyForRecords(relationshipNames: string[], records: any[]): Promise<any[]> {
-    return Promise.all(records.map(record => this.loadMany(relationshipNames, record)));
+    return Promise.all(records.map((record) => this.loadMany(relationshipNames, record)));
   }
 
   /**
@@ -519,11 +519,7 @@ export class RelationshipLoader<TSchema extends SchemaDefinition<any>> {
    * });
    * ```
    */
-  registerLoader(
-    targetSchema: string,
-    foreignKey: string,
-    loaderFn: DataLoaderFn<any, any>
-  ): void {
+  registerLoader(targetSchema: string, foreignKey: string, loaderFn: DataLoaderFn<any, any>): void {
     const loaderKey = `${targetSchema}:${foreignKey}`;
     const loader = new BatchLoader(loaderFn, this.context.batchOptions);
     this.loaders.set(loaderKey, loader);

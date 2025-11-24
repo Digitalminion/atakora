@@ -1,5 +1,9 @@
 import { BaseValidationRule, ValidationContext } from '../validation-rule';
-import { ValidationResult, ValidationResultBuilder, ValidationSeverity } from '../validation-result';
+import {
+  ValidationResult,
+  ValidationResultBuilder,
+  ValidationSeverity,
+} from '../validation-result';
 import {
   validateLength,
   validatePattern,
@@ -11,7 +15,12 @@ import {
   validateEndsWith,
   collectResults,
 } from '../common-validators';
-import { isValidCIDR, isWithinCIDR, cidrsOverlap, isValidPortRange } from '../../core/validation/validation-helpers';
+import {
+  isValidCIDR,
+  isWithinCIDR,
+  cidrsOverlap,
+  isValidPortRange,
+} from '../../core/validation/validation-helpers';
 
 /**
  * Validates Virtual Network address space format
@@ -27,7 +36,8 @@ export class VNetAddressSpaceValidator extends BaseValidationRule {
   }
 
   validate(resource: any, context?: ValidationContext): ValidationResult | ValidationResult[] {
-    const addressSpace = resource.properties?.addressSpace?.addressPrefixes?.[0] || resource.addressSpace;
+    const addressSpace =
+      resource.properties?.addressSpace?.addressPrefixes?.[0] || resource.addressSpace;
 
     if (!addressSpace) {
       return ValidationResultBuilder.error(this.name)
@@ -65,9 +75,7 @@ export class VNetNameValidator extends BaseValidationRule {
     const name = resource.name || resource.virtualNetworkName;
 
     if (!name) {
-      return ValidationResultBuilder.error(this.name)
-        .withMessage('VNet name is required')
-        .build();
+      return ValidationResultBuilder.error(this.name).withMessage('VNet name is required').build();
     }
 
     const results: ValidationResult[] = [];
@@ -156,7 +164,11 @@ export class SubnetOverlapValidator extends BaseValidationRule {
 
     const overlapping = existingSubnets.filter((subnet: any) => {
       const existingPrefix = subnet.properties?.addressPrefix || subnet.addressPrefix;
-      return existingPrefix && existingPrefix !== subnetPrefix && cidrsOverlap(subnetPrefix, existingPrefix);
+      return (
+        existingPrefix &&
+        existingPrefix !== subnetPrefix &&
+        cidrsOverlap(subnetPrefix, existingPrefix)
+      );
     });
 
     if (overlapping.length > 0) {
@@ -232,7 +244,9 @@ export class PrivateEndpointSubnetPoliciesValidator extends BaseValidationRule {
 
     if (policies !== 'Disabled') {
       return ValidationResultBuilder.error(this.name)
-        .withMessage('Subnet must have privateEndpointNetworkPolicies set to "Disabled" for private endpoints')
+        .withMessage(
+          'Subnet must have privateEndpointNetworkPolicies set to "Disabled" for private endpoints'
+        )
         .withSuggestion('Set privateEndpointNetworkPolicies: "Disabled" on the subnet')
         .withDetails('This must be configured before creating private endpoints')
         .build();
@@ -295,7 +309,13 @@ export class NSGPriorityRangeValidator extends BaseValidationRule {
       const priority = rule.priority || rule.properties?.priority;
       const ruleName = rule.name || `rule-${index}`;
 
-      const rangeResult = validateRange(priority, 100, 4096, `Priority for rule '${ruleName}'`, this.name);
+      const rangeResult = validateRange(
+        priority,
+        100,
+        4096,
+        `Priority for rule '${ruleName}'`,
+        this.name
+      );
       if (rangeResult) {
         results.push(rangeResult);
       }
@@ -394,7 +414,8 @@ export class PublicIPAllocationMethodValidator extends BaseValidationRule {
 
   validate(resource: any, context?: ValidationContext): ValidationResult | ValidationResult[] {
     const sku = resource.sku?.name || resource.sku;
-    const allocationMethod = resource.properties?.publicIPAllocationMethod || resource.publicIPAllocationMethod;
+    const allocationMethod =
+      resource.properties?.publicIPAllocationMethod || resource.publicIPAllocationMethod;
 
     if (sku === 'Standard' && allocationMethod !== 'Static') {
       return ValidationResultBuilder.error(this.name)
@@ -427,7 +448,9 @@ export class PrivateDnsZoneLocationValidator extends BaseValidationRule {
       return ValidationResultBuilder.error(this.name)
         .withMessage(`Private DNS Zone location must be 'global', not '${location}'`)
         .withSuggestion('Set location: "global" or omit the location property')
-        .withDetails('Private DNS Zones are global resources and do not belong to a specific region')
+        .withDetails(
+          'Private DNS Zones are global resources and do not belong to a specific region'
+        )
         .build();
     }
 
@@ -486,7 +509,9 @@ export class PrivateEndpointGroupIdValidator extends BaseValidationRule {
   }
 
   validate(resource: any, context?: ValidationContext): ValidationResult | ValidationResult[] {
-    const groupIds = resource.properties?.privateLinkServiceConnections?.[0]?.properties?.groupIds || resource.groupIds;
+    const groupIds =
+      resource.properties?.privateLinkServiceConnections?.[0]?.properties?.groupIds ||
+      resource.groupIds;
     const targetResourceType = context?.targetResourceType;
 
     if (!groupIds || groupIds.length === 0) {

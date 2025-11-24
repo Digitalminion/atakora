@@ -1,5 +1,9 @@
 import { BaseValidationRule, ValidationContext } from '../validation-rule';
-import { ValidationResult, ValidationResultBuilder, ValidationSeverity } from '../validation-result';
+import {
+  ValidationResult,
+  ValidationResultBuilder,
+  ValidationSeverity,
+} from '../validation-result';
 import {
   validateLength,
   validatePattern,

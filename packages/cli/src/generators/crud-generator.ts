@@ -154,7 +154,10 @@ export class CrudGenerator {
     // Replace all placeholders
     for (const [key, value] of Object.entries(replacements)) {
       if (value !== undefined) {
-        content = content.replace(new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), value);
+        content = content.replace(
+          new RegExp(key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+          value
+        );
       }
     }
 

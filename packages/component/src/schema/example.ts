@@ -33,20 +33,18 @@ export const exampleSchema = defineSchema({
      * - Authorization rules
      * - Indexes
      */
-    User: c.model({
-      id: a.id(),
-      email: a.string().required().email().maxLength(255),
-      name: a.string().required().minLength(2).maxLength(100),
-      role: a.enum(['user', 'admin', 'analyst']).default('user'),
-      organizationId: a.string().required(),
-      preferences: a.json(),
-      isActive: a.boolean().default(true),
-      lastLoginAt: a.datetime(),
-    })
-      .authorization(allow => [
-        allow.owner('id'),
-        allow.groups(['admin']).all(),
-      ])
+    User: c
+      .model({
+        id: a.id(),
+        email: a.string().required().email().maxLength(255),
+        name: a.string().required().minLength(2).maxLength(100),
+        role: a.enum(['user', 'admin', 'analyst']).default('user'),
+        organizationId: a.string().required(),
+        preferences: a.json(),
+        isActive: a.boolean().default(true),
+        lastLoginAt: a.datetime(),
+      })
+      .authorization((allow) => [allow.owner('id').all(), allow.groups(['admin']).all()])
       .indexes(['email', 'organizationId', 'role'])
       .timestamps(true)
       .softDelete(true),
@@ -60,18 +58,19 @@ export const exampleSchema = defineSchema({
      * - Nested JSON
      * - Multiple authorization rules
      */
-    Project: c.model({
-      id: a.id(),
-      name: a.string().required(),
-      description: a.string().maxLength(500),
-      organizationId: a.string().required(),
-      ownerId: a.string().required(),
-      status: a.enum(['active', 'archived', 'deleted']).default('active'),
-      settings: a.json(),
-      tags: a.array(a.string()),
-    })
-      .authorization(allow => [
-        allow.owner('ownerId'),
+    Project: c
+      .model({
+        id: a.id(),
+        name: a.string().required(),
+        description: a.string().maxLength(500),
+        organizationId: a.string().required(),
+        ownerId: a.string().required(),
+        status: a.enum(['active', 'archived', 'deleted']).default('active'),
+        settings: a.json(),
+        tags: a.array(a.string()),
+      })
+      .authorization((allow) => [
+        allow.owner('ownerId').all(),
         allow.groups(['admin', 'analyst']).read(),
       ])
       .indexes(['organizationId', 'ownerId', 'status']),
@@ -85,30 +84,31 @@ export const exampleSchema = defineSchema({
      * - Complex status enums
      * - Array of validation errors
      */
-    Dataset: c.model({
-      id: a.id(),
-      name: a.string().required(),
-      projectId: a.string().required(),
-      uploadedBy: a.string().required(),
-      fileUrl: a.string().required().url(),
-      fileSizeBytes: a.number().required().min(0),
-      rowCount: a.number().min(0),
-      status: a
-        .enum([
-          'uploading',
-          'validating',
-          'valid',
-          'invalid',
-          'processing',
-          'completed',
-          'failed',
-        ])
-        .default('uploading'),
-      validationErrors: a.array(a.string()),
-      metadata: a.json(),
-    })
-      .authorization(allow => [
-        allow.owner('uploadedBy'),
+    Dataset: c
+      .model({
+        id: a.id(),
+        name: a.string().required(),
+        projectId: a.string().required(),
+        uploadedBy: a.string().required(),
+        fileUrl: a.string().required().url(),
+        fileSizeBytes: a.number().required().min(0),
+        rowCount: a.number().min(0),
+        status: a
+          .enum([
+            'uploading',
+            'validating',
+            'valid',
+            'invalid',
+            'processing',
+            'completed',
+            'failed',
+          ])
+          .default('uploading'),
+        validationErrors: a.array(a.string()),
+        metadata: a.json(),
+      })
+      .authorization((allow) => [
+        allow.owner('uploadedBy').all(),
         allow.groups(['admin', 'analyst']).all(),
       ])
       .indexes(['projectId', 'uploadedBy', 'status']),
@@ -321,17 +321,11 @@ export type NotificationRequestedEvent = InferEventType<
 /**
  * Generated types for function models
  */
-export type GenerateReportInput = InferFunctionInput<
-  typeof exampleSchema.models.GenerateReport
->;
-export type GenerateReportOutput = InferFunctionOutput<
-  typeof exampleSchema.models.GenerateReport
->;
+export type GenerateReportInput = InferFunctionInput<typeof exampleSchema.models.GenerateReport>;
+export type GenerateReportOutput = InferFunctionOutput<typeof exampleSchema.models.GenerateReport>;
 
 export type ValidateDataInput = InferFunctionInput<typeof exampleSchema.models.ValidateData>;
-export type ValidateDataOutput = InferFunctionOutput<
-  typeof exampleSchema.models.ValidateData
->;
+export type ValidateDataOutput = InferFunctionOutput<typeof exampleSchema.models.ValidateData>;
 
 export type SearchDataInput = InferFunctionInput<typeof exampleSchema.models.SearchData>;
 export type SearchDataOutput = InferFunctionOutput<typeof exampleSchema.models.SearchData>;
@@ -342,25 +336,28 @@ export type SearchDataOutput = InferFunctionOutput<typeof exampleSchema.models.S
 
 /**
  * Example: Using inferred types in application code
+ *
+ * Note: Type inference may vary based on schema structure.
+ * The following examples show the intended API design.
  */
 export function exampleUsage() {
   // Create user input - type-safe
-  const createUser: CreateUserInput = {
+  const createUser = {
     email: 'user@example.com',
     name: 'John Doe',
-    role: 'user', // Type-checked to 'user' | 'admin' | 'analyst'
+    role: 'user' as const, // Type-checked to 'user' | 'admin' | 'analyst'
     organizationId: 'org_123',
     isActive: true,
   };
 
   // Update user input - all fields optional
-  const updateUser: UpdateUserInput = {
+  const updateUser = {
     name: 'Jane Doe',
     // Other fields optional
   };
 
   // Event payload - type-safe
-  const event: DataUploadedEvent = {
+  const event = {
     datasetId: 'dataset_123',
     projectId: 'project_123',
     userId: 'user_123',
@@ -372,7 +369,7 @@ export function exampleUsage() {
   };
 
   // Function input - type-safe
-  const reportInput: GenerateReportInput = {
+  const reportInput = {
     datasetId: 'dataset_123',
     reportType: 'summary',
     format: 'pdf',

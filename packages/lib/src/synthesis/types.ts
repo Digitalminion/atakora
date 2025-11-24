@@ -370,7 +370,13 @@ export interface ResourceMetadata {
    * @example "compute"  // Function app should go in compute template
    * @example "any"  // RBAC assignment can go anywhere
    */
-  readonly templatePreference?: 'foundation' | 'compute' | 'application' | 'security' | 'data' | 'any';
+  readonly templatePreference?:
+    | 'foundation'
+    | 'compute'
+    | 'application'
+    | 'security'
+    | 'data'
+    | 'any';
 
   /**
    * Resource-specific metadata for assignment decisions and optimization.
@@ -1025,7 +1031,9 @@ export interface TemplateAssignmentOptions {
    * }
    * ```
    */
-  readonly customGrouping?: (metadata: readonly ResourceMetadata[]) => ReadonlyMap<string, readonly string[]>;
+  readonly customGrouping?: (
+    metadata: readonly ResourceMetadata[]
+  ) => ReadonlyMap<string, readonly string[]>;
 }
 
 // ============================================================================

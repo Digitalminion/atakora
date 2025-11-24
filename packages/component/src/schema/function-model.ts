@@ -67,7 +67,17 @@ export class FunctionModelBuilder<TInput = any, TOutput = any> {
    */
   authorization(rules: AuthorizationRulesFn): this {
     const builder = new AuthorizationBuilder();
-    this._config.authorization = rules(builder);
+    const rawRules = rules(builder);
+
+    // Process rules - convert any rule builders to rules
+    this._config.authorization = rawRules.map((rule) => {
+      // If it's a rule builder (has _build method), convert it
+      if (rule && typeof rule === 'object' && '_build' in rule) {
+        return (rule as any)._build();
+      }
+      return rule;
+    });
+
     return this;
   }
 

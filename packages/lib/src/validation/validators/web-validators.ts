@@ -1,5 +1,9 @@
 import { BaseValidationRule, ValidationContext } from '../validation-rule';
-import { ValidationResult, ValidationResultBuilder, ValidationSeverity } from '../validation-result';
+import {
+  ValidationResult,
+  ValidationResultBuilder,
+  ValidationSeverity,
+} from '../validation-result';
 import {
   validateLength,
   validatePattern,
@@ -199,11 +203,7 @@ export class AppServicePlanZoneRedundancyValidator extends BaseValidationRule {
     }
 
     // Recommend zone redundancy for production
-    if (
-      !zoneRedundant &&
-      context?.environment === 'production' &&
-      sku?.name?.startsWith('P')
-    ) {
+    if (!zoneRedundant && context?.environment === 'production' && sku?.name?.startsWith('P')) {
       return ValidationResultBuilder.warning(this.name)
         .withMessage('Production App Service Plan without zone redundancy')
         .withSuggestion('Enable zoneRedundant for high availability')
@@ -283,9 +283,7 @@ export class FunctionAppStorageValidator extends BaseValidationRule {
     }
 
     const appSettings = resource.properties?.siteConfig?.appSettings || [];
-    const azureWebJobsStorage = appSettings.find(
-      (s: any) => s.name === 'AzureWebJobsStorage'
-    );
+    const azureWebJobsStorage = appSettings.find((s: any) => s.name === 'AzureWebJobsStorage');
 
     if (!azureWebJobsStorage) {
       return ValidationResultBuilder.error(this.name)
@@ -327,9 +325,7 @@ export class FunctionAppRuntimeValidator extends BaseValidationRule {
     }
 
     const appSettings = resource.properties?.siteConfig?.appSettings || [];
-    const runtimeVersion = appSettings.find(
-      (s: any) => s.name === 'FUNCTIONS_EXTENSION_VERSION'
-    );
+    const runtimeVersion = appSettings.find((s: any) => s.name === 'FUNCTIONS_EXTENSION_VERSION');
 
     if (!runtimeVersion) {
       return ValidationResultBuilder.warning(this.name)
@@ -385,12 +381,7 @@ export class FunctionAppAlwaysOnValidator extends BaseValidationRule {
     }
 
     // Recommend always-on for non-consumption plans
-    if (
-      !alwaysOn &&
-      planSku &&
-      planSku !== 'Y1' &&
-      context?.environment === 'production'
-    ) {
+    if (!alwaysOn && planSku && planSku !== 'Y1' && context?.environment === 'production') {
       return ValidationResultBuilder.warning(this.name)
         .withMessage('Always-on is disabled on non-consumption plan')
         .withSuggestion('Enable always-on to prevent cold starts')

@@ -259,9 +259,7 @@ export class AzureExtensionsHandler {
     lines.push(`/**`);
     lines.push(` * Type guard for ${typeName}.`);
     lines.push(` */`);
-    lines.push(
-      `export function is${typeName}(value: unknown): value is ${typeName} {`
-    );
+    lines.push(`export function is${typeName}(value: unknown): value is ${typeName} {`);
     lines.push(`  return (`);
     lines.push(`    typeof value === 'object' &&`);
     lines.push(`    value !== null &&`);

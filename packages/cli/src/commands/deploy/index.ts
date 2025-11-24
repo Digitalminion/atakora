@@ -8,7 +8,12 @@ import { ConfigManager, ProfileConfig } from '../../config/config-manager';
 import { authManager } from '../../auth/auth-manager';
 
 // Import types from lib
-import type { CloudAssemblyV2, StackManifestV2, CloudAssembly, StackManifest } from '@atakora/lib/synthesis/types';
+import type {
+  CloudAssemblyV2,
+  StackManifestV2,
+  CloudAssembly,
+  StackManifest,
+} from '@atakora/lib/synthesis/types';
 import { ArtifactStorageManager } from '@atakora/lib/synthesis/storage';
 import { ArtifactUploader } from '../../deployment/artifact-uploader';
 
@@ -230,9 +235,7 @@ ${chalk.bold('Related Commands:')}
           process.exit(1);
         }
 
-        const manifestData = JSON.parse(
-          fs.readFileSync(manifestPath, 'utf-8')
-        );
+        const manifestData = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
 
         // Check manifest version
         const isV2Manifest = manifestData.version === '2.0.0';
@@ -398,7 +401,7 @@ async function deployStack(
         location: profile.location || 'eastus2',
         project: 'atakora',
         environment: 'production',
-        credential: credential
+        credential: credential,
       });
 
       // Provision storage

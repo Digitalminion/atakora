@@ -230,10 +230,7 @@ export class TypeGenerator {
   /**
    * Generate TypeScript interface from object schema.
    */
-  private generateInterface(
-    schema: JsonSchema,
-    name: string
-  ): { code: string; deps: string[] } {
+  private generateInterface(schema: JsonSchema, name: string): { code: string; deps: string[] } {
     const dependencies: string[] = [];
     const properties: string[] = [];
 
@@ -264,9 +261,7 @@ export class TypeGenerator {
     if (schema.additionalProperties && typeof schema.additionalProperties === 'object') {
       const valueType = this.schemaToTypeString(schema.additionalProperties);
       dependencies.push(...this.extractDependencies(schema.additionalProperties));
-      properties.push(
-        `  ${this.options.readonly ? 'readonly ' : ''}[key: string]: ${valueType};`
-      );
+      properties.push(`  ${this.options.readonly ? 'readonly ' : ''}[key: string]: ${valueType};`);
     }
 
     const documentation = this.generateDocumentation(schema, name);

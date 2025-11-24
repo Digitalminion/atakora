@@ -202,9 +202,7 @@ export class FunctionSynthesizer {
           'index.js': escapedCode,
         },
       },
-      dependsOn: [
-        `[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]`,
-      ],
+      dependsOn: [`[resourceId('Microsoft.Web/sites', parameters('functionAppName'))]`],
     };
   }
 
@@ -253,7 +251,8 @@ export class FunctionSynthesizer {
         databaseName: config.cosmosDbTrigger.databaseName,
         collectionName: config.cosmosDbTrigger.containerName,
         leaseCollectionName: config.cosmosDbTrigger.leaseContainerName || 'leases',
-        createLeaseCollectionIfNotExists: config.cosmosDbTrigger.createLeaseContainerIfNotExists || false,
+        createLeaseCollectionIfNotExists:
+          config.cosmosDbTrigger.createLeaseContainerIfNotExists || false,
         startFromBeginning: config.cosmosDbTrigger.startFromBeginning || false,
       });
     }

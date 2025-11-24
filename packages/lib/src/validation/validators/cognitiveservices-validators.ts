@@ -1,5 +1,9 @@
 import { BaseValidationRule, ValidationContext } from '../validation-rule';
-import { ValidationResult, ValidationResultBuilder, ValidationSeverity } from '../validation-result';
+import {
+  ValidationResult,
+  ValidationResultBuilder,
+  ValidationSeverity,
+} from '../validation-result';
 import {
   validateLength,
   validatePattern,
@@ -83,7 +87,9 @@ export class OpenAIDeploymentModelValidator extends BaseValidationRule {
       results.push(
         ValidationResultBuilder.error(this.name)
           .withMessage('Model name is required')
-          .withSuggestion('Set model.name (e.g., "gpt-4", "gpt-35-turbo", "text-embedding-ada-002")')
+          .withSuggestion(
+            'Set model.name (e.g., "gpt-4", "gpt-35-turbo", "text-embedding-ada-002")'
+          )
           .build()
       );
     }

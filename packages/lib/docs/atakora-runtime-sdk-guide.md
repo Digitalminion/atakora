@@ -56,11 +56,11 @@ const listQuery = postQuery
 const complexQuery = postQuery
   .or([
     { field: 'status', operator: 'eq', value: 'published' },
-    { field: 'status', operator: 'eq', value: 'archived' }
+    { field: 'status', operator: 'eq', value: 'archived' },
   ])
   .and([
     { field: 'featured', operator: 'eq', value: true },
-    { field: 'viewCount', operator: 'gte', value: 100 }
+    { field: 'viewCount', operator: 'gte', value: 100 },
   ])
   .toGraphQL();
 
@@ -71,23 +71,13 @@ const withRelations = postQuery
   .toGraphQL();
 
 // Select specific fields
-const projection = postQuery
-  .select('id', 'title', 'excerpt')
-  .list({ limit: 20 })
-  .toGraphQL();
+const projection = postQuery.select('id', 'title', 'excerpt').list({ limit: 20 }).toGraphQL();
 
 // Pagination
-const paginated = postQuery
-  .orderBy('createdAt', 'desc')
-  .limit(20)
-  .offset(40)
-  .toGraphQL();
+const paginated = postQuery.orderBy('createdAt', 'desc').limit(20).offset(40).toGraphQL();
 
 // Cursor-based pagination
-const cursorBased = postQuery
-  .cursor('next-page-token')
-  .limit(20)
-  .toGraphQL();
+const cursorBased = postQuery.cursor('next-page-token').limit(20).toGraphQL();
 ```
 
 ### Mutation Builder
@@ -105,7 +95,7 @@ const postMutation = createMutationBuilder(PostSchema, authContext);
 const createResult = await postMutation.create({
   title: 'My First Post',
   content: 'Post content here...',
-  status: 'draft'
+  status: 'draft',
 });
 
 if (createResult.success) {
@@ -117,7 +107,7 @@ if (createResult.success) {
 // Update
 const updateResult = await postMutation.update('post-123', {
   title: 'Updated Title',
-  status: 'published'
+  status: 'published',
 });
 
 // Delete
@@ -126,7 +116,7 @@ const deleteResult = await postMutation.delete('post-123');
 // Generate GraphQL mutations
 const createMutation = postMutation.toGraphQLCreate({
   title: 'New Post',
-  content: 'Content...'
+  content: 'Content...',
 });
 // {
 //   mutation: "mutation createPost($input: CreatePostInput!) { ... }",
@@ -134,7 +124,7 @@ const createMutation = postMutation.toGraphQLCreate({
 // }
 
 const updateMutation = postMutation.toGraphQLUpdate('post-123', {
-  title: 'Updated'
+  title: 'Updated',
 });
 
 const deleteMutation = postMutation.toGraphQLDelete('post-123');
@@ -155,18 +145,15 @@ const loader = createRelationshipLoader(PostSchema, {
     maxBatchSize: 100,
     batchDelay: 10,
     cache: true,
-    cacheTtl: 60000
-  }
+    cacheTtl: 60000,
+  },
 });
 
 // Register custom loaders
 loader.registerLoader('User', 'id', async (userIds) => {
-  const users = await database.query(
-    'SELECT * FROM users WHERE id IN (?)',
-    [userIds]
-  );
+  const users = await database.query('SELECT * FROM users WHERE id IN (?)', [userIds]);
   const map = new Map();
-  users.forEach(user => map.set(user.id, user));
+  users.forEach((user) => map.set(user.id, user));
   return map;
 });
 
@@ -183,17 +170,11 @@ const author = await loader.loadBelongsTo('author', post);
 const categories = await loader.loadManyToMany('categories', post);
 
 // Load multiple relationships
-const withRelations = await loader.loadMany(
-  ['author', 'comments', 'categories'],
-  post
-);
+const withRelations = await loader.loadMany(['author', 'comments', 'categories'], post);
 
 // Load for multiple records (batched automatically)
 const posts = await postQuery.list().execute();
-const allWithRelations = await loader.loadManyForRecords(
-  ['author'],
-  posts.data
-);
+const allWithRelations = await loader.loadManyForRecords(['author'], posts.data);
 ```
 
 ## Code Generation
@@ -212,7 +193,7 @@ const { code } = generateTypes(UserSchema, {
   generateFilters: true,
   generateInputs: true,
   includeRelationships: true,
-  includeComputed: true
+  includeComputed: true,
 });
 
 console.log(code);
@@ -261,9 +242,27 @@ export interface User {
  * Filter options for User queries.
  */
 export interface UserFilter {
-  email?: { equals?: string; contains?: string; startsWith?: string; endsWith?: string; in?: string[]; notIn?: string[] };
-  name?: { equals?: string; contains?: string; startsWith?: string; endsWith?: string; in?: string[]; notIn?: string[] };
-  role?: { equals?: 'admin' | 'author' | 'reader'; in?: ('admin' | 'author' | 'reader')[]; notIn?: ('admin' | 'author' | 'reader')[] };
+  email?: {
+    equals?: string;
+    contains?: string;
+    startsWith?: string;
+    endsWith?: string;
+    in?: string[];
+    notIn?: string[];
+  };
+  name?: {
+    equals?: string;
+    contains?: string;
+    startsWith?: string;
+    endsWith?: string;
+    in?: string[];
+    notIn?: string[];
+  };
+  role?: {
+    equals?: 'admin' | 'author' | 'reader';
+    in?: ('admin' | 'author' | 'reader')[];
+    notIn?: ('admin' | 'author' | 'reader')[];
+  };
 
   // Logical operators
   AND?: UserFilter[];
@@ -320,7 +319,7 @@ const { code } = generateManySDK([UserSchema, PostSchema, CommentSchema], {
   clientType: 'fetch',
   includeRetry: true,
   includeCache: false,
-  baseUrl: '/api'
+  baseUrl: '/api',
 });
 
 // Save to file
@@ -342,11 +341,11 @@ const posts = await sdk.posts.list({ limit: 10 });
 const createResult = await sdk.posts.create({
   title: 'New Post',
   content: 'Content...',
-  status: 'draft'
+  status: 'draft',
 });
 
 const updateResult = await sdk.posts.update('post-123', {
-  title: 'Updated Title'
+  title: 'Updated Title',
 });
 
 const deleteResult = await sdk.posts.delete('post-123');
@@ -371,7 +370,7 @@ import { UserSchema, PostSchema, CommentSchema } from './schemas';
 const { code } = generateManyHooks([UserSchema, PostSchema, CommentSchema], {
   stateLibrary: 'react-query',
   includeOptimistic: true,
-  includeSuspense: false
+  includeSuspense: false,
 });
 
 // Save to file

@@ -25,7 +25,6 @@ const handler: AzureFunction = async (context: Context, req: HttpRequest) => {
       status: 200,
       body: validationResult,
     };
-
   } catch (error) {
     context.log.error('Validation failed:', error);
     return {

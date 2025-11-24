@@ -54,13 +54,17 @@ export class JsonFieldBuilder extends BaseFieldBuilder<any, JsonFieldConfig> {
    * ```
    */
   objectOnly(): this {
-    this.config.validations.push({
-      type: 'custom',
+    const rule = {
+      type: 'custom' as const,
       validator: (value: any) => {
         return value !== null && typeof value === 'object' && !Array.isArray(value);
       },
       message: 'Must be a JSON object',
-    });
+    };
+
+    this.definition.validations.push(rule);
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -76,11 +80,15 @@ export class JsonFieldBuilder extends BaseFieldBuilder<any, JsonFieldConfig> {
    * ```
    */
   arrayOnly(): this {
-    this.config.validations.push({
-      type: 'custom',
+    const rule = {
+      type: 'custom' as const,
       validator: (value: any) => Array.isArray(value),
       message: 'Must be a JSON array',
-    });
+    };
+
+    this.definition.validations.push(rule);
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 }

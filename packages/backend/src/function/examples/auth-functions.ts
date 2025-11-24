@@ -5,24 +5,26 @@
  * In a real app, these would be full function definitions.
  */
 
-import { defineFunction } from '@atakora/component/functions';
+import { defineFunctions, configureFunction } from '@atakora/component/functions';
 
-export const initPasswordReset = defineFunction({
-  name: 'init-password-reset',
-  entry: './handlers/init-password-reset.ts',
-  trigger: {
-    type: 'http',
-    methods: ['POST'],
-    route: 'auth/reset-password',
-  },
-});
+export const authFunctions = defineFunctions({
+  InitPasswordReset: configureFunction('init-password-reset').withHandler(async (context, req) => {
+    // Handler from ./handlers/init-password-reset.ts
+    context.log('Initiating password reset');
+    return {
+      status: 200,
+      body: { message: 'Password reset initiated' },
+    };
+  }),
 
-export const confirmPasswordReset = defineFunction({
-  name: 'confirm-password-reset',
-  entry: './handlers/confirm-password-reset.ts',
-  trigger: {
-    type: 'http',
-    methods: ['POST'],
-    route: 'auth/confirm-reset',
-  },
+  ConfirmPasswordReset: configureFunction('confirm-password-reset').withHandler(
+    async (context, req) => {
+      // Handler from ./handlers/confirm-password-reset.ts
+      context.log('Confirming password reset');
+      return {
+        status: 200,
+        body: { message: 'Password reset confirmed' },
+      };
+    }
+  ),
 });

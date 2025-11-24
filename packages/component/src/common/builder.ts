@@ -28,6 +28,18 @@
  */
 
 /**
+ * Helper type to make all properties mutable (removes readonly)
+ * @internal
+ */
+type Mutable<T> = {
+  -readonly [P in keyof T]: T[P] extends readonly (infer U)[]
+    ? U[]
+    : T[P] extends Record<string, any>
+      ? Mutable<T[P]>
+      : T[P];
+};
+
+/**
  * Base class for all fluent API builders
  *
  * @typeParam TConfig - The configuration object type that this builder produces
@@ -36,10 +48,10 @@
  */
 export abstract class BaseBuilder<TConfig extends Record<string, any>> {
   /**
-   * Internal configuration state
+   * Internal configuration state (mutable during building)
    * @protected
    */
-  protected config: TConfig;
+  protected config: Mutable<TConfig>;
 
   /**
    * Create a new builder with initial configuration
@@ -47,7 +59,7 @@ export abstract class BaseBuilder<TConfig extends Record<string, any>> {
    * @param initialConfig - Initial configuration values
    */
   constructor(initialConfig: TConfig) {
-    this.config = { ...initialConfig };
+    this.config = { ...initialConfig } as Mutable<TConfig>;
   }
 
   /**
@@ -158,10 +170,7 @@ export abstract class BaseBuilder<TConfig extends Record<string, any>> {
    * Deep merge two objects
    * @internal
    */
-  private deepMerge<T extends Record<string, any>>(
-    target: T,
-    source: Partial<T>
-  ): T {
+  private deepMerge<T extends Record<string, any>>(target: T, source: Partial<T>): T {
     const result = { ...target };
 
     for (const key in source) {
@@ -170,7 +179,10 @@ export abstract class BaseBuilder<TConfig extends Record<string, any>> {
 
       if (this.isPlainObject(sourceValue) && this.isPlainObject(targetValue)) {
         // Recursively merge objects
-        result[key] = this.deepMerge(targetValue, sourceValue) as T[Extract<keyof T, string>];
+        result[key] = this.deepMerge(targetValue, sourceValue as any) as T[Extract<
+          keyof T,
+          string
+        >];
       } else if (sourceValue !== undefined) {
         // Override with source value
         result[key] = sourceValue as T[Extract<keyof T, string>];
@@ -219,6 +231,7 @@ export type BuilderConfig<T> = T extends BaseBuilder<infer C> ? C : never;
  *
  * @public
  */
-export type NestedBuilder<TConfig, TBuilder extends BaseBuilder<TConfig>> = (
-  builder: TBuilder
-) => TBuilder;
+export type NestedBuilder<
+  TConfig extends Record<string, any>,
+  TBuilder extends BaseBuilder<TConfig>,
+> = (builder: TBuilder) => TBuilder;

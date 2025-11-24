@@ -1,5 +1,9 @@
 import { BaseValidationRule, ValidationContext } from '../validation-rule';
-import { ValidationResult, ValidationResultBuilder, ValidationSeverity } from '../validation-result';
+import {
+  ValidationResult,
+  ValidationResultBuilder,
+  ValidationSeverity,
+} from '../validation-result';
 import {
   validateLength,
   validatePattern,
@@ -210,14 +214,13 @@ export class KeyVaultNetworkAclsValidator extends BaseValidationRule {
     const defaultAction = networkAcls.defaultAction;
     const bypass = networkAcls.bypass;
 
-    if (
-      defaultAction === 'Deny' &&
-      (!bypass || !bypass.includes('AzureServices'))
-    ) {
+    if (defaultAction === 'Deny' && (!bypass || !bypass.includes('AzureServices'))) {
       return ValidationResultBuilder.warning(this.name)
         .withMessage('Network ACLs deny all access without Azure Services bypass')
         .withSuggestion('Consider adding bypass: "AzureServices" to allow trusted Azure services')
-        .withDetails('This allows services like Azure Backup and Azure Site Recovery to access the vault')
+        .withDetails(
+          'This allows services like Azure Backup and Azure Site Recovery to access the vault'
+        )
         .build();
     }
 
@@ -242,10 +245,7 @@ export class KeyVaultPublicAccessValidator extends BaseValidationRule {
     const publicAccess = resource.properties?.publicNetworkAccess;
     const hasPrivateEndpoints = context?.hasPrivateEndpoints;
 
-    if (
-      publicAccess === 'disabled' &&
-      (!hasPrivateEndpoints || hasPrivateEndpoints === false)
-    ) {
+    if (publicAccess === 'disabled' && (!hasPrivateEndpoints || hasPrivateEndpoints === false)) {
       return ValidationResultBuilder.error(this.name)
         .withMessage('Public network access disabled without private endpoints')
         .withSuggestion('Create private endpoints before disabling public access')

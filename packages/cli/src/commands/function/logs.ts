@@ -21,7 +21,10 @@ export function createFunctionLogsCommand(): Command {
     .argument('<name>', 'Function name')
     .option('-f, --follow', 'Follow log output (tail -f style)')
     .option('-n, --lines <count>', 'Number of lines to show', '100')
-    .option('--since <time>', 'Show logs since timestamp (e.g., "1h", "30m", "2024-01-15T10:00:00")')
+    .option(
+      '--since <time>',
+      'Show logs since timestamp (e.g., "1h", "30m", "2024-01-15T10:00:00")'
+    )
     .option('--level <level>', 'Minimum log level (verbose, info, warning, error)')
     .option('--resource-group <group>', 'Target resource group')
     .option('--function-app <app>', 'Function app name')
@@ -88,7 +91,9 @@ ${chalk.bold('Log Levels:')}
         console.log(chalk.dim('2024-01-15 10:30:45.456 [INFO] Request completed successfully'));
         console.log(chalk.dim('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n'));
 
-        console.log(chalk.yellow('Note: Log streaming requires Azure credentials and deployed functions'));
+        console.log(
+          chalk.yellow('Note: Log streaming requires Azure credentials and deployed functions')
+        );
         console.log(chalk.dim('Set up authentication with: ') + chalk.white('az login\n'));
       } catch (error) {
         spinner.fail(chalk.red('Failed to retrieve logs'));

@@ -109,6 +109,20 @@ export * from './validation';
 export * from './auth';
 
 // ============================================================================
+// FUNCTION CUSTOMIZATION API
+// Phase 5: Custom function handlers and configuration
+// ============================================================================
+
+export * from './functions';
+
+// ============================================================================
+// BACKEND ASSEMBLY API
+// Phase 4: Backend configuration and assembly
+// ============================================================================
+
+export * from './backend';
+
+// ============================================================================
 // LEGACY COMPATIBILITY LAYER
 // v1 API is deprecated and will be removed in 3.0
 // Use the new schema-centric API above
@@ -124,7 +138,11 @@ export const LEGACY_MODE = true;
  * @deprecated Import from '@atakora/component/common' instead
  * @legacy
  */
-export { duration, threshold, size, network } from './common';
+export type { Duration, Threshold, Size } from './common';
+export { default as duration } from './common';
+export { default as threshold } from './common';
+export { default as size } from './common';
+export { default as network } from './common';
 
 // Note: Legacy component exports (CrudApi, FunctionsApp, etc.) are temporarily
 // disabled during the migration to the schema-centric architecture.

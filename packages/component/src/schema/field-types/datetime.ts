@@ -65,11 +65,16 @@ export class DateTimeFieldBuilder extends BaseFieldBuilder<string, DateTimeField
   min(value: Date | string): this {
     this.config.min = value;
     const dateStr = value instanceof Date ? value.toISOString() : value;
-    this.config.validations.push({
-      type: 'min',
+
+    const rule = {
+      type: 'min' as const,
       value: new Date(dateStr).getTime(),
       message: `Must be on or after ${dateStr}`,
-    });
+    };
+
+    this.definition.validations.push(rule);
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -90,11 +95,16 @@ export class DateTimeFieldBuilder extends BaseFieldBuilder<string, DateTimeField
   max(value: Date | string): this {
     this.config.max = value;
     const dateStr = value instanceof Date ? value.toISOString() : value;
-    this.config.validations.push({
-      type: 'max',
+
+    const rule = {
+      type: 'max' as const,
       value: new Date(dateStr).getTime(),
       message: `Must be on or before ${dateStr}`,
-    });
+    };
+
+    this.definition.validations.push(rule);
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -111,11 +121,16 @@ export class DateTimeFieldBuilder extends BaseFieldBuilder<string, DateTimeField
    */
   future(): this {
     this.config.isFuture = true;
-    this.config.validations.push({
-      type: 'custom',
+
+    const rule = {
+      type: 'custom' as const,
       validator: (value: string) => new Date(value).getTime() > Date.now(),
       message: 'Must be a future date/time',
-    });
+    };
+
+    this.definition.validations.push(rule);
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -132,11 +147,16 @@ export class DateTimeFieldBuilder extends BaseFieldBuilder<string, DateTimeField
    */
   past(): this {
     this.config.isPast = true;
-    this.config.validations.push({
-      type: 'custom',
+
+    const rule = {
+      type: 'custom' as const,
       validator: (value: string) => new Date(value).getTime() < Date.now(),
       message: 'Must be a past date/time',
-    });
+    };
+
+    this.definition.validations.push(rule);
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 

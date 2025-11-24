@@ -34,7 +34,10 @@ export interface EnumFieldConfig<T extends readonly string[]> extends BaseFieldC
  * const priority = a.enum(['low', 'medium', 'high', 'critical']).required();
  * ```
  */
-export class EnumFieldBuilder<T extends readonly string[]> extends BaseFieldBuilder<T[number], EnumFieldConfig<T>> {
+export class EnumFieldBuilder<T extends readonly string[]> extends BaseFieldBuilder<
+  T[number],
+  EnumFieldConfig<T>
+> {
   constructor(values: T) {
     super('enum');
 
@@ -45,11 +48,14 @@ export class EnumFieldBuilder<T extends readonly string[]> extends BaseFieldBuil
     this.config.values = values;
 
     // Add validation for allowed values
-    this.config.validations.push({
-      type: 'custom',
+    const rule = {
+      type: 'custom' as const,
       validator: (value: string) => values.includes(value),
       message: `Must be one of: ${values.join(', ')}`,
-    });
+    };
+
+    this.definition.validations.push(rule);
+    this.config.validations = this.definition.validations;
   }
 
   /**

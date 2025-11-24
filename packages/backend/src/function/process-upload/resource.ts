@@ -15,29 +15,21 @@
  * - Cold start optimization: Enabled
  */
 
-import { defineFunction } from '@atakora/component/functions';
+import { defineFunctions, configureFunction } from '@atakora/component/functions';
 
-export const processUpload = defineFunction({
-  name: 'process-upload',
-
-  // Points to the handler file in the same directory
-  entry: './handler.ts',
-
-  // HTTP trigger - the most common function type
-  trigger: {
-    type: 'http',
-    methods: ['POST'],
-    route: 'upload',
-    // authLevel defaults to 'function' (requires function key)
-    // Can be 'anonymous' or 'admin' if needed
-  },
-
-  // Only override defaults when needed:
-  timeout: 300, // 5 minutes for file processing
-  memory: 512,  // More memory for file handling
-
-  // Everything else uses smart defaults!
-  // No need to specify unless you need different values
+export const processUpload = defineFunctions({
+  ProcessUpload: configureFunction('process-upload')
+    .memory(512)
+    .timeout(300000)
+    .withHandler(async (context, req) => {
+      // Handler implementation from ./handler.ts
+      context.log('Processing file upload');
+      // TODO: Implement upload processing logic
+      return {
+        status: 200,
+        body: { message: 'Upload processed successfully' },
+      };
+    }),
 });
 
 /**

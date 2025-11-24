@@ -83,19 +83,39 @@ export class AuthorizationBuilder {
       operations,
     };
   }
+
+  /**
+   * Custom authorization rule with a function
+   *
+   * @param fn - Custom authorization function
+   *
+   * @example
+   * ```typescript
+   * .authorization(allow => [
+   *   allow.custom((user, resource) => {
+   *     return user.id === resource.ownerId || user.groups.includes('admin');
+   *   }).read()
+   * ])
+   * ```
+   */
+  custom(fn: (user: any, resource: any) => boolean): CustomRuleBuilder {
+    return new CustomRuleBuilder(fn);
+  }
 }
 
 // ============================================================================
 // Owner Rule Builder
 // ============================================================================
 
-class OwnerRuleBuilder {
+export class OwnerRuleBuilder {
   private field: string;
-  private ops?: Operation[];
+  private ops: Operation[] = [];
 
   constructor(field: string, operations?: Operation[]) {
     this.field = field;
-    this.ops = operations;
+    if (operations) {
+      this.ops = [...operations];
+    }
   }
 
   /**
@@ -112,45 +132,41 @@ class OwnerRuleBuilder {
   /**
    * Allow create operation
    */
-  create(): AuthorizationRule {
-    return {
-      type: 'owner',
-      field: this.field,
-      operations: ['create'],
-    };
+  create(): this {
+    if (!this.ops.includes('create')) {
+      this.ops.push('create');
+    }
+    return this;
   }
 
   /**
    * Allow read operation
    */
-  read(): AuthorizationRule {
-    return {
-      type: 'owner',
-      field: this.field,
-      operations: ['read'],
-    };
+  read(): this {
+    if (!this.ops.includes('read')) {
+      this.ops.push('read');
+    }
+    return this;
   }
 
   /**
    * Allow update operation
    */
-  update(fields?: string[]): AuthorizationRule {
-    return {
-      type: 'owner',
-      field: this.field,
-      operations: ['update'],
-    };
+  update(fields?: string[]): this {
+    if (!this.ops.includes('update')) {
+      this.ops.push('update');
+    }
+    return this;
   }
 
   /**
    * Allow delete operation
    */
-  delete(): AuthorizationRule {
-    return {
-      type: 'owner',
-      field: this.field,
-      operations: ['delete'],
-    };
+  delete(): this {
+    if (!this.ops.includes('delete')) {
+      this.ops.push('delete');
+    }
+    return this;
   }
 
   /**
@@ -160,8 +176,15 @@ class OwnerRuleBuilder {
     return {
       type: 'owner',
       field: this.field,
-      operations: this.ops,
+      operations: this.ops.length > 0 ? this.ops : undefined,
     };
+  }
+
+  /**
+   * Convert to authorization rule (default behavior when not chained)
+   */
+  toRule(): AuthorizationRule {
+    return this._build();
   }
 }
 
@@ -169,9 +192,9 @@ class OwnerRuleBuilder {
 // Groups Rule Builder
 // ============================================================================
 
-class GroupsRuleBuilder {
+export class GroupsRuleBuilder {
   private groupNames: string[];
-  private ops?: Operation[];
+  private ops: Operation[] = [];
 
   constructor(groups: string[]) {
     this.groupNames = groups;
@@ -191,45 +214,141 @@ class GroupsRuleBuilder {
   /**
    * Allow create operation
    */
-  create(): AuthorizationRule {
-    return {
-      type: 'groups',
-      groups: this.groupNames,
-      operations: ['create'],
-    };
+  create(): this {
+    if (!this.ops.includes('create')) {
+      this.ops.push('create');
+    }
+    return this;
   }
 
   /**
    * Allow read operation
    */
-  read(): AuthorizationRule {
-    return {
-      type: 'groups',
-      groups: this.groupNames,
-      operations: ['read'],
-    };
+  read(): this {
+    if (!this.ops.includes('read')) {
+      this.ops.push('read');
+    }
+    return this;
   }
 
   /**
    * Allow update operation
    */
-  update(): AuthorizationRule {
-    return {
-      type: 'groups',
-      groups: this.groupNames,
-      operations: ['update'],
-    };
+  update(): this {
+    if (!this.ops.includes('update')) {
+      this.ops.push('update');
+    }
+    return this;
   }
 
   /**
    * Allow delete operation
    */
-  delete(): AuthorizationRule {
+  delete(): this {
+    if (!this.ops.includes('delete')) {
+      this.ops.push('delete');
+    }
+    return this;
+  }
+
+  /**
+   * Build with current operations
+   */
+  _build(): AuthorizationRule {
     return {
       type: 'groups',
       groups: this.groupNames,
-      operations: ['delete'],
+      operations: this.ops.length > 0 ? this.ops : undefined,
     };
+  }
+
+  /**
+   * Convert to authorization rule (default behavior when not chained)
+   */
+  toRule(): AuthorizationRule {
+    return this._build();
+  }
+}
+
+// ============================================================================
+// Custom Rule Builder
+// ============================================================================
+
+export class CustomRuleBuilder {
+  private fn: (user: any, resource: any) => boolean;
+  private ops: Operation[] = [];
+
+  constructor(fn: (user: any, resource: any) => boolean) {
+    this.fn = fn;
+  }
+
+  /**
+   * Allow all operations
+   */
+  all(): AuthorizationRule {
+    return {
+      type: 'custom',
+      fn: this.fn,
+      operations: undefined, // undefined means all
+    } as any;
+  }
+
+  /**
+   * Allow create operation
+   */
+  create(): this {
+    if (!this.ops.includes('create')) {
+      this.ops.push('create');
+    }
+    return this;
+  }
+
+  /**
+   * Allow read operation
+   */
+  read(): this {
+    if (!this.ops.includes('read')) {
+      this.ops.push('read');
+    }
+    return this;
+  }
+
+  /**
+   * Allow update operation
+   */
+  update(): this {
+    if (!this.ops.includes('update')) {
+      this.ops.push('update');
+    }
+    return this;
+  }
+
+  /**
+   * Allow delete operation
+   */
+  delete(): this {
+    if (!this.ops.includes('delete')) {
+      this.ops.push('delete');
+    }
+    return this;
+  }
+
+  /**
+   * Build with current operations
+   */
+  _build(): AuthorizationRule {
+    return {
+      type: 'custom',
+      fn: this.fn,
+      operations: this.ops.length > 0 ? this.ops : undefined,
+    } as any;
+  }
+
+  /**
+   * Convert to authorization rule (default behavior when not chained)
+   */
+  toRule(): AuthorizationRule {
+    return this._build();
   }
 }
 
@@ -237,4 +356,18 @@ class GroupsRuleBuilder {
 // Type Export
 // ============================================================================
 
-export type AuthorizationRulesFn = (builder: AuthorizationBuilder) => AuthorizationRule[];
+/**
+ * Authorization rule or builder type
+ *
+ * @remarks
+ * Allows both completed authorization rules and builder instances
+ * to be returned from authorization functions. Builders will be
+ * automatically converted to rules.
+ */
+export type AuthorizationRuleOrBuilder =
+  | AuthorizationRule
+  | OwnerRuleBuilder
+  | GroupsRuleBuilder
+  | CustomRuleBuilder;
+
+export type AuthorizationRulesFn = (builder: AuthorizationBuilder) => AuthorizationRuleOrBuilder[];

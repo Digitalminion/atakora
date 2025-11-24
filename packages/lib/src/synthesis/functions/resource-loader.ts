@@ -46,9 +46,7 @@ export class ResourceLoader {
    * export default defineFunction({ ... });
    * ```
    */
-  async loadResourceConfig(
-    directory: FunctionDirectory
-  ): Promise<FunctionConfiguration> {
+  async loadResourceConfig(directory: FunctionDirectory): Promise<FunctionConfiguration> {
     try {
       // Dynamically import resource.ts
       const module = await this.importResourceModule(directory.resourcePath);
@@ -93,12 +91,8 @@ export class ResourceLoader {
    * Uses Promise.all for parallel loading to improve performance.
    * If any resource fails to load, the entire operation fails.
    */
-  async loadMultiple(
-    directories: FunctionDirectory[]
-  ): Promise<FunctionConfiguration[]> {
-    return Promise.all(
-      directories.map((dir) => this.loadResourceConfig(dir))
-    );
+  async loadMultiple(directories: FunctionDirectory[]): Promise<FunctionConfiguration[]> {
+    return Promise.all(directories.map((dir) => this.loadResourceConfig(dir)));
   }
 
   /**
@@ -131,9 +125,7 @@ export class ResourceLoader {
       return module;
     } catch (error) {
       throw new Error(
-        `Failed to import resource.ts: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`
+        `Failed to import resource.ts: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }
   }
@@ -159,10 +151,7 @@ export class ResourceLoader {
    *
    * @internal
    */
-  private extractDefinition(
-    module: any,
-    resourcePath: string
-  ): FunctionDefinition {
+  private extractDefinition(module: any, resourcePath: string): FunctionDefinition {
     // Try default export first
     if (module.default) {
       return module.default as FunctionDefinition;
@@ -221,26 +210,16 @@ export class ResourceLoader {
 
     // Check trigger
     if (!definition.config.trigger || !definition.config.trigger.type) {
-      throw new Error(
-        'Function config must have a trigger with a type property'
-      );
+      throw new Error('Function config must have a trigger with a type property');
     }
 
     // Validate bindings if present
     if (definition.config.inputBindings) {
-      this.validateBindings(
-        definition.config.inputBindings,
-        'input',
-        functionName
-      );
+      this.validateBindings(definition.config.inputBindings, 'input', functionName);
     }
 
     if (definition.config.outputBindings) {
-      this.validateBindings(
-        definition.config.outputBindings,
-        'output',
-        functionName
-      );
+      this.validateBindings(definition.config.outputBindings, 'output', functionName);
     }
   }
 
@@ -266,9 +245,7 @@ export class ResourceLoader {
     functionName: string
   ): void {
     if (!Array.isArray(bindings)) {
-      throw new Error(
-        `${bindingType} bindings must be an array in function '${functionName}'`
-      );
+      throw new Error(`${bindingType} bindings must be an array in function '${functionName}'`);
     }
 
     for (const [index, binding] of bindings.entries()) {

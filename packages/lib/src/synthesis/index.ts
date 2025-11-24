@@ -1,5 +1,6 @@
 export * from './types';
 export * from './synthesizer';
+// BackendAdapter moved to @atakora/component package
 
 // Context-aware synthesis
 export * from './context';

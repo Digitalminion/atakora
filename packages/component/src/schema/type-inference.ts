@@ -11,7 +11,7 @@ import type {
   StringFieldBuilder,
   NumberFieldBuilder,
   BooleanFieldBuilder,
-  DatetimeFieldBuilder,
+  DateTimeFieldBuilder,
   IdFieldBuilder,
   EnumFieldBuilder,
   ArrayFieldBuilder,
@@ -27,34 +27,39 @@ import type {
 /**
  * Infer TypeScript type from field builder
  */
-export type InferFieldType<T> =
-  T extends StringFieldBuilder ? string :
-  T extends NumberFieldBuilder ? number :
-  T extends BooleanFieldBuilder ? boolean :
-  T extends DatetimeFieldBuilder ? string : // ISO 8601 string
-  T extends IdFieldBuilder ? string :
-  T extends EnumFieldBuilder<infer Values> ? Values[number] :
-  T extends ArrayFieldBuilder ? InferArrayItemType<T>[] :
-  T extends ObjectFieldBuilder ? InferObjectType<T> :
-  T extends JsonFieldBuilder ? any :
-  T extends BinaryFieldBuilder ? Buffer :
-  unknown;
+export type InferFieldType<T> = T extends StringFieldBuilder
+  ? string
+  : T extends NumberFieldBuilder
+    ? number
+    : T extends BooleanFieldBuilder
+      ? boolean
+      : T extends DateTimeFieldBuilder
+        ? string // ISO 8601 string
+        : T extends IdFieldBuilder
+          ? string
+          : T extends EnumFieldBuilder<infer Values>
+            ? Values[number]
+            : T extends ArrayFieldBuilder<any>
+              ? InferArrayItemType<T>[]
+              : T extends ObjectFieldBuilder<any>
+                ? InferObjectType<T>
+                : T extends JsonFieldBuilder
+                  ? any
+                  : T extends BinaryFieldBuilder
+                    ? Buffer
+                    : unknown;
 
 /**
  * Infer array item type
  */
 type InferArrayItemType<T> =
-  T extends ArrayFieldBuilder<infer ItemType>
-    ? InferFieldType<ItemType>
-    : unknown;
+  T extends ArrayFieldBuilder<infer ItemType> ? InferFieldType<ItemType> : unknown;
 
 /**
  * Infer object field types
  */
 type InferObjectType<T> =
-  T extends ObjectFieldBuilder<infer Schema>
-    ? InferFieldTypes<Schema>
-    : unknown;
+  T extends ObjectFieldBuilder<infer Schema> ? InferFieldTypes<Schema> : unknown;
 
 /**
  * Infer types for all fields in an object
@@ -146,17 +151,13 @@ export interface FilterOperators<T> {
  * Infer event type from event model builder
  */
 export type InferEventType<T> =
-  T extends EventModelBuilder<infer Fields>
-    ? InferFieldTypes<Fields>
-    : never;
+  T extends EventModelBuilder<infer Fields> ? InferFieldTypes<Fields> : never;
 
 /**
  * Infer event publish input (adds metadata)
  */
 export type InferEventPublishInput<T> =
-  T extends EventModelBuilder<infer Fields>
-    ? InferFieldTypes<Fields>
-    : never;
+  T extends EventModelBuilder<infer Fields> ? InferFieldTypes<Fields> : never;
 
 // ============================================================================
 // Function Type Inference
@@ -166,17 +167,13 @@ export type InferEventPublishInput<T> =
  * Infer function input type from function model builder
  */
 export type InferFunctionInput<T> =
-  T extends FunctionModelBuilder<infer Input, any>
-    ? InferFieldTypes<Input>
-    : never;
+  T extends FunctionModelBuilder<infer Input, any> ? InferFieldTypes<Input> : never;
 
 /**
  * Infer function output type from function model builder
  */
 export type InferFunctionOutput<T> =
-  T extends FunctionModelBuilder<any, infer Output>
-    ? InferFieldTypes<Output>
-    : never;
+  T extends FunctionModelBuilder<any, infer Output> ? InferFieldTypes<Output> : never;
 
 // ============================================================================
 // List Response Types
@@ -205,9 +202,7 @@ export interface ListResponse<T> {
  * Infer list response type
  */
 export type InferListResponse<T> =
-  T extends CrudModelBuilder<any>
-    ? ListResponse<InferModelType<T>>
-    : never;
+  T extends CrudModelBuilder<any> ? ListResponse<InferModelType<T>> : never;
 
 // ============================================================================
 // Utility Types

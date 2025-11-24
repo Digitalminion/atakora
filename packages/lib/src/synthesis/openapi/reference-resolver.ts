@@ -9,11 +9,7 @@
  */
 
 import $RefParser from '@apidevtools/json-schema-ref-parser';
-import {
-  OpenApiDefinition,
-  CircularReference,
-  ReferenceResolverOptions,
-} from './types';
+import { OpenApiDefinition, CircularReference, ReferenceResolverOptions } from './types';
 
 /**
  * Resolves $ref references in OpenAPI specifications.

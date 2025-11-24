@@ -70,11 +70,32 @@ export interface Threshold<T = number> {
  * @internal
  */
 class ThresholdImpl<T = number> implements Threshold<T> {
-  constructor(
-    readonly type: 'greater' | 'less' | 'between' | 'equals' | 'older',
-    readonly value: T,
-    readonly upperValue?: T
-  ) {}
+  readonly type!: 'greater' | 'less' | 'between' | 'equals' | 'older';
+  readonly value!: T;
+  readonly upperValue?: T;
+
+  constructor(type: 'greater' | 'less' | 'between' | 'equals' | 'older', value: T, upperValue?: T) {
+    Object.defineProperty(this, 'type', {
+      value: type,
+      writable: false,
+      enumerable: true,
+      configurable: false,
+    });
+    Object.defineProperty(this, 'value', {
+      value,
+      writable: false,
+      enumerable: true,
+      configurable: false,
+    });
+    if (upperValue !== undefined) {
+      Object.defineProperty(this, 'upperValue', {
+        value: upperValue,
+        writable: false,
+        enumerable: true,
+        configurable: false,
+      });
+    }
+  }
 
   evaluate(current: T): boolean {
     // Handle numeric comparisons

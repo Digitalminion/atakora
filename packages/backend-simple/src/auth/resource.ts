@@ -24,9 +24,7 @@ export const authentication = defineAuth({
    * - Role-based authorization
    * - Session management
    */
-  Primary: auth.entra()
-    .tenant(process.env.AZURE_TENANT_ID!)
-    .clientId(process.env.AZURE_CLIENT_ID!),
+  Primary: auth.entra().tenant(process.env.AZURE_TENANT_ID!).clientId(process.env.AZURE_CLIENT_ID!),
 
   /**
    * Optional: API Keys for service-to-service auth

@@ -95,7 +95,9 @@ ${chalk.bold('Deployment Process:')}
         console.log(`  ${chalk.cyan('1.')} Test your functions`);
         console.log(`     ${chalk.dim('$')} ${chalk.bold('atakora function invoke <name>')}\n`);
         console.log(`  ${chalk.cyan('2.')} View function logs`);
-        console.log(`     ${chalk.dim('$')} ${chalk.bold('atakora function logs <name> --follow')}\n`);
+        console.log(
+          `     ${chalk.dim('$')} ${chalk.bold('atakora function logs <name> --follow')}\n`
+        );
         console.log(`  ${chalk.cyan('3.')} Monitor function execution`);
         console.log(`     ${chalk.dim('Visit Azure Portal to view metrics and logs')}\n`);
       } catch (error) {

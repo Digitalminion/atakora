@@ -9,7 +9,15 @@
  * - Container lifecycle management
  */
 
-import { BlobServiceClient, ContainerClient, StorageSharedKeyCredential, generateBlobSASQueryParameters, BlobSASPermissions, SASProtocol, ContainerSASPermissions } from '@azure/storage-blob';
+import {
+  BlobServiceClient,
+  ContainerClient,
+  StorageSharedKeyCredential,
+  generateBlobSASQueryParameters,
+  BlobSASPermissions,
+  SASProtocol,
+  ContainerSASPermissions,
+} from '@azure/storage-blob';
 import { StorageManagementClient } from '@azure/arm-storage';
 import { DefaultAzureCredential, TokenCredential } from '@azure/identity';
 import * as crypto from 'crypto';
@@ -180,13 +188,13 @@ export class ArtifactStorageManager {
     // Upload template
     await blockBlobClient.upload(templateContent, Buffer.byteLength(templateContent, 'utf-8'), {
       blobHTTPHeaders: {
-        blobContentType: 'application/json'
+        blobContentType: 'application/json',
       },
       metadata: {
         checksum,
         uploadedAt: new Date().toISOString(),
-        deploymentId: this.storageInfo.deploymentId
-      }
+        deploymentId: this.storageInfo.deploymentId,
+      },
     });
 
     const blobUrl = blockBlobClient.url;
@@ -198,7 +206,7 @@ export class ArtifactStorageManager {
     return {
       blobUrl,
       sasUrl,
-      checksum
+      checksum,
     };
   }
 
@@ -220,13 +228,13 @@ export class ArtifactStorageManager {
     // Upload package
     await blockBlobClient.upload(packageContent, packageContent.length, {
       blobHTTPHeaders: {
-        blobContentType: 'application/zip'
+        blobContentType: 'application/zip',
       },
       metadata: {
         checksum,
         uploadedAt: new Date().toISOString(),
-        deploymentId: this.storageInfo.deploymentId
-      }
+        deploymentId: this.storageInfo.deploymentId,
+      },
     });
 
     const blobUrl = blockBlobClient.url;
@@ -238,7 +246,7 @@ export class ArtifactStorageManager {
     return {
       blobUrl,
       sasUrl,
-      checksum
+      checksum,
     };
   }
 
@@ -260,13 +268,16 @@ export class ArtifactStorageManager {
     try {
       // Generate container-level SAS token (not blob-specific)
       // This is recommended for ARM linked template deployments
-      const containerSAS = generateBlobSASQueryParameters({
-        containerName: this.containerName,
-        permissions: ContainerSASPermissions.parse('rl'), // Read + List
-        expiresOn,
-        protocol: SASProtocol.Https,
-        version: '2022-11-02' // API version matching Azure CLI
-      }, this.sharedKeyCredential);
+      const containerSAS = generateBlobSASQueryParameters(
+        {
+          containerName: this.containerName,
+          permissions: ContainerSASPermissions.parse('rl'), // Read + List
+          expiresOn,
+          protocol: SASProtocol.Https,
+          version: '2022-11-02', // API version matching Azure CLI
+        },
+        this.sharedKeyCredential
+      );
 
       return `?${containerSAS.toString()}`;
     } catch (error) {
@@ -442,10 +453,7 @@ export class ArtifactStorageManager {
    */
   private generateDeploymentId(): string {
     const now = new Date();
-    const timestamp = now.toISOString()
-      .replace(/[-:]/g, '')
-      .replace('T', '-')
-      .substring(0, 15); // YYYYMMDD-HHmmss
+    const timestamp = now.toISOString().replace(/[-:]/g, '').replace('T', '-').substring(0, 15); // YYYYMMDD-HHmmss
 
     const hash = crypto.randomBytes(3).toString('hex');
 
@@ -456,9 +464,6 @@ export class ArtifactStorageManager {
    * Private helper: Calculate SHA256 checksum
    */
   private calculateChecksum(content: Buffer): string {
-    return crypto
-      .createHash('sha256')
-      .update(content)
-      .digest('hex');
+    return crypto.createHash('sha256').update(content).digest('hex');
   }
 }

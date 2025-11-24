@@ -111,10 +111,7 @@ export interface ConfigConflict {
 /**
  * Validator function type.
  */
-export type ValidatorFn<T = unknown> = (
-  value: T,
-  context: ValidationContext
-) => ValidationResult;
+export type ValidatorFn<T = unknown> = (value: T, context: ValidationContext) => ValidationResult;
 
 /**
  * Context provided to validators.
@@ -223,7 +220,7 @@ export class ConflictDetector {
       const entry = {
         value,
         source: context.sources[i],
-        priority: context.priorities[i]
+        priority: context.priorities[i],
       };
 
       if (!uniqueValues.has(key)) {
@@ -240,8 +237,8 @@ export class ConflictDetector {
       }
 
       // Check if all priorities are the same (unresolvable conflict)
-      const priorities = allEntries.map(e => e.priority);
-      const allSamePriority = priorities.every(p => p === priorities[0]);
+      const priorities = allEntries.map((e) => e.priority);
+      const allSamePriority = priorities.every((p) => p === priorities[0]);
 
       conflicts.push({
         path: context.path,
@@ -251,7 +248,7 @@ export class ConflictDetector {
         resolvable: !allSamePriority,
         reason: allSamePriority
           ? `Multiple sources with same priority (${priorities[0]}) have different values`
-          : `Values differ but can be resolved by priority`
+          : `Values differ but can be resolved by priority`,
       });
     }
 
@@ -275,13 +272,13 @@ export class ConflictDetector {
       return conflicts;
     }
 
-    const types = values.map(v => {
+    const types = values.map((v) => {
       if (v === null) return 'null';
       if (Array.isArray(v)) return 'array';
       return typeof v;
     });
 
-    const uniqueTypes = new Set(types.filter(t => t !== 'undefined'));
+    const uniqueTypes = new Set(types.filter((t) => t !== 'undefined'));
 
     if (uniqueTypes.size > 1) {
       conflicts.push({
@@ -289,12 +286,12 @@ export class ConflictDetector {
         values: values.map((value, i) => ({
           value,
           source: context.sources[i],
-          priority: context.priorities[i]
+          priority: context.priorities[i],
         })),
         conflictType: 'type',
         resolvable: false,
         reason: `Incompatible types: ${Array.from(uniqueTypes).join(', ')}`,
-        suggestedStrategy: 'manual-resolution'
+        suggestedStrategy: 'manual-resolution',
       });
     }
 
@@ -318,15 +315,15 @@ export class ConflictDetector {
       if (rule.condition(config)) {
         conflicts.push({
           path: rule.path,
-          values: rule.conflictingPaths.map(path => ({
+          values: rule.conflictingPaths.map((path) => ({
             value: this.getNestedValue(config, path),
             source: 'merged-config',
-            priority: 0
+            priority: 0,
           })),
           conflictType: 'incompatible',
           resolvable: false,
           reason: rule.reason,
-          suggestedStrategy: rule.suggestion
+          suggestedStrategy: rule.suggestion,
         });
       }
     }
@@ -432,7 +429,7 @@ export class ConfigValidator {
         path: context.path,
         source: context.source,
         expected: `Non-null value of type ${schema.type}`,
-        code: 'REQUIRED_FIELD_MISSING'
+        code: 'REQUIRED_FIELD_MISSING',
       });
       return { valid: false, errors };
     }
@@ -452,7 +449,7 @@ export class ConfigValidator {
           source: context.source,
           actualValue: value,
           expected: `One of: ${schema.enum?.join(', ')}`,
-          code: 'INVALID_ENUM_VALUE'
+          code: 'INVALID_ENUM_VALUE',
         });
       }
     } else if (actualType !== schema.type) {
@@ -462,18 +459,17 @@ export class ConfigValidator {
         source: context.source,
         actualValue: value,
         expected: `Type: ${schema.type}`,
-        code: 'TYPE_MISMATCH'
+        code: 'TYPE_MISMATCH',
       });
     }
 
     // Array validation
     if (schema.type === 'array' && Array.isArray(value) && schema.items) {
       for (let i = 0; i < value.length; i++) {
-        const itemResult = this.validateAgainstSchema(
-          value[i],
-          schema.items,
-          { ...context, path: `${context.path}[${i}]` }
-        );
+        const itemResult = this.validateAgainstSchema(value[i], schema.items, {
+          ...context,
+          path: `${context.path}[${i}]`,
+        });
         if (!itemResult.valid) {
           errors.push(...(itemResult.errors || []));
         }
@@ -487,11 +483,10 @@ export class ConfigValidator {
     if (schema.type === 'object' && typeof value === 'object' && schema.properties) {
       const obj = value as Record<string, unknown>;
       for (const [key, propSchema] of Object.entries(schema.properties)) {
-        const propResult = this.validateAgainstSchema(
-          obj[key],
-          propSchema,
-          { ...context, path: `${context.path}.${key}` }
-        );
+        const propResult = this.validateAgainstSchema(obj[key], propSchema, {
+          ...context,
+          path: `${context.path}.${key}`,
+        });
         if (!propResult.valid) {
           errors.push(...(propResult.errors || []));
         }
@@ -517,7 +512,7 @@ export class ConfigValidator {
     return {
       valid: errors.length === 0,
       errors: errors.length > 0 ? errors : undefined,
-      warnings: warnings.length > 0 ? warnings : undefined
+      warnings: warnings.length > 0 ? warnings : undefined,
     };
   }
 
@@ -528,10 +523,7 @@ export class ConfigValidator {
    * @param context Validation context
    * @returns Validation result
    */
-  validate(
-    config: Record<string, unknown>,
-    context: ValidationContext
-  ): ValidationResult {
+  validate(config: Record<string, unknown>, context: ValidationContext): ValidationResult {
     const errors: ValidationError[] = [];
     const warnings: string[] = [];
 
@@ -541,7 +533,7 @@ export class ConfigValidator {
       const result = this.validateAgainstSchema(value, schema, {
         ...context,
         path,
-        fullConfig: config
+        fullConfig: config,
       });
 
       if (!result.valid) {
@@ -559,7 +551,7 @@ export class ConfigValidator {
         const result = validator(value, {
           ...context,
           path,
-          fullConfig: config
+          fullConfig: config,
         });
 
         if (!result.valid) {
@@ -574,7 +566,7 @@ export class ConfigValidator {
     return {
       valid: errors.length === 0,
       errors: errors.length > 0 ? errors : undefined,
-      warnings: warnings.length > 0 ? warnings : undefined
+      warnings: warnings.length > 0 ? warnings : undefined,
     };
   }
 
@@ -615,7 +607,7 @@ export const AzureValidators = {
           source: context.source,
           actualValue: value,
           expected: `Length: ${minLength}-${maxLength}`,
-          code: 'INVALID_LENGTH'
+          code: 'INVALID_LENGTH',
         });
       }
 
@@ -627,7 +619,7 @@ export const AzureValidators = {
           source: context.source,
           actualValue: value,
           expected: 'Pattern: ^[a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?$',
-          code: 'INVALID_PATTERN'
+          code: 'INVALID_PATTERN',
         });
       }
 
@@ -652,7 +644,7 @@ export const AzureValidators = {
           source: context.source,
           actualValue: value,
           expected: 'Length: 3-24',
-          code: 'INVALID_LENGTH'
+          code: 'INVALID_LENGTH',
         });
       }
 
@@ -664,7 +656,7 @@ export const AzureValidators = {
           source: context.source,
           actualValue: value,
           expected: 'Pattern: lowercase letters and numbers only',
-          code: 'INVALID_PATTERN'
+          code: 'INVALID_PATTERN',
         });
       }
 
@@ -686,7 +678,7 @@ export const AzureValidators = {
           source: context.source,
           actualValue: value,
           expected: `Range: ${min}-${max}`,
-          code: 'OUT_OF_RANGE'
+          code: 'OUT_OF_RANGE',
         });
       }
 
@@ -708,7 +700,7 @@ export const AzureValidators = {
           source: context.source,
           actualValue: value.length,
           expected: `Length: ${min}-${max}`,
-          code: 'INVALID_LENGTH'
+          code: 'INVALID_LENGTH',
         });
       }
 
@@ -730,11 +722,11 @@ export const AzureValidators = {
           source: context.source,
           actualValue: value,
           expected: description,
-          code: 'INVALID_PATTERN'
+          code: 'INVALID_PATTERN',
         });
       }
 
       return { valid: errors.length === 0, errors: errors.length > 0 ? errors : undefined };
     };
-  }
+  },
 };

@@ -101,11 +101,7 @@ export class FunctionDiscovery {
     try {
       await fs.access(basePath);
     } catch {
-      throw new DiscoveryError(
-        `Functions directory not found: ${basePath}`,
-        undefined,
-        undefined
-      );
+      throw new DiscoveryError(`Functions directory not found: ${basePath}`, undefined, undefined);
     }
 
     // Read directory contents

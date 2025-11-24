@@ -87,6 +87,8 @@ export * from './naming';
 // Synthesis types and synthesizers (CloudAssembly, StackManifest, DataStackSynthesizer, etc.)
 export type { CloudAssembly, StackManifest } from './synthesis';
 export {
+  Synthesizer,
+  // BackendAdapter moved to @atakora/component package
   DataStackSynthesizer,
   synthesizeCosmosContainer,
   synthesizeEventTopics,
@@ -132,7 +134,16 @@ export * from './authorization';
 export * as schema from './schema';
 
 // Atakora schema DSL for data modeling
-export { defineSchema, Fields, allow, hasMany, hasOne, belongsTo, manyToMany, polymorphic } from './schema/atakora';
+export {
+  defineSchema,
+  Fields,
+  allow,
+  hasMany,
+  hasOne,
+  belongsTo,
+  manyToMany,
+  polymorphic,
+} from './schema/atakora';
 export type { SchemaDefinition, InferSchemaType } from './schema/atakora';
 
 // Atakora runtime SDK (query and mutation builders, relationship loading)

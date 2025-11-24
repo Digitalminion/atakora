@@ -40,9 +40,7 @@ export interface IResourceProvider {
   ): any;
 
   /** Merge multiple requirements into one */
-  mergeRequirements(
-    requirements: ReadonlyArray<IResourceRequirement>
-  ): IResourceRequirement;
+  mergeRequirements(requirements: ReadonlyArray<IResourceRequirement>): IResourceRequirement;
 }
 
 /**
@@ -61,11 +59,7 @@ export interface ProviderContext {
  * Naming convention interface for resource naming.
  */
 export interface NamingConvention {
-  formatResourceName(
-    resourceType: string,
-    backendId: string,
-    suffix?: string
-  ): string;
+  formatResourceName(resourceType: string, backendId: string, suffix?: string): string;
 }
 
 /**
@@ -261,14 +255,9 @@ export abstract class BaseProvider<TConfig = any, TResource = any> implements IR
    * @returns Single merged requirement
    * @throws {ProviderError} If requirements cannot be merged
    */
-  mergeRequirements(
-    requirements: ReadonlyArray<IResourceRequirement>
-  ): IResourceRequirement {
+  mergeRequirements(requirements: ReadonlyArray<IResourceRequirement>): IResourceRequirement {
     if (requirements.length === 0) {
-      throw this.createError(
-        'EMPTY_REQUIREMENTS',
-        'Cannot merge empty requirements array'
-      );
+      throw this.createError('EMPTY_REQUIREMENTS', 'Cannot merge empty requirements array');
     }
 
     if (requirements.length === 1) {
@@ -311,11 +300,9 @@ export abstract class BaseProvider<TConfig = any, TResource = any> implements IR
     // Validate merged configuration
     const validation = this.validate(mergedConfig);
     if (!validation.valid) {
-      throw this.createError(
-        'INVALID_MERGED_CONFIG',
-        'Merged configuration is invalid',
-        { errors: validation.errors }
-      );
+      throw this.createError('INVALID_MERGED_CONFIG', 'Merged configuration is invalid', {
+        errors: validation.errors,
+      });
     }
 
     // Use the first requirement as a template and override config
@@ -324,7 +311,7 @@ export abstract class BaseProvider<TConfig = any, TResource = any> implements IR
       resourceType: firstReq.resourceType,
       requirementKey: firstReq.requirementKey,
       config: mergedConfig,
-      priority: Math.max(...requirements.map(r => r.priority ?? 10)),
+      priority: Math.max(...requirements.map((r) => r.priority ?? 10)),
     };
   }
 
@@ -351,11 +338,9 @@ export abstract class BaseProvider<TConfig = any, TResource = any> implements IR
     // Validate configuration
     const validation = this.validate(requirement.config);
     if (!validation.valid) {
-      throw this.createError(
-        'INVALID_CONFIG',
-        'Configuration validation failed',
-        { errors: validation.errors }
-      );
+      throw this.createError('INVALID_CONFIG', 'Configuration validation failed', {
+        errors: validation.errors,
+      });
     }
 
     // Generate resource name
@@ -383,9 +368,7 @@ export abstract class BaseProvider<TConfig = any, TResource = any> implements IR
    * @param requirements - Requirements to analyze
    * @returns Merge analysis result
    */
-  protected analyzeMergeability(
-    requirements: ReadonlyArray<IResourceRequirement>
-  ): MergeResult {
+  protected analyzeMergeability(requirements: ReadonlyArray<IResourceRequirement>): MergeResult {
     const warnings: string[] = [];
 
     // Check pairwise compatibility
@@ -398,9 +381,7 @@ export abstract class BaseProvider<TConfig = any, TResource = any> implements IR
           return {
             config: null,
             canMerge: false,
-            warnings: [
-              `Requirements ${i} and ${j} are incompatible and cannot be merged`
-            ],
+            warnings: [`Requirements ${i} and ${j} are incompatible and cannot be merged`],
           };
         }
       }

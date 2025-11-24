@@ -14,7 +14,4 @@
 export { MessageQueue } from './message-queue';
 
 // Types
-export type {
-  MessageQueueProps,
-  QueueFunctionConfig,
-} from './types';
+export type { MessageQueueProps, QueueFunctionConfig } from './types';

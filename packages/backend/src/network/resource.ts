@@ -10,8 +10,9 @@ const isProd = process.env.NODE_ENV === 'production';
 
 export const networking = defineNetwork({
   // Primary VNet configuration
-  Primary: network.vnet()
-    .access(access =>
+  Primary: network
+    .vnet()
+    .access((access) =>
       access
         .forcePrivate(isProd)
         .allowIPs(
@@ -21,7 +22,7 @@ export const networking = defineNetwork({
         )
         .serviceEndpoints(['Microsoft.Storage', 'Microsoft.Sql', 'Microsoft.KeyVault'])
     )
-    .cors(cors =>
+    .cors((cors) =>
       cors
         .enable()
         .allowOrigins([
@@ -34,45 +35,32 @@ export const networking = defineNetwork({
         .allowCredentials()
         .maxAge(3600)
     )
-    .tls(tls =>
-      tls
-        .minVersion('1.2')
-        .cipherSuites('modern')
-        .requireHttps()
-        .hsts(31536000) // 1 year
+    .tls(
+      (tls) => tls.minVersion('1.2').cipherSuites('modern').requireHttps().hsts(31536000) // 1 year
     )
-    .when(isProd, net =>
-      net.privateLink(link =>
-        link
-          .enable()
-          .services(['functionApp', 'storage', 'cosmosdb', 'keyVault'])
+    .when(isProd, (net) =>
+      net.privateLink((link) =>
+        link.enable().services(['functionApp', 'storage', 'cosmosdb', 'keyVault'])
       )
     )
-    .dns(dns =>
-      dns
-        .when(isProd, d =>
-          d.customDomains(['api.company.com', 'data.company.com'])
-        )
-        .dnsSec(true)
+    .dns((dns) =>
+      dns.when(isProd, (d) => d.customDomains(['api.company.com', 'data.company.com'])).dnsSec(true)
     ),
 
   // Web Application Firewall
-  Firewall: network.waf()
+  Firewall: network
+    .waf()
     .enable(isProd)
     .mode('Prevention')
     .ruleSet('OWASP_3.2')
-    .customRule(rule =>
-      rule
-        .name('RateLimitAPI')
-        .priority(100)
-        .rateLimit('1m', 100)
-        .action('Block')
+    .customRule((rule) =>
+      rule.name('RateLimitAPI').priority(100).rateLimit('1m', 100).action('Block')
     )
-    .customRule(rule =>
+    .customRule((rule) =>
       rule
         .name('BlockMaliciousUserAgents')
         .priority(200)
-        .match(match =>
+        .match((match) =>
           match
             .variable('RequestHeaders')
             .selector('User-Agent')
@@ -83,7 +71,5 @@ export const networking = defineNetwork({
     ),
 
   // DDoS Protection
-  DDoS: network.ddos()
-    .enable(isProd)
-    .mode('VirtualNetworkInherited'),
+  DDoS: network.ddos().enable(isProd).mode('VirtualNetworkInherited'),
 });

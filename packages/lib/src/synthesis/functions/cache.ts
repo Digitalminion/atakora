@@ -106,10 +106,7 @@ export class BuildCache {
     factors.push(`node:${process.version}`);
 
     // Compute final cache key
-    return crypto
-      .createHash('sha256')
-      .update(factors.join('|'))
-      .digest('hex');
+    return crypto.createHash('sha256').update(factors.join('|')).digest('hex');
   }
 
   /**
@@ -182,9 +179,7 @@ export class BuildCache {
       const serializableArtifact = {
         ...artifact,
         bundle: this.uint8ArrayToBase64(artifact.bundle),
-        sourceMap: artifact.sourceMap
-          ? this.uint8ArrayToBase64(artifact.sourceMap)
-          : undefined,
+        sourceMap: artifact.sourceMap ? this.uint8ArrayToBase64(artifact.sourceMap) : undefined,
       };
 
       // Create cache entry
@@ -241,7 +236,7 @@ export class BuildCache {
 
       if (pattern) {
         // Remove matching entries
-        const matching = files.filter(f => f.includes(pattern));
+        const matching = files.filter((f) => f.includes(pattern));
         for (const file of matching) {
           const filePath = path.join(this.config.cacheDir, file);
           fs.unlinkSync(filePath);
@@ -344,8 +339,9 @@ export class BuildCache {
     }
 
     // Get all cache files sorted by modification time (oldest first)
-    const files = fs.readdirSync(this.config.cacheDir)
-      .map(f => {
+    const files = fs
+      .readdirSync(this.config.cacheDir)
+      .map((f) => {
         const filePath = path.join(this.config.cacheDir, f);
         const stat = fs.statSync(filePath);
         return { path: filePath, mtime: stat.mtimeMs, size: stat.size };
@@ -377,7 +373,7 @@ export class BuildCache {
       const hash = crypto.createHash('sha256');
       const stream = fs.createReadStream(filePath);
 
-      stream.on('data', data => hash.update(data));
+      stream.on('data', (data) => hash.update(data));
       stream.on('end', () => resolve(hash.digest('hex')));
       stream.on('error', reject);
     });
@@ -416,10 +412,7 @@ export class BuildCache {
         devDependencies: packageJson.devDependencies || {},
       };
 
-      return crypto
-        .createHash('sha256')
-        .update(JSON.stringify(deps))
-        .digest('hex');
+      return crypto.createHash('sha256').update(JSON.stringify(deps)).digest('hex');
     } catch (error) {
       // If we can't read package.json, return a constant
       return 'no-deps';

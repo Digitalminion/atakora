@@ -25,7 +25,6 @@ const handler: AzureFunction = async (context: Context, req: HttpRequest) => {
         sentAt: new Date().toISOString(),
       },
     };
-
   } catch (error) {
     context.log.error('Notification failed:', error);
     return {

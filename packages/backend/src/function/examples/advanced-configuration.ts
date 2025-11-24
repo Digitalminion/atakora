@@ -5,7 +5,7 @@
  * Uses the new defineFunction() pattern for Azure Functions.
  */
 
-import { defineFunction } from '@atakora/component/functions';
+import { defineFunctions, configureFunction } from '@atakora/component/functions';
 
 /**
  * Process uploaded files with validation and storage.
@@ -17,183 +17,44 @@ import { defineFunction } from '@atakora/component/functions';
  * 4. Creates database record
  * 5. Queues for further processing
  */
-export const processUpload = defineFunction({
-  name: 'process-upload',
+export const processUpload = defineFunctions({
+  ProcessUpload: configureFunction('process-upload')
+    .memory(512)
+    .timeout(300000)
+    .withHandler(async (context, req) => {
+      const file = req.body;
+      const { description, tags } = req.query;
 
-  // Function entry point
-  entry: './handler.ts',
+      // Validate file
+      if (!file) {
+        return {
+          status: 400,
+          body: { error: 'Invalid file format' },
+        };
+      }
 
-  // Runtime configuration
-  runtime: 20, // Node.js 20
-  timeout: 300, // 5 minutes
-  memory: 512, // MB
+      // TODO: Process and store file
+      // - Store in blob storage
+      // - Create Cosmos DB record
+      // - Queue for validation
 
-  // HTTP trigger configuration
-  trigger: {
-    type: 'http',
-    methods: ['POST'],
-    route: 'upload',
-    authLevel: 'function', // Requires function key
-  },
-
-  // Bindings for Azure services
-  bindings: {
-    // Input: Receive file from HTTP request
-    input: [
-      {
-        type: 'httpTrigger',
-        name: 'req',
-        methods: ['POST'],
-        route: 'upload',
-      },
-    ],
-
-    // Output: Multiple outputs
-    output: [
-      {
-        type: 'http',
-        name: '$return',
-      },
-      {
-        type: 'blob',
-        name: 'uploadedFile',
-        path: 'uploads/{rand-guid}',
-        connection: 'STORAGE_CONNECTION',
-      },
-      {
-        type: 'cosmosDB',
-        name: 'datasetRecord',
-        databaseName: 'colorai-db',
-        containerName: 'datasets',
-        connection: 'COSMOS_CONNECTION',
-      },
-      {
-        type: 'queue',
-        name: 'validationQueue',
-        queueName: 'dataset-validation',
-        connection: 'STORAGE_CONNECTION',
-      },
-    ],
-  },
-
-  // Environment variables
-  environment: {
-    STORAGE_CONNECTION: '${backend.storage.connectionString}',
-    COSMOS_CONNECTION: '${backend.cosmos.connectionString}',
-    MAX_FILE_SIZE: '${backend.config.maxUploadSizeMb}',
-    ALLOWED_TYPES: '${backend.config.allowedFileTypes}',
-  },
-
-  // Scaling configuration
-  scale: {
-    minInstances: 0,
-    maxInstances: 10,
-    rules: [
-      {
-        name: 'http-queue-length',
-        type: 'http',
-        threshold: 100,
-      },
-    ],
-  },
-
-  // Retry policy
-  retry: {
-    maxAttempts: 3,
-    delay: 5000, // 5 seconds
-    backoff: 'exponential',
-  },
-
-  // Monitoring
-  monitoring: {
-    logLevel: 'info',
-    metrics: [
-      { name: 'upload_size_bytes', type: 'histogram' },
-      { name: 'upload_duration_ms', type: 'histogram' },
-      { name: 'upload_success', type: 'counter' },
-      { name: 'upload_failure', type: 'counter' },
-    ],
-    alerts: [
-      {
-        name: 'upload_failures',
-        condition: 'rate(upload_failure[5m]) > 10',
-        severity: 'warning',
-      },
-    ],
-  },
-
-  // CORS configuration
-  cors: {
-    allowedOrigins: ['${backend.config.allowedOrigins}'],
-    allowedMethods: ['POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    maxAge: 86400,
-  },
-
-  // Authorization
-  authorization: {
-    type: 'jwt',
-    audiences: ['${backend.auth.audience}'],
-    issuer: '${backend.auth.issuer}',
-  },
-
-  // OpenAPI documentation
-  openapi: {
-    summary: 'Upload and process dataset file',
-    description: 'Uploads a CSV or Excel file for processing and validation',
-    requestBody: {
-      required: true,
-      content: {
-        'multipart/form-data': {
-          schema: {
-            type: 'object',
-            properties: {
-              file: {
-                type: 'string',
-                format: 'binary',
-                description: 'The file to upload',
-              },
-              description: {
-                type: 'string',
-                description: 'Optional description of the dataset',
-              },
-              tags: {
-                type: 'array',
-                items: { type: 'string' },
-                description: 'Optional tags for categorization',
-              },
-            },
-            required: ['file'],
-          },
+      return {
+        status: 200,
+        body: {
+          datasetId: 'generated-id',
+          fileName: file.name || 'upload',
+          size: file.size || 0,
+          status: 'processing',
+          message: 'Upload successful, validation in progress',
         },
-      },
-    },
-    responses: {
-      200: {
-        description: 'Upload successful',
-        content: {
-          'application/json': {
-            schema: {
-              type: 'object',
-              properties: {
-                datasetId: { type: 'string' },
-                fileName: { type: 'string' },
-                size: { type: 'number' },
-                status: { type: 'string' },
-                message: { type: 'string' },
-              },
-            },
-          },
-        },
-      },
-      400: {
-        description: 'Invalid file or parameters',
-      },
-      413: {
-        description: 'File too large',
-      },
-    },
-  },
+      };
+    })
+    .env({
+      STORAGE_CONNECTION: '${backend.storage.connectionString}',
+      COSMOS_CONNECTION: '${backend.cosmos.connectionString}',
+      MAX_FILE_SIZE: '${backend.config.maxUploadSizeMb}',
+      ALLOWED_TYPES: '${backend.config.allowedFileTypes}',
+    }),
 });
 
 /**

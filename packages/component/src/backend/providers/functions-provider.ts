@@ -1,7 +1,12 @@
 import type { Construct } from '@atakora/cdk';
 import { FunctionApp } from '@atakora/cdk/functions';
 import type { FunctionAppProps } from '@atakora/cdk/functions';
-import { BaseProvider, type IResourceRequirement, type ProviderContext, type ValidationResult } from './base-provider';
+import {
+  BaseProvider,
+  type IResourceRequirement,
+  type ProviderContext,
+  type ValidationResult,
+} from './base-provider';
 
 /**
  * Function runtime types.
@@ -128,23 +133,23 @@ export class FunctionsProvider extends BaseProvider<FunctionsConfig, FunctionApp
     const env1 = config1.environmentVariables ?? {};
     const env2 = config2.environmentVariables ?? {};
 
-    const namespacedKeys1 = Object.keys(env1).map(key =>
+    const namespacedKeys1 = Object.keys(env1).map((key) =>
       this.namespaceEnvVar(key, env1[key].componentId ?? 'unknown')
     );
-    const namespacedKeys2 = Object.keys(env2).map(key =>
+    const namespacedKeys2 = Object.keys(env2).map((key) =>
       this.namespaceEnvVar(key, env2[key].componentId ?? 'unknown')
     );
 
     // Check for duplicates
-    const duplicates = namespacedKeys1.filter(key => namespacedKeys2.includes(key));
+    const duplicates = namespacedKeys1.filter((key) => namespacedKeys2.includes(key));
     if (duplicates.length > 0) {
       // Check if duplicate keys have same values
       for (const dupKey of duplicates) {
-        const original1 = Object.entries(env1).find(([k, v]) =>
-          this.namespaceEnvVar(k, v.componentId ?? 'unknown') === dupKey
+        const original1 = Object.entries(env1).find(
+          ([k, v]) => this.namespaceEnvVar(k, v.componentId ?? 'unknown') === dupKey
         );
-        const original2 = Object.entries(env2).find(([k, v]) =>
-          this.namespaceEnvVar(k, v.componentId ?? 'unknown') === dupKey
+        const original2 = Object.entries(env2).find(
+          ([k, v]) => this.namespaceEnvVar(k, v.componentId ?? 'unknown') === dupKey
         );
 
         if (original1 && original2 && original1[1].value !== original2[1].value) {
@@ -163,7 +168,7 @@ export class FunctionsProvider extends BaseProvider<FunctionsConfig, FunctionApp
    * @returns Merged Functions configuration
    */
   protected merge(requirements: ReadonlyArray<IResourceRequirement>): FunctionsConfig {
-    const configs = requirements.map(r => r.config as FunctionsConfig);
+    const configs = requirements.map((r) => r.config as FunctionsConfig);
 
     // Start with first config as base
     const mergedConfig: any = {
@@ -180,7 +185,7 @@ export class FunctionsProvider extends BaseProvider<FunctionsConfig, FunctionApp
     const allExtensions = new Set<string>();
     for (const config of configs) {
       if (config.extensions) {
-        config.extensions.forEach(ext => allExtensions.add(ext));
+        config.extensions.forEach((ext) => allExtensions.add(ext));
       }
     }
     if (allExtensions.size > 0) {
@@ -191,18 +196,18 @@ export class FunctionsProvider extends BaseProvider<FunctionsConfig, FunctionApp
     mergedConfig.environmentVariables = this.mergeEnvironmentVariables(configs);
 
     // Use highest SKU
-    const skus = configs.map(c => c.sku).filter((sku): sku is string => sku !== undefined);
+    const skus = configs.map((c) => c.sku).filter((sku): sku is string => sku !== undefined);
     if (skus.length > 0) {
       mergedConfig.sku = this.selectHighestSku(skus);
     }
 
     // Enable alwaysOn if any component requires it
-    if (configs.some(c => c.alwaysOn)) {
+    if (configs.some((c) => c.alwaysOn)) {
       mergedConfig.alwaysOn = true;
     }
 
     // Use most recent version if multiple specified
-    const versions = configs.map(c => c.version).filter((v): v is string => v !== undefined);
+    const versions = configs.map((c) => c.version).filter((v): v is string => v !== undefined);
     if (versions.length > 1) {
       mergedConfig.version = this.selectHighestVersion(versions);
     }
@@ -286,16 +291,16 @@ export class FunctionsProvider extends BaseProvider<FunctionsConfig, FunctionApp
    */
   private selectHighestSku(skus: string[]): string {
     const skuPriority: Record<string, number> = {
-      'Y1': 1, // Consumption
-      'EP1': 2, // Elastic Premium
-      'EP2': 3,
-      'EP3': 4,
-      'P1V2': 5, // Premium V2
-      'P2V2': 6,
-      'P3V2': 7,
-      'P1V3': 8, // Premium V3
-      'P2V3': 9,
-      'P3V3': 10,
+      Y1: 1, // Consumption
+      EP1: 2, // Elastic Premium
+      EP2: 3,
+      EP3: 4,
+      P1V2: 5, // Premium V2
+      P2V2: 6,
+      P3V2: 7,
+      P1V3: 8, // Premium V3
+      P2V3: 9,
+      P3V3: 10,
     };
 
     return skus.reduce((highest, current) => {
@@ -418,7 +423,9 @@ export class FunctionsProvider extends BaseProvider<FunctionsConfig, FunctionApp
     // Validate runtime
     const validRuntimes: FunctionRuntime[] = ['node', 'python', 'dotnet', 'java', 'powershell'];
     if (!validRuntimes.includes(config.runtime)) {
-      errors.push(`Invalid runtime '${config.runtime}'. Must be one of: ${validRuntimes.join(', ')}`);
+      errors.push(
+        `Invalid runtime '${config.runtime}'. Must be one of: ${validRuntimes.join(', ')}`
+      );
     }
 
     // Validate version format

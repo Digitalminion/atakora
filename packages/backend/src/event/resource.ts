@@ -44,7 +44,7 @@ export const event = defineEvents({
     .parallelism(3) // Max 3 concurrent uploads
 
     // Retry policy - aggressive for critical pipeline
-    .retry(retry =>
+    .retry((retry) =>
       retry
         .maxAttempts(10)
         .exponentialBackoff()
@@ -84,7 +84,7 @@ export const event = defineEvents({
     })
 
     // Monitoring and alerts
-    .monitoring(alerts =>
+    .monitoring((alerts) =>
       alerts
         .onDepth(greaterThan(100))
         .warn()
@@ -153,7 +153,7 @@ export const event = defineEvents({
       }
     })
 
-    .monitoring(alerts =>
+    .monitoring((alerts) =>
       alerts
         .onDepth(greaterThan(200))
         .warn()
@@ -202,7 +202,7 @@ export const event = defineEvents({
       await context.metrics.record('processing.status', event.status);
     })
 
-    .monitoring(alerts =>
+    .monitoring((alerts) =>
       alerts
         .onDepth(greaterThan(50))
         .warn()
@@ -263,7 +263,7 @@ export const event = defineEvents({
       }
     })
 
-    .monitoring(alerts =>
+    .monitoring((alerts) =>
       alerts
         .onDepth(greaterThan(20))
         .critical()
@@ -287,12 +287,8 @@ export const event = defineEvents({
     .parallelism(5) // Limit concurrent sends
 
     // Standard retry policy
-    .retry(retry =>
-      retry
-        .maxAttempts(5)
-        .exponentialBackoff()
-        .initialDelay(minutes(1))
-        .maxDelay(minutes(30))
+    .retry((retry) =>
+      retry.maxAttempts(5).exponentialBackoff().initialDelay(minutes(1)).maxDelay(minutes(30))
     )
 
     .withDeadLetterQueue()
@@ -345,7 +341,7 @@ export const event = defineEvents({
       });
     })
 
-    .monitoring(alerts =>
+    .monitoring((alerts) =>
       alerts
         .onDepth(greaterThan(1000))
         .warn()

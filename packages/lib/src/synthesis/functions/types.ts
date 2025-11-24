@@ -188,7 +188,10 @@ export interface BuildOptions {
   /**
    * Custom loaders for file types
    */
-  readonly loader?: Record<string, 'js' | 'jsx' | 'ts' | 'tsx' | 'json' | 'text' | 'base64' | 'dataurl' | 'file' | 'binary'>;
+  readonly loader?: Record<
+    string,
+    'js' | 'jsx' | 'ts' | 'tsx' | 'json' | 'text' | 'base64' | 'dataurl' | 'file' | 'binary'
+  >;
 }
 
 /**
@@ -510,7 +513,9 @@ export interface FunctionMetadata {
 /**
  * Complete function configuration with directory and metadata
  */
-export interface FunctionConfiguration<TEnv extends Record<string, string> = Record<string, string>> {
+export interface FunctionConfiguration<
+  TEnv extends Record<string, string> = Record<string, string>,
+> {
   /**
    * Directory information
    */

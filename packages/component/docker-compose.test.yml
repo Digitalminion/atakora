@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # Cosmos DB Emulator
+  # https://learn.microsoft.com/en-us/azure/cosmos-db/docker-emulator-linux
+  cosmos:
+    image: mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest
+    container_name: atakora-cosmos-test
+    platform: linux/amd64
+    environment:
+      AZURE_COSMOS_EMULATOR_PARTITION_COUNT: 10
+      AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE: 'false'
+      AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE: 127.0.0.1
+    ports:
+      - '8081:8081'
+      - '10251-10254:10251-10254'
+    networks:
+      - atakora-test
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'https://localhost:8081/_explorer/emulator.pem']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Azurite - Azure Storage Emulator
+  # https://learn.microsoft.com/en-us/azure/storage/common/storage-use-azurite
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    container_name: atakora-azurite-test
+    command: azurite --blobHost 0.0.0.0 --queueHost 0.0.0.0 --tableHost 0.0.0.0 --loose
+    ports:
+      - '10000:10000' # Blob service
+      - '10001:10001' # Queue service
+      - '10002:10002' # Table service
+    networks:
+      - atakora-test
+    healthcheck:
+      test: ['CMD', 'nc', '-z', 'localhost', '10000']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    volumes:
+      - azurite-data:/data
+
+networks:
+  atakora-test:
+    driver: bridge
+
+volumes:
+  azurite-data:

@@ -12,10 +12,7 @@
  */
 
 import type { SchemaDefinition, AuthorizationRule } from '../../schema/atakora/schema-types';
-import {
-  getPrimaryKeyField,
-  getRelationshipsByType,
-} from '../../schema/atakora/define-schema';
+import { getPrimaryKeyField, getRelationshipsByType } from '../../schema/atakora/define-schema';
 
 /**
  * Resolver operation type.
@@ -161,9 +158,7 @@ export interface ResolverSynthesisResult {
  * // }
  * ```
  */
-export function synthesizeResolvers(
-  schema: SchemaDefinition<any>
-): ResolverSynthesisResult {
+export function synthesizeResolvers(schema: SchemaDefinition<any>): ResolverSynthesisResult {
   const resolvers: ResolverConfig[] = [];
   const inputTypes = new Map<string, any>();
 
@@ -197,11 +192,9 @@ export function synthesizeResolvers(
     create: resolvers.filter((r) => r.operation === ResolverOperation.CREATE).length,
     update: resolvers.filter((r) => r.operation === ResolverOperation.UPDATE).length,
     delete: resolvers.filter((r) => r.operation === ResolverOperation.DELETE).length,
-    relationship: resolvers.filter((r) => r.operation === ResolverOperation.RELATIONSHIP)
-      .length,
+    relationship: resolvers.filter((r) => r.operation === ResolverOperation.RELATIONSHIP).length,
     computed: resolvers.filter((r) => r.operation === ResolverOperation.COMPUTED).length,
-    subscription: resolvers.filter((r) => r.operation === ResolverOperation.SUBSCRIPTION)
-      .length,
+    subscription: resolvers.filter((r) => r.operation === ResolverOperation.SUBSCRIPTION).length,
   };
 
   return {
@@ -421,9 +414,10 @@ function mapComputedType(type: string): string {
 /**
  * Validate resolver synthesis result.
  */
-export function validateResolverSynthesis(
-  result: ResolverSynthesisResult
-): { valid: boolean; errors: string[] } {
+export function validateResolverSynthesis(result: ResolverSynthesisResult): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   // Validate each resolver

@@ -322,9 +322,7 @@ export class DataStackSynthesizer {
   /**
    * Synthesize Cosmos DB containers.
    */
-  private synthesizeCosmosContainers(
-    schemas: SchemaDefinition<any>[]
-  ): CosmosContainerConfig[] {
+  private synthesizeCosmosContainers(schemas: SchemaDefinition<any>[]): CosmosContainerConfig[] {
     return schemas.map((schema) => synthesizeCosmosContainer(schema));
   }
 
@@ -528,9 +526,10 @@ function topologicalSort(nodes: DependencyNode[]): string[] {
 /**
  * Validate data stack manifest.
  */
-export function validateDataStackManifest(
-  manifest: DataStackManifest
-): { valid: boolean; errors: string[] } {
+export function validateDataStackManifest(manifest: DataStackManifest): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   // Validate Cosmos DB configuration

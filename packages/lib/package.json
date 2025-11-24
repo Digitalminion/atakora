@@ -276,7 +276,6 @@
   "license": "ISC",
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^14.2.1",
-    "@atakora/component": "*",
     "@azure/arm-storage": "^19.0.0",
     "@azure/identity": "^4.5.0",
     "@azure/storage-blob": "^12.17.0",

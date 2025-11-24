@@ -39,7 +39,9 @@ describe('TemplateSplitter', () => {
       const categorized = splitter.categorizeResources(resources);
 
       expect(categorized.get(ResourceTier.FOUNDATION)).toHaveLength(1);
-      expect(categorized.get(ResourceTier.FOUNDATION)?.[0].type).toBe('Microsoft.Storage/storageAccounts');
+      expect(categorized.get(ResourceTier.FOUNDATION)?.[0].type).toBe(
+        'Microsoft.Storage/storageAccounts'
+      );
 
       expect(categorized.get(ResourceTier.COMPUTE)).toHaveLength(2);
       expect(categorized.get(ResourceTier.CONFIGURATION)).toHaveLength(1);
@@ -97,9 +99,11 @@ describe('TemplateSplitter', () => {
 
       expect(graph.nodes.size).toBe(2);
       expect(graph.edges.size).toBe(2);
-      expect(graph.edges.get('Microsoft.Web/sites/app1')?.has('Microsoft.Storage/storageAccounts/storage1')).toBe(
-        true
-      );
+      expect(
+        graph.edges
+          .get('Microsoft.Web/sites/app1')
+          ?.has('Microsoft.Storage/storageAccounts/storage1')
+      ).toBe(true);
     });
 
     it('should handle resources with no dependencies', () => {
@@ -227,7 +231,9 @@ describe('TemplateSplitter', () => {
       expect(result.deploymentOrder.length).toBeGreaterThan(0);
 
       // Foundation resources should come before compute resources
-      const foundationIndex = result.deploymentOrder.findIndex((name) => name.includes('foundation'));
+      const foundationIndex = result.deploymentOrder.findIndex((name) =>
+        name.includes('foundation')
+      );
       const computeIndex = result.deploymentOrder.findIndex((name) => name.includes('compute'));
 
       if (foundationIndex >= 0 && computeIndex >= 0) {

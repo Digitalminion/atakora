@@ -1,6 +1,33 @@
-import { App, SubscriptionStack, ResourceGroupStack, Subscription, Geography, Organization, Project, Environment, Instance } from '@atakora/cdk';
-import { VirtualNetworks, Subnets, NetworkSecurityGroups, PrivateEndpoints, PrivateEndpointNetworkPolicies, PrivateLinkServiceNetworkPolicies, SecurityRuleProtocol, SecurityRuleAccess, SecurityRuleDirection } from '@atakora/cdk/network';
-import { StorageAccounts, StorageAccountSkuName, StorageAccountKind, TlsVersion, NetworkAclDefaultAction, NetworkAclBypass } from '@atakora/cdk/storage';
+import {
+  App,
+  SubscriptionStack,
+  ResourceGroupStack,
+  Subscription,
+  Geography,
+  Organization,
+  Project,
+  Environment,
+  Instance,
+} from '@atakora/cdk';
+import {
+  VirtualNetworks,
+  Subnets,
+  NetworkSecurityGroups,
+  PrivateEndpoints,
+  PrivateEndpointNetworkPolicies,
+  PrivateLinkServiceNetworkPolicies,
+  SecurityRuleProtocol,
+  SecurityRuleAccess,
+  SecurityRuleDirection,
+} from '@atakora/cdk/network';
+import {
+  StorageAccounts,
+  StorageAccountSkuName,
+  StorageAccountKind,
+  TlsVersion,
+  NetworkAclDefaultAction,
+  NetworkAclBypass,
+} from '@atakora/cdk/storage';
 import { Vaults, KeyVaultSkuName } from '@atakora/cdk/keyvault';
 import { Workspaces, WorkspaceSku } from '@atakora/cdk/operationalinsights';
 
@@ -24,7 +51,9 @@ const location = process.env.AZURE_LOCATION || 'usgovvirginia'; // Gov Cloud reg
 
 // Create subscription stack
 const subscriptionStack = new SubscriptionStack(app, 'GovCloudFoundation', {
-  subscription: Subscription.fromId(process.env.AZURE_SUBSCRIPTION_ID || '00000000-0000-0000-0000-000000000000'),
+  subscription: Subscription.fromId(
+    process.env.AZURE_SUBSCRIPTION_ID || '00000000-0000-0000-0000-000000000000'
+  ),
   geography: Geography.fromValue(location),
   organization: Organization.fromValue('governmentorg'),
   project: new Project('govcloud'),
@@ -71,10 +100,7 @@ const vnet = new VirtualNetworks(stack, 'SecureVNet', {
 const privateSubnet = new Subnets(vnet, 'PrivateSubnet', {
   name: 'snet-private',
   addressPrefix: '10.100.1.0/24',
-  serviceEndpoints: [
-    { service: 'Microsoft.Storage' },
-    { service: 'Microsoft.KeyVault' },
-  ],
+  serviceEndpoints: [{ service: 'Microsoft.Storage' }, { service: 'Microsoft.KeyVault' }],
   privateEndpointNetworkPolicies: PrivateEndpointNetworkPolicies.DISABLED,
   privateLinkServiceNetworkPolicies: PrivateLinkServiceNetworkPolicies.DISABLED,
 });
@@ -121,7 +147,8 @@ const nsg = new NetworkSecurityGroups(stack, 'PrivateNSG', {
 
 // Secure Storage Account with private endpoint
 const storage = new StorageAccounts(stack, 'SecureStorage', {
-  storageAccountName: `stgovcloud${environment}${Math.random().toString(36).slice(2, 6)}`.toLowerCase(),
+  storageAccountName:
+    `stgovcloud${environment}${Math.random().toString(36).slice(2, 6)}`.toLowerCase(),
   sku: StorageAccountSkuName.STANDARD_RAGRS, // Read-access geo-redundant for gov cloud
   kind: StorageAccountKind.STORAGE_V2,
   minimumTlsVersion: TlsVersion.TLS1_2,

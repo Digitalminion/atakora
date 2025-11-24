@@ -17,12 +17,12 @@ import { DefaultAzureCredential } from '@azure/identity';
 
 // Initialize Cosmos DB client with managed identity
 const credential = new DefaultAzureCredential({
-  managedIdentityClientId: process.env.AZURE_CLIENT_ID
+  managedIdentityClientId: process.env.AZURE_CLIENT_ID,
 });
 
 const cosmosClient = new CosmosClient({
   endpoint: process.env.COSMOS_ENDPOINT!,
-  aadCredentials: credential
+  aadCredentials: credential,
 });
 
 const database = cosmosClient.database('ATAKORA_DATABASE_NAME');
@@ -106,8 +106,8 @@ app.http('create-ATAKORA_ENTITY_NAME_LOWER', {
           status: 400,
           jsonBody: {
             error: 'Validation failed',
-            details: errors
-          }
+            details: errors,
+          },
         };
       }
 
@@ -118,7 +118,7 @@ app.http('create-ATAKORA_ENTITY_NAME_LOWER', {
         id: body.id || crypto.randomUUID(),
         ATAKORA_PARTITION_KEY: body.ATAKORA_PARTITION_KEY || body.id || crypto.randomUUID(),
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
       };
 
       // Create item in Cosmos DB
@@ -126,7 +126,7 @@ app.http('create-ATAKORA_ENTITY_NAME_LOWER', {
 
       return {
         status: 201,
-        jsonBody: resource
+        jsonBody: resource,
       };
     } catch (error: any) {
       context.error('Error creating ATAKORA_ENTITY_NAME:', error);
@@ -135,8 +135,8 @@ app.http('create-ATAKORA_ENTITY_NAME_LOWER', {
         return {
           status: 409,
           jsonBody: {
-            error: 'ATAKORA_ENTITY_NAME already exists'
-          }
+            error: 'ATAKORA_ENTITY_NAME already exists',
+          },
         };
       }
 
@@ -144,9 +144,9 @@ app.http('create-ATAKORA_ENTITY_NAME_LOWER', {
         status: 500,
         jsonBody: {
           error: 'Internal server error',
-          message: error.message
-        }
+          message: error.message,
+        },
       };
     }
-  }
+  },
 });

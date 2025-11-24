@@ -11,18 +11,18 @@
  * - Auto-retry on failure
  */
 
-import { defineFunction } from '@atakora/component/functions';
+import { defineFunctions, configureFunction } from '@atakora/component/functions';
 
-export const sendNotification = defineFunction({
-  name: 'send-notification',
-  entry: './handler.ts',
-
-  trigger: {
-    type: 'http',
-    methods: ['POST'],
-    route: 'notifications/send',
-  },
-
-  // Quick timeout for notification dispatch
-  timeout: 30,
+export const sendNotification = defineFunctions({
+  SendNotification: configureFunction('send-notification')
+    .timeout(30000)
+    .withHandler(async (context, req) => {
+      // Handler implementation from ./handler.ts
+      context.log('Sending notification');
+      // TODO: Implement notification sending logic
+      return {
+        status: 200,
+        body: { message: 'Notification sent successfully' },
+      };
+    }),
 });

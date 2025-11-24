@@ -12,7 +12,7 @@ import type {
   MergeContext,
   MergeResult,
   MergeStrategyHandler,
-  CustomMergeFunction
+  CustomMergeFunction,
 } from './strategies';
 import {
   unionStrategy,
@@ -21,7 +21,7 @@ import {
   priorityStrategy,
   minimumStrategy,
   objectMergeStrategy,
-  MergeStrategyRegistry
+  MergeStrategyRegistry,
 } from './strategies';
 import type {
   ValidationResult,
@@ -29,13 +29,9 @@ import type {
   ConfigConflict,
   ValidatorFn,
   ConfigSchema,
-  IncompatibilityRule
+  IncompatibilityRule,
 } from './validators';
-import {
-  ConflictDetector,
-  ConfigValidator,
-  AzureValidators
-} from './validators';
+import { ConflictDetector, ConfigValidator, AzureValidators } from './validators';
 
 /**
  * Minimal interface for resource requirements.
@@ -168,7 +164,7 @@ export class ConfigurationMerger {
       customStrategies: options.customStrategies ?? [],
       incompatibilityRules: options.incompatibilityRules ?? [],
       validators: options.validators ?? new Map(),
-      schemas: options.schemas ?? new Map()
+      schemas: options.schemas ?? new Map(),
     };
 
     this.strategyRegistry = new MergeStrategyRegistry();
@@ -197,9 +193,7 @@ export class ConfigurationMerger {
    * @param requirements Array of resource requirements to merge
    * @returns Merged configuration with conflict information
    */
-  mergeRequirements(
-    requirements: ReadonlyArray<IResourceRequirement>
-  ): MergedConfiguration {
+  mergeRequirements(requirements: ReadonlyArray<IResourceRequirement>): MergedConfiguration {
     if (requirements.length === 0) {
       return {
         config: {},
@@ -207,7 +201,7 @@ export class ConfigurationMerger {
         unresolvableConflicts: [],
         errors: [],
         warnings: [],
-        success: true
+        success: true,
       };
     }
 
@@ -218,7 +212,7 @@ export class ConfigurationMerger {
         unresolvableConflicts: [],
         errors: [],
         warnings: [],
-        success: true
+        success: true,
       };
     }
 
@@ -232,29 +226,19 @@ export class ConfigurationMerger {
     const allErrors: ValidationError[] = [];
 
     // Extract configurations
-    const configs = requirements.map(req => req.config);
-    const sources = requirements.map(req => req.componentId ?? 'unknown');
-    const priorities = requirements.map(req => req.priority ?? 10);
+    const configs = requirements.map((req) => req.config);
+    const sources = requirements.map((req) => req.componentId ?? 'unknown');
+    const priorities = requirements.map((req) => req.priority ?? 10);
 
     // Merge configurations
-    const mergedConfig = this.deepMergeObjects(
-      configs,
-      sources,
-      priorities,
-      'config'
-    );
+    const mergedConfig = this.deepMergeObjects(configs, sources, priorities, 'config');
 
     if (mergedConfig.warnings) {
       allWarnings.push(...mergedConfig.warnings);
     }
 
     // Detect conflicts
-    const conflicts = this.detectAllConflicts(
-      configs,
-      sources,
-      priorities,
-      'config'
-    );
+    const conflicts = this.detectAllConflicts(configs, sources, priorities, 'config');
     allConflicts.push(...conflicts);
 
     // Check for incompatibilities
@@ -265,15 +249,15 @@ export class ConfigurationMerger {
     allConflicts.push(...incompatibilities);
 
     // Separate resolvable from unresolvable conflicts
-    const unresolvableConflicts = allConflicts.filter(c => !c.resolvable);
-    const resolvableConflicts = allConflicts.filter(c => c.resolvable);
+    const unresolvableConflicts = allConflicts.filter((c) => !c.resolvable);
+    const resolvableConflicts = allConflicts.filter((c) => c.resolvable);
 
     // Validate merged configuration
     for (const req of requirements) {
       const validationResult = this.validator.validate(mergedConfig.value, {
         path: 'config',
         source: req.componentId ?? 'unknown',
-        fullConfig: mergedConfig.value
+        fullConfig: mergedConfig.value,
       });
 
       if (!validationResult.valid && validationResult.errors) {
@@ -291,10 +275,7 @@ export class ConfigurationMerger {
 
     // In strict mode, throw on any conflicts or errors
     if (this.options.strictMode && !success) {
-      const errorMessage = this.formatErrorMessage(
-        unresolvableConflicts,
-        allErrors
-      );
+      const errorMessage = this.formatErrorMessage(unresolvableConflicts, allErrors);
       throw new Error(`Configuration merge failed:\n${errorMessage}`);
     }
 
@@ -305,7 +286,7 @@ export class ConfigurationMerger {
       errors: allErrors,
       warnings: allWarnings,
       trace: this.options.enableTracing ? [...this.traces] : undefined,
-      success
+      success,
     };
   }
 
@@ -340,9 +321,9 @@ export class ConfigurationMerger {
           value: obj[key],
           source: sources[i],
           priority: priorities[i],
-          index: i
+          index: i,
         }))
-        .filter(x => x.value !== undefined);
+        .filter((x) => x.value !== undefined);
 
       if (propertyValues.length === 0) {
         continue;
@@ -359,13 +340,13 @@ export class ConfigurationMerger {
 
       const context: MergeContext = {
         path: propertyPath,
-        sources: propertyValues.map(pv => pv.source),
-        priorities: propertyValues.map(pv => pv.priority)
+        sources: propertyValues.map((pv) => pv.source),
+        priorities: propertyValues.map((pv) => pv.priority),
       };
 
       try {
         const mergeResult = this.mergeProperty(
-          propertyValues.map(pv => pv.value),
+          propertyValues.map((pv) => pv.value),
           context,
           strategy
         );
@@ -383,14 +364,14 @@ export class ConfigurationMerger {
           this.traces.push({
             path: propertyPath,
             strategy: mergeResult.strategyUsed,
-            inputs: propertyValues.map(pv => ({
+            inputs: propertyValues.map((pv) => ({
               value: pv.value,
               source: pv.source,
-              priority: pv.priority
+              priority: pv.priority,
             })),
             output: mergeResult.value,
             warnings: mergeResult.warnings,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
         }
       } catch (error) {
@@ -404,7 +385,7 @@ export class ConfigurationMerger {
       value: result,
       warnings: allWarnings.length > 0 ? allWarnings : undefined,
       strategyUsed: 'custom',
-      contributingSources: Array.from(contributingSources)
+      contributingSources: Array.from(contributingSources),
     };
   }
 
@@ -486,9 +467,9 @@ export class ConfigurationMerger {
         .map((config, i) => ({
           value: config[key],
           source: sources[i],
-          priority: priorities[i]
+          priority: priorities[i],
         }))
-        .filter(x => x.value !== undefined);
+        .filter((x) => x.value !== undefined);
 
       if (propertyValues.length < 2) {
         continue;
@@ -496,20 +477,20 @@ export class ConfigurationMerger {
 
       const context: MergeContext = {
         path: propertyPath,
-        sources: propertyValues.map(pv => pv.source),
-        priorities: propertyValues.map(pv => pv.priority)
+        sources: propertyValues.map((pv) => pv.source),
+        priorities: propertyValues.map((pv) => pv.priority),
       };
 
       // Detect value conflicts
       const valueConflicts = this.conflictDetector.detectConflicts(
-        propertyValues.map(pv => pv.value),
+        propertyValues.map((pv) => pv.value),
         context
       );
       conflicts.push(...valueConflicts);
 
       // Detect type conflicts
       const typeConflicts = this.conflictDetector.detectTypeConflicts(
-        propertyValues.map(pv => pv.value),
+        propertyValues.map((pv) => pv.value),
         context
       );
       conflicts.push(...typeConflicts);
@@ -517,11 +498,11 @@ export class ConfigurationMerger {
       // Recursively check nested objects
       const firstValue = propertyValues[0].value;
       if (typeof firstValue === 'object' && firstValue !== null && !Array.isArray(firstValue)) {
-        const nestedConfigs = propertyValues.map(pv => pv.value as Record<string, unknown>);
+        const nestedConfigs = propertyValues.map((pv) => pv.value as Record<string, unknown>);
         const nestedConflicts = this.detectAllConflicts(
           nestedConfigs,
-          propertyValues.map(pv => pv.source),
-          propertyValues.map(pv => pv.priority),
+          propertyValues.map((pv) => pv.source),
+          propertyValues.map((pv) => pv.priority),
           propertyPath
         );
         conflicts.push(...nestedConflicts);
@@ -541,11 +522,20 @@ export class ConfigurationMerger {
     }
 
     // Use heuristics based on path patterns
-    if (path.includes('environmentVariables') || path.includes('tags') || path.includes('capabilities')) {
+    if (
+      path.includes('environmentVariables') ||
+      path.includes('tags') ||
+      path.includes('capabilities')
+    ) {
       return 'union';
     }
 
-    if (path.includes('memory') || path.includes('throughput') || path.includes('size') || path.includes('retention')) {
+    if (
+      path.includes('memory') ||
+      path.includes('throughput') ||
+      path.includes('size') ||
+      path.includes('retention')
+    ) {
       return 'maximum';
     }
 
@@ -659,9 +649,7 @@ export class EnvironmentVariableNamespace {
         const namespacedKey = this.namespace(componentId, key);
 
         if (merged[namespacedKey] && merged[namespacedKey] !== value) {
-          conflicts.push(
-            `Conflict for ${namespacedKey}: ${merged[namespacedKey]} vs ${value}`
-          );
+          conflicts.push(`Conflict for ${namespacedKey}: ${merged[namespacedKey]} vs ${value}`);
         }
 
         merged[namespacedKey] = value;
@@ -707,7 +695,7 @@ export type {
   ConfigConflict,
   ValidatorFn,
   ConfigSchema,
-  IncompatibilityRule
+  IncompatibilityRule,
 };
 
 export {
@@ -720,5 +708,5 @@ export {
   MergeStrategyRegistry,
   ConflictDetector,
   ConfigValidator,
-  AzureValidators
+  AzureValidators,
 };

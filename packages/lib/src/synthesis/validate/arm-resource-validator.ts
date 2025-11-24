@@ -75,11 +75,21 @@ export class ArmResourceValidator extends BaseValidator {
 
           if (result.severity === 'error') {
             errors.push(
-              this.createError(result.message || 'Validation failed', path, result.ruleName, result.suggestion)
+              this.createError(
+                result.message || 'Validation failed',
+                path,
+                result.ruleName,
+                result.suggestion
+              )
             );
           } else if (result.severity === 'warning') {
             warnings.push(
-              this.createWarning(result.message || 'Validation warning', path, result.ruleName, result.suggestion)
+              this.createWarning(
+                result.message || 'Validation warning',
+                path,
+                result.ruleName,
+                result.suggestion
+              )
             );
           }
         }

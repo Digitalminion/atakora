@@ -7,5 +7,5 @@ export {
   ArtifactStorageManager,
   StorageAccountConfig,
   StorageAccountInfo,
-  UploadResult
+  UploadResult,
 } from './artifact-storage';

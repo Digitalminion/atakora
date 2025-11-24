@@ -11,20 +11,19 @@
  * - JWT authentication required
  */
 
-import { defineFunction } from '@atakora/component/functions';
+import { defineFunctions, configureFunction } from '@atakora/component/functions';
 
-export const validateDataset = defineFunction({
-  name: 'validate-dataset',
-  entry: './handler.ts',
-
-  trigger: {
-    type: 'http',
-    methods: ['POST'],
-    route: 'datasets/{id}/validate',
-  },
-
-  // Slightly longer timeout for validation
-  timeout: 120, // 2 minutes
-
-  // Defaults are perfect for everything else!
+export const validateDataset = defineFunctions({
+  ValidateDataset: configureFunction('validate-dataset')
+    .timeout(120000)
+    .withHandler(async (context, req) => {
+      // Handler implementation from ./handler.ts
+      const datasetId = context.bindingData?.id;
+      context.log(`Validating dataset ${datasetId}`);
+      // TODO: Implement dataset validation logic
+      return {
+        status: 200,
+        body: { message: 'Dataset validated successfully', datasetId },
+      };
+    }),
 });

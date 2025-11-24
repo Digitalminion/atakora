@@ -93,18 +93,9 @@ export type {
 // FIELD TYPES
 // ============================================================================
 
-export {
-  field,
-  Fields,
-  FieldBuilder,
-  getFieldMetadata,
-  hasFieldMetadata,
-} from './field-types';
+export { field, Fields, FieldBuilder, getFieldMetadata, hasFieldMetadata } from './field-types';
 
-export type {
-  FieldMetadata,
-  ExtendedZodSchema,
-} from './field-types';
+export type { FieldMetadata, ExtendedZodSchema } from './field-types';
 
 // ============================================================================
 // RELATIONSHIPS

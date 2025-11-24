@@ -1,288 +1,293 @@
 /**
- * Backend Pattern Main Exports
+ * Backend Assembly System Public API
  *
- * This is the main entry point for the backend pattern implementation.
- * It exports all public interfaces, classes, and utilities.
+ * This module provides the backend assembly pattern that brings together
+ * schema (Phase 1) and authentication (Phase 2) into a unified backend definition.
  *
  * @module @atakora/component/backend
  *
  * @example
  * ```typescript
- * import { Backend, IBackendComponent, IResourceRequirement } from '@atakora/component/backend';
+ * import { defineBackend } from '@atakora/component/backend';
+ * import { defineSchema, a, c } from '@atakora/component/schema';
+ * import { defineAuth, auth } from '@atakora/component/auth';
  *
- * // Create backend
- * const backend = new Backend(scope, 'MyBackend', {
- *   environment: 'prod',
- *   location: 'eastus',
+ * // Define schema
+ * const schema = defineSchema({
+ *   schema: a.schema({
+ *     User: c.model({
+ *       id: a.id(),
+ *       email: a.string().required().email(),
+ *     }),
+ *   }),
  * });
  *
- * // Add components
- * backend.addComponent(CrudApi.define('UserApi', config));
+ * // Define authentication
+ * const authentication = defineAuth({
+ *   entra: auth.entra()
+ *     .clientId('...')
+ *     .tenantId('...')
+ *     .primary(),
+ * });
  *
- * // Initialize
- * backend.initialize(scope);
+ * // Define backend
+ * export const backend = defineBackend({
+ *   schema,
+ *   authentication,
+ *   settings: {
+ *     name: 'my-app',
+ *     region: 'eastus',
+ *   },
+ * });
  * ```
+ *
+ * @packageDocumentation
  */
 
 // ============================================================================
-// Core Backend
-// ============================================================================
-
-export { Backend } from './backend';
-
-// ============================================================================
-// Interfaces
-// ============================================================================
-
-export type {
-  // Core interfaces
-  IBackend,
-  IBackendComponent,
-  IComponentDefinition,
-  IResourceRequirement,
-  IResourceProvider,
-
-  // Configuration
-  BackendConfig,
-  MonitoringConfig,
-  NetworkingConfig,
-  NamingConvention,
-  ResourceLimits,
-
-  // Resource requirements
-  ICosmosRequirement,
-  IFunctionAppRequirement,
-  IStorageRequirement,
-  CosmosConfig,
-  FunctionAppConfig,
-  StorageConfig,
-  DatabaseRequirement,
-  ContainerRequirement,
-  StorageContainer,
-  FileShare,
-  IndexingPolicy,
-  CorsSettings,
-  ConnectionString,
-
-  // Validation
-  ValidationResult,
-  ValidationContext,
-  RequirementValidator,
-  RequirementMetadata,
-
-  // Provider context
-  ProviderContext,
-
-  // Component types
-  ComponentFactory,
-  ComponentOutputs,
-  ComponentMap,
-
-  // Resource map
-  ResourceMap,
-  ResourceConfig,
-
-  // Configuration merger
-  IConfigurationMerger,
-  ConflictResolution,
-  MergeStrategy,
-
-  // Factory functions
-  DefineBackendFunction,
-  TypedBackend,
-
-  // Utility types
-  ExtractConfig,
-  ExtractComponent,
-
-  // Specific types
-  CosmosConsistencyLevel,
-  CosmosCapability,
-  // Note: FunctionRuntime not exported to avoid conflict with functions module
-  FunctionAppSku,
-  StorageSku,
-  StorageKind,
-  StorageAccessTier,
-  ConnectionStringType,
-} from './interfaces';
-
-// ============================================================================
-// Type Guards
-// ============================================================================
-
-export {
-  isBackendComponent,
-  isComponentDefinition,
-  isResourceRequirement,
-} from './interfaces';
-
-// ============================================================================
-// Registry
-// ============================================================================
-
-export {
-  ProviderRegistry,
-  globalRegistry,
-  registerGlobalProvider,
-  registerGlobalProviders,
-  getGlobalProvider,
-  isGloballySupported,
-} from './registry';
-
-// ============================================================================
-// Utilities
-// ============================================================================
-
-export {
-  // Resource key formatting
-  formatResourceKey,
-  parseResourceKey,
-  getResourceKeyFromRequirement,
-  formatResourceKeyWithSuffix,
-
-  // Backward compatibility
-  markAsBackendManaged,
-  setBackendId,
-
-  // Validation
-  validateRequirement,
-  isValidRequirementKey,
-  sanitizeRequirementKey,
-
-  // Requirement analysis
-  groupRequirementsByKey,
-  groupRequirementsByType,
-  getUniqueResourceTypes,
-  filterRequirementsByType,
-
-  // Priority handling
-  DEFAULT_REQUIREMENT_PRIORITY,
-  getEffectivePriority,
-  sortRequirementsByPriority,
-  getHighestPriorityRequirement,
-
-  // Deep merge
-  deepMerge,
-  deepMergeAll,
-
-  // Environment variables
-  namespaceEnvironmentVariable,
-  mergeEnvironmentVariables,
-
-  // Error utilities
-  createDuplicateKeyError,
-  createUnsupportedResourceTypeError,
-  createMissingProviderError,
-  createResourceLimitError,
-} from './utils';
-
-// ============================================================================
-// Errors
-// ============================================================================
-
-export {
-  // Error classes
-  BackendError,
-  ComponentError,
-  RequirementError,
-  ProviderError,
-  ProvisioningError,
-  ValidationError,
-  MergeError,
-  ResourceLimitError,
-  InitializationError,
-
-  // Error factory functions
-  createDuplicateComponentError,
-  createComponentNotFoundError,
-  createInvalidRequirementError,
-  createMissingProviderError as createMissingProviderErrorTyped,
-  createProviderFailureError,
-  createProvisioningFailureError,
-  createValidationFailureError,
-  createIncompatibleConfigsError,
-  createLimitExceededError,
-  createInitializationFailureError,
-} from './errors';
-
-// ============================================================================
-// Logging
-// ============================================================================
-
-export {
-  // Logger class
-  Logger,
-
-  // Log level
-  LogLevel,
-
-  // Types
-  type LogEntry,
-  type LoggerConfig,
-  type LogHandler,
-
-  // Global logger
-  globalLogger,
-
-  // Logger factories
-  getBackendLogger,
-  getComponentLogger,
-  getProviderLogger,
-
-  // Global log level
-  setGlobalLogLevel,
-  getGlobalLogLevel,
-} from './logger';
-
-// ============================================================================
-// Main API - defineBackend and Builder
+// Main Function
 // ============================================================================
 
 export {
   defineBackend,
-  isBackendManaged,
-  getBackendId,
-  setBackendContext,
+  isBackendObject,
+  getBackendMetadata,
+  getEnabledFeatures,
+  isFeatureEnabled,
 } from './define-backend';
 
+// ============================================================================
+// Type Exports
+// ============================================================================
+
+export type {
+  // Core types
+  Environment,
+  BackendSettings,
+  ResolvedBackendSettings,
+  BackendConfig,
+  BackendObject,
+  BackendMetadata,
+
+  // Attachment points
+  AttachmentPoint,
+} from './types';
+
+// ============================================================================
+// Attachment Point System
+// ============================================================================
+
 export {
-  BackendBuilder,
-  createBackendBuilder,
-} from './builder';
+  AttachmentPointImpl,
+  createAttachmentPoint,
+  createAttachmentPoints,
+} from './attachment-point';
+
+export type { BackendObjectRef, ConfigValidator } from './attachment-point';
 
 // ============================================================================
-// Resource Providers
+// Service Configuration
+// ============================================================================
+
+export type { ServicesConfig, InferServices } from './service-config';
+export { createServiceBuilder } from './service-config';
+
+export {
+  AttachmentValidationError,
+  isNonEmptyString,
+  isValidResourceName,
+  isValidSku,
+  isPositiveInteger,
+  isInRange,
+  validateStorageAccountConfig,
+  validateDatabaseConfig,
+  validateFunctionAppConfig,
+  validateVNetConfig,
+  validateAppInsightsConfig,
+  createRequiredFieldsValidator,
+  composeValidators,
+  ValidatorRegistry,
+  defaultValidators,
+} from './attachment-validator';
+
+export type {
+  BaseResourceConfig,
+  StorageAccountConfig,
+  DatabaseConfig,
+  FunctionAppConfig,
+  VNetConfig,
+  AppInsightsConfig,
+} from './attachment-validator';
+
+// ============================================================================
+// Environment Detection and Configuration (Phase 4)
 // ============================================================================
 
 export {
-  CosmosProvider,
-  FunctionsProvider,
-  StorageProvider,
-} from './providers';
+  // Environment types
+  type Environment as EnvironmentType,
+  type EnvironmentOptions,
+  type EnvironmentDefaults,
+
+  // Detection functions
+  detectEnvironment,
+  getEnvironmentDefaults,
+  isFeatureEnabled as isEnvironmentFeatureEnabled,
+  getDefaultRegion,
+} from './environment';
+
+export {
+  // Utility types
+  type EnvironmentOverrides,
+  type EnvironmentComparison,
+
+  // Utility functions
+  mergeEnvironmentConfig,
+  getEnvironmentFlags,
+  validateEnvironmentConfig,
+  getEnvironmentDisplayName,
+  getEnvironmentColor,
+  detectAndConfigure,
+  isOperationAllowed,
+  getEnvironmentTags,
+} from './environment-utils';
 
 // ============================================================================
-// Re-exports for convenience
+// Storage Attachments (Phase 4)
+// ============================================================================
+
+export {
+  // Configuration types
+  type StorageAccountConfig as StorageAttachmentConfig,
+  type DatabaseConfig as DatabaseAttachmentConfig,
+  type QueueConfig,
+  type BlobContainerConfig,
+  type StorageNetworkRules,
+  type DatabaseThroughput,
+  type DatabaseBackupConfig,
+  type DatabaseNetworkRules,
+  type CosmosDatabase,
+  type CosmosContainer,
+  type IndexingPolicy,
+
+  // Enums
+  type StorageSku,
+  type StorageTier,
+  type CosmosConsistency,
+  type CosmosMode,
+
+  // Validation functions
+  validateStorageAccountConfig as validateStorageAttachment,
+  validateDatabaseConfig as validateDatabaseAttachment,
+  validateQueueConfig,
+
+  // Factory functions
+  createDefaultStorageConfig,
+  createDefaultDatabaseConfig,
+
+  // Error class
+  StorageAttachmentError,
+} from './attachments/storage';
+
+// ============================================================================
+// Monitoring Attachments (Phase 4)
+// ============================================================================
+
+export {
+  // Configuration types
+  type AppInsightsConfig as AppInsightsAttachmentConfig,
+  type LogAnalyticsConfig,
+  type AlertsConfig,
+  type AlertThreshold,
+  type CustomAlertConfig,
+  type ActionGroupConfig,
+  type EmailReceiver,
+  type SmsReceiver,
+  type WebhookReceiver,
+  type AzureFunctionReceiver,
+  type LogicAppReceiver,
+  type DataSourceType,
+
+  // Validation functions
+  validateAppInsightsConfig as validateAppInsightsAttachment,
+  validateLogAnalyticsConfig,
+  validateAlertsConfig,
+
+  // Factory functions
+  createDefaultAppInsightsConfig,
+  createDefaultLogAnalyticsConfig,
+  createDefaultAlertsConfig,
+
+  // Error class
+  MonitoringAttachmentError,
+} from './attachments/monitoring';
+
+// ============================================================================
+// Legacy Component Compatibility Stubs
 // ============================================================================
 
 /**
- * Create a new backend instance.
- * Convenience function that wraps Backend constructor.
- *
- * @param scope - CDK construct scope
- * @param id - Backend identifier
- * @param config - Backend configuration
- * @returns Backend instance
- *
- * @deprecated Use defineBackend() instead for better type safety
+ * @deprecated Legacy component interface - no longer used in schema-centric architecture
+ * @legacy
  */
-export function createBackend(
-  scope: import('@atakora/cdk').Construct,
-  id: string,
-  config?: BackendConfig
-): IBackend {
-  const { Backend: BackendClass } = require('./backend');
-  return new BackendClass(scope, id, config);
+export interface IBackendComponent {
+  readonly componentType: string;
+  readonly componentId: string;
 }
 
-// Import types to satisfy TS
-import type { BackendConfig, IBackend } from './interfaces';
+/**
+ * @deprecated Legacy component interface - no longer used in schema-centric architecture
+ * @legacy
+ */
+export interface IComponentDefinition {
+  readonly type: string;
+  readonly config: Record<string, any>;
+}
+
+/**
+ * @deprecated Legacy component interface - no longer used in schema-centric architecture
+ * @legacy
+ */
+export interface IResourceRequirement {
+  readonly resourceType: string;
+  readonly required: boolean;
+}
+
+/**
+ * @deprecated Legacy component interface - no longer used in schema-centric architecture
+ * @legacy
+ */
+export type ResourceMap = Record<string, any>;
+
+/**
+ * @deprecated Legacy component interface - no longer used in schema-centric architecture
+ * @legacy
+ * @remarks Renamed to avoid conflict with validation module's ValidationResult
+ */
+export interface LegacyValidationResult {
+  readonly valid: boolean;
+  readonly errors?: string[];
+}
+
+/**
+ * @deprecated Legacy component interface - no longer used in schema-centric architecture
+ * @legacy
+ */
+export type ComponentOutputs = Record<string, any>;
+
+/**
+ * @deprecated Legacy component function - no longer used in schema-centric architecture
+ * @legacy
+ */
+export function isBackendManaged(_component: any): boolean {
+  return false;
+}
+
+// ============================================================================
+// Version
+// ============================================================================
+
+/**
+ * Backend assembly API version
+ */
+export const BACKEND_ASSEMBLY_VERSION = '1.0.0';

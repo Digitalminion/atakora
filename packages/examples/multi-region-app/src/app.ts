@@ -1,7 +1,29 @@
-import { App, SubscriptionStack, ResourceGroupStack, Subscription, Geography, Organization, Project, Environment, Instance } from '@atakora/cdk';
+import {
+  App,
+  SubscriptionStack,
+  ResourceGroupStack,
+  Subscription,
+  Geography,
+  Organization,
+  Project,
+  Environment,
+  Instance,
+} from '@atakora/cdk';
 import { VirtualNetworks, Subnets } from '@atakora/cdk/network';
-import { StorageAccounts, StorageAccountSkuName, StorageAccountKind, TlsVersion } from '@atakora/cdk/storage';
-import { ServerFarms, Sites, ServerFarmSkuName, ServerFarmKind, MinTlsVersion, FtpsState } from '@atakora/cdk/web';
+import {
+  StorageAccounts,
+  StorageAccountSkuName,
+  StorageAccountKind,
+  TlsVersion,
+} from '@atakora/cdk/storage';
+import {
+  ServerFarms,
+  Sites,
+  ServerFarmSkuName,
+  ServerFarmKind,
+  MinTlsVersion,
+  FtpsState,
+} from '@atakora/cdk/web';
 import { Components, ApplicationType } from '@atakora/cdk/insights';
 
 /**
@@ -25,7 +47,9 @@ const secondaryRegion = process.env.SECONDARY_REGION || 'westus2';
 
 // Create subscription stack
 const subscriptionStack = new SubscriptionStack(app, 'MultiRegionAppFoundation', {
-  subscription: Subscription.fromId(process.env.AZURE_SUBSCRIPTION_ID || '00000000-0000-0000-0000-000000000000'),
+  subscription: Subscription.fromId(
+    process.env.AZURE_SUBSCRIPTION_ID || '00000000-0000-0000-0000-000000000000'
+  ),
   geography: Geography.fromValue(primaryRegion),
   organization: Organization.fromValue('contoso'),
   project: new Project('multiregion'),
@@ -127,8 +151,12 @@ regions.forEach((region) => {
 
   // Regional Storage Account (GRS for primary, LRS for secondary)
   const storage = new StorageAccounts(regionalStack, 'RegionalStorage', {
-    storageAccountName: `stmr${region.name}${environment}${Math.random().toString(36).slice(2, 6)}`.toLowerCase(),
-    sku: region.name === 'primary' ? StorageAccountSkuName.STANDARD_GZRS : StorageAccountSkuName.STANDARD_LRS,
+    storageAccountName:
+      `stmr${region.name}${environment}${Math.random().toString(36).slice(2, 6)}`.toLowerCase(),
+    sku:
+      region.name === 'primary'
+        ? StorageAccountSkuName.STANDARD_GZRS
+        : StorageAccountSkuName.STANDARD_LRS,
     kind: StorageAccountKind.STORAGE_V2,
     minimumTlsVersion: TlsVersion.TLS1_2,
     enableBlobPublicAccess: false,
@@ -153,7 +181,8 @@ regions.forEach((region) => {
 
   // Regional Web App
   const webApp = new Sites(regionalStack, 'RegionalWebApp', {
-    siteName: `webapp-mr-${region.name}-${environment}-${Math.random().toString(36).slice(2, 6)}`.toLowerCase(),
+    siteName:
+      `webapp-mr-${region.name}-${environment}-${Math.random().toString(36).slice(2, 6)}`.toLowerCase(),
     location: region.location,
     serverFarmId: appServicePlan.planId,
     httpsOnly: true,
@@ -235,12 +264,16 @@ Global Resources:
 - (Traffic Manager: Pending implementation)
 
 Regional Deployments:
-${regions.map(r => `  ${r.name.toUpperCase()} (${r.location}):
+${regions
+  .map(
+    (r) => `  ${r.name.toUpperCase()} (${r.location}):
     - Resource Group: rg-multiregion-${r.name}-${environment}
     - Web App: webapp-mr-${r.name}-${environment}-######
     - Storage: stmr${r.name}${environment}######
     - App Service Plan: asp-multiregion-${r.name}-${environment}
-  `).join('\n')}
+  `
+  )
+  .join('\n')}
 
 Note: Traffic Manager integration commented out pending construct implementation.
 Regional web apps are deployed independently. Add Traffic Manager manually or

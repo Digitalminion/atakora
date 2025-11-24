@@ -41,6 +41,20 @@ jobs:
       matrix:
         node-version: [18.x, 20.x]
 
+    services:
+      # Azurite - Azure Storage Emulator
+      azurite:
+        image: mcr.microsoft.com/azure-storage/azurite:latest
+        ports:
+          - 10000:10000
+          - 10001:10001
+          - 10002:10002
+        options: >-
+          --health-cmd "nc -z localhost 10000"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -57,7 +71,7 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Run tests
+      - name: Run unit tests
         run: npm test
 
       - name: Generate coverage
@@ -72,3 +86,80 @@ jobs:
           flags: unittests
           name: codecov-umbrella
         continue-on-error: true
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Start Azurite
+        run: |
+          docker run -d \
+            -p 10000:10000 \
+            -p 10001:10001 \
+            -p 10002:10002 \
+            --name azurite \
+            mcr.microsoft.com/azure-storage/azurite:latest
+
+      - name: Wait for Azurite
+        run: |
+          timeout 60 bash -c 'until nc -z localhost 10000; do sleep 2; done'
+
+      - name: Run integration tests
+        run: npm run test:integration
+        env:
+          AZURITE_BLOB_ENDPOINT: http://127.0.0.1:10000/devstoreaccount1
+          CI: true
+
+      - name: Stop Azurite
+        if: always()
+        run: docker stop azurite && docker rm azurite
+
+  performance-tests:
+    name: Performance Benchmarks
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Run performance benchmarks
+        run: npm run test:bench
+        env:
+          CI: true
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: |
+            packages/component/benchmark-results.json
+        if: always()

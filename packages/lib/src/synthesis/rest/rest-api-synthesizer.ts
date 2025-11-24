@@ -6,10 +6,7 @@
 
 import type { ArmResource } from '../types';
 import type { IRestOperation } from '../../apimanagement/rest';
-import type {
-  RestApiSynthesisOptions,
-  RestApiSynthesisResult,
-} from './types';
+import type { RestApiSynthesisOptions, RestApiSynthesisResult } from './types';
 import { OperationSynthesizer } from './operation-synthesizer';
 import { BackendSynthesizer } from './backend-synthesizer';
 
@@ -70,10 +67,7 @@ export class RestApiSynthesizer {
 
     for (const operation of this.operations) {
       const opSynthesizer = new OperationSynthesizer(operation, this.apiName);
-      const opResources = opSynthesizer.synthesize(
-        apiManagementServiceName,
-        apiResourceId
-      );
+      const opResources = opSynthesizer.synthesize(apiManagementServiceName, apiResourceId);
 
       resources.push(...opResources);
       operationCount++;

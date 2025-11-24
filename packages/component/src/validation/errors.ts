@@ -45,6 +45,7 @@ export type ValidationErrorType =
   | 'max'
   | 'minLength'
   | 'maxLength'
+  | 'length'
   | 'pattern'
   | 'email'
   | 'url'
@@ -69,13 +70,19 @@ export type ValidationResult<T> =
  */
 export class ValidationError extends Error {
   public readonly errors: FieldError[];
-  public readonly statusCode: number = 400;
+  public readonly statusCode!: number;
 
   constructor(errors: FieldError[]) {
     const message = `Validation failed: ${errors.length} error(s)`;
     super(message);
     this.name = 'ValidationError';
     this.errors = errors;
+    Object.defineProperty(this, 'statusCode', {
+      value: 400,
+      writable: false,
+      enumerable: true,
+      configurable: false,
+    });
   }
 
   /**
@@ -124,9 +131,22 @@ export function formatPath(path: (string | number)[]): string {
   if (path.length === 0) return 'root';
 
   return path.reduce<string>((acc, segment, index) => {
-    if (index === 0) return String(segment);
-    if (typeof segment === 'number') return `${acc}[${segment}]`;
-    return `${acc}.${segment}`;
+    if (index === 0) {
+      // First segment - just convert to string
+      return String(segment);
+    }
+
+    // For subsequent segments
+    if (typeof segment === 'number') {
+      // Array index
+      return `${acc}[${segment}]`;
+    } else if (typeof path[index - 1] === 'number') {
+      // String after array index - use dot notation
+      return `${acc}.${segment}`;
+    } else {
+      // String after string - use dot notation
+      return `${acc}.${segment}`;
+    }
   }, '');
 }
 

@@ -15,12 +15,12 @@ import { DefaultAzureCredential } from '@azure/identity';
 
 // Initialize Cosmos DB client with managed identity
 const credential = new DefaultAzureCredential({
-  managedIdentityClientId: process.env.AZURE_CLIENT_ID
+  managedIdentityClientId: process.env.AZURE_CLIENT_ID,
 });
 
 const cosmosClient = new CosmosClient({
   endpoint: process.env.COSMOS_ENDPOINT!,
-  aadCredentials: credential
+  aadCredentials: credential,
 });
 
 const database = cosmosClient.database('ATAKORA_DATABASE_NAME');
@@ -41,8 +41,8 @@ app.http('delete-ATAKORA_ENTITY_NAME_LOWER', {
         return {
           status: 400,
           jsonBody: {
-            error: 'ID is required'
-          }
+            error: 'ID is required',
+          },
         };
       }
 
@@ -50,7 +50,7 @@ app.http('delete-ATAKORA_ENTITY_NAME_LOWER', {
       await container.item(id, id).delete();
 
       return {
-        status: 204
+        status: 204,
       };
     } catch (error: any) {
       context.error('Error deleting ATAKORA_ENTITY_NAME:', error);
@@ -59,8 +59,8 @@ app.http('delete-ATAKORA_ENTITY_NAME_LOWER', {
         return {
           status: 404,
           jsonBody: {
-            error: 'ATAKORA_ENTITY_NAME not found'
-          }
+            error: 'ATAKORA_ENTITY_NAME not found',
+          },
         };
       }
 
@@ -68,9 +68,9 @@ app.http('delete-ATAKORA_ENTITY_NAME_LOWER', {
         status: 500,
         jsonBody: {
           error: 'Internal server error',
-          message: error.message
-        }
+          message: error.message,
+        },
       };
     }
-  }
+  },
 });

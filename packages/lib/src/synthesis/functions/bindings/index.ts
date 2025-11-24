@@ -531,10 +531,7 @@ export type TriggerBinding =
 /**
  * Union type of all input bindings
  */
-export type InputBinding =
-  | BlobInputBinding
-  | CosmosDbInputBinding
-  | TableInputBinding;
+export type InputBinding = BlobInputBinding | CosmosDbInputBinding | TableInputBinding;
 
 /**
  * Union type of all output bindings

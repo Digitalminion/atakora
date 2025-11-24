@@ -117,11 +117,13 @@ export class MessageQueue extends Construct {
     super(scope, id);
 
     // Create or use existing Service Bus namespace
-    this.namespace = props.namespace ?? new ServiceBusNamespace(this, 'Namespace', {
-      sku: ServiceBusSku.STANDARD, // Standard tier includes dead-letter queues
-      location: props.location,
-      tags: props.tags,
-    });
+    this.namespace =
+      props.namespace ??
+      new ServiceBusNamespace(this, 'Namespace', {
+        sku: ServiceBusSku.STANDARD, // Standard tier includes dead-letter queues
+        location: props.location,
+        tags: props.tags,
+      });
 
     // Create the queue
     // Note: Queue must be created under the MessageQueue construct (not under namespace)
@@ -244,9 +246,7 @@ export class MessageQueue extends Construct {
    * @returns Environment variable prefix in UPPER_SNAKE_CASE
    */
   private getEnvPrefix(): string {
-    return this.queueName
-      .replace(/-/g, '_')
-      .toUpperCase();
+    return this.queueName.replace(/-/g, '_').toUpperCase();
   }
 
   /**

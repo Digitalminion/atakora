@@ -428,9 +428,7 @@ export class BackendSynthesizer {
   /**
    * Synthesize credentials configuration
    */
-  private synthesizeCredentials(
-    credentials?: any
-  ): ArmBackendCredentials {
+  private synthesizeCredentials(credentials?: any): ArmBackendCredentials {
     if (!credentials) {
       return {};
     }
@@ -463,9 +461,7 @@ export class BackendSynthesizer {
   /**
    * Synthesize TLS configuration
    */
-  private synthesizeTlsConfiguration(
-    tls?: TlsConfiguration
-  ): ArmBackendTls {
+  private synthesizeTlsConfiguration(tls?: TlsConfiguration): ArmBackendTls {
     return {
       validateCertificateChain: tls?.validateCertificateChain ?? true,
       validateCertificateName: tls?.validateCertificateName ?? true,
@@ -475,9 +471,7 @@ export class BackendSynthesizer {
   /**
    * Synthesize circuit breaker rules
    */
-  private synthesizeCircuitBreakerRules(
-    config: CircuitBreakerConfig
-  ): ArmCircuitBreakerRule[] {
+  private synthesizeCircuitBreakerRules(config: CircuitBreakerConfig): ArmCircuitBreakerRule[] {
     if (!config.enabled) {
       return [];
     }

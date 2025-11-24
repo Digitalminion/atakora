@@ -7,6 +7,8 @@ import { execSync } from 'child_process';
 import { TemplateValidator, ValidationSeverity } from '../../validation';
 import { ManifestManager } from '../../manifest/manifest-manager';
 import { isLegacyManifest, type PackageConfiguration } from '../../manifest/types';
+import { EntryPointDetector, EntryPointType } from '../../synthesis/entry-point-detector';
+import { BackendSynthesisStrategy } from '../../synthesis/backend-synthesis-strategy';
 
 // Types for assembly and manifest
 interface StackManifest {
@@ -408,9 +410,9 @@ async function synthesizePackage(
       throw new Error(`App file not found: ${appPath}`);
     }
 
-    spinner.text = `Compiling TypeScript for ${packageName}...`;
+    spinner.text = `Loading entry point for ${packageName}...`;
 
-    // Find tsx CLI path
+    // Find tsx CLI path for dynamic import
     let tsxPath: string;
     try {
       const tsxMainPath = require.resolve('tsx');
@@ -424,85 +426,235 @@ async function synthesizePackage(
       options.output || manifest.outputDirectory || ManifestManager.DEFAULT_OUTPUT_DIR;
     const packageOutputDir = path.join(globalOutputDir, packageName);
 
-    // Create a temporary synthesis script
-    const synthScript = `
+    // Create a temporary module loader script that detects entry point type
+    const loaderScript = `
       (async () => {
         try {
           const appModule = require('${appPath.replace(/\\/g, '/')}');
-          const app = appModule.app || appModule.default;
 
-          if (!app) {
-            throw new Error('App file must export an "app" or default export');
-          }
-
-          if (typeof app.synth !== 'function') {
-            throw new Error('Exported app must have a synth() method');
-          }
-
-          // Set output directory
-          app.outdir = '${packageOutputDir.replace(/\\/g, '/')}';
-
-          // Synthesize
-          const assembly = await app.synth();
-
-          // Output result as JSON
-          console.log(JSON.stringify(assembly, null, 2));
+          // Export the module for inspection
+          console.log(JSON.stringify({
+            type: 'module-exports',
+            hasApp: !!(appModule.app || (typeof appModule.default === 'object' && typeof appModule.default?.synth === 'function')),
+            hasBackend: !!(appModule.backend || (typeof appModule.default === 'object' && appModule.default?.schema && appModule.default?.settings)),
+            exports: Object.keys(appModule),
+          }));
         } catch (error) {
-          console.error('Synthesis error:', error);
+          console.error(JSON.stringify({
+            type: 'error',
+            message: error.message,
+          }));
           process.exit(1);
         }
       })();
     `;
 
-    const tempScriptPath = path.join(process.cwd(), `.synth-temp-${packageName}.js`);
-    fs.writeFileSync(tempScriptPath, synthScript);
+    const tempLoaderPath = path.join(process.cwd(), `.synth-loader-${packageName}.js`);
+    fs.writeFileSync(tempLoaderPath, loaderScript);
 
-    spinner.text = `Synthesizing templates for ${packageName}...`;
-
-    let synthOutput: string;
+    // Run loader to detect entry point type
+    let loaderOutput: string;
     try {
-      synthOutput = execSync(`node "${tsxPath}" "${tempScriptPath}"`, {
+      loaderOutput = execSync(`node "${tsxPath}" "${tempLoaderPath}"`, {
         encoding: 'utf-8',
         cwd: process.cwd(),
-        maxBuffer: 10 * 1024 * 1024, // 10MB buffer
+        maxBuffer: 10 * 1024 * 1024,
+        env: process.env,
       });
     } catch (execError: unknown) {
-      // Clean up temp script before throwing
-      if (fs.existsSync(tempScriptPath)) {
-        fs.unlinkSync(tempScriptPath);
+      if (fs.existsSync(tempLoaderPath)) {
+        fs.unlinkSync(tempLoaderPath);
       }
-
-      // Type guard for exec error
-      const isExecError = (
-        err: unknown
-      ): err is { status?: number; stdout?: string; stderr?: string; message?: string } => {
-        return typeof err === 'object' && err !== null;
-      };
-
-      if (isExecError(execError)) {
-        // Include all output in error message
-        const errorOutput = [
-          execError.stdout ? `stdout: ${execError.stdout}` : '',
-          execError.stderr ? `stderr: ${execError.stderr}` : '',
-        ]
-          .filter(Boolean)
-          .join('\n');
-
-        throw new Error(
-          `Synthesis execution failed (exit code ${execError.status}):\n${errorOutput || execError.message || 'Unknown error'}`
-        );
-      }
-
-      throw new Error(`Synthesis execution failed: ${String(execError)}`);
+      throw new Error(`Failed to load entry point: ${String(execError)}`);
     }
 
-    // Clean up temp script
-    if (fs.existsSync(tempScriptPath)) {
-      fs.unlinkSync(tempScriptPath);
+    // Clean up loader script
+    if (fs.existsSync(tempLoaderPath)) {
+      fs.unlinkSync(tempLoaderPath);
     }
 
-    // Parse synthesis result
-    const assembly = JSON.parse(synthOutput.trim());
+    // Parse loader result
+    const loaderResult = JSON.parse(loaderOutput.trim());
+
+    if (loaderResult.type === 'error') {
+      throw new Error(loaderResult.message);
+    }
+
+    // Determine synthesis path based on detection
+    let assembly: CloudAssembly;
+
+    if (loaderResult.hasApp) {
+      // CDK APP PATH - Use existing synthesis logic (preserve backwards compatibility)
+      spinner.text = `Synthesizing CDK app for ${packageName}...`;
+
+      const cdkSynthScript = `
+        (async () => {
+          try {
+            const appModule = require('${appPath.replace(/\\/g, '/')}');
+            const app = appModule.app || appModule.default;
+
+            if (!app) {
+              throw new Error('App file must export an "app" or default export');
+            }
+
+            if (typeof app.synth !== 'function') {
+              throw new Error('Exported app must have a synth() method');
+            }
+
+            // Set output directory
+            app.outdir = '${packageOutputDir.replace(/\\/g, '/')}';
+
+            // Synthesize
+            const assembly = await app.synth();
+
+            // Output result as JSON
+            console.log(JSON.stringify(assembly, null, 2));
+          } catch (error) {
+            console.error('Synthesis error:', error);
+            process.exit(1);
+          }
+        })();
+      `;
+
+      const cdkScriptPath = path.join(process.cwd(), `.synth-cdk-${packageName}.js`);
+      fs.writeFileSync(cdkScriptPath, cdkSynthScript);
+
+      let cdkOutput: string;
+      try {
+        cdkOutput = execSync(`node "${tsxPath}" "${cdkScriptPath}"`, {
+          encoding: 'utf-8',
+          cwd: process.cwd(),
+          maxBuffer: 10 * 1024 * 1024,
+          env: process.env,
+        });
+      } catch (execError: unknown) {
+        if (fs.existsSync(cdkScriptPath)) {
+          fs.unlinkSync(cdkScriptPath);
+        }
+
+        const isExecError = (
+          err: unknown
+        ): err is { status?: number; stdout?: string; stderr?: string; message?: string } => {
+          return typeof err === 'object' && err !== null;
+        };
+
+        if (isExecError(execError)) {
+          const errorOutput = [
+            execError.stdout ? `stdout: ${execError.stdout}` : '',
+            execError.stderr ? `stderr: ${execError.stderr}` : '',
+          ]
+            .filter(Boolean)
+            .join('\n');
+
+          throw new Error(
+            `CDK synthesis execution failed (exit code ${execError.status}):\n${errorOutput || execError.message || 'Unknown error'}`
+          );
+        }
+
+        throw new Error(`CDK synthesis execution failed: ${String(execError)}`);
+      }
+
+      if (fs.existsSync(cdkScriptPath)) {
+        fs.unlinkSync(cdkScriptPath);
+      }
+
+      assembly = JSON.parse(cdkOutput.trim());
+
+    } else if (loaderResult.hasBackend) {
+      // COMPONENT BACKEND PATH - Use new backend synthesis strategy
+      spinner.text = `Synthesizing component backend for ${packageName}...`;
+
+      // Calculate the correct path to backend-synthesis-strategy
+      // When running from bundled CLI (dist/cli.bundle.js), the strategy is at dist/synthesis/backend-synthesis-strategy.js
+      // Use process.argv[1] which contains the path to the executed script even when require.main is undefined
+      const cliScriptPath = process.argv[1] || require.main?.filename || __filename;
+      const cliDistDir = path.dirname(path.resolve(cliScriptPath));
+      const strategyPath = path.join(cliDistDir, 'synthesis', 'backend-synthesis-strategy.js');
+
+      const backendSynthScript = `
+        (async () => {
+          try {
+            const { BackendSynthesisStrategy } = require('${strategyPath.replace(/\\/g, '/')}');
+            const appModule = require('${appPath.replace(/\\/g, '/')}');
+            const backend = appModule.backend || appModule.default;
+
+            if (!backend) {
+              throw new Error('Entry point must export "backend" or default export');
+            }
+
+            const strategy = new BackendSynthesisStrategy();
+            const result = await strategy.synthesize(backend, {
+              output: '${packageOutputDir.replace(/\\/g, '/')}',
+              skipValidation: ${options.skipValidation || false},
+              quiet: ${options.quiet || false},
+            });
+
+            if (!result.success) {
+              throw new Error(result.error?.message || 'Backend synthesis failed');
+            }
+
+            // Output assembly in CDK-compatible format
+            console.log(JSON.stringify(result.assembly, null, 2));
+          } catch (error) {
+            console.error('Backend synthesis error:', error.message);
+            process.exit(1);
+          }
+        })();
+      `;
+
+      const backendScriptPath = path.join(process.cwd(), `.synth-backend-${packageName}.js`);
+      fs.writeFileSync(backendScriptPath, backendSynthScript);
+
+      let backendOutput: string;
+      try {
+        backendOutput = execSync(`node "${tsxPath}" "${backendScriptPath}"`, {
+          encoding: 'utf-8',
+          cwd: process.cwd(),
+          maxBuffer: 10 * 1024 * 1024,
+          env: process.env,
+        });
+      } catch (execError: unknown) {
+        if (fs.existsSync(backendScriptPath)) {
+          fs.unlinkSync(backendScriptPath);
+        }
+
+        const isExecError = (
+          err: unknown
+        ): err is { status?: number; stdout?: string; stderr?: string; message?: string } => {
+          return typeof err === 'object' && err !== null;
+        };
+
+        if (isExecError(execError)) {
+          const errorOutput = [
+            execError.stdout ? `stdout: ${execError.stdout}` : '',
+            execError.stderr ? `stderr: ${execError.stderr}` : '',
+          ]
+            .filter(Boolean)
+            .join('\n');
+
+          throw new Error(
+            `Backend synthesis execution failed (exit code ${execError.status}):\n${errorOutput || execError.message || 'Unknown error'}`
+          );
+        }
+
+        throw new Error(`Backend synthesis execution failed: ${String(execError)}`);
+      }
+
+      if (fs.existsSync(backendScriptPath)) {
+        fs.unlinkSync(backendScriptPath);
+      }
+
+      assembly = JSON.parse(backendOutput.trim());
+
+    } else {
+      // UNKNOWN ENTRY POINT TYPE
+      const detector = new EntryPointDetector();
+      throw new Error(
+        detector.getErrorMessage({
+          exports: loaderResult.exports,
+        })
+      );
+    }
 
     // If single-file flag is set, merge templates
     if (options.singleFile) {

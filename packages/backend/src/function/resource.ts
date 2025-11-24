@@ -20,12 +20,9 @@
  * - Monitoring and alerts
  */
 
-import {
-  defineFunctions,
-  configureFunction,
-  minutes,
-  greaterThan,
-} from '@atakora/component/functions';
+import { defineFunctions, configureFunction } from '@atakora/component/functions';
+import { minutes } from '@atakora/component/common';
+import { greaterThan } from '@atakora/component/common';
 
 export const func = defineFunctions({
   /**
@@ -96,7 +93,7 @@ export const func = defineFunctions({
       storage: {
         type: 'blob',
         container: 'reports',
-        path: `{reportId}.${format}`,
+        path: '{reportId}.{format}', // Template variables resolved at runtime
       },
       // Queue for cleanup after expiration
       queue: {
@@ -114,7 +111,7 @@ export const func = defineFunctions({
     })
 
     // Monitoring
-    .monitoring(alerts =>
+    .monitoring((alerts) =>
       alerts
         .onExecutionTime(greaterThan(minutes(8)))
         .warn()
@@ -154,7 +151,7 @@ export const func = defineFunctions({
       // Return structured results
       return {
         isValid: result.isValid,
-        errors: result.errors.map(err => ({
+        errors: result.errors.map((err) => ({
           row: err.rowNumber,
           column: err.columnName,
           message: err.message,
@@ -169,11 +166,7 @@ export const func = defineFunctions({
       };
     })
 
-    .monitoring(alerts =>
-      alerts
-        .onExecutionTime(greaterThan(minutes(1)))
-        .warn()
-    )
+    .monitoring((alerts) => alerts.onExecutionTime(greaterThan(minutes(1))).warn())
 
     .withMetrics(),
 
@@ -233,7 +226,7 @@ export const func = defineFunctions({
       return {
         transformedDatasetId,
         outputUrl,
-        rowsProcessed: transformedData.rowCount,
+        rowsProcessed: 0, // TODO: Extract from transformer metadata
         transformsApplied,
         duration: context.executionTime,
       };
@@ -256,7 +249,7 @@ export const func = defineFunctions({
       ENABLE_PARALLEL_PROCESSING: 'true',
     })
 
-    .monitoring(alerts =>
+    .monitoring((alerts) =>
       alerts
         .onExecutionTime(greaterThan(minutes(12)))
         .warn()
@@ -304,7 +297,7 @@ export const func = defineFunctions({
 
       // Return formatted results
       return {
-        results: results.items.map(item => ({
+        results: results.items.map((item) => ({
           id: item.id,
           name: item.name,
           score: item['@search.score'],
@@ -323,7 +316,7 @@ export const func = defineFunctions({
       SEARCH_INDEX_NAME: 'datasets',
     })
 
-    .monitoring(alerts =>
+    .monitoring((alerts) =>
       alerts
         .onExecutionTime(greaterThan(minutes(0.5)))
         .warn()

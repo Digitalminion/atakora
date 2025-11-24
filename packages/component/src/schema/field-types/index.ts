@@ -339,19 +339,29 @@ export const a = {
 /**
  * Infer the TypeScript type from a field builder
  */
-export type InferFieldType<T> =
-  T extends StringFieldBuilder ? string :
-  T extends NumberFieldBuilder ? number :
-  T extends BooleanFieldBuilder ? boolean :
-  T extends DateTimeFieldBuilder ? string :
-  T extends IdFieldBuilder ? string :
-  T extends EnumFieldBuilder<infer Values> ? Values[number] :
-  T extends ArrayFieldBuilder<infer Item> ? InferFieldType<Item>[] :
-  T extends RefFieldBuilder ? string :
-  T extends ObjectFieldBuilder<infer Schema> ? { [K in keyof Schema]: InferFieldType<Schema[K]> } :
-  T extends JsonFieldBuilder ? any :
-  T extends BinaryFieldBuilder ? Buffer | Uint8Array :
-  unknown;
+export type InferFieldType<T> = T extends StringFieldBuilder
+  ? string
+  : T extends NumberFieldBuilder
+    ? number
+    : T extends BooleanFieldBuilder
+      ? boolean
+      : T extends DateTimeFieldBuilder
+        ? string
+        : T extends IdFieldBuilder
+          ? string
+          : T extends EnumFieldBuilder<infer Values>
+            ? Values[number]
+            : T extends ArrayFieldBuilder<infer Item>
+              ? InferFieldType<Item>[]
+              : T extends RefFieldBuilder
+                ? string
+                : T extends ObjectFieldBuilder<infer Schema>
+                  ? { [K in keyof Schema]: InferFieldType<Schema[K]> }
+                  : T extends JsonFieldBuilder
+                    ? any
+                    : T extends BinaryFieldBuilder
+                      ? Buffer | Uint8Array
+                      : unknown;
 
 /**
  * Infer field types from a schema definition

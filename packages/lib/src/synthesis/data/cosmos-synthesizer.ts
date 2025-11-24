@@ -143,9 +143,7 @@ export interface CosmosContainerConfig {
  * // }
  * ```
  */
-export function synthesizeCosmosContainer(
-  schema: SchemaDefinition<any>
-): CosmosContainerConfig {
+export function synthesizeCosmosContainer(schema: SchemaDefinition<any>): CosmosContainerConfig {
   // Extract partition key from metadata or use id as default
   const partitionKeyPath = extractPartitionKey(schema);
 
@@ -338,9 +336,10 @@ function ensureLeadingSlash(path: string): string {
  * @param config - Container configuration
  * @returns Validation result
  */
-export function validateContainerConfig(
-  config: CosmosContainerConfig
-): { valid: boolean; errors: string[] } {
+export function validateContainerConfig(config: CosmosContainerConfig): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   // Validate container name

@@ -8,7 +8,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
-import type { ArtifactStorageManager, UploadResult as StorageUploadResult } from '@atakora/lib/synthesis/storage';
+import type {
+  ArtifactStorageManager,
+  UploadResult as StorageUploadResult,
+} from '@atakora/lib/synthesis/storage';
 import type { CloudAssemblyV2, StackManifestV2 } from '@atakora/lib/synthesis/types';
 
 export interface TemplateArtifact {
@@ -55,9 +58,7 @@ export class ArtifactUploader {
   private maxRetries = 3;
   private retryDelayMs = 1000;
 
-  constructor(
-    private readonly onProgress?: ProgressCallback
-  ) {}
+  constructor(private readonly onProgress?: ProgressCallback) {}
 
   /**
    * Upload all artifacts from cloud assembly
@@ -98,18 +99,10 @@ export class ArtifactUploader {
     }
 
     // Upload templates
-    const templateArtifacts = await this.uploadTemplates(
-      templateFiles,
-      storageManager,
-      baseDir
-    );
+    const templateArtifacts = await this.uploadTemplates(templateFiles, storageManager, baseDir);
 
     // Upload packages
-    const packageArtifacts = await this.uploadPackages(
-      packageFiles,
-      storageManager,
-      stack
-    );
+    const packageArtifacts = await this.uploadPackages(packageFiles, storageManager, stack);
 
     // Build result
     const linkedTemplates = new Map<string, string>();
@@ -130,9 +123,7 @@ export class ArtifactUploader {
     }
 
     // Get root template artifact
-    const rootArtifact = templateArtifacts.find(
-      a => a.name === stack.templatePath
-    );
+    const rootArtifact = templateArtifacts.find((a) => a.name === stack.templatePath);
 
     if (!rootArtifact) {
       throw new Error('Root template artifact not found after upload');
@@ -147,7 +138,7 @@ export class ArtifactUploader {
       linkedTemplates,
       functionPackages,
       baseUri,
-      sasToken
+      sasToken,
     };
   }
 
@@ -176,15 +167,11 @@ export class ArtifactUploader {
             current: processedCount,
             total: totalFiles,
             currentFile: templateName,
-            phase: 'templates'
+            phase: 'templates',
           });
 
           try {
-            const artifact = await this.uploadTemplate(
-              templatePath,
-              templateName,
-              storageManager
-            );
+            const artifact = await this.uploadTemplate(templatePath, templateName, storageManager);
 
             processedCount++;
 
@@ -192,14 +179,12 @@ export class ArtifactUploader {
               current: processedCount,
               total: totalFiles,
               currentFile: templateName,
-              phase: 'templates'
+              phase: 'templates',
             });
 
             return artifact;
           } catch (error) {
-            throw new Error(
-              `Failed to upload template ${templateName}: ${error}`
-            );
+            throw new Error(`Failed to upload template ${templateName}: ${error}`);
           }
         })
       );
@@ -240,7 +225,7 @@ export class ArtifactUploader {
       blobUrl: uploadResult.blobUrl,
       sasUrl: uploadResult.sasUrl,
       checksum: uploadResult.checksum,
-      size
+      size,
     };
   }
 
@@ -273,15 +258,12 @@ export class ArtifactUploader {
             current: processedCount,
             total: totalFiles,
             currentFile: packageName,
-            phase: 'packages'
+            phase: 'packages',
           });
 
           try {
             // Find function app name from stack artifacts
-            const functionAppName = this.findFunctionAppName(
-              packagePath,
-              stack
-            );
+            const functionAppName = this.findFunctionAppName(packagePath, stack);
 
             const artifact = await this.uploadPackage(
               packagePath,
@@ -296,14 +278,12 @@ export class ArtifactUploader {
               current: processedCount,
               total: totalFiles,
               currentFile: packageName,
-              phase: 'packages'
+              phase: 'packages',
             });
 
             return artifact;
           } catch (error) {
-            throw new Error(
-              `Failed to upload package ${packageName}: ${error}`
-            );
+            throw new Error(`Failed to upload package ${packageName}: ${error}`);
           }
         })
       );
@@ -346,7 +326,7 @@ export class ArtifactUploader {
       sasUrl: uploadResult.sasUrl,
       checksum: uploadResult.checksum,
       size,
-      functionAppName
+      functionAppName,
     };
   }
 
@@ -373,9 +353,7 @@ export class ArtifactUploader {
   /**
    * Private helper: Retry operation with exponential backoff
    */
-  private async retryOperation<T>(
-    operation: () => Promise<T>
-  ): Promise<T> {
+  private async retryOperation<T>(operation: () => Promise<T>): Promise<T> {
     let lastError: Error | undefined;
 
     for (let attempt = 0; attempt < this.maxRetries; attempt++) {
@@ -397,9 +375,7 @@ export class ArtifactUploader {
       }
     }
 
-    throw new Error(
-      `Operation failed after ${this.maxRetries} retries: ${lastError?.message}`
-    );
+    throw new Error(`Operation failed after ${this.maxRetries} retries: ${lastError?.message}`);
   }
 
   /**
@@ -416,28 +392,25 @@ export class ArtifactUploader {
       /timeout/i,
       /503/i,
       /502/i,
-      /429/i // Rate limiting
+      /429/i, // Rate limiting
     ];
 
     const errorString = error?.message || String(error);
-    return retryablePatterns.some(pattern => pattern.test(errorString));
+    return retryablePatterns.some((pattern) => pattern.test(errorString));
   }
 
   /**
    * Private helper: Sleep for specified milliseconds
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
    * Private helper: Calculate SHA256 checksum
    */
   private calculateChecksum(content: Buffer): string {
-    return crypto
-      .createHash('sha256')
-      .update(content)
-      .digest('hex');
+    return crypto.createHash('sha256').update(content).digest('hex');
   }
 
   /**
@@ -460,17 +433,12 @@ export class ArtifactUploader {
   /**
    * Private helper: Find function app name from package path
    */
-  private findFunctionAppName(
-    packagePath: string,
-    stack: StackManifestV2
-  ): string {
+  private findFunctionAppName(packagePath: string, stack: StackManifestV2): string {
     if (!stack.artifacts?.functionPackages) {
       throw new Error('No function packages in stack artifacts');
     }
 
-    const pkg = stack.artifacts.functionPackages.find(
-      p => p.packagePath === packagePath
-    );
+    const pkg = stack.artifacts.functionPackages.find((p) => p.packagePath === packagePath);
 
     if (!pkg) {
       throw new Error(`Package ${packagePath} not found in stack artifacts`);

@@ -466,10 +466,7 @@ export class MockTableStorage {
    * @param filter - Optional filter function
    * @returns Array of entities
    */
-  query(
-    tableName: string,
-    filter?: (entity: Record<string, unknown>) => boolean
-  ): unknown[] {
+  query(tableName: string, filter?: (entity: Record<string, unknown>) => boolean): unknown[] {
     const table = this.tables.get(tableName);
     if (!table) {
       return [];
@@ -549,11 +546,7 @@ export class MockCosmosDb {
    * cosmos.insert('mydb', 'mycollection', { id: '123', name: 'Test' });
    * ```
    */
-  insert(
-    databaseName: string,
-    collectionName: string,
-    document: Record<string, unknown>
-  ): void {
+  insert(databaseName: string, collectionName: string, document: Record<string, unknown>): void {
     if (!document.id) {
       throw new Error('Document must have an id property');
     }

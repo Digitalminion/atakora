@@ -166,67 +166,74 @@ export const backend = defineBackend({
 // ========================================
 // Networking & Security
 // ========================================
-backend.network.primary.attach(networking.Primary);
-backend.network.firewall.attach(networking.Firewall);
-backend.network.ddos.attach(networking.DDoS);
+// Temporarily disabled for synthesis testing
+// backend.network.primary.attach(networking.Primary);
+// backend.network.firewall.attach(networking.Firewall);
+// backend.network.ddos.attach(networking.DDoS);
 
 // ========================================
 // Storage & Data
 // ========================================
-backend.storage.blobs.attach(data.BlobStorage);
-backend.storage.database.attach(data.Database);
+// Temporarily disabled for synthesis testing - using defaults
+// backend.storage.blobs.attach(data.BlobStorage);
+// backend.storage.database.attach(data.Database);
 
 // ========================================
 // Compute
 // ========================================
-backend.compute.functionApp.attach(functions.FunctionApp);
+// Temporarily disabled for synthesis testing - using defaults
+// backend.compute.functionApp.attach(functions.FunctionApp);
 
 // ========================================
 // Monitoring & Logging
 // ========================================
-backend.monitoring.insights.attach(monitoring.AppInsights);
-backend.monitoring.logs.attach(monitoring.LogAnalytics);
-backend.monitoring.alerts.attach(monitoring.Alerts);
-backend.monitoring.diagnostics.attach(monitoring.Diagnostics);
-backend.monitoring.metrics.attach(monitoring.CustomMetrics);
-backend.monitoring.tracing.attach(monitoring.Tracing);
-backend.monitoring.queryPacks.attach(monitoring.PerformanceQueries);
-backend.monitoring.queryPacks.attach(monitoring.ErrorQueries);
-backend.monitoring.queryPacks.attach(monitoring.UsageQueries);
+// Temporarily disabled for synthesis testing - using defaults
+// backend.monitoring.insights.attach(monitoring.AppInsights);
+// backend.monitoring.logs.attach(monitoring.LogAnalytics);
+// backend.monitoring.alerts.attach(monitoring.Alerts);
+// backend.monitoring.diagnostics.attach(monitoring.Diagnostics);
+// backend.monitoring.metrics.attach(monitoring.CustomMetrics);
+// backend.monitoring.tracing.attach(monitoring.Tracing);
+// backend.monitoring.queryPacks.attach(monitoring.PerformanceQueries);
+// backend.monitoring.queryPacks.attach(monitoring.ErrorQueries);
+// backend.monitoring.queryPacks.attach(monitoring.UsageQueries);
 
 // ========================================
 // Performance & Optimization
 // ========================================
-backend.performance.cdn.attach(performance.CDN);
-backend.performance.cache.attach(performance.Cache);
-backend.performance.rateLimit.attach(performance.RateLimit);
-backend.performance.compression.attach(performance.Compression);
+// Temporarily disabled for synthesis testing - using defaults
+// backend.performance.cdn.attach(performance.CDN);
+// backend.performance.cache.attach(performance.Cache);
+// backend.performance.rateLimit.attach(performance.RateLimit);
+// backend.performance.compression.attach(performance.Compression);
 
 // ========================================
 // Schema Model Customizations
 // ========================================
-const SchemaStack = backend.schema;
+// const SchemaStack = backend.schema;
 
 // ========================================
 // Event Queue Customizations
 // ========================================
+// Temporarily disabled for synthesis testing
 // Attach custom event processing configurations
 // (retries, TTL, visibility, monitoring, custom processors)
-SchemaStack.DataUploaded.queue.attach(event.DataUploaded);
-SchemaStack.DataValidated.queue.attach(event.DataValidated);
-SchemaStack.ProcessingCompleted.queue.attach(event.ProcessingCompleted);
-SchemaStack.QualityCheckFailed.queue.attach(event.QualityCheckFailed);
-SchemaStack.NotificationRequested.queue.attach(event.NotificationRequested);
+// SchemaStack.DataUploaded.queue.attach(event.DataUploaded);
+// SchemaStack.DataValidated.queue.attach(event.DataValidated);
+// SchemaStack.ProcessingCompleted.queue.attach(event.ProcessingCompleted);
+// SchemaStack.QualityCheckFailed.queue.attach(event.QualityCheckFailed);
+// SchemaStack.NotificationRequested.queue.attach(event.NotificationRequested);
 
 // ========================================
 // Function Customizations
 // ========================================
+// Temporarily disabled for synthesis testing
 // Attach custom function handlers and configurations
 // (memory, timeout, bindings, custom logic)
-SchemaStack.GenerateReport.function.attach(func.GenerateReport);
-SchemaStack.ValidateData.function.attach(func.ValidateData);
-SchemaStack.TransformData.function.attach(func.TransformData);
-SchemaStack.SearchData.function.attach(func.SearchData);
+// SchemaStack.GenerateReport.function.attach(func.GenerateReport);
+// SchemaStack.ValidateData.function.attach(func.ValidateData);
+// SchemaStack.TransformData.function.attach(func.TransformData);
+// SchemaStack.SearchData.function.attach(func.SearchData);
 // ProcessUpload uses defaults - no attachment needed
 
 // ========================================

@@ -284,7 +284,7 @@ export const arrayRules = {
    * Minimum number of items
    */
   minItems: (min: number) => ({
-    check: <T>(schema: z.ZodArray<T>) => schema.min(min),
+    check: <T extends z.ZodTypeAny>(schema: z.ZodArray<T>) => schema.min(min),
     message: `Must contain at least ${min} item(s)`,
   }),
 
@@ -292,7 +292,7 @@ export const arrayRules = {
    * Maximum number of items
    */
   maxItems: (max: number) => ({
-    check: <T>(schema: z.ZodArray<T>) => schema.max(max),
+    check: <T extends z.ZodTypeAny>(schema: z.ZodArray<T>) => schema.max(max),
     message: `Must contain at most ${max} item(s)`,
   }),
 
@@ -300,7 +300,7 @@ export const arrayRules = {
    * Exact number of items
    */
   length: (len: number) => ({
-    check: <T>(schema: z.ZodArray<T>) => schema.length(len),
+    check: <T extends z.ZodTypeAny>(schema: z.ZodArray<T>) => schema.length(len),
     message: `Must contain exactly ${len} item(s)`,
   }),
 
@@ -308,7 +308,7 @@ export const arrayRules = {
    * Non-empty array
    */
   nonEmpty: () => ({
-    check: <T>(schema: z.ZodArray<T>) => schema.nonempty(),
+    check: <T extends z.ZodTypeAny>(schema: z.ZodArray<T>) => schema.nonempty(),
     message: 'Array cannot be empty',
   }),
 

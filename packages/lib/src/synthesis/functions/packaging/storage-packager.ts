@@ -231,12 +231,12 @@ export class StoragePackager {
 
     // Add input bindings
     if (inputBindings) {
-      bindings.push(...inputBindings.map(b => this.bindingToJson(b)));
+      bindings.push(...inputBindings.map((b) => this.bindingToJson(b)));
     }
 
     // Add output bindings
     if (outputBindings) {
-      bindings.push(...outputBindings.map(b => this.bindingToJson(b)));
+      bindings.push(...outputBindings.map((b) => this.bindingToJson(b)));
     }
 
     return {
@@ -318,9 +318,8 @@ export class StoragePackager {
 
     for (const entry of entries) {
       // Convert content to Uint8Array if needed
-      const content = typeof entry.content === 'string'
-        ? new TextEncoder().encode(entry.content)
-        : entry.content;
+      const content =
+        typeof entry.content === 'string' ? new TextEncoder().encode(entry.content) : entry.content;
 
       // For now, just concatenate (in production, create proper ZIP structure)
       buffers.push(content);
@@ -347,10 +346,7 @@ export class StoragePackager {
    * @internal
    */
   private computeIntegrity(data: Uint8Array): string {
-    return crypto
-      .createHash('sha256')
-      .update(data)
-      .digest('hex');
+    return crypto.createHash('sha256').update(data).digest('hex');
   }
 
   /**

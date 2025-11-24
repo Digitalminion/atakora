@@ -10,6 +10,7 @@
  */
 
 import { BaseFieldBuilder, type BaseFieldConfig } from './base';
+import type { UnifiedFieldDefinition } from '../unified-types';
 
 /**
  * String field configuration
@@ -85,12 +86,17 @@ export class StringFieldBuilder extends BaseFieldBuilder<string, StringFieldConf
    * @param value - Minimum length
    */
   min(value: number): this {
-    this.config.minLength = value;
-    this.config.validations.push({
+    this.definition.minLength = value;
+    this.definition.validations.push({
       type: 'minLength',
       value,
       message: `Must be at least ${value} character${value !== 1 ? 's' : ''}`,
     });
+
+    // Update legacy config
+    this.config.minLength = value;
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -108,12 +114,17 @@ export class StringFieldBuilder extends BaseFieldBuilder<string, StringFieldConf
    * @param value - Maximum length
    */
   max(value: number): this {
-    this.config.maxLength = value;
-    this.config.validations.push({
+    this.definition.maxLength = value;
+    this.definition.validations.push({
       type: 'maxLength',
       value,
       message: `Must be at most ${value} character${value !== 1 ? 's' : ''}`,
     });
+
+    // Update legacy config
+    this.config.maxLength = value;
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -147,12 +158,18 @@ export class StringFieldBuilder extends BaseFieldBuilder<string, StringFieldConf
    * ```
    */
   email(): this {
-    this.config.format = 'email';
-    this.config.pattern = EMAIL_REGEX;
-    this.config.validations.push({
+    this.definition.format = 'email';
+    this.definition.pattern = EMAIL_REGEX;
+    this.definition.validations.push({
       type: 'email',
       message: 'Must be a valid email address',
     });
+
+    // Update legacy config
+    this.config.format = 'email';
+    this.config.pattern = EMAIL_REGEX;
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -168,12 +185,18 @@ export class StringFieldBuilder extends BaseFieldBuilder<string, StringFieldConf
    * ```
    */
   url(): this {
-    this.config.format = 'url';
-    this.config.pattern = URL_REGEX;
-    this.config.validations.push({
+    this.definition.format = 'url';
+    this.definition.pattern = URL_REGEX;
+    this.definition.validations.push({
       type: 'url',
       message: 'Must be a valid URL starting with http:// or https://',
     });
+
+    // Update legacy config
+    this.config.format = 'url';
+    this.config.pattern = URL_REGEX;
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -189,13 +212,19 @@ export class StringFieldBuilder extends BaseFieldBuilder<string, StringFieldConf
    * ```
    */
   uuid(): this {
-    this.config.format = 'uuid';
-    this.config.pattern = UUID_REGEX;
-    this.config.validations.push({
+    this.definition.format = 'uuid';
+    this.definition.pattern = UUID_REGEX;
+    this.definition.validations.push({
       type: 'pattern',
       pattern: UUID_REGEX,
       message: 'Must be a valid UUID',
     });
+
+    // Update legacy config
+    this.config.format = 'uuid';
+    this.config.pattern = UUID_REGEX;
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -211,13 +240,19 @@ export class StringFieldBuilder extends BaseFieldBuilder<string, StringFieldConf
    * ```
    */
   phone(): this {
-    this.config.format = 'phone';
-    this.config.pattern = PHONE_REGEX;
-    this.config.validations.push({
+    this.definition.format = 'phone';
+    this.definition.pattern = PHONE_REGEX;
+    this.definition.validations.push({
       type: 'pattern',
       pattern: PHONE_REGEX,
       message: 'Must be a valid phone number',
     });
+
+    // Update legacy config
+    this.config.format = 'phone';
+    this.config.pattern = PHONE_REGEX;
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -240,12 +275,50 @@ export class StringFieldBuilder extends BaseFieldBuilder<string, StringFieldConf
    * @param message - Optional custom error message
    */
   regex(pattern: RegExp, message?: string): this {
-    this.config.pattern = pattern;
-    this.config.validations.push({
+    this.definition.pattern = pattern;
+    this.definition.validations.push({
       type: 'regex',
       pattern,
       message: message || 'Must match the required pattern',
     });
+
+    // Update legacy config
+    this.config.pattern = pattern;
+    this.config.validations = this.definition.validations;
+
     return this;
+  }
+
+  /**
+   * Alias for regex() - validate against custom pattern
+   *
+   * @param pattern - Regular expression pattern
+   * @param message - Optional custom error message
+   */
+  pattern(pattern: RegExp, message?: string): this {
+    return this.regex(pattern, message);
+  }
+
+  /**
+   * Override syncLegacyToUnified to handle string-specific properties
+   *
+   * @internal
+   */
+  protected syncLegacyToUnified(): void {
+    super.syncLegacyToUnified();
+
+    // Sync string-specific properties
+    if (this.config.minLength !== undefined) {
+      this.definition.minLength = this.config.minLength;
+    }
+    if (this.config.maxLength !== undefined) {
+      this.definition.maxLength = this.config.maxLength;
+    }
+    if (this.config.pattern !== undefined) {
+      this.definition.pattern = this.config.pattern;
+    }
+    if (this.config.format !== undefined) {
+      this.definition.format = this.config.format;
+    }
   }
 }

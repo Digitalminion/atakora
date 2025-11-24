@@ -191,7 +191,9 @@ describe('UserAssignedIdentity', () => {
         'existing-identity'
       );
 
-      expect(imported.identityId).toContain("resourceId('Microsoft.ManagedIdentity/userAssignedIdentities'");
+      expect(imported.identityId).toContain(
+        "resourceId('Microsoft.ManagedIdentity/userAssignedIdentities'"
+      );
       expect(imported.identityId).toContain('existing-identity');
     });
   });
@@ -202,11 +204,7 @@ describe('UserAssignedIdentity', () => {
       const resourceId =
         '/subscriptions/12345/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/my-identity';
 
-      const imported = UserAssignedIdentity.fromIdentityId(
-        rg,
-        'ImportedIdentity',
-        resourceId
-      );
+      const imported = UserAssignedIdentity.fromIdentityId(rg, 'ImportedIdentity', resourceId);
 
       expect(imported.identityName).toBe('my-identity');
       expect(imported.identityId).toBe(resourceId);
@@ -218,11 +216,7 @@ describe('UserAssignedIdentity', () => {
       const resourceId =
         '/subscriptions/12345/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/extracted-name';
 
-      const imported = UserAssignedIdentity.fromIdentityId(
-        rg,
-        'ImportedIdentity',
-        resourceId
-      );
+      const imported = UserAssignedIdentity.fromIdentityId(rg, 'ImportedIdentity', resourceId);
 
       expect(imported.identityName).toBe('extracted-name');
     });
@@ -231,11 +225,7 @@ describe('UserAssignedIdentity', () => {
       const rg = new MockResourceGroup(undefined as any, 'TestRG');
       const resourceId = '/invalid/resource/id';
 
-      const imported = UserAssignedIdentity.fromIdentityId(
-        rg,
-        'ImportedIdentity',
-        resourceId
-      );
+      const imported = UserAssignedIdentity.fromIdentityId(rg, 'ImportedIdentity', resourceId);
 
       expect(imported.identityName).toBe('imported-identity');
     });
@@ -249,7 +239,9 @@ describe('UserAssignedIdentity', () => {
         location: 'eastus',
       });
 
-      expect(identity.resourceId).toContain("resourceId('Microsoft.ManagedIdentity/userAssignedIdentities'");
+      expect(identity.resourceId).toContain(
+        "resourceId('Microsoft.ManagedIdentity/userAssignedIdentities'"
+      );
       expect(identity.resourceId).toContain('test-identity');
       expect(identity.identityId).toBe(identity.resourceId);
     });

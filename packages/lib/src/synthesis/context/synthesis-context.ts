@@ -215,7 +215,7 @@ export class SynthesisContext {
     if (!this.templateMetadata.has(currentTemplate)) {
       throw new Error(
         `Current template '${currentTemplate}' not found in template metadata. ` +
-        `Available templates: ${Array.from(templateMetadata.keys()).join(', ')}`
+          `Available templates: ${Array.from(templateMetadata.keys()).join(', ')}`
       );
     }
   }
@@ -250,8 +250,8 @@ export class SynthesisContext {
     if (!targetTemplate) {
       throw new Error(
         `Resource '${resourceId}' not found in template assignments. ` +
-        `This resource was not assigned to any template during the splitting phase. ` +
-        `Available resources: ${Array.from(this.resourceTemplates.keys()).slice(0, 10).join(', ')}${this.resourceTemplates.size > 10 ? '...' : ''}`
+          `This resource was not assigned to any template during the splitting phase. ` +
+          `Available resources: ${Array.from(this.resourceTemplates.keys()).slice(0, 10).join(', ')}${this.resourceTemplates.size > 10 ? '...' : ''}`
       );
     }
 
@@ -327,14 +327,14 @@ export class SynthesisContext {
     if (!targetTemplate) {
       throw new Error(
         `Resource '${resourceId}' not found in template assignments. ` +
-        `Cannot create cross-template reference for unknown resource.`
+          `Cannot create cross-template reference for unknown resource.`
       );
     }
 
     if (targetTemplate === this.currentTemplate) {
       throw new Error(
         `Invalid cross-template reference: Resource '${resourceId}' is in the same template ('${this.currentTemplate}'). ` +
-        `Use getResourceReference() instead for same-template references.`
+          `Use getResourceReference() instead for same-template references.`
       );
     }
 
@@ -500,7 +500,7 @@ export class SynthesisContext {
     if (!template) {
       throw new Error(
         `Resource '${resourceId}' not found in template assignments. ` +
-        `Cannot determine which template this resource belongs to.`
+          `Cannot determine which template this resource belongs to.`
       );
     }
     return template;

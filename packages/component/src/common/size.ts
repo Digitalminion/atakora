@@ -61,6 +61,11 @@ export interface Size {
   toGigabytes(): number;
 
   /**
+   * Convert to terabytes
+   */
+  toTerabytes(): number;
+
+  /**
    * Get human-readable string representation
    */
   toString(): string;
@@ -71,10 +76,23 @@ export interface Size {
  * @internal
  */
 class SizeImpl implements Size {
-  constructor(
-    readonly value: number,
-    readonly unit: 'B' | 'KB' | 'MB' | 'GB' | 'TB'
-  ) {}
+  readonly value!: number;
+  readonly unit!: 'B' | 'KB' | 'MB' | 'GB' | 'TB';
+
+  constructor(value: number, unit: 'B' | 'KB' | 'MB' | 'GB' | 'TB') {
+    Object.defineProperty(this, 'value', {
+      value,
+      writable: false,
+      enumerable: true,
+      configurable: false,
+    });
+    Object.defineProperty(this, 'unit', {
+      value: unit,
+      writable: false,
+      enumerable: true,
+      configurable: false,
+    });
+  }
 
   toBytes(): number {
     const conversions = {
@@ -82,7 +100,7 @@ class SizeImpl implements Size {
       KB: 1024,
       MB: 1048576,
       GB: 1073741824,
-      TB: 1099511627776
+      TB: 1099511627776,
     };
     return this.value * conversions[this.unit];
   }
@@ -97,6 +115,10 @@ class SizeImpl implements Size {
 
   toGigabytes(): number {
     return this.toBytes() / 1073741824;
+  }
+
+  toTerabytes(): number {
+    return this.toBytes() / 1099511627776;
   }
 
   toString(): string {

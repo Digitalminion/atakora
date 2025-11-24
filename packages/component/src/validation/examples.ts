@@ -210,12 +210,7 @@ export function exampleFunctionValidation() {
     generatedAt: new Date().toISOString(),
   };
 
-  const validation = validateFunction(
-    generateReportInput,
-    generateReportOutput,
-    input,
-    output
-  );
+  const validation = validateFunction(generateReportInput, generateReportOutput, input, output);
 
   if (validation.input.success && validation.output?.success) {
     console.log('Function validation passed');
@@ -352,17 +347,12 @@ export const orderItemSchema: SchemaDefinition = {
   quantity: {
     type: 'number',
     required: true,
-    validations: [
-      { type: 'integer' },
-      { type: 'positive' },
-    ],
+    validations: [{ type: 'integer' }, { type: 'positive' }],
   },
   price: {
     type: 'number',
     required: true,
-    validations: [
-      { type: 'positive' },
-    ],
+    validations: [{ type: 'positive' }],
   },
 };
 
@@ -401,9 +391,7 @@ export const addressSchema: SchemaDefinition = {
   state: {
     type: 'string',
     required: true,
-    validations: [
-      { type: 'length', value: 2 },
-    ],
+    validations: [{ type: 'length', value: 2 }],
   },
   zipCode: {
     type: 'string',

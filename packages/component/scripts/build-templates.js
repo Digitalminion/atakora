@@ -19,13 +19,7 @@ const esbuild = require('esbuild');
 
 // Template directories
 const SCRIPTS_DIR = __dirname;
-const TEMPLATES_DIR = [
-  'crud-create',
-  'crud-read',
-  'crud-update',
-  'crud-delete',
-  'crud-list'
-];
+const TEMPLATES_DIR = ['crud-create', 'crud-read', 'crud-update', 'crud-delete', 'crud-list'];
 
 // Output directory for generated templates
 const OUTPUT_DIR = path.join(SCRIPTS_DIR, '..', 'src', 'crud', 'functions');
@@ -50,19 +44,19 @@ async function bundleTemplate(templateDir) {
     // Bundle with esbuild - includes all dependencies, tree-shaken and minified
     await esbuild.build({
       entryPoints: [indexTs],
-      bundle: true,           // Bundle all dependencies
-      platform: 'node',       // Target Node.js runtime
-      target: 'node18',       // Target Node 18+
-      format: 'cjs',          // CommonJS format for Azure Functions
+      bundle: true, // Bundle all dependencies
+      platform: 'node', // Target Node.js runtime
+      target: 'node18', // Target Node 18+
+      format: 'cjs', // CommonJS format for Azure Functions
       outfile: outfile,
-      minify: true,           // Minify code - strip whitespace, shorten variable names
+      minify: true, // Minify code - strip whitespace, shorten variable names
       minifyWhitespace: true, // Remove all unnecessary whitespace
-      minifyIdentifiers: true,// Shorten variable/function names (preserves ATAKORA_* tokens)
-      minifySyntax: true,     // Simplify syntax (e.g., if statements, loops)
-      treeShaking: true,      // Remove unused code
+      minifyIdentifiers: true, // Shorten variable/function names (preserves ATAKORA_* tokens)
+      minifySyntax: true, // Simplify syntax (e.g., if statements, loops)
+      treeShaking: true, // Remove unused code
       // Mark Azure Functions runtime packages as external (provided by Azure Functions runtime)
       external: [
-        '@azure/functions-core',  // Injected by Azure Functions runtime
+        '@azure/functions-core', // Injected by Azure Functions runtime
       ],
       tsconfig: path.join(SCRIPTS_DIR, 'tsconfig.json'),
       logLevel: 'warning',
@@ -110,31 +104,40 @@ function generateIndexFile(templateData) {
     })
     .join('\n');
 
-  const interfaces = templateData.map(({ name, tokens }) => {
-    const functionName = name.replace('crud-', 'generate').replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-    const configName = functionName.charAt(0).toUpperCase() + functionName.slice(1) + 'Config';
-    const parameterNames = tokens.map(token => token.replace('ATAKORA_', '').toLowerCase());
+  const interfaces = templateData
+    .map(({ name, tokens }) => {
+      const functionName = name
+        .replace('crud-', 'generate')
+        .replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+      const configName = functionName.charAt(0).toUpperCase() + functionName.slice(1) + 'Config';
+      const parameterNames = tokens.map((token) => token.replace('ATAKORA_', '').toLowerCase());
 
-    return `
+      return `
 /**
  * Configuration for ${name} function
  */
 export interface ${configName} {
-${parameterNames.map(name => `  readonly ${name}: string;`).join('\n')}
+${parameterNames.map((name) => `  readonly ${name}: string;`).join('\n')}
 ${tokens.includes('ATAKORA_SCHEMA_JSON') ? '  readonly schemaJson: string;' : ''}
 }`;
-  }).join('\n');
+    })
+    .join('\n');
 
-  const functions = templateData.map(({ name, tokens }) => {
-    const varName = name.replace(/-/g, '_');
-    const functionName = name.replace('crud-', 'generate').replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-    const configName = functionName.charAt(0).toUpperCase() + functionName.slice(1) + 'Config';
-    const replacements = tokens.map(token => {
-      const paramName = token.replace('ATAKORA_', '').toLowerCase();
-      return `  code = code.replace(/${token}/g, config.${paramName});`;
-    }).join('\n');
+  const functions = templateData
+    .map(({ name, tokens }) => {
+      const varName = name.replace(/-/g, '_');
+      const functionName = name
+        .replace('crud-', 'generate')
+        .replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+      const configName = functionName.charAt(0).toUpperCase() + functionName.slice(1) + 'Config';
+      const replacements = tokens
+        .map((token) => {
+          const paramName = token.replace('ATAKORA_', '').toLowerCase();
+          return `  code = code.replace(/${token}/g, config.${paramName});`;
+        })
+        .join('\n');
 
-    return `
+      return `
 /**
  * Generates the ${name} function code
  *
@@ -150,7 +153,8 @@ ${replacements}
 
   return code;
 }`;
-  }).join('\n');
+    })
+    .join('\n');
 
   return `/**
  * CRUD Function Code Generators
@@ -221,7 +225,7 @@ async function main() {
   console.log('\n✅ Template build complete! All dependencies bundled and minified.');
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error('Build failed:', err);
   process.exit(1);
 });

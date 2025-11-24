@@ -5,55 +5,25 @@
  * Triggered by Event Grid events from the 'audit-logs' topic.
  */
 
-import { defineFunction } from '@atakora/component/functions';
+import { defineFunctions, configureFunction } from '@atakora/component/functions';
 
-export const auditLogger = defineFunction({
-  name: 'audit-logger',
+export const auditLogger = defineFunctions({
+  AuditLogger: configureFunction('audit-logger')
+    .memory(512)
+    .timeout(60000)
+    .withHandler(async (context, event) => {
+      // Handler implementation from ./handler.ts
+      context.log(`Processing audit event`);
+      // TODO: Implement audit logging logic
 
-  // Event Grid trigger configuration
-  trigger: {
-    type: 'eventGrid',
-    topicName: 'audit-logs',
-    // Optional: Filter events by type or subject
-    eventTypes: [
-      'Authentication.*',
-      'Authorization.*',
-      'DataAccess.*',
-      'DataModification.*',
-      'DataDeletion.*',
-      'Security.*',
-      'Compliance.*',
-    ],
-  },
-
-  // Handler implementation
-  handler: './handler.ts',
-
-  // Function configuration
-  memory: 512,       // 512MB for event processing
-  timeout: 60,       // 1 minute per event batch
-
-  // Environment variables
-  environment: {
-    AUDIT_STORAGE_CONNECTION: '@storage.audit.connectionString',
-    LOG_ANALYTICS_WORKSPACE_ID: '@logAnalytics.workspaceId',
-    LOG_ANALYTICS_KEY: '@keyVault.secrets.log-analytics-key',
-  },
-
-  // Scaling configuration
-  scale: {
-    minInstances: 1,    // Always have one instance running for audit
-    maxInstances: 20,   // Scale up for high event volume
-    maxConcurrentExecutions: 10,  // Process multiple events concurrently
-  },
-
-  // No retry for audit events - log errors but continue
-  retry: {
-    maxRetryCount: 0,  // No retries - must not lose audit events
-  },
-
-  // High availability settings
-  alwaysOn: true,  // Keep warm for immediate processing
+      // Store in Log Analytics, Storage, etc.
+      return { success: true };
+    })
+    .env({
+      AUDIT_STORAGE_CONNECTION: '@storage.audit.connectionString',
+      LOG_ANALYTICS_WORKSPACE_ID: '@logAnalytics.workspaceId',
+      LOG_ANALYTICS_KEY: '@keyVault.secrets.log-analytics-key',
+    }),
 });
 
 /**

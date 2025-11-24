@@ -22,6 +22,7 @@ The Backend Pattern is a new (opt-in) way to use @atakora/component that enables
 ### What Changes?
 
 **Before (Traditional Pattern):**
+
 ```typescript
 // Each component creates its own resources
 const userApi = new CrudApi(stack, 'UserApi', { ... });
@@ -29,6 +30,7 @@ const productApi = new CrudApi(stack, 'ProductApi', { ... });
 ```
 
 **After (Backend Pattern):**
+
 ```typescript
 // Components share resources via backend orchestration
 const backend = defineBackend({
@@ -40,6 +42,7 @@ backend.addToStack(stack);
 ```
 
 The only real difference is:
+
 1. Use `Component.define()` instead of `new Component()`
 2. Wrap definitions in `defineBackend()`
 3. Call `backend.addToStack()` instead of constructing directly
@@ -52,21 +55,21 @@ Everything else stays the same!
 
 Real-world impact for a typical application:
 
-| Scale | Traditional Cost | Backend Pattern Cost | Monthly Savings | Annual Savings |
-|-------|------------------|---------------------|-----------------|----------------|
-| 3 APIs | ~$111/month | ~$37/month | $74/month | $888/year |
-| 5 APIs | ~$185/month | ~$55/month | $130/month | $1,560/year |
-| 10 APIs | ~$370/month | ~$110/month | $260/month | $3,120/year |
-| 20 APIs | ~$740/month | ~$220/month | $520/month | $6,240/year |
+| Scale   | Traditional Cost | Backend Pattern Cost | Monthly Savings | Annual Savings |
+| ------- | ---------------- | -------------------- | --------------- | -------------- |
+| 3 APIs  | ~$111/month      | ~$37/month           | $74/month       | $888/year      |
+| 5 APIs  | ~$185/month      | ~$55/month           | $130/month      | $1,560/year    |
+| 10 APIs | ~$370/month      | ~$110/month          | $260/month      | $3,120/year    |
+| 20 APIs | ~$740/month      | ~$220/month          | $520/month      | $6,240/year    |
 
 ### Resource Reduction
 
 | Components | Traditional Resources | Backend Resources | Reduction |
-|------------|----------------------|-------------------|-----------|
-| 3 | 9 resources | 3 resources | 67% |
-| 5 | 15 resources | 3 resources | 80% |
-| 10 | 30 resources | 3-6 resources | 75-80% |
-| 20 | 60 resources | 3-9 resources | 70-85% |
+| ---------- | --------------------- | ----------------- | --------- |
+| 3          | 9 resources           | 3 resources       | 67%       |
+| 5          | 15 resources          | 3 resources       | 80%       |
+| 10         | 30 resources          | 3-6 resources     | 75-80%    |
+| 20         | 60 resources          | 3-9 resources     | 70-85%    |
 
 ### Operational Benefits
 
@@ -153,12 +156,14 @@ Component Inventory:
 ### Step 2: Identify Migration Candidates
 
 Good candidates for backend pattern:
+
 - Multiple components of same type (CrudApi, FunctionsApp)
 - Components with similar resource requirements
 - Components in same region/environment
 - Components that don't need strict resource isolation
 
 Poor candidates:
+
 - Single standalone component
 - Components with vastly different resource needs
 - Components requiring separate security boundaries
@@ -181,15 +186,16 @@ import { ResourceGroupStack } from '@atakora/cdk';
 ### Step 4: Convert Component Instantiations
 
 **Before:**
+
 ```typescript
 const userApi = new CrudApi(stack, 'UserApi', {
   entityName: 'User',
   schema: {
     id: 'string',
     name: 'string',
-    email: 'string'
+    email: 'string',
   },
-  partitionKey: '/id'
+  partitionKey: '/id',
 });
 
 const productApi = new CrudApi(stack, 'ProductApi', {
@@ -197,13 +203,14 @@ const productApi = new CrudApi(stack, 'ProductApi', {
   schema: {
     id: 'string',
     name: 'string',
-    price: 'number'
+    price: 'number',
   },
-  partitionKey: '/id'
+  partitionKey: '/id',
 });
 ```
 
 **After:**
+
 ```typescript
 const backend = defineBackend({
   userApi: CrudApi.define('UserApi', {
@@ -211,9 +218,9 @@ const backend = defineBackend({
     schema: {
       id: 'string',
       name: 'string',
-      email: 'string'
+      email: 'string',
     },
-    partitionKey: '/id'
+    partitionKey: '/id',
   }),
 
   productApi: CrudApi.define('ProductApi', {
@@ -221,16 +228,17 @@ const backend = defineBackend({
     schema: {
       id: 'string',
       name: 'string',
-      price: 'number'
+      price: 'number',
     },
-    partitionKey: '/id'
-  })
+    partitionKey: '/id',
+  }),
 });
 
 backend.addToStack(stack);
 ```
 
 Key changes:
+
 1. Replace `new CrudApi(stack, 'UserApi', config)` with `CrudApi.define('UserApi', config)`
 2. Remove `stack` parameter from component creation
 3. Wrap definitions in `defineBackend({ ... })`
@@ -239,6 +247,7 @@ Key changes:
 ### Step 5: Update Component References
 
 **Before:**
+
 ```typescript
 // Direct property access
 console.log(userApi.apiEndpoint);
@@ -246,6 +255,7 @@ console.log(productApi.database.resourceId);
 ```
 
 **After:**
+
 ```typescript
 // Access via backend.components
 console.log(backend.components.userApi.apiEndpoint);
@@ -257,16 +267,18 @@ console.log(backend.components.productApi.database.resourceId);
 ### Step 6: Update Outputs and Cross-References
 
 **Before:**
+
 ```typescript
 // Direct references between components
 const processorApp = new FunctionsApp(stack, 'ProcessorApp', {
   environmentVariables: {
-    USER_API_ENDPOINT: userApi.apiEndpoint
-  }
+    USER_API_ENDPOINT: userApi.apiEndpoint,
+  },
 });
 ```
 
 **After:**
+
 ```typescript
 const backend = defineBackend({
   userApi: CrudApi.define('UserApi', { ... }),
@@ -342,6 +354,7 @@ npx atakora deploy --environment dev
 ```
 
 Validate:
+
 - All resources created successfully
 - Component endpoints are accessible
 - Functionality works as expected
@@ -352,6 +365,7 @@ Validate:
 ### CrudApi Migration
 
 **Before:**
+
 ```typescript
 const userApi = new CrudApi(stack, 'UserApi', {
   entityName: 'User',
@@ -360,15 +374,15 @@ const userApi = new CrudApi(stack, 'UserApi', {
     name: 'string',
     email: 'string',
     role: 'string',
-    createdAt: 'timestamp'
+    createdAt: 'timestamp',
   },
   partitionKey: '/id',
   ttl: 86400,
   throughput: 400,
   enableSoftDelete: true,
   cors: {
-    allowedOrigins: ['https://myapp.com']
-  }
+    allowedOrigins: ['https://myapp.com'],
+  },
 });
 
 // Access properties
@@ -377,6 +391,7 @@ const dbId = userApi.database.resourceId;
 ```
 
 **After:**
+
 ```typescript
 const backend = defineBackend({
   userApi: CrudApi.define('UserApi', {
@@ -386,16 +401,16 @@ const backend = defineBackend({
       name: 'string',
       email: 'string',
       role: 'string',
-      createdAt: 'timestamp'
+      createdAt: 'timestamp',
     },
     partitionKey: '/id',
     ttl: 86400,
     throughput: 400,
     enableSoftDelete: true,
     cors: {
-      allowedOrigins: ['https://myapp.com']
-    }
-  })
+      allowedOrigins: ['https://myapp.com'],
+    },
+  }),
 });
 
 backend.addToStack(stack);
@@ -406,6 +421,7 @@ const dbId = backend.components.userApi.database.resourceId;
 ```
 
 **Migration Notes:**
+
 - Configuration props are identical
 - All features work the same way
 - Resource sharing happens automatically with other CrudApi components
@@ -413,6 +429,7 @@ const dbId = backend.components.userApi.database.resourceId;
 ### FunctionsApp Migration
 
 **Before:**
+
 ```typescript
 const processorApp = new FunctionsApp(stack, 'ProcessorApp', {
   runtime: 'node',
@@ -420,17 +437,18 @@ const processorApp = new FunctionsApp(stack, 'ProcessorApp', {
   functions: {
     'process-webhook': {
       trigger: 'http',
-      methods: ['POST']
-    }
+      methods: ['POST'],
+    },
   },
   environmentVariables: {
     STORAGE_CONNECTION: storageAccount.connectionString,
-    LOG_LEVEL: 'info'
-  }
+    LOG_LEVEL: 'info',
+  },
 });
 ```
 
 **After:**
+
 ```typescript
 const backend = defineBackend({
   processorApp: FunctionsApp.define('ProcessorApp', {
@@ -439,20 +457,21 @@ const backend = defineBackend({
     functions: {
       'process-webhook': {
         trigger: 'http',
-        methods: ['POST']
-      }
+        methods: ['POST'],
+      },
     },
     environmentVariables: {
       STORAGE_CONNECTION: '${storage.connectionString}',
-      LOG_LEVEL: 'info'
-    }
-  })
+      LOG_LEVEL: 'info',
+    },
+  }),
 });
 
 backend.addToStack(stack);
 ```
 
 **Migration Notes:**
+
 - Functions will be deployed to shared Function App
 - Environment variables support templating (e.g., `${storage.connectionString}`)
 - Each component's functions remain isolated
@@ -460,30 +479,33 @@ backend.addToStack(stack);
 ### StaticSiteWithCdn Migration
 
 **Before:**
+
 ```typescript
 const website = new StaticSiteWithCdn(stack, 'Website', {
   indexDocument: 'index.html',
   enableSpaMode: true,
   customDomain: 'www.myapp.com',
-  dnsZoneName: 'myapp.com'
+  dnsZoneName: 'myapp.com',
 });
 ```
 
 **After:**
+
 ```typescript
 const backend = defineBackend({
   website: StaticSiteWithCdn.define('Website', {
     indexDocument: 'index.html',
     enableSpaMode: true,
     customDomain: 'www.myapp.com',
-    dnsZoneName: 'myapp.com'
-  })
+    dnsZoneName: 'myapp.com',
+  }),
 });
 
 backend.addToStack(stack);
 ```
 
 **Migration Notes:**
+
 - Storage accounts can be shared if multiple static sites exist
 - CDN configuration remains per-component
 - Custom domains work identically
@@ -513,6 +535,7 @@ az resource list --resource-group rg-myapp-dev --query "length([])"
 ```
 
 Expected results:
+
 - Fewer total resources than before
 - Shared Cosmos DB, Function App, Storage Account present
 - All necessary databases/containers/functions exist
@@ -559,6 +582,7 @@ npm run test:load
 ```
 
 Expected results:
+
 - Similar or better response times (often better due to shared connections)
 - Lower overall resource utilization
 - No increased error rates
@@ -720,6 +744,7 @@ const productApi = new CrudApi(stack, 'ProductApi', { ... });
 ### Q: What happens to my existing data?
 
 **A:** Data migration depends on your approach:
+
 - **New deployment**: Start fresh with backend pattern (no data migration needed)
 - **In-place upgrade**: May require data migration between resources
 - **Blue-green**: Run both patterns in parallel, migrate data gradually
@@ -727,6 +752,7 @@ const productApi = new CrudApi(stack, 'ProductApi', { ... });
 ### Q: Will performance change?
 
 **A:** Performance typically improves or stays the same:
+
 - **Pros**: Shared connection pools, lower latency between co-located components
 - **Cons**: Potential resource contention if one component has traffic spike
 - **Solution**: Monitor and adjust SKUs as needed
@@ -763,11 +789,13 @@ const userApiDatabase = backend.components.userApi.database;
 ### Q: What if components have conflicting requirements?
 
 **A:** The backend uses smart conflict resolution:
+
 1. **Compatible configs**: Merged automatically (databases, containers)
 2. **Priority-based**: Higher priority wins (configurable per requirement)
 3. **Incompatible**: Error with clear message
 
 Example:
+
 ```typescript
 // Component A wants Session consistency
 // Component B wants Strong consistency

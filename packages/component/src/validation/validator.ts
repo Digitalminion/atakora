@@ -2,7 +2,7 @@
  * Validation Engine
  *
  * @remarks
- * Core validation engine that converts field type definitions to Zod schemas
+ * Core validation engine that converts unified field definitions to Zod schemas
  * and performs runtime validation. Supports all common field types and
  * provides clear, actionable error messages.
  *
@@ -20,9 +20,15 @@ import {
   type ValidationErrorType,
 } from './errors';
 import type { CustomValidator } from './rules';
+import type {
+  UnifiedFieldDefinition,
+  UnifiedValidationRule,
+  FieldType,
+} from '../schema/unified-types';
 
 /**
- * Field type definition
+ * Field definition type (alias for backward compatibility)
+ * @deprecated Use UnifiedFieldDefinition from unified-types instead
  */
 export interface FieldDefinition {
   type: FieldType;
@@ -34,24 +40,14 @@ export interface FieldDefinition {
 }
 
 /**
- * Supported field types
+ * Supported field types (re-export for backward compatibility)
+ * @deprecated Import FieldType from unified-types instead
  */
-export type FieldType =
-  | 'string'
-  | 'number'
-  | 'boolean'
-  | 'date'
-  | 'datetime'
-  | 'email'
-  | 'url'
-  | 'uuid'
-  | 'json'
-  | 'array'
-  | 'object'
-  | 'enum';
+export type { FieldType } from '../schema/unified-types';
 
 /**
- * Validation rule
+ * Validation rule (alias for backward compatibility)
+ * @deprecated Use UnifiedValidationRule from unified-types instead
  */
 export interface Validation {
   type: ValidationErrorType;
@@ -63,20 +59,68 @@ export interface Validation {
 /**
  * Schema definition (collection of fields)
  */
-export type SchemaDefinition = Record<string, FieldDefinition>;
+export type SchemaDefinition = Record<string, UnifiedFieldDefinition | FieldDefinition>;
 
 /**
- * Convert field definition to Zod schema
+ * Convert legacy FieldDefinition to UnifiedFieldDefinition
+ *
+ * @internal
  */
-export function fieldToZodSchema(field: FieldDefinition): z.ZodTypeAny {
+function toUnifiedDefinition(
+  field: FieldDefinition | UnifiedFieldDefinition
+): UnifiedFieldDefinition {
+  // Check if already unified
+  if (
+    'validations' in field &&
+    Array.isArray(field.validations) &&
+    field.validations.length > 0 &&
+    'type' in field.validations[0]
+  ) {
+    // Check if it has the unified structure
+    if (typeof field.required === 'boolean' && typeof field.nullable === 'boolean') {
+      return field as UnifiedFieldDefinition;
+    }
+  }
+
+  // Convert legacy to unified
+  const legacy = field as FieldDefinition;
+  const unified: UnifiedFieldDefinition = {
+    type: legacy.type,
+    required: legacy.required ?? false,
+    nullable: legacy.nullable ?? false,
+    default: legacy.default,
+    validations: [],
+    metadata: legacy.description ? { description: legacy.description } : undefined,
+  };
+
+  // Convert legacy validations to unified
+  if (legacy.validations) {
+    unified.validations = legacy.validations.map(
+      (v) =>
+        ({
+          type: v.type as any,
+          value: v.value,
+          message: v.message,
+          validator: v.validator,
+        }) as UnifiedValidationRule
+    );
+  }
+
+  return unified;
+}
+
+/**
+ * Convert unified field definition to Zod schema
+ */
+export function fieldToZodSchema(field: UnifiedFieldDefinition | FieldDefinition): z.ZodTypeAny {
+  // Ensure we have a unified definition
+  const unified = toUnifiedDefinition(field);
+
   let schema: z.ZodTypeAny;
 
   // Base schema based on type
-  switch (field.type) {
+  switch (unified.type) {
     case 'string':
-    case 'email':
-    case 'url':
-    case 'uuid':
       schema = z.string();
       break;
 
@@ -88,66 +132,128 @@ export function fieldToZodSchema(field: FieldDefinition): z.ZodTypeAny {
       schema = z.boolean();
       break;
 
-    case 'date':
     case 'datetime':
       schema = z.coerce.date();
+      break;
+
+    case 'id':
+      schema = z.string();
       break;
 
     case 'json':
       schema = z.any();
       break;
 
+    case 'binary':
+      schema = z.instanceof(Buffer);
+      break;
+
     case 'array':
-      schema = z.array(z.any());
+      // Handle array item definition
+      if (unified.itemDefinition) {
+        const itemSchema = fieldToZodSchema(unified.itemDefinition);
+        schema = z.array(itemSchema);
+      } else {
+        schema = z.array(z.any());
+      }
       break;
 
     case 'object':
-      schema = z.record(z.any());
+      // Handle object schema
+      if (unified.schema) {
+        const shape: Record<string, z.ZodTypeAny> = {};
+        for (const [key, fieldDef] of Object.entries(unified.schema)) {
+          shape[key] = fieldToZodSchema(fieldDef);
+        }
+        schema = z.object(shape);
+      } else {
+        schema = z.record(z.any());
+      }
       break;
 
     case 'enum':
-      // Enum requires values in validation
-      const enumValidation = field.validations?.find((v) => v.type === 'format');
-      if (enumValidation?.value && Array.isArray(enumValidation.value)) {
-        schema = z.enum(enumValidation.value as [string, ...string[]]);
+      // Handle enum values
+      if (unified.values && unified.values.length > 0) {
+        schema = z.enum(unified.values as [string, ...string[]]);
       } else {
-        schema = z.string();
+        // Look for format validation with enum values
+        const enumValidation = unified.validations?.find((v) => v.type === 'format');
+        if (enumValidation?.value && Array.isArray(enumValidation.value)) {
+          schema = z.enum(enumValidation.value as [string, ...string[]]);
+        } else {
+          schema = z.string();
+        }
       }
+      break;
+
+    case 'ref':
+      // Reference fields are validated as strings (storing IDs)
+      schema = z.string();
+      break;
+
+    case 'email':
+      // Email fields are strings with email validation
+      schema = z.string().email('Must be a valid email address');
+      break;
+
+    case 'url':
+      // URL fields are strings with URL validation
+      schema = z.string().url('Must be a valid URL');
+      break;
+
+    case 'uuid':
+      // UUID fields are strings with UUID validation
+      schema = z.string().uuid('Must be a valid UUID');
+      break;
+
+    case 'date':
+      // Date fields (treated the same as datetime)
+      schema = z.coerce.date();
       break;
 
     default:
       schema = z.any();
   }
 
-  // Apply type-specific validations
-  if (field.type === 'string' || field.type === 'email' || field.type === 'url' || field.type === 'uuid') {
-    schema = applyStringValidations(schema as z.ZodString, field);
-  } else if (field.type === 'number') {
-    schema = applyNumberValidations(schema as z.ZodNumber, field);
-  } else if (field.type === 'date' || field.type === 'datetime') {
-    schema = applyDateValidations(schema as z.ZodDate, field);
-  } else if (field.type === 'array') {
-    schema = applyArrayValidations(schema as z.ZodArray<any>, field);
+  // Apply type-specific validations based on unified definition
+  if (
+    unified.type === 'string' ||
+    unified.type === 'email' ||
+    unified.type === 'url' ||
+    unified.type === 'uuid'
+  ) {
+    schema = applyStringValidations(schema as z.ZodString, unified);
+  } else if (unified.type === 'number') {
+    schema = applyNumberValidations(schema as z.ZodNumber, unified);
+  } else if (unified.type === 'datetime' || unified.type === 'date') {
+    schema = applyDateValidations(schema as z.ZodDate, unified);
+  } else if (unified.type === 'array') {
+    schema = applyArrayValidations(schema as z.ZodArray<any>, unified);
   }
 
   // Apply custom validations
-  if (field.validations) {
-    schema = applyCustomValidations(schema, field.validations);
+  if (unified.validations && unified.validations.length > 0) {
+    schema = applyCustomValidations(schema, unified.validations);
   }
 
   // Handle nullable
-  if (field.nullable) {
+  if (unified.nullable) {
     schema = schema.nullable();
   }
 
   // Handle optional vs required
-  if (!field.required) {
+  if (!unified.required) {
     schema = schema.optional();
   }
 
   // Handle default value
-  if (field.default !== undefined) {
-    schema = schema.default(field.default);
+  if (unified.default !== undefined) {
+    schema = schema.default(unified.default);
+  }
+
+  // Add description if available
+  if (unified.metadata?.description) {
+    schema = schema.describe(unified.metadata.description);
   }
 
   return schema;
@@ -156,30 +262,61 @@ export function fieldToZodSchema(field: FieldDefinition): z.ZodTypeAny {
 /**
  * Apply string-specific validations
  */
-function applyStringValidations(schema: z.ZodString, field: FieldDefinition): z.ZodString {
+function applyStringValidations(schema: z.ZodString, field: UnifiedFieldDefinition): z.ZodString {
   let result = schema;
 
-  // Type-specific built-in validations
-  if (field.type === 'email') {
-    result = result.email('Must be a valid email address');
-  } else if (field.type === 'url') {
-    result = result.url('Must be a valid URL');
-  } else if (field.type === 'uuid') {
-    result = result.uuid('Must be a valid UUID');
+  // Apply format validations (skip if type is already email/url/uuid to avoid double-application)
+  if (field.type !== 'email' && field.type !== 'url' && field.type !== 'uuid') {
+    if (field.format === 'email' || field.validations?.some((v) => v.type === 'email')) {
+      result = result.email('Must be a valid email address');
+    } else if (field.format === 'url' || field.validations?.some((v) => v.type === 'url')) {
+      result = result.url('Must be a valid URL');
+    } else if (field.format === 'uuid' || field.validations?.some((v) => v.type === 'uuid')) {
+      result = result.uuid('Must be a valid UUID');
+    }
   }
 
-  // Additional validations
+  // Apply length constraints from unified definition
+  if (field.minLength !== undefined) {
+    result = result.min(field.minLength);
+  }
+  if (field.maxLength !== undefined) {
+    result = result.max(field.maxLength);
+  }
+
+  // Apply pattern validation
+  if (field.pattern) {
+    result = result.regex(field.pattern);
+  }
+
+  // Additional validations from rules
   field.validations?.forEach((validation) => {
     switch (validation.type) {
       case 'minLength':
-        result = result.min(validation.value, validation.message);
+        if (validation.value !== undefined) {
+          result = result.min(validation.value, validation.message);
+        }
         break;
       case 'maxLength':
-        result = result.max(validation.value, validation.message);
+        if (validation.value !== undefined) {
+          result = result.max(validation.value, validation.message);
+        }
         break;
       case 'pattern':
-        if (validation.value instanceof RegExp) {
-          result = result.regex(validation.value, validation.message);
+      case 'regex':
+        // Support both 'pattern' property (unified) and 'value' property (legacy)
+        const pattern = validation.pattern || (validation as any).value;
+        if (pattern instanceof RegExp) {
+          result = result.regex(pattern, validation.message);
+        }
+        break;
+      case 'phone':
+        // Phone validation is handled via pattern
+        if (field.pattern) {
+          result = result.regex(
+            field.pattern,
+            validation.message || 'Must be a valid phone number'
+          );
         }
         break;
     }
@@ -191,16 +328,32 @@ function applyStringValidations(schema: z.ZodString, field: FieldDefinition): z.
 /**
  * Apply number-specific validations
  */
-function applyNumberValidations(schema: z.ZodNumber, field: FieldDefinition): z.ZodNumber {
+function applyNumberValidations(schema: z.ZodNumber, field: UnifiedFieldDefinition): z.ZodNumber {
   let result = schema;
 
+  // Apply constraints from unified definition
+  if (field.min !== undefined) {
+    result = result.min(field.min);
+  }
+  if (field.max !== undefined) {
+    result = result.max(field.max);
+  }
+  if (field.integer) {
+    result = result.int();
+  }
+
+  // Additional validations from rules
   field.validations?.forEach((validation) => {
     switch (validation.type) {
       case 'min':
-        result = result.min(validation.value, validation.message);
+        if (validation.value !== undefined) {
+          result = result.min(validation.value, validation.message);
+        }
         break;
       case 'max':
-        result = result.max(validation.value, validation.message);
+        if (validation.value !== undefined) {
+          result = result.max(validation.value, validation.message);
+        }
         break;
       case 'integer':
         result = result.int(validation.message);
@@ -220,19 +373,27 @@ function applyNumberValidations(schema: z.ZodNumber, field: FieldDefinition): z.
 /**
  * Apply date-specific validations
  */
-function applyDateValidations(schema: z.ZodDate, field: FieldDefinition): z.ZodDate {
+function applyDateValidations(schema: z.ZodDate, field: UnifiedFieldDefinition): z.ZodDate {
   let result = schema;
 
   field.validations?.forEach((validation) => {
     switch (validation.type) {
       case 'min':
-        if (validation.value instanceof Date) {
-          result = result.min(validation.value, validation.message);
+        if (
+          validation.value &&
+          typeof validation.value === 'object' &&
+          (validation.value as any) instanceof Date
+        ) {
+          result = result.min(validation.value as Date, validation.message);
         }
         break;
       case 'max':
-        if (validation.value instanceof Date) {
-          result = result.max(validation.value, validation.message);
+        if (
+          validation.value &&
+          typeof validation.value === 'object' &&
+          (validation.value as any) instanceof Date
+        ) {
+          result = result.max(validation.value as Date, validation.message);
         }
         break;
     }
@@ -244,16 +405,43 @@ function applyDateValidations(schema: z.ZodDate, field: FieldDefinition): z.ZodD
 /**
  * Apply array-specific validations
  */
-function applyArrayValidations(schema: z.ZodArray<any>, field: FieldDefinition): z.ZodArray<any> {
+function applyArrayValidations(
+  schema: z.ZodArray<any>,
+  field: UnifiedFieldDefinition
+): z.ZodArray<any> {
   let result = schema;
 
+  // Apply constraints from unified definition
+  if (field.minItems !== undefined) {
+    result = result.min(field.minItems);
+  }
+  if (field.maxItems !== undefined) {
+    result = result.max(field.maxItems);
+  }
+  if (field.unique) {
+    // Apply uniqueness validation
+    result = result.refine((items) => new Set(items).size === items.length, {
+      message: 'Array items must be unique',
+    }) as unknown as z.ZodArray<any>;
+  }
+
+  // Additional validations from rules
   field.validations?.forEach((validation) => {
     switch (validation.type) {
       case 'minItems':
-        result = result.min(validation.value, validation.message);
+        if (validation.value !== undefined) {
+          result = result.min(validation.value, validation.message);
+        }
         break;
       case 'maxItems':
-        result = result.max(validation.value, validation.message);
+        if (validation.value !== undefined) {
+          result = result.max(validation.value, validation.message);
+        }
+        break;
+      case 'unique':
+        result = result.refine((items) => new Set(items).size === items.length, {
+          message: validation.message || 'Array items must be unique',
+        }) as unknown as z.ZodArray<any>;
         break;
     }
   });
@@ -264,7 +452,10 @@ function applyArrayValidations(schema: z.ZodArray<any>, field: FieldDefinition):
 /**
  * Apply custom validations using refinements
  */
-function applyCustomValidations(schema: z.ZodTypeAny, validations: Validation[]): z.ZodTypeAny {
+function applyCustomValidations(
+  schema: z.ZodTypeAny,
+  validations: UnifiedValidationRule[]
+): z.ZodTypeAny {
   let result = schema;
 
   validations.forEach((validation) => {
@@ -295,7 +486,7 @@ export function schemaToZodSchema(schema: SchemaDefinition): z.ZodObject<any> {
  * Validate data against a field definition
  */
 export function validateField<T = any>(
-  field: FieldDefinition,
+  field: UnifiedFieldDefinition | FieldDefinition,
   value: unknown,
   fieldName: string = 'field'
 ): ValidationResult<T> {
@@ -308,12 +499,7 @@ export function validateField<T = any>(
 
   const errors: FieldError[] = result.error.issues.map((issue) => {
     const path = issue.path.length > 0 ? formatPath([fieldName, ...issue.path]) : fieldName;
-    return createFieldError(
-      path,
-      issue.message,
-      mapZodErrorType(issue.code),
-      { code: issue.code }
-    );
+    return createFieldError(path, issue.message, mapZodErrorType(issue.code), { code: issue.code });
   });
 
   return { success: false, errors };
@@ -330,16 +516,13 @@ export function validateSchema<T = any>(
   const result = zodSchema.safeParse(data);
 
   if (result.success) {
-    return { success: true, data: result.data };
+    return { success: true, data: result.data as T };
   }
 
   const errors: FieldError[] = result.error.issues.map((issue) => {
-    return createFieldError(
-      formatPath(issue.path),
-      issue.message,
-      mapZodErrorType(issue.code),
-      { code: issue.code }
-    );
+    return createFieldError(formatPath(issue.path), issue.message, mapZodErrorType(issue.code), {
+      code: issue.code,
+    });
   });
 
   return { success: false, errors };
@@ -348,10 +531,7 @@ export function validateSchema<T = any>(
 /**
  * Validate and throw on error
  */
-export function validate<T = any>(
-  schema: SchemaDefinition,
-  data: unknown
-): T {
+export function validate<T = any>(schema: SchemaDefinition, data: unknown): T {
   const result = validateSchema<T>(schema, data);
 
   if (!result.success) {
@@ -372,15 +552,24 @@ export function validateModelInput<T = any>(
   // For update operations, make all fields optional
   if (mode === 'update') {
     const optionalSchema = Object.fromEntries(
-      Object.entries(schema).map(([key, field]) => [
-        key,
-        { ...field, required: false },
-      ])
+      Object.entries(schema).map(([key, field]) => {
+        const unified = toUnifiedDefinition(field);
+        return [key, { ...unified, required: false }];
+      })
     );
     return validateSchema<T>(optionalSchema, data);
   }
 
-  return validateSchema<T>(schema, data);
+  // For create operations, respect read-only fields
+  const createSchema = Object.fromEntries(
+    Object.entries(schema).filter(([key, field]) => {
+      const unified = toUnifiedDefinition(field);
+      // Exclude read-only and computed fields from create validation
+      return !unified.metadata?.readOnly && !unified.metadata?.computed;
+    })
+  );
+
+  return validateSchema<T>(createSchema, data);
 }
 
 /**

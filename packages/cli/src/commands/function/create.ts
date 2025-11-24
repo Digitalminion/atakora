@@ -35,7 +35,10 @@ export function createFunctionCreateCommand(): Command {
   const create = new Command('create')
     .description('Create a new Azure Function')
     .option('-n, --name <name>', 'Function name (e.g., "api", "processOrders")')
-    .option('-t, --trigger <type>', 'Trigger type (http, timer, queue, blob, cosmosdb, servicebus, eventhub)')
+    .option(
+      '-t, --trigger <type>',
+      'Trigger type (http, timer, queue, blob, cosmosdb, servicebus, eventhub)'
+    )
     .option('-l, --language <language>', 'Language (typescript, javascript)', 'typescript')
     .option('--path <path>', 'Functions directory path', './functions')
     .option('--non-interactive', 'Skip prompts and use defaults')
@@ -175,11 +178,17 @@ ${chalk.bold('Function Structure:')}
 
         console.log(chalk.bold('🚀 Next Steps:\n'));
         console.log(`  ${chalk.cyan('1.')} Edit the function handler`);
-        console.log(`     ${chalk.dim('Edit:')} ${chalk.bold(path.relative(process.cwd(), handlerPath))}\n`);
+        console.log(
+          `     ${chalk.dim('Edit:')} ${chalk.bold(path.relative(process.cwd(), handlerPath))}\n`
+        );
         console.log(`  ${chalk.cyan('2.')} Configure function settings`);
-        console.log(`     ${chalk.dim('Edit:')} ${chalk.bold(path.relative(process.cwd(), resourcePath))}\n`);
+        console.log(
+          `     ${chalk.dim('Edit:')} ${chalk.bold(path.relative(process.cwd(), resourcePath))}\n`
+        );
         console.log(`  ${chalk.cyan('3.')} Test the function locally`);
-        console.log(`     ${chalk.dim('$')} ${chalk.bold(`atakora function invoke ${functionName}`)}\n`);
+        console.log(
+          `     ${chalk.dim('$')} ${chalk.bold(`atakora function invoke ${functionName}`)}\n`
+        );
         console.log(`  ${chalk.cyan('4.')} Deploy to Azure`);
         console.log(`     ${chalk.dim('$')} ${chalk.bold('atakora function deploy')}\n`);
       } catch (error) {

@@ -123,7 +123,11 @@ ${chalk.bold('Output:')}
               console.log();
             }
 
-            console.log(chalk.dim('💡 Tip: Run ') + chalk.white('atakora function invoke <name>') + chalk.dim(' to test a function locally\n'));
+            console.log(
+              chalk.dim('💡 Tip: Run ') +
+                chalk.white('atakora function invoke <name>') +
+                chalk.dim(' to test a function locally\n')
+            );
           }
         }
       } catch (error) {

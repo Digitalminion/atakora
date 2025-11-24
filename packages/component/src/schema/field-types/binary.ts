@@ -66,11 +66,16 @@ export class BinaryFieldBuilder extends BaseFieldBuilder<Buffer | Uint8Array, Bi
    */
   maxSize(bytes: number): this {
     this.config.maxSize = bytes;
-    this.config.validations.push({
-      type: 'custom',
+
+    const rule = {
+      type: 'custom' as const,
       validator: (value: Buffer | Uint8Array) => value.byteLength <= bytes,
       message: `File size must not exceed ${this.formatBytes(bytes)}`,
-    });
+    };
+
+    this.definition.validations.push(rule);
+    this.config.validations = this.definition.validations;
+
     return this;
   }
 
@@ -115,5 +120,38 @@ export class BinaryFieldBuilder extends BaseFieldBuilder<Buffer | Uint8Array, Bi
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
     if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
     return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+  }
+
+  /**
+   * Sync binary-specific config to unified definition
+   *
+   * @internal
+   */
+  protected syncLegacyToUnified(): void {
+    super.syncLegacyToUnified();
+
+    // Sync binary-specific properties to unified definition
+    if (this.config.maxSize !== undefined) {
+      (this.definition as any).maxSize = this.config.maxSize;
+    }
+    if (this.config.allowedMimeTypes !== undefined) {
+      (this.definition as any).allowedMimeTypes = this.config.allowedMimeTypes;
+    }
+  }
+
+  /**
+   * Build final configuration (override to add maxSizeBytes alias)
+   *
+   * @internal
+   */
+  _build(): BinaryFieldConfig {
+    const config = super._build();
+
+    // Add maxSizeBytes as an alias for maxSize for backward compatibility
+    if (this.config.maxSize !== undefined) {
+      (config as any).maxSizeBytes = this.config.maxSize;
+    }
+
+    return config;
   }
 }

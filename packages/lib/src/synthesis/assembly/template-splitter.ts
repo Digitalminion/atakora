@@ -188,7 +188,10 @@ export class TemplateSplitter {
    * });
    * ```
    */
-  assignResources(metadata: ResourceMetadata[], options?: TemplateAssignmentOptions): TemplateAssignments {
+  assignResources(
+    metadata: ResourceMetadata[],
+    options?: TemplateAssignmentOptions
+  ): TemplateAssignments {
     const opts = {
       maxTemplateSize: options?.maxTemplateSize ?? this.maxTemplateSize,
       groupingStrategy: options?.groupingStrategy ?? ('minimize-cross-refs' as const),
@@ -275,7 +278,10 @@ export class TemplateSplitter {
       if (resources.length === 0) continue;
 
       const templateName = `${this.stackName}-${tier}`;
-      groups.set(templateName, resources.map((r) => r.id));
+      groups.set(
+        templateName,
+        resources.map((r) => r.id)
+      );
       tierIndex++;
     }
 
@@ -316,7 +322,10 @@ export class TemplateSplitter {
     for (const [provider, resources] of providerGroups) {
       const providerName = provider.replace('Microsoft.', '').toLowerCase();
       const templateName = `${this.stackName}-${providerName}`;
-      groups.set(templateName, resources.map((r) => r.id));
+      groups.set(
+        templateName,
+        resources.map((r) => r.id)
+      );
     }
 
     return groups;
@@ -500,7 +509,8 @@ export class TemplateSplitter {
 
       // Add final subgroup
       if (currentGroup.length > 0) {
-        const subgroupName = subgroupIndex === 0 ? templateName : `${templateName}-${subgroupIndex}`;
+        const subgroupName =
+          subgroupIndex === 0 ? templateName : `${templateName}-${subgroupIndex}`;
         finalGroups.set(subgroupName, currentGroup);
       }
     }
@@ -562,7 +572,9 @@ export class TemplateSplitter {
       maxTemplateSize: number;
       groupingStrategy: 'minimize-cross-refs' | 'resource-type' | 'dependency-chain';
       preferLinkedTemplates: boolean;
-      customGrouping?: (metadata: readonly ResourceMetadata[]) => ReadonlyMap<string, readonly string[]>;
+      customGrouping?: (
+        metadata: readonly ResourceMetadata[]
+      ) => ReadonlyMap<string, readonly string[]>;
     }
   ): TemplateAssignments {
     const assignments = new Map<string, string>();
@@ -728,7 +740,10 @@ export class TemplateSplitter {
     const templateSize = this.calculateTemplateSize(template);
 
     // Check if splitting is needed
-    if (templateSize < this.maxTemplateSize && template.resources.length < this.maxResourcesPerTemplate) {
+    if (
+      templateSize < this.maxTemplateSize &&
+      template.resources.length < this.maxResourcesPerTemplate
+    ) {
       // No splitting needed - return single template
       return {
         root: template,
@@ -854,7 +869,10 @@ export class TemplateSplitter {
   /**
    * Group resources by affinity (keep related resources together)
    */
-  private groupByAffinity(resources: ArmResource[], dependencyGraph: DependencyGraph): ArmResource[][] {
+  private groupByAffinity(
+    resources: ArmResource[],
+    dependencyGraph: DependencyGraph
+  ): ArmResource[][] {
     const groups: ArmResource[][] = [];
     const visited = new Set<string>();
 
@@ -912,7 +930,10 @@ export class TemplateSplitter {
     const finalGroups: ResourceGroup[] = [];
 
     for (const group of groups) {
-      if (group.size > this.maxTemplateSize || group.resources.length > this.maxResourcesPerTemplate) {
+      if (
+        group.size > this.maxTemplateSize ||
+        group.resources.length > this.maxResourcesPerTemplate
+      ) {
         // Split this group
         const subgroups = this.splitGroup(group);
         finalGroups.push(...subgroups);

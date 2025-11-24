@@ -89,7 +89,9 @@ ${chalk.bold('What happens:')}
 
         if (!manifest.packages[packageName]) {
           console.log(chalk.red(`\nPackage '${packageName}' does not exist!`));
-          console.log(chalk.gray(`Available packages: ${Object.keys(manifest.packages).join(', ')}`));
+          console.log(
+            chalk.gray(`Available packages: ${Object.keys(manifest.packages).join(', ')}`)
+          );
           process.exit(1);
         }
 
@@ -122,7 +124,9 @@ ${chalk.bold('What happens:')}
           workspaceRoot: process.cwd(),
           packageName,
         });
-        spinner.succeed(chalk.green(`Created CRUD stack in packages/${packageName}/src/rest/${resourceName}/`));
+        spinner.succeed(
+          chalk.green(`Created CRUD stack in packages/${packageName}/src/rest/${resourceName}/`)
+        );
 
         // Success message
         console.log(chalk.cyan('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'));
@@ -131,23 +135,37 @@ ${chalk.bold('What happens:')}
 
         console.log(chalk.bold('📋 Generated Files:\n'));
         console.log(`  ${chalk.cyan('•')} Stack configuration`);
-        console.log(`     ${chalk.dim('packages/')}${packageName}${chalk.dim('/src/rest/')}${resourceName}${chalk.dim('/stack.ts')}\n`);
+        console.log(
+          `     ${chalk.dim('packages/')}${packageName}${chalk.dim('/src/rest/')}${resourceName}${chalk.dim('/stack.ts')}\n`
+        );
         console.log(`  ${chalk.cyan('•')} Resource types & schema`);
-        console.log(`     ${chalk.dim('packages/')}${packageName}${chalk.dim('/src/rest/')}${resourceName}${chalk.dim('/resource.ts')}\n`);
+        console.log(
+          `     ${chalk.dim('packages/')}${packageName}${chalk.dim('/src/rest/')}${resourceName}${chalk.dim('/resource.ts')}\n`
+        );
         console.log(`  ${chalk.cyan('•')} 5 Azure Functions (Create, Read, Update, Delete, List)`);
-        console.log(`     ${chalk.dim('packages/')}${packageName}${chalk.dim('/src/rest/')}${resourceName}${chalk.dim('/<operation>/')}\n`);
+        console.log(
+          `     ${chalk.dim('packages/')}${packageName}${chalk.dim('/src/rest/')}${resourceName}${chalk.dim('/<operation>/')}\n`
+        );
 
         console.log(chalk.bold('🚀 Next Steps:\n'));
         console.log(`  ${chalk.cyan('1.')} Customize the schema`);
-        console.log(`     ${chalk.dim('Edit:')} ${chalk.bold(`packages/${packageName}/src/rest/${resourceName}/resource.ts`)}\n`);
+        console.log(
+          `     ${chalk.dim('Edit:')} ${chalk.bold(`packages/${packageName}/src/rest/${resourceName}/resource.ts`)}\n`
+        );
         console.log(`  ${chalk.cyan('2.')} Update the stack configuration`);
-        console.log(`     ${chalk.dim('Edit:')} ${chalk.bold(`packages/${packageName}/src/rest/${resourceName}/stack.ts`)}\n`);
+        console.log(
+          `     ${chalk.dim('Edit:')} ${chalk.bold(`packages/${packageName}/src/rest/${resourceName}/stack.ts`)}\n`
+        );
         console.log(`  ${chalk.cyan('3.')} Customize handlers if needed`);
-        console.log(`     ${chalk.dim('Edit:')} ${chalk.bold(`packages/${packageName}/src/rest/${resourceName}/*-*/handler.ts`)}\n`);
+        console.log(
+          `     ${chalk.dim('Edit:')} ${chalk.bold(`packages/${packageName}/src/rest/${resourceName}/*-*/handler.ts`)}\n`
+        );
         console.log(`  ${chalk.cyan('4.')} Build and synthesize`);
         console.log(`     ${chalk.dim('$')} ${chalk.bold('npm run build && npm run synth')}\n`);
 
-        console.log(chalk.dim(`💡 Tip: The generated functions use managed identity to access Cosmos DB\n`));
+        console.log(
+          chalk.dim(`💡 Tip: The generated functions use managed identity to access Cosmos DB\n`)
+        );
       } catch (error) {
         spinner.fail(chalk.red('Failed to generate CRUD stack'));
 

@@ -130,7 +130,6 @@ const handler: AzureFunction = async (context: Context, req: HttpRequest) => {
         message: 'Upload successful, validation in progress',
       },
     };
-
   } catch (error) {
     context.log.error('Upload processing failed:', error);
 

@@ -9,5 +9,5 @@ export {
   PackageArtifact,
   UploadResult,
   UploadProgress,
-  ProgressCallback
+  ProgressCallback,
 } from './artifact-uploader';

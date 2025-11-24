@@ -41,7 +41,7 @@ export class RefFieldBuilder extends BaseFieldBuilder<string, RefFieldConfig> {
     super('ref');
 
     if (!modelName) {
-      throw new Error('Reference field must specify a model name');
+      throw new Error('Reference field must specify a valid model name');
     }
 
     this.config.modelName = modelName;
@@ -91,5 +91,40 @@ export class RefFieldBuilder extends BaseFieldBuilder<string, RefFieldConfig> {
    */
   getModelName(): string {
     return this.config.modelName;
+  }
+
+  /**
+   * Validate ref field configuration
+   *
+   * @remarks
+   * Validates ref field specific constraints.
+   * Called automatically during build.
+   *
+   * @internal
+   */
+  protected validateFieldConfig(): void {
+    // Call parent validation first
+    super.validateFieldConfig();
+
+    // Validate model name is not empty
+    if (!this.config.modelName || this.config.modelName.trim() === '') {
+      throw new Error('Reference field must specify a valid model name');
+    }
+
+    // Validate onDelete behavior with nullable
+    if (this.config.onDelete === 'set_null' && !this.config.isNullable) {
+      throw new Error(
+        `Reference field with onDelete('set_null') must be nullable. ` +
+          `Add .nullable() to this field or use a different onDelete behavior.`
+      );
+    }
+
+    // Validate onDelete with required
+    if (this.config.onDelete === 'set_null' && this.config.isRequired) {
+      throw new Error(
+        `Reference field cannot be both required and have onDelete('set_null'). ` +
+          `Either remove .required() or use a different onDelete behavior.`
+      );
+    }
   }
 }

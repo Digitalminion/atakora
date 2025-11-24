@@ -20,12 +20,10 @@ export default async function handler(context: Context, messages: EmailMessage[]
   context.log(`Processing ${messages.length} email messages`);
 
   // Process emails in batches for efficiency
-  const results = await Promise.allSettled(
-    messages.map(message => sendEmail(context, message))
-  );
+  const results = await Promise.allSettled(messages.map((message) => sendEmail(context, message)));
 
-  const successful = results.filter(r => r.status === 'fulfilled').length;
-  const failed = results.filter(r => r.status === 'rejected').length;
+  const successful = results.filter((r) => r.status === 'fulfilled').length;
+  const failed = results.filter((r) => r.status === 'rejected').length;
 
   context.log(`Emails sent: ${successful} successful, ${failed} failed`);
 }
@@ -38,9 +36,7 @@ async function sendEmail(context: Context, message: EmailMessage) {
     // const sgMail = require('@sendgrid/mail');
     // sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-    const emailContent = template ?
-      await renderTemplate(template, data) :
-      { html, text };
+    const emailContent = template ? await renderTemplate(template, data) : { html, text };
 
     // Mock sending
     context.log(`Sending email to ${to}: ${subject}`);
@@ -53,7 +49,6 @@ async function sendEmail(context: Context, message: EmailMessage) {
     // });
 
     return { success: true, to, subject };
-
   } catch (error) {
     context.log.error('Email sending failed:', error);
     throw error; // Re-throw for retry

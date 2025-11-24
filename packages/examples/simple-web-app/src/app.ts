@@ -1,8 +1,36 @@
-import { App, SubscriptionStack, ResourceGroupStack, Subscription, Geography, Organization, Project, Environment, Instance } from '@atakora/cdk';
+import {
+  App,
+  SubscriptionStack,
+  ResourceGroupStack,
+  Subscription,
+  Geography,
+  Organization,
+  Project,
+  Environment,
+  Instance,
+} from '@atakora/cdk';
 import { VirtualNetworks, Subnets } from '@atakora/cdk/network';
-import { StorageAccounts, StorageAccountSkuName, StorageAccountKind, TlsVersion } from '@atakora/cdk/storage';
-import { ServerFarms, Sites, ServerFarmSkuName, ServerFarmKind, MinTlsVersion, FtpsState } from '@atakora/cdk/web';
-import { ArmServers, ArmDatabases, SqlServerVersion, PublicNetworkAccess, DatabaseSkuTier } from '@atakora/cdk/sql';
+import {
+  StorageAccounts,
+  StorageAccountSkuName,
+  StorageAccountKind,
+  TlsVersion,
+} from '@atakora/cdk/storage';
+import {
+  ServerFarms,
+  Sites,
+  ServerFarmSkuName,
+  ServerFarmKind,
+  MinTlsVersion,
+  FtpsState,
+} from '@atakora/cdk/web';
+import {
+  ArmServers,
+  ArmDatabases,
+  SqlServerVersion,
+  PublicNetworkAccess,
+  DatabaseSkuTier,
+} from '@atakora/cdk/sql';
 import { Components, ApplicationType } from '@atakora/cdk/insights';
 
 /**
@@ -25,7 +53,9 @@ const location = process.env.AZURE_LOCATION || 'eastus2';
 
 // Create subscription stack
 const subscriptionStack = new SubscriptionStack(app, 'SimpleWebAppFoundation', {
-  subscription: Subscription.fromId(process.env.AZURE_SUBSCRIPTION_ID || '00000000-0000-0000-0000-000000000000'),
+  subscription: Subscription.fromId(
+    process.env.AZURE_SUBSCRIPTION_ID || '00000000-0000-0000-0000-000000000000'
+  ),
   geography: Geography.fromValue(location),
   organization: Organization.fromValue('contoso'),
   project: new Project('webapp'),
@@ -92,7 +122,8 @@ const appSubnet = new Subnets(vnet, 'AppSubnet', {
 
 // Storage Account for static files, logs, and backups
 const storage = new StorageAccounts(stack, 'AppStorage', {
-  storageAccountName: `stwebapp${environment}${Math.random().toString(36).slice(2, 8)}`.toLowerCase(),
+  storageAccountName:
+    `stwebapp${environment}${Math.random().toString(36).slice(2, 8)}`.toLowerCase(),
   sku: config.storageSku,
   kind: StorageAccountKind.STORAGE_V2,
   minimumTlsVersion: TlsVersion.TLS1_2,

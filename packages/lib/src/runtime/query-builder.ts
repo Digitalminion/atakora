@@ -8,7 +8,11 @@
  * @packageDocumentation
  */
 
-import type { SchemaDefinition, InferSchemaType, AuthorizationContext } from '../schema/atakora/schema-types';
+import type {
+  SchemaDefinition,
+  InferSchemaType,
+  AuthorizationContext,
+} from '../schema/atakora/schema-types';
 
 /**
  * Filter operators for query building.
@@ -409,7 +413,7 @@ export class QueryBuilder<TSchema extends SchemaDefinition<any>> {
    */
   toGraphQL(): GraphQLQuery {
     const entityName = this.schema.name;
-    const operationName = this.options.filters?.some(f => 'field' in f && f.field === 'id')
+    const operationName = this.options.filters?.some((f) => 'field' in f && f.field === 'id')
       ? `get${entityName}`
       : `list${entityName}s`;
 
@@ -565,7 +569,7 @@ export class QueryBuilder<TSchema extends SchemaDefinition<any>> {
     }
 
     return {
-      and: filters.map(f => this.serializeFilter(f)),
+      and: filters.map((f) => this.serializeFilter(f)),
     };
   }
 
@@ -574,11 +578,11 @@ export class QueryBuilder<TSchema extends SchemaDefinition<any>> {
    */
   private serializeFilter(filter: Filter): any {
     if ('and' in filter) {
-      return { and: filter.and?.map(f => this.serializeFilter(f)) };
+      return { and: filter.and?.map((f) => this.serializeFilter(f)) };
     }
 
     if ('or' in filter) {
-      return { or: filter.or?.map(f => this.serializeFilter(f)) };
+      return { or: filter.or?.map((f) => this.serializeFilter(f)) };
     }
 
     if ('not' in filter) {

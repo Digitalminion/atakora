@@ -1,5 +1,16 @@
 import { App } from '../core/app';
-import { CloudAssembly, SynthesisOptions, ArmTemplate, CloudAssemblyV2, StackManifestV2, FunctionPackage, ResourceMetadata, TemplateAssignments, TemplateMetadata, ArmResource } from './types';
+import {
+  CloudAssembly,
+  SynthesisOptions,
+  ArmTemplate,
+  CloudAssemblyV2,
+  StackManifestV2,
+  FunctionPackage,
+  ResourceMetadata,
+  TemplateAssignments,
+  TemplateMetadata,
+  ArmResource,
+} from './types';
 import { TreeTraverser } from './prepare/tree-traverser';
 import { ResourceCollector } from './prepare/resource-collector';
 import { ResourceTransformer } from './transform/resource-transformer';
@@ -342,9 +353,10 @@ export class Synthesizer {
 
       if (assignments.templates.size <= 1) {
         // Single template - create context
-        const templateName = assignments.templates.size === 1
-          ? Array.from(assignments.templates.keys())[0]
-          : `${stackInfo.name}.json`;
+        const templateName =
+          assignments.templates.size === 1
+            ? Array.from(assignments.templates.keys())[0]
+            : `${stackInfo.name}.json`;
 
         const context = new SynthesisContext(
           templateName,
@@ -356,7 +368,9 @@ export class Synthesizer {
       } else {
         // Multiple templates - fall back to non-context transformation for now
         // TODO: Implement per-resource context creation
-        console.warn(`Warning: Context-aware synthesis not yet supported for ${assignments.templates.size} linked templates in stack '${stackInfo.name}'. Using fallback transformation.`);
+        console.warn(
+          `Warning: Context-aware synthesis not yet supported for ${assignments.templates.size} linked templates in stack '${stackInfo.name}'. Using fallback transformation.`
+        );
         armResources = transformer.transformAll(stackInfo.resources);
       }
 
@@ -860,10 +874,7 @@ export class Synthesizer {
       // Create stack manifest
       const totalResourceCount =
         splitResult.root.resources.length +
-        Array.from(splitResult.linked.values()).reduce(
-          (sum, t) => sum + t.resources.length,
-          0
-        );
+        Array.from(splitResult.linked.values()).reduce((sum, t) => sum + t.resources.length, 0);
 
       stackManifests[stackName] = {
         name: stackName,
@@ -1008,7 +1019,9 @@ export class Synthesizer {
             };
 
             // Add .json extension if not present
-            const linkedFileName = templateName.endsWith('.json') ? templateName : `${templateName}.json`;
+            const linkedFileName = templateName.endsWith('.json')
+              ? templateName
+              : `${templateName}.json`;
             const linkedPath = path.join(outdir, linkedFileName);
             this.writeJsonFile(linkedPath, linkedTemplate, prettyPrint);
             linkedTemplatePaths.push(linkedFileName);
@@ -1115,7 +1128,9 @@ export class Synthesizer {
     for (const [templateName, templateMetadata] of assignments.templates) {
       if (!templateMetadata.isMain) {
         // Ensure .json extension for file name
-        const linkedFileName = templateName.endsWith('.json') ? templateName : `${templateName}.json`;
+        const linkedFileName = templateName.endsWith('.json')
+          ? templateName
+          : `${templateName}.json`;
 
         const deploymentResource: ArmResource = {
           type: 'Microsoft.Resources/deployments',
@@ -1138,7 +1153,10 @@ export class Synthesizer {
         // Add dependsOn based on cross-template dependencies
         const deps = assignments.crossTemplateDependencies
           .filter((dep) => dep.sourceTemplate === templateName)
-          .map((dep) => `[resourceId('Microsoft.Resources/deployments', '${dep.targetTemplate.replace('.json', '')}')]`);
+          .map(
+            (dep) =>
+              `[resourceId('Microsoft.Resources/deployments', '${dep.targetTemplate.replace('.json', '')}')]`
+          );
 
         if (deps.length > 0) {
           deploymentResource.dependsOn = deps;

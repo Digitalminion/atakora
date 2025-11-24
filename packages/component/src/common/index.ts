@@ -53,43 +53,16 @@
  */
 
 // Duration utilities
-export {
-  type Duration,
-  milliseconds,
-  seconds,
-  minutes,
-  hours,
-  days
-} from './duration';
+export { type Duration, milliseconds, seconds, minutes, hours, days } from './duration';
 
 // Threshold builders
-export {
-  type Threshold,
-  greaterThan,
-  lessThan,
-  between,
-  equals,
-  olderThan
-} from './threshold';
+export { type Threshold, greaterThan, lessThan, between, equals, olderThan } from './threshold';
 
 // Size utilities
-export {
-  type Size,
-  bytes,
-  kilobytes,
-  megabytes,
-  gigabytes,
-  terabytes
-} from './size';
+export { type Size, bytes, kilobytes, megabytes, gigabytes, terabytes } from './size';
 
 // Network utilities
-export {
-  IPAddress,
-  CIDR,
-  ipAddress,
-  cidr,
-  subnet
-} from './network';
+export { IPAddress, CIDR, ipAddress, cidr, subnet } from './network';
 
 // Importing the functions for the default export object
 import {
@@ -97,7 +70,7 @@ import {
   seconds as _seconds,
   minutes as _minutes,
   hours as _hours,
-  days as _days
+  days as _days,
 } from './duration';
 
 import {
@@ -105,7 +78,7 @@ import {
   lessThan as _lessThan,
   between as _between,
   equals as _equals,
-  olderThan as _olderThan
+  olderThan as _olderThan,
 } from './threshold';
 
 import {
@@ -113,14 +86,10 @@ import {
   kilobytes as _kilobytes,
   megabytes as _megabytes,
   gigabytes as _gigabytes,
-  terabytes as _terabytes
+  terabytes as _terabytes,
 } from './size';
 
-import {
-  ipAddress as _ipAddress,
-  cidr as _cidr,
-  subnet as _subnet
-} from './network';
+import { ipAddress as _ipAddress, cidr as _cidr, subnet as _subnet } from './network';
 
 // Default export with all utilities grouped by category
 const helpers = {
@@ -148,7 +117,7 @@ const helpers = {
   // Network
   ipAddress: _ipAddress,
   cidr: _cidr,
-  subnet: _subnet
+  subnet: _subnet,
 };
 
 export default helpers;
