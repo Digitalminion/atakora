@@ -12,7 +12,12 @@ const packages = [
   { name: 'lib', src: 'dist/lib', dest: 'packages/lib/dist' },
   { name: 'cdk', src: 'dist/cdk', dest: 'packages/cdk/dist' },
   // Copy CLI bundle to root dist for global access
-  { name: 'cli-bundle', src: 'packages/cli/dist', dest: 'dist/cli', onlyFiles: ['cli.bundle.js', 'cli.bundle.js.map', 'package.json', 'README.md'] },
+  {
+    name: 'cli-bundle',
+    src: 'packages/cli/dist',
+    dest: 'dist/cli',
+    onlyFiles: ['cli.bundle.js', 'cli.bundle.js.map', 'package.json', 'README.md'],
+  },
 ];
 
 /**

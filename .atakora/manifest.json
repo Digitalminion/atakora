@@ -6,7 +6,7 @@
   "packages": {
     "backend": {
       "path": "packages/backend",
-      "entry": "src/index.ts",
+      "entry": "dist/index.js",
       "enabled": true,
       "type": "infrastructure"
     }
