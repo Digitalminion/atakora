@@ -1,0 +1,402 @@
+# Phase 5: GraphQL Support (Week 8) - OPTIONAL
+# Goal: Add GraphQL endpoint alongside REST API
+
+---
+# ============================================================================
+# GRAPHQL SCHEMA GENERATION (Day 36-38)
+# ============================================================================
+
+- id: FEL-5-001
+  title: Create GraphQL type generator from model
+  agent: felix
+  effort: 4h
+  dependencies: [FEL-2-004]
+  phase: 5
+  description: |
+    Implement function to generate GraphQL type definitions from model schema.
+    Convert field types to GraphQL types and handle relationships.
+  acceptance_criteria:
+    - generateTypeForModel() function implemented
+    - Converts a.string() to GraphQL String type
+    - Converts a.number() to GraphQL Int/Float types
+    - Converts a.boolean() to GraphQL Boolean type
+    - Converts a.id() to GraphQL ID type
+    - Converts a.ref() to GraphQL reference type
+    - Converts a.array() to GraphQL list type
+    - Handles required vs optional fields
+    - Unit tests for all field types
+  files:
+    - packages/component/src/synthesis/schema/graphql-type-generator.ts (create)
+    - packages/component/src/synthesis/schema/graphql-type-generator.spec.ts (create)
+
+- id: FEL-5-002
+  title: Create GraphQL query generator
+  agent: felix
+  effort: 3h
+  dependencies: [FEL-5-001]
+  phase: 5
+  description: |
+    Implement function to generate GraphQL query definitions for CRUD operations.
+    Create queries for get and list operations.
+  acceptance_criteria:
+    - generateQueryForModel() function implemented
+    - Generates get query (getUser(id: ID!): User)
+    - Generates list query (listUsers(limit: Int, offset: Int): [User!]!)
+    - Includes pagination arguments
+    - Includes filtering arguments
+    - Returns GraphQL query definition string
+    - Unit tests for various models
+  files:
+    - packages/component/src/synthesis/schema/graphql-query-generator.ts (create)
+    - packages/component/src/synthesis/schema/graphql-query-generator.spec.ts (create)
+
+- id: FEL-5-003
+  title: Create GraphQL mutation generator
+  agent: felix
+  effort: 3h
+  dependencies: [FEL-5-001]
+  phase: 5
+  description: |
+    Implement function to generate GraphQL mutation definitions for CRUD operations.
+    Create mutations for create, update, and delete operations.
+  acceptance_criteria:
+    - generateMutationForModel() function implemented
+    - Generates create mutation (createUser(input: CreateUserInput!): User!)
+    - Generates update mutation (updateUser(id: ID!, input: UpdateUserInput!): User!)
+    - Generates delete mutation (deleteUser(id: ID!): Boolean!)
+    - Generates input types (CreateUserInput, UpdateUserInput)
+    - Returns GraphQL mutation definition string
+    - Unit tests for various models
+  files:
+    - packages/component/src/synthesis/schema/graphql-mutation-generator.ts (create)
+    - packages/component/src/synthesis/schema/graphql-mutation-generator.spec.ts (create)
+
+- id: FEL-5-004
+  title: Implement GraphQL schema synthesizer
+  agent: felix
+  effort: 4h
+  dependencies: [FEL-5-002, FEL-5-003]
+  phase: 5
+  description: |
+    Implement SchemaSynthesizer.generateGraphQL() method that creates complete
+    GraphQL schema from schema definition.
+  acceptance_criteria:
+    - generateGraphQL() creates GraphQL schema string
+    - Includes type definitions for all models
+    - Includes Query type with all queries
+    - Includes Mutation type with all mutations
+    - Includes input types for creates/updates
+    - Validates schema is syntactically correct
+    - Returns SDL (Schema Definition Language) string
+    - Unit tests for schema generation
+  files:
+    - packages/component/src/synthesis/schema/schema-synthesizer.ts (modify)
+    - packages/component/src/synthesis/schema/schema-synthesizer.spec.ts (modify)
+
+# ============================================================================
+# APOLLO SERVER FUNCTION (Day 38-40)
+# ============================================================================
+
+- id: GRACE-5-001
+  title: Create GraphQL resolver template
+  agent: grace
+  effort: 4h
+  dependencies: [FEL-5-004]
+  phase: 5
+  description: |
+    Create template for GraphQL resolvers that connect to Cosmos DB.
+    Generate resolvers for queries and mutations.
+  acceptance_criteria:
+    - Template generates resolver functions
+    - Query resolvers (get, list) implemented
+    - Mutation resolvers (create, update, delete) implemented
+    - Connects to Cosmos DB using @azure/cosmos
+    - Handles pagination for list queries
+    - Handles validation for mutations
+    - Returns TypeScript code string
+    - Unit tests validate generated code
+  files:
+    - packages/component/src/synthesis/templates/graphql-resolvers.ts (create)
+    - packages/component/src/synthesis/templates/graphql-resolvers.spec.ts (create)
+
+- id: GRACE-5-002
+  title: Create Apollo Server function template
+  agent: grace
+  effort: 4h
+  dependencies: [GRACE-5-001]
+  phase: 5
+  description: |
+    Create template for Azure Function that runs Apollo Server.
+    Configure Apollo Server with generated schema and resolvers.
+  acceptance_criteria:
+    - Template generates Apollo Server function
+    - Uses @apollo/server package
+    - Configures server with GraphQL schema
+    - Connects resolvers to function
+    - Handles HTTP requests from API Management
+    - Supports GraphQL Playground in development
+    - Includes error handling
+    - Returns TypeScript code string
+    - Unit tests validate generated code
+  files:
+    - packages/component/src/synthesis/templates/apollo-server-function.ts (create)
+    - packages/component/src/synthesis/templates/apollo-server-function.spec.ts (create)
+
+- id: DEV-5-001
+  title: Implement GraphQL function synthesis
+  agent: devon
+  effort: 3h
+  dependencies: [GRACE-5-002]
+  phase: 5
+  description: |
+    Extend FunctionSynthesizer to generate Apollo Server function.
+    Add GraphQL endpoint to function list.
+  acceptance_criteria:
+    - FunctionSynthesizer generates GraphQL function
+    - Uses Apollo Server template
+    - Configures function with GraphQL schema
+    - Generates resolver code
+    - Configures function route (/graphql)
+    - Returns GraphQL function in FunctionResources
+    - Integration test validates function generated
+  files:
+    - packages/component/src/synthesis/function-synthesizer.ts (modify)
+    - packages/component/src/synthesis/function-synthesizer.spec.ts (modify)
+
+# ============================================================================
+# API MANAGEMENT INTEGRATION (Day 39-40)
+# ============================================================================
+
+- id: DEV-5-002
+  title: Add GraphQL operation to API Management
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-5-001]
+  phase: 5
+  description: |
+    Extend ApiSynthesizer to add GraphQL operation to API Management.
+    Configure operation to forward requests to Apollo Server function.
+  acceptance_criteria:
+    - ApiSynthesizer generates GraphQL operation
+    - Operation configured for POST /graphql
+    - Operation forwards to Apollo Server function
+    - Configures CORS for GraphQL Playground
+    - Applies authentication policies
+    - Integration test validates operation created
+  files:
+    - packages/component/src/synthesis/api-synthesizer.ts (modify)
+    - packages/component/src/synthesis/api-synthesizer.spec.ts (modify)
+
+- id: DEV-5-003
+  title: Integrate GraphQL into BackendSynthesizer
+  agent: devon
+  effort: 2h
+  dependencies: [DEV-5-002, FEL-5-004]
+  phase: 5
+  description: |
+    Integrate GraphQL schema generation and Apollo Server function into
+    BackendSynthesizer orchestration flow.
+  acceptance_criteria:
+    - BackendSynthesizer generates GraphQL schema file
+    - Generates Apollo Server function
+    - Adds GraphQL operation to API Management
+    - Writes schema.graphql to schemas/ directory
+    - Integration test validates complete GraphQL flow
+    - JSDoc documentation updated
+  files:
+    - packages/component/src/synthesis/backend-synthesizer.ts (modify)
+    - packages/component/src/synthesis/backend-synthesizer.spec.ts (modify)
+
+# ============================================================================
+# TESTING (Day 40-42)
+# ============================================================================
+
+- id: TEST-5-001
+  title: Write unit tests for GraphQL generators
+  agent: charlie
+  effort: 3h
+  dependencies: [FEL-5-004]
+  phase: 5
+  description: |
+    Write comprehensive unit tests for GraphQL type, query, and mutation generators
+    covering all field types and model configurations.
+  acceptance_criteria:
+    - Tests for type generation with all field types
+    - Tests for query generation (get, list)
+    - Tests for mutation generation (create, update, delete)
+    - Tests for input type generation
+    - Tests for schema validation
+    - Validates generated SDL is syntactically correct
+    - 100% code coverage for graphql-*-generator.ts files
+  files:
+    - packages/component/src/synthesis/schema/graphql-type-generator.spec.ts (modify)
+    - packages/component/src/synthesis/schema/graphql-query-generator.spec.ts (modify)
+    - packages/component/src/synthesis/schema/graphql-mutation-generator.spec.ts (modify)
+
+- id: TEST-5-002
+  title: Write unit tests for GraphQL templates
+  agent: charlie
+  effort: 3h
+  dependencies: [GRACE-5-002]
+  phase: 5
+  description: |
+    Write comprehensive unit tests for GraphQL resolver and Apollo Server templates
+    validating generated code structure and correctness.
+  acceptance_criteria:
+    - Tests for resolver template with various models
+    - Tests for Apollo Server template configuration
+    - Validates generated TypeScript compiles
+    - Validates resolvers connect to Cosmos DB correctly
+    - 100% code coverage for template files
+  files:
+    - packages/component/src/synthesis/templates/graphql-resolvers.spec.ts (modify)
+    - packages/component/src/synthesis/templates/apollo-server-function.spec.ts (modify)
+
+- id: TEST-5-003
+  title: Write integration tests for GraphQL synthesis
+  agent: charlie
+  effort: 4h
+  dependencies: [DEV-5-003]
+  phase: 5
+  description: |
+    Write integration tests for GraphQL synthesis that validate complete
+    schema generation and Apollo Server function creation.
+  acceptance_criteria:
+    - Test GraphQL schema generation from simple schema
+    - Test GraphQL schema generation from complex schema with refs
+    - Test Apollo Server function generation
+    - Test GraphQL operation in API Management
+    - Validate schema.graphql file written
+    - Validate Apollo Server function code
+  files:
+    - packages/component/src/synthesis/graphql-synthesis.integration.spec.ts (create)
+
+- id: TEST-5-004
+  title: Write E2E test for GraphQL API
+  agent: charlie
+  effort: 4h
+  dependencies: [TEST-5-003]
+  phase: 5
+  description: |
+    Write end-to-end test that validates GraphQL API works correctly
+    with queries and mutations against deployed infrastructure.
+  acceptance_criteria:
+    - Test GraphQL query execution (get, list)
+    - Test GraphQL mutation execution (create, update, delete)
+    - Test GraphQL error handling
+    - Test GraphQL authentication
+    - Test GraphQL and REST coexistence
+    - Test runs against real or mocked GraphQL endpoint
+  files:
+    - packages/component/__tests__/graphql/e2e-graphql.test.ts (create)
+
+# ============================================================================
+# DOCUMENTATION (Day 41-42)
+# ============================================================================
+
+- id: DOC-5-001
+  title: Create GraphQL architecture documentation
+  agent: ella
+  effort: 3h
+  dependencies: [DEV-5-003]
+  phase: 5
+  description: |
+    Create comprehensive documentation explaining GraphQL support,
+    schema generation, and Apollo Server integration.
+  acceptance_criteria:
+    - Architecture diagram showing GraphQL flow
+    - Explanation of GraphQL schema generation
+    - Apollo Server configuration documented
+    - Resolver implementation explained
+    - Code examples for GraphQL usage
+    - Troubleshooting guide for GraphQL issues
+    - Published to docs/design/synthesis/graphql.md
+  files:
+    - docs/design/synthesis/graphql.md (create)
+
+- id: DOC-5-002
+  title: Create GraphQL user guide
+  agent: ella
+  effort: 3h
+  dependencies: [TEST-5-004]
+  phase: 5
+  description: |
+    Create user guide explaining how to use GraphQL API,
+    including query examples, mutation examples, and client setup.
+  acceptance_criteria:
+    - Quick start guide for GraphQL
+    - Query examples for all models
+    - Mutation examples for CRUD operations
+    - Pagination and filtering guide
+    - GraphQL Playground usage guide
+    - Client library recommendations (Apollo Client, urql)
+    - Examples of GraphQL client setup
+    - Published to docs/user-guide/graphql.md
+  files:
+    - docs/user-guide/graphql.md (create)
+
+- id: DOC-5-003
+  title: Update synthesis user guide with GraphQL
+  agent: ella
+  effort: 2h
+  dependencies: [DOC-5-002]
+  phase: 5
+  description: |
+    Update synthesis user guide to include GraphQL as an option
+    alongside REST API.
+  acceptance_criteria:
+    - Updated synthesis overview with GraphQL option
+    - Complete example with REST and GraphQL
+    - How to enable/disable GraphQL
+    - How to customize GraphQL schema
+    - Published to docs/user-guide/synthesis.md
+  files:
+    - docs/user-guide/synthesis.md (modify)
+
+- id: DOC-5-004
+  title: Create Phase 5 completion summary
+  agent: ella
+  effort: 2h
+  dependencies: [TEST-5-004, DOC-5-003]
+  phase: 5
+  description: |
+    Create comprehensive summary of Phase 5 completion including
+    GraphQL features, test results, and usage recommendations.
+  acceptance_criteria:
+    - Summary of GraphQL features implemented
+    - Test metrics for GraphQL tests
+    - Performance comparison REST vs GraphQL
+    - When to use GraphQL vs REST
+    - Known limitations of GraphQL support
+    - Future enhancements planned
+    - Published to docs/phase-5-summary.md
+  files:
+    - docs/phase-5-summary.md (create)
+
+# ============================================================================
+# SUMMARY
+# ============================================================================
+# Total tickets: 15
+# devon: 3 tickets (7 hours)
+# grace: 2 tickets (8 hours)
+# felix: 4 tickets (14 hours)
+# charlie: 4 tickets (14 hours)
+# ella: 4 tickets (10 hours)
+#
+# Total estimated effort: 53 hours
+# Parallelization: ~25 hours (with 2-3 agents working simultaneously)
+# Calendar time: 5 working days (1 week)
+#
+# ============================================================================
+# GRAND TOTAL ACROSS ALL PHASES
+# ============================================================================
+# Total tickets: 109
+# devon: 40 tickets (~103.5 hours)
+# grace: 15 tickets (~42 hours)
+# felix: 11 tickets (~34 hours)
+# charlie: 26 tickets (~86.5 hours)
+# ella: 17 tickets (~54 hours)
+#
+# Total estimated effort: 320 hours
+# Parallelization: ~160 hours (with 2-3 agents working simultaneously)
+# Calendar time: 35 working days (7 weeks)

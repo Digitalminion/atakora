@@ -305,7 +305,7 @@ DEPLOYED TO AZURE
 - 90%+ test coverage
 - < 500ms API response time
 
-**Read:** `/docs/architecture/decisions/ADR-074-COMPONENT-API-FUNCTION-SCHEMA-LAYERS.md`
+**Read:** `/docs/design/architecture/adr-024-component-api-function-schema-layers.md`
 
 ---
 

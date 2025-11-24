@@ -1,0 +1,388 @@
+# Sprint 1 Fix Tickets
+#
+# Generated from Sprint 1 Quality Review
+# Review Date: 2025-11-23
+# Reviewer: Becky (Staff Architect)
+
+---
+
+# ============================================================================
+# MAJOR FIXES (High Priority - Complete Before Implementation Phase)
+# ============================================================================
+
+- id: FIX-1-001
+  title: Replace placeholder `any` types in ApiSynthesizer with CDK constructs
+  agent: devon
+  effort: 1h
+  priority: HIGH
+  dependencies: [DEV-1-008]
+  phase: 1.5
+  sprint: fixes
+  description: |
+    Replace placeholder `any` types in api-synthesizer-types.ts with actual
+    CDK construct interfaces once they are available from the CDK package.
+
+    **Context:**
+    During the foundation sprint, some types were defined as `any` placeholders
+    with TODO comments because the CDK constructs weren't yet available. Now that
+    we're implementing the DataSynthesizer (DEV-1-008), these CDK types should be
+    available and can replace the placeholders.
+
+    **Specific Changes:**
+    1. ResourceGroupStack (line 93): Import from @atakora/lib
+    2. DataResources.cosmosAccount: Use ICosmosDbAccount from @atakora/cdk
+    3. DataResources.cosmosDatabase: Use ICosmosDbDatabase from @atakora/cdk
+    4. DataResources.functionApp: Use IFunctionApp from @atakora/cdk
+    5. DataResources.storageAccount: Use IStorageAccount from @atakora/cdk
+
+    **Impact:**
+    - Improves type safety for API synthesizer
+    - Enables full compile-time validation
+    - Prevents potential runtime errors from type mismatches
+    - Removes all placeholder `any` types from api-synthesizer-types.ts
+
+  acceptance_criteria:
+    - No `any` types remain in api-synthesizer-types.ts
+    - All CDK imports are type-only imports (use `import type`)
+    - TypeScript compiles without errors or warnings
+    - No type assertion workarounds needed (no `as` casts)
+    - ApiSynthesizer.synthesize() signature properly typed
+    - All TODOs related to placeholder types are removed
+
+  files:
+    - packages/component/src/synthesis/api-synthesizer-types.ts (modify - replace any types)
+    - packages/component/src/synthesis/types.ts (verify re-exports still work)
+
+  verification:
+    - Run `npx tsc --noEmit` and verify zero errors
+    - Check that VSCode autocomplete works for all CDK construct properties
+    - Verify import statements use `import type` syntax
+
+- id: FIX-1-002
+  title: Remove duplicate DataResources interface from api-synthesizer-types
+  agent: devon
+  effort: 0.5h
+  priority: HIGH
+  dependencies: [FIX-1-001]
+  phase: 1.5
+  sprint: fixes
+  description: |
+    Remove the duplicate DataResources interface from api-synthesizer-types.ts
+    and import the correct version from data-synthesizer-types.ts instead.
+
+    **Problem:**
+    Two different DataResources interfaces currently exist:
+    1. In data-synthesizer-types.ts (lines 159-203) - ✅ CORRECT version using CDK constructs
+    2. In api-synthesizer-types.ts (lines 176-210) - ❌ DUPLICATE with placeholder `any` types
+
+    This duplication creates:
+    - Type ambiguity when importing
+    - Risk of using wrong type definition
+    - Maintenance burden (changes need to be made twice)
+    - Potential bugs from type mismatches
+
+    **Solution:**
+    Remove the duplicate from api-synthesizer-types.ts and import the canonical
+    version from data-synthesizer-types.ts. This ensures all code uses the
+    CDK-based DataResources type definition.
+
+  acceptance_criteria:
+    - DataResources interface completely removed from api-synthesizer-types.ts
+    - Import added at top of file: `import type { DataResources } from './data-synthesizer-types'`
+    - ApiSynthesizer.synthesize() signature still uses correct DataResources type
+    - No import conflicts or ambiguities anywhere in synthesis module
+    - TypeScript compiles without errors or warnings
+    - All references to DataResources resolve to data-synthesizer-types version
+
+  files:
+    - packages/component/src/synthesis/api-synthesizer-types.ts (modify - remove interface, add import)
+    - packages/component/src/synthesis/types.ts (verify re-export chain still works)
+
+  verification:
+    - Search codebase for all `import.*DataResources` statements
+    - Verify all imports resolve to data-synthesizer-types.ts
+    - Run `npx tsc --noEmit` and verify zero errors
+    - Check that "Go to Definition" in VSCode navigates to data-synthesizer-types.ts
+
+# ============================================================================
+# TECHNICAL DEBT (Low Priority - Nice to Have)
+# ============================================================================
+
+- id: TECH-DEBT-1-001
+  title: Add validation type definitions for ARM template validation
+  agent: devon
+  effort: 1h
+  priority: LOW
+  dependencies: []
+  phase: 1.5
+  sprint: fixes
+  description: |
+    Add type definitions for template validation results and errors to the
+    synthesis type system. These types will be used by the validation system
+    (DEV-1-016) but defining them early improves type system completeness.
+
+    **Motivation:**
+    The SynthesisOptions interface includes a `validate` flag (line 472 in types.ts):
+    ```typescript
+    export interface SynthesisOptions {
+      validate?: boolean;
+    }
+    ```
+
+    However, there are no corresponding types for:
+    - What a validation result looks like
+    - How validation errors are structured
+    - What severity levels exist
+    - How to report validation warnings vs errors
+
+    Defining these types now provides:
+    - Clear contract for DEV-1-016 implementation
+    - Better IDE autocomplete for developers
+    - Type-safe validation error handling
+    - Consistent validation across synthesizers
+
+  acceptance_criteria:
+    - ValidationResult interface defined with success/failure status
+    - ValidationError interface defined with code, message, severity, location
+    - ValidationSeverity enum defined (ERROR, WARNING, INFO)
+    - ValidationContext type defined for error context
+    - All types exported from types.ts
+    - JSDoc documentation complete with examples
+    - Types integrated with existing SynthesisResult
+
+  files:
+    - packages/component/src/synthesis/types.ts (add new validation section)
+
+  implementation_guide: |
+    Add after line 901 (end of SynthesisMetadata):
+
+    ```typescript
+    // ============================================================================
+    // Validation Types
+    // ============================================================================
+
+    /**
+     * ARM template validation severity levels
+     */
+    export enum ValidationSeverity {
+      ERROR = 'error',
+      WARNING = 'warning',
+      INFO = 'info',
+    }
+
+    /**
+     * ARM template validation error
+     *
+     * @remarks
+     * Represents a single validation issue found during template validation.
+     */
+    export interface ValidationError {
+      /**
+       * Error code (e.g., 'INVALID_RESOURCE_NAME', 'MISSING_REQUIRED_PROPERTY')
+       */
+      readonly code: string;
+
+      /**
+       * Human-readable error message
+       */
+      readonly message: string;
+
+      /**
+       * Error severity level
+       */
+      readonly severity: ValidationSeverity;
+
+      /**
+       * Location in template where error occurred
+       */
+      readonly location?: {
+        readonly resourceType?: string;
+        readonly resourceName?: string;
+        readonly property?: string;
+        readonly line?: number;
+      };
+
+      /**
+       * Suggested fix for the error
+       */
+      readonly suggestion?: string;
+    }
+
+    /**
+     * ARM template validation result
+     *
+     * @remarks
+     * Result of validating a synthesized ARM template.
+     */
+    export interface ValidationResult {
+      /**
+       * Whether validation passed (no errors, warnings allowed)
+       */
+      readonly success: boolean;
+
+      /**
+       * Validation errors found
+       */
+      readonly errors: readonly ValidationError[];
+
+      /**
+       * Validation warnings found
+       */
+      readonly warnings: readonly ValidationError[];
+
+      /**
+       * Informational messages
+       */
+      readonly info: readonly ValidationError[];
+
+      /**
+       * Validation timestamp
+       */
+      readonly validatedAt: Date;
+
+      /**
+       * Validation duration in milliseconds
+       */
+      readonly durationMs: number;
+    }
+    ```
+
+- id: TECH-DEBT-1-002
+  title: Add SchemaObject import aliasing to prevent confusion
+  agent: devon
+  effort: 0.5h
+  priority: LOW
+  dependencies: []
+  phase: 1.5
+  sprint: fixes
+  description: |
+    Add import aliasing to distinguish between data schema SchemaObject and
+    OpenAPI SchemaObject types to prevent developer confusion.
+
+    **Problem:**
+    Two different SchemaObject types exist:
+    1. data-synthesizer-types.ts imports from '../schema/types' (data model schema)
+    2. openapi-types.ts defines SchemaObject (OpenAPI/JSON Schema)
+
+    While they serve different purposes and shouldn't conflict, the same name
+    could cause confusion when working across both files.
+
+    **Solution:**
+    Use import aliasing to make the distinction clear:
+    ```typescript
+    // In data-synthesizer-types.ts
+    import type { SchemaObject as DataSchemaObject } from '../schema/types';
+    ```
+
+  acceptance_criteria:
+    - Import aliased to DataSchemaObject in data-synthesizer-types.ts
+    - All references updated to use DataSchemaObject
+    - No naming conflicts anywhere in synthesis module
+    - TypeScript compiles without errors
+    - Documentation updated to clarify distinction
+
+  files:
+    - packages/component/src/synthesis/data-synthesizer-types.ts (modify imports and usage)
+
+# ============================================================================
+# ENHANCEMENT (Nice to Have - Future Improvements)
+# ============================================================================
+
+- id: ENHANCE-1-001
+  title: Create CosmosConfigPresets for common environment configurations
+  agent: devon
+  effort: 1.5h
+  priority: LOW
+  dependencies: []
+  phase: 2
+  sprint: enhancements
+  description: |
+    Create preset configurations for Cosmos DB that codify best practices for
+    different environments (dev, staging, production).
+
+    **Motivation:**
+    While the documentation provides examples of dev vs prod configurations,
+    having actual preset objects would:
+    - Reduce boilerplate in user code
+    - Codify best practices
+    - Ensure consistent configurations
+    - Make it easier to get started
+
+    **Example Usage:**
+    ```typescript
+    import { CosmosConfigPresets } from '@atakora/component/synthesis';
+
+    const backend = defineBackend({
+      schema,
+      storage: {
+        database: attachCosmosDb(CosmosConfigPresets.development)
+      }
+    });
+    ```
+
+  acceptance_criteria:
+    - CosmosConfigPresets object exported with development, staging, production configs
+    - createCosmosConfig() helper function for custom presets
+    - TypeScript autocomplete works for all presets
+    - JSDoc documentation explains each preset's use case
+    - Unit tests validate preset configurations
+    - Examples added to synthesis documentation
+
+  files:
+    - packages/component/src/synthesis/cosmos-presets.ts (create)
+    - packages/component/src/synthesis/index.ts (export presets)
+    - packages/component/src/synthesis/cosmos-presets.spec.ts (create tests)
+
+- id: ENHANCE-1-002
+  title: Create example file for api-synthesizer-types usage
+  agent: devon
+  effort: 2h
+  priority: LOW
+  dependencies: []
+  phase: 2
+  sprint: enhancements
+  description: |
+    Create an example file for api-synthesizer-types similar to the excellent
+    openapi-types.example.ts created in FEL-1-001.
+
+    **Motivation:**
+    The openapi-types.example.ts file was identified as exceptional work that
+    provides significant developer experience value. Creating similar examples
+    for other synthesizers would:
+    - Help developers understand API synthesis
+    - Demonstrate best practices
+    - Provide copy-paste starting points
+    - Serve as living documentation
+
+  acceptance_criteria:
+    - api-synthesizer-types.example.ts file created
+    - Shows complete API synthesis configuration
+    - Demonstrates CRUD operation generation
+    - Includes policy configuration examples (auth, rate limit, CORS)
+    - All code is executable and type-safe
+    - JSDoc documentation explains each section
+
+  files:
+    - packages/component/src/synthesis/__tests__/api-synthesizer-types.example.ts (create)
+
+# ============================================================================
+# SUMMARY
+# ============================================================================
+# Total Fix Tickets: 6
+#
+# HIGH Priority (Phase 1.5 - Before Implementation):
+#   - FIX-1-001: Replace any types with CDK constructs (1h)
+#   - FIX-1-002: Remove duplicate DataResources (0.5h)
+#
+# LOW Priority (Phase 1.5 - Nice to Have):
+#   - TECH-DEBT-1-001: Add validation types (1h)
+#   - TECH-DEBT-1-002: Add SchemaObject aliasing (0.5h)
+#
+# ENHANCEMENT (Phase 2 - Future):
+#   - ENHANCE-1-001: Create CosmosConfigPresets (1.5h)
+#   - ENHANCE-1-002: Create API synthesizer example (2h)
+#
+# Total Estimated Effort:
+#   - Critical Path: 1.5h (HIGH priority items)
+#   - Full Fixes: 3h (HIGH + LOW priority)
+#   - All Items: 6.5h (including enhancements)

@@ -1111,9 +1111,9 @@ synthesizer.resourceMapper = new CustomResourceMapper();
 ### Related Documentation
 
 **ADRs:**
-- [ADR-064: Component Synthesis CDK Integration](/Users/Austin.Leahy/Source/Github/DigitalMinion/atakora/docs/architecture/decisions/ADR-064-COMPONENT-SYNTHESIS-CDK-INTEGRATION.md)
-- [ADR-073: Synthesis Strategy](/Users/Austin.Leahy/Source/Github/DigitalMinion/atakora/docs/architecture/decisions/ADR-073-SYNTHESIS-STRATEGY.md)
-- [ADR-074: Component API + Function + Schema Layers](/Users/Austin.Leahy/Source/Github/DigitalMinion/atakora/docs/architecture/decisions/ADR-074-COMPONENT-API-FUNCTION-SCHEMA-LAYERS.md)
+- [ADR-021: Component Synthesis CDK Integration](/Users/Austin.Leahy/Source/Github/DigitalMinion/atakora/docs/design/architecture/adr-021-component-synthesis-cdk-integration.md)
+- [ADR-023: Synthesis Strategy](/Users/Austin.Leahy/Source/Github/DigitalMinion/atakora/docs/design/architecture/adr-023-synthesis-strategy.md)
+- [ADR-024: Component API + Function + Schema Layers](/Users/Austin.Leahy/Source/Github/DigitalMinion/atakora/docs/design/architecture/adr-024-component-api-function-schema-layers.md)
 
 **Developer Guides:**
 - CLI Command Reference (Future)

@@ -71,7 +71,7 @@ The component package (`packages/component/src/synthesis/`) currently **manually
 
 ### 3. Architecture Decision Record (ADR)
 
-**File**: `/Users/Austin.Leahy/Source/Github/DigitalMinion/atakora/docs/architecture/decisions/ADR-064-COMPONENT-SYNTHESIS-CDK-INTEGRATION.md`
+**File**: `/Users/Austin.Leahy/Source/Github/DigitalMinion/atakora/docs/design/architecture/adr-021-component-synthesis-cdk-integration.md`
 
 **Purpose**: Document the architectural decision and rationale
 
@@ -162,7 +162,7 @@ We will refactor component synthesis to use CDK constructs and lib synthesis sys
 
 1. `/Users/Austin.Leahy/Source/Github/DigitalMinion/atakora/docs/design/architecture/synthesis-current-state-analysis.md` (5,356 lines)
 2. `/Users/Austin.Leahy/Source/Github/DigitalMinion/atakora/docs/design/architecture/synthesis-cdk-integration-design.md` (3,892 lines)
-3. `/Users/Austin.Leahy/Source/Github/DigitalMinion/atakora/docs/architecture/decisions/ADR-064-COMPONENT-SYNTHESIS-CDK-INTEGRATION.md` (2,784 lines)
+3. `/Users/Austin.Leahy/Source/Github/DigitalMinion/atakora/docs/design/architecture/adr-021-component-synthesis-cdk-integration.md` (2,784 lines)
 4. `/Users/Austin.Leahy/Source/Github/DigitalMinion/atakora/docs/design/architecture/synthesis-cdk-integration-implementation-plan.md` (4,127 lines)
 5. `/Users/Austin.Leahy/Source/Github/DigitalMinion/atakora/docs/design/architecture/synthesis-cdk-integration-migration-strategy.md` (3,198 lines)
 

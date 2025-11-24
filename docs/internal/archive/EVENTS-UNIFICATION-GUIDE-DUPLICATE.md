@@ -317,8 +317,8 @@ criticalQueue: queue('critical')
 
 ### Getting Help
 
-- Check the [ADR-020](../architecture/adr-020-unified-events-namespace.md) for architectural decisions
-- Review the [API documentation](../../reference/component/events.md)
+- Check the [ADR-020](../../architecture/decisions/adr-020-unified-events-namespace.md) for architectural decisions
+- Review the [API documentation](../../reference/api/events.md)
 - File issues on GitHub with the `events` label
 
 ## Reference

@@ -734,10 +734,10 @@ describe('E2E Deployment', () => {
 
 ## Related Documentation
 
-- [Architecture Decision Records](/docs/design/architecture/)
-- [API Reference](/docs/api/)
-- [Migration Guides](/docs/guides/migration/)
-- [Examples](/examples/)
+- [Architecture Decision Records](./decisions/)
+- [API Reference](../reference/api/)
+- [Migration Guides](../guides/migration/)
+- [Examples](../../examples/)
 
 ---
 

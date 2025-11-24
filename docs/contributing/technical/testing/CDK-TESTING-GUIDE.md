@@ -19,7 +19,16 @@
 
 ```typescript
 import { describe, it, expect, beforeEach } from 'vitest';
-import { App, SubscriptionStack, Subscription, Geography, Organization, Project, Environment, Instance } from '@atakora/cdk';
+import {
+  App,
+  SubscriptionStack,
+  Subscription,
+  Geography,
+  Organization,
+  Project,
+  Environment,
+  Instance,
+} from '@atakora/cdk';
 import { MockResourceGroup } from '../helpers/test-fixtures';
 import { VirtualNetworks } from '../index';
 
@@ -342,7 +351,7 @@ const rg = new MockResourceGroup(app, 'TestRG');
 ```typescript
 // WRONG: TypeScript readonly is compile-time only
 it('should enforce readonly at runtime', () => {
-  const obj: IMyInterface = { readonly prop: 'value' };
+  const obj: IMyInterface = { prop: 'value' };
   obj.prop = 'changed'; // This WILL change the value at runtime!
   expect(obj.prop).toBe('value'); // FAILS
 });

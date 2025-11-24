@@ -23,6 +23,66 @@ Comprehensive guide for migrating from the monolithic `@atakora/lib` package to 
 
 **Who should read this**: Anyone currently using `@atakora/lib` who wants to migrate to the new package structure.
 
+### [CDK-Only Imports Migration](./MIGRATION-TO-CDK-IMPORTS.md)
+
+Critical migration required for v1.1.0+ - all framework classes must now be imported from `@atakora/cdk` rather than `@atakora/lib`.
+
+- Breaking change requirements
+- Quick migration steps
+- Import pattern updates
+- Automated migration tools
+- Troubleshooting guide
+
+**Who should read this**: All users upgrading to Atakora v1.1.0 or later.
+
+### [Backend Pattern Migration](./BACKEND-PATTERN-MIGRATION.md)
+
+Guide for migrating from traditional component patterns to the new Backend Pattern for resource sharing and cost optimization.
+
+- Cost benefits and resource sharing
+- Step-by-step migration process
+- Component-specific migrations
+- Testing strategies
+- Rollback procedures
+
+**Who should read this**: Teams looking to optimize infrastructure costs through resource sharing.
+
+### [Unified Events Migration](./UNIFIED-EVENTS-MIGRATION.md)
+
+Migrate from scattered event infrastructure to the unified events namespace.
+
+- Consolidate queue processors, event topics, and service bus
+- Single import for all event types
+- Progressive enhancement patterns
+- Preset configurations
+- Advanced monitoring features
+
+**Who should read this**: Anyone using Storage Queues, Event Grid, or Service Bus.
+
+### [Azure RBAC Grant Pattern](./RBAC-MIGRATION.md)
+
+Migrate from manual Azure role assignments to the declarative RBAC Grant Pattern.
+
+- Type-safe permission management
+- Simplified role assignments
+- Built-in role definitions
+- Cross-resource permissions
+- Audit and compliance features
+
+**Who should read this**: Teams managing complex Azure permissions and role assignments.
+
+### [REST API Migration](./REST-API-MIGRATION.md)
+
+Comprehensive guide for migrating REST APIs from various platforms to Atakora.
+
+- Azure API Management Portal migration
+- Azure Functions Proxies migration
+- Express.js to Atakora
+- OpenAPI specification import
+- Automation scripts and tools
+
+**Who should read this**: Teams migrating existing APIs to Atakora infrastructure-as-code.
+
 ## Migration Philosophy
 
 Atakora follows semantic versioning and provides clear migration paths for breaking changes:

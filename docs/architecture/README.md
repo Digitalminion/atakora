@@ -193,6 +193,7 @@ Detailed design decisions:
 
 Technical specifications:
 
+- **[System Design](./SYSTEM-DESIGN.md)** - Comprehensive system architecture and design
 - **[Project Structure](../design/architecture/PROJECT-STRUCTURE-SPEC.md)** - Codebase organization
 - **[Validation Integration](../design/architecture/validation-integration-plan.md)** - Validation implementation
 - **[Success Metrics](../design/architecture/validation-success-metrics.md)** - Quality metrics

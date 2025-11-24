@@ -88,4 +88,4 @@ ISC
 
 - [Documentation](docs/)
 - [GitHub Issues](https://github.com/atakora/atakora/issues)
-- [Architecture Decision Records](docs/design/architecture/)
+- [Architecture Decision Records](docs/architecture/decisions/)
